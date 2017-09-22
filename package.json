@@ -1,0 +1,48 @@
+{
+  "name": "heroku-salesforce-auth",
+  "version": "1.0.0",
+  "description": "Salesforce authentication for Heroku Node applications.",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "nyc mocha --recursive"
+  },
+  "keywords": [
+    "heroku",
+    "salesforce",
+    "authentication"
+  ],
+  "author": "sfry@financialforce.com",
+  "license": "ISC",
+  "dependencies": {
+    "jsonwebtoken": "^8.0.1",
+    "lodash": "^4.17.4",
+    "openid-client": "^1.15.0"
+  },
+  "nyc": {
+    "check-coverage": true,
+    "per-file": true,
+    "lines": 100,
+    "statements": 100,
+    "functions": 100,
+    "branches": 100,
+    "include": [
+      "src"
+    ],
+    "reporter": [
+      "lcov",
+      "html",
+      "text",
+      "text-summary"
+    ],
+    "cache": true,
+    "all": true
+  },
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "chai-as-promised": "^7.1.1",
+    "mocha": "^3.5.3",
+    "nyc": "^11.2.1",
+    "proxyquire": "^1.8.0",
+    "sinon": "^3.3.0"
+  }
+}

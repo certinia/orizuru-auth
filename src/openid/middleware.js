@@ -2,7 +2,6 @@
 
 const
 	_ = require('lodash'),
-	sharedFunctions = require('./shared/functions'),
 	issuer = require('./shared/issuer'),
 	envValidator = require('./shared/envValidator'),
 
@@ -25,6 +24,7 @@ const
 				}
 				return {
 					env,
+					req,
 					accessToken,
 					issuer
 				};
@@ -34,25 +34,32 @@ const
 			});
 	},
 
-	validateAccessToken = ({ env, accessToken, issuer }) => {
+	validateAccessToken = ({ env, req, accessToken, issuer }) => {
 		const issuerClient = new issuer.Client();
 		return issuerClient.userinfo(accessToken)
 			.then(userInfo => {
 				if (userInfo == null) {
 					throw new Error( /* doesn't matter, catch assigns message */ );
 				}
-				return userInfo;;
+				return {
+					req,
+					userInfo
+				};
 			})
 			.catch(() => {
 				throw new Error('Failed to authenticate with Authorisation header');
 			});
 	},
 
-	success = (userInfo) => {
-		return {
+	success = ({ req, userInfo }) => {
+		const user = {
 			username: userInfo.preferred_username,
 			organizationId: userInfo.organization_id
 		};
+
+		req.user = user;
+
+		return user;
 	},
 
 	fail = req => error => {
@@ -61,9 +68,9 @@ const
 
 module.exports = {
 
-	express: env => {
+	tokenValidator: env => {
 		envValidator.validate(env);
-		return req => Promise.resolve({ env, req })
+		return (req, res, next) => Promise.resolve({ env, req })
 			.then(extractAccessToken)
 			.then(validateAccessToken)
 			.then(success)

@@ -5,18 +5,18 @@ const
 	chai = require('chai'),
 
 	expect = chai.expect,
-	openidAuthMock = { name: 'openidAuthMock' },
+	openidMiddlewareMock = { name: 'openidMiddlewareMock' },
 	openidGrantMock = { name: 'openidGrantMock' },
 
 	index = proxyquire('../src/index.js', {
-		'./openid/auth': openidAuthMock,
+		'./openid/middleware': openidMiddlewareMock,
 		'./openid/grant': openidGrantMock
 	});
 
 describe('index.js', () => {
 
 	it('should contain the correct parts', () => {
-		expect(index.openid.auth).to.eql(openidAuthMock);
+		expect(index.openid.middleware).to.eql(openidMiddlewareMock);
 		expect(index.openid.grant).to.eql(openidGrantMock);
 	});
 

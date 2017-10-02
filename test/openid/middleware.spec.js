@@ -5,9 +5,8 @@ const
 	chai = require('chai'),
 	chaiAsPromised = require('chai-as-promised'),
 
-	auth = require('../../src/openid/auth'),
+	auth = require('../../src/openid/middleware'),
 	issuer = require('../../src/openid/shared/issuer'),
-	sharedFunctions = require('../../src/openid/shared/functions'),
 	envValidator = require('../../src/openid/shared/envValidator'),
 
 	env = {
@@ -24,7 +23,7 @@ const
 
 chai.use(chaiAsPromised);
 
-describe('auth.js', () => {
+describe('middleware.js', () => {
 
 	let req,
 
@@ -82,7 +81,7 @@ describe('auth.js', () => {
 		sandbox.restore();
 	});
 
-	describe('express', () => {
+	describe('tokenValidator', () => {
 
 		it('should reject if envValidator rejects', () => {
 
@@ -90,7 +89,7 @@ describe('auth.js', () => {
 			envValidatorMock.throws(new Error('some error or other'));
 
 			// when - then
-			expect(() => auth.express(env)).to.throw('some error or other');
+			expect(() => auth.tokenValidator(env)).to.throw('some error or other');
 
 		});
 
@@ -101,7 +100,7 @@ describe('auth.js', () => {
 			req.get.withArgs('Authorization').returns(null);
 
 			// when - then
-			return expect(auth.express(env)(null)).to.eventually.be.rejectedWith(noHeaderTokenErrorUnknown);
+			return expect(auth.tokenValidator(env)(null)).to.eventually.be.rejectedWith(noHeaderTokenErrorUnknown);
 
 		});
 
@@ -112,7 +111,7 @@ describe('auth.js', () => {
 			req.get.withArgs('Authorization').returns(null);
 
 			// when - then
-			return expect(auth.express(env)({})).to.eventually.be.rejectedWith(noHeaderTokenErrorUnknown);
+			return expect(auth.tokenValidator(env)({})).to.eventually.be.rejectedWith(noHeaderTokenErrorUnknown);
 
 		});
 
@@ -123,7 +122,7 @@ describe('auth.js', () => {
 			req.get.withArgs('Authorization').returns(null);
 
 			// when - then
-			return expect(auth.express(env)(req)).to.eventually.be.rejectedWith(noHeaderTokenError);
+			return expect(auth.tokenValidator(env)(req)).to.eventually.be.rejectedWith(noHeaderTokenError);
 
 		});
 
@@ -134,7 +133,7 @@ describe('auth.js', () => {
 			req.get.withArgs('Authorization').returns('');
 
 			// when - then
-			return expect(auth.express(env)(req)).to.eventually.be.rejectedWith(noHeaderTokenError);
+			return expect(auth.tokenValidator(env)(req)).to.eventually.be.rejectedWith(noHeaderTokenError);
 
 		});
 
@@ -145,7 +144,7 @@ describe('auth.js', () => {
 			req.get.withArgs('Authorization').returns('12345');
 
 			// when - then
-			return expect(auth.express(env)(req)).to.eventually.be.rejectedWith(noHeaderTokenError);
+			return expect(auth.tokenValidator(env)(req)).to.eventually.be.rejectedWith(noHeaderTokenError);
 
 		});
 
@@ -156,7 +155,7 @@ describe('auth.js', () => {
 			req.get.withArgs('Authorization').returns('Bearer ');
 
 			// when - then
-			return expect(auth.express(env)(req)).to.eventually.be.rejectedWith(noHeaderTokenError);
+			return expect(auth.tokenValidator(env)(req)).to.eventually.be.rejectedWith(noHeaderTokenError);
 
 		});
 
@@ -168,7 +167,7 @@ describe('auth.js', () => {
 			issuerGetAsyncMock.rejects(new Error('something or other'));
 
 			// when - then
-			return expect(auth.express(env)(req)).to.eventually.be.rejectedWith(noIssuerError)
+			return expect(auth.tokenValidator(env)(req)).to.eventually.be.rejectedWith(noIssuerError)
 				.then(() => {
 					calledOnce(issuerGetAsyncMock);
 					calledWith(issuerGetAsyncMock, env.openidHTTPTimeout, env.openidIssuerURI);
@@ -184,7 +183,7 @@ describe('auth.js', () => {
 			issuerGetAsyncMock.resolves(null);
 
 			// when - then
-			return expect(auth.express(env)(req)).to.eventually.be.rejectedWith(noIssuerError)
+			return expect(auth.tokenValidator(env)(req)).to.eventually.be.rejectedWith(noIssuerError)
 				.then(() => {
 					calledOnce(issuerGetAsyncMock);
 					calledWith(issuerGetAsyncMock, env.openidHTTPTimeout, env.openidIssuerURI);
@@ -201,7 +200,7 @@ describe('auth.js', () => {
 			issuerClientUserInfoStub.rejects(new Error('something or other'));
 
 			// when - then
-			return expect(auth.express(env)(req)).to.eventually.be.rejectedWith(authenticationFailedError)
+			return expect(auth.tokenValidator(env)(req)).to.eventually.be.rejectedWith(authenticationFailedError)
 				.then(() => {
 					calledOnce(issuerGetAsyncMock);
 					calledWith(issuerGetAsyncMock, env.openidHTTPTimeout, env.openidIssuerURI);
@@ -220,7 +219,7 @@ describe('auth.js', () => {
 			issuerClientUserInfoStub.resolves(null);
 
 			// when - then
-			return expect(auth.express(env)(req)).to.eventually.be.rejectedWith(authenticationFailedError)
+			return expect(auth.tokenValidator(env)(req)).to.eventually.be.rejectedWith(authenticationFailedError)
 				.then(() => {
 					calledOnce(issuerGetAsyncMock);
 					calledWith(issuerGetAsyncMock, env.openidHTTPTimeout, env.openidIssuerURI);
@@ -232,6 +231,12 @@ describe('auth.js', () => {
 
 		it('should resolve if shared functions resolve', () => {
 
+			const
+				user = {
+					username: userInfoMock.preferred_username,
+					organizationId: userInfoMock.organization_id
+				};
+
 			// given
 			envValidatorMock.resolves();
 			req.get.withArgs('Authorization').returns('Bearer 12345');
@@ -239,10 +244,10 @@ describe('auth.js', () => {
 			issuerClientUserInfoStub.resolves(userInfoMock);
 
 			// when - then
-			return expect(auth.express(env)(req)).to.eventually.eql({
-				username: userInfoMock.preferred_username,
-				organizationId: userInfoMock.organization_id
-			}).then(() => {
+			return expect(auth.tokenValidator(env)(req)).to.eventually.eql(user).then(() => {
+
+				expect(req.user).to.deep.eql(user);
+
 				calledOnce(issuerGetAsyncMock);
 				calledWith(issuerGetAsyncMock, env.openidHTTPTimeout, env.openidIssuerURI);
 				calledOnce(issuerClientUserInfoStub);

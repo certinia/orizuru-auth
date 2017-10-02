@@ -2,7 +2,7 @@
 
 module.exports = {
 	openid: {
-		auth: require('./openid/auth'),
+		middleware: require('./openid/middleware'),
 		grant: require('./openid/grant')
 	}
 };

@@ -39,10 +39,7 @@ describe('auth.js', () => {
 		issuerClientUserInfoStub,
 		IssuerClientMock,
 		issuerInstanceMock,
-		issuerGetAsyncMock,
-
-		sharedConstructSignedJwtMock,
-		sharedObtainAuthorizationGrantMock;
+		issuerGetAsyncMock;
 
 	beforeEach(() => {
 
@@ -78,9 +75,6 @@ describe('auth.js', () => {
 		};
 
 		issuerGetAsyncMock = sandbox.stub(issuer, 'getAsync');
-
-		sharedConstructSignedJwtMock = sandbox.stub(sharedFunctions, 'constructSignedJwt');
-		sharedObtainAuthorizationGrantMock = sandbox.stub(sharedFunctions, 'obtainAuthorizationGrant');
 
 	});
 
@@ -236,35 +230,6 @@ describe('auth.js', () => {
 
 		});
 
-		it('should reject if a shared function rejects', () => {
-
-			// given
-			envValidatorMock.resolves();
-			req.get.withArgs('Authorization').returns('Bearer 12345');
-			issuerGetAsyncMock.resolves(issuerInstanceMock);
-			issuerClientUserInfoStub.resolves(userInfoMock);
-			sharedConstructSignedJwtMock.resolves('testJwtResult');
-			sharedObtainAuthorizationGrantMock.rejects(new Error('Shared function error'));
-
-			// when - then
-			return expect(auth.express(env)(req)).to.eventually.be.rejectedWith(`${baseError} Shared function error`)
-				.then(() => {
-					calledOnce(issuerGetAsyncMock);
-					calledWith(issuerGetAsyncMock, env.openidHTTPTimeout, env.openidIssuerURI);
-					calledOnce(issuerClientUserInfoStub);
-					calledWith(issuerClientUserInfoStub, '12345');
-					calledOnce(sharedConstructSignedJwtMock);
-					calledWith(sharedConstructSignedJwtMock, {
-						env,
-						issuerClient: sinon.match.instanceOf(IssuerClientMock),
-						userInfo: userInfoMock
-					});
-					calledOnce(sharedObtainAuthorizationGrantMock);
-					calledWith(sharedObtainAuthorizationGrantMock, 'testJwtResult');
-				});
-
-		});
-
 		it('should resolve if shared functions resolve', () => {
 
 			// given
@@ -272,34 +237,16 @@ describe('auth.js', () => {
 			req.get.withArgs('Authorization').returns('Bearer 12345');
 			issuerGetAsyncMock.resolves(issuerInstanceMock);
 			issuerClientUserInfoStub.resolves(userInfoMock);
-			sharedConstructSignedJwtMock.resolves('testJwtResult');
-			sharedObtainAuthorizationGrantMock.resolves({
-				env,
-				grant: {
-					['instance_url']: 'mockInstance_url'
-				},
-				userInfo: userInfoMock
-			});
 
 			// when - then
 			return expect(auth.express(env)(req)).to.eventually.eql({
 				username: userInfoMock.preferred_username,
-				instanceUrl: 'mockInstance_url',
-				organizationId: userInfoMock.organization_id,
-				userId: userInfoMock.user_id
+				organizationId: userInfoMock.organization_id
 			}).then(() => {
 				calledOnce(issuerGetAsyncMock);
 				calledWith(issuerGetAsyncMock, env.openidHTTPTimeout, env.openidIssuerURI);
 				calledOnce(issuerClientUserInfoStub);
 				calledWith(issuerClientUserInfoStub, '12345');
-				calledOnce(sharedConstructSignedJwtMock);
-				calledWith(sharedConstructSignedJwtMock, {
-					env,
-					issuerClient: sinon.match.instanceOf(IssuerClientMock),
-					userInfo: userInfoMock
-				});
-				calledOnce(sharedObtainAuthorizationGrantMock);
-				calledWith(sharedObtainAuthorizationGrantMock, 'testJwtResult');
 			});
 
 		});

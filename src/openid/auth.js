@@ -41,23 +41,17 @@ const
 				if (userInfo == null) {
 					throw new Error( /* doesn't matter, catch assigns message */ );
 				}
-				return {
-					env,
-					issuerClient,
-					userInfo
-				};
+				return userInfo;;
 			})
 			.catch(() => {
 				throw new Error('Failed to authenticate with Authorisation header');
 			});
 	},
 
-	success = ({ env, grant, userInfo }) => {
+	success = (userInfo) => {
 		return {
 			username: userInfo.preferred_username,
-			instanceUrl: grant.instance_url,
-			organizationId: userInfo.organization_id,
-			userId: userInfo.user_id
+			organizationId: userInfo.organization_id
 		};
 	},
 
@@ -72,8 +66,6 @@ module.exports = {
 		return req => Promise.resolve({ env, req })
 			.then(extractAccessToken)
 			.then(validateAccessToken)
-			.then(sharedFunctions.constructSignedJwt)
-			.then(sharedFunctions.obtainAuthorizationGrant)
 			.then(success)
 			.catch(fail(req));
 	}

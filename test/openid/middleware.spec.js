@@ -64,7 +64,9 @@ describe('middleware.js', () => {
 
 		listener = sandbox.stub();
 
-		auth.emitter.on('deny', listener);
+		auth.emitter.on('denied', listener);
+		auth.emitter.on('token_validated', listener);
+		auth.emitter.on('grant_checked', listener);
 
 		baseError = `Access denied to: ${req.ip}, error:`;
 		noHeaderTokenError = `${baseError} Authorization header with 'Bearer ***...' required`;
@@ -328,6 +330,9 @@ describe('middleware.js', () => {
 					expect(req.nozomi.user).to.deep.eql(user);
 
 					calledOnce(next);
+					calledOnce(listener);
+					calledWith(listener, 'Token validated for: 1.1.1.1');
+
 					calledOnce(issuerGetAsyncMock);
 					calledWith(issuerGetAsyncMock, env.openidHTTPTimeout, env.openidIssuerURI);
 					calledOnce(issuerClientUserInfoStub);
@@ -360,6 +365,9 @@ describe('middleware.js', () => {
 					expect(req.nozomi.other).to.eql(true);
 
 					calledOnce(next);
+					calledOnce(listener);
+					calledWith(listener, 'Token validated for: 1.1.1.1');
+
 					calledOnce(issuerGetAsyncMock);
 					calledWith(issuerGetAsyncMock, env.openidHTTPTimeout, env.openidIssuerURI);
 					calledOnce(issuerClientUserInfoStub);
@@ -540,6 +548,9 @@ describe('middleware.js', () => {
 					expect(req.nozomi.grantChecked).to.equal(true);
 
 					calledOnce(next);
+					calledOnce(listener);
+					calledWith(listener, 'Grant checked for: 1.1.1.1');
+
 					calledOnce(issuerGetAsyncMock);
 					calledWith(issuerGetAsyncMock, env.openidHTTPTimeout, env.openidIssuerURI);
 					calledOnce(constructSignedJwtMock);

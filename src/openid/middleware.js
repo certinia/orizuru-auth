@@ -11,6 +11,10 @@ const
 
 	emitter = new EventEmitter(),
 
+	DENIED_EVENT = 'denied',
+	TOKEN_VALIDATED_EVENT = 'token_validated',
+	GRANT_CHECKED_EVENT = 'grant_checked',
+
 	extractAccessToken = ({ env, req }) => {
 		// https://tools.ietf.org/html/rfc6750
 		const
@@ -104,6 +108,8 @@ const
 		nozomi.user = user;
 		req.nozomi = nozomi;
 
+		emitter.emit(TOKEN_VALIDATED_EVENT, `Token validated for: ${req.ip}`);
+
 		return undefined;
 	},
 
@@ -111,13 +117,15 @@ const
 
 		req.nozomi.grantChecked = true;
 
+		emitter.emit(GRANT_CHECKED_EVENT, `Grant checked for: ${req.ip}`);
+
 		return undefined;
 
 	},
 
 	fail = (req, res) => error => {
 
-		emitter.emit('deny', `Access denied to: ${req ? req.ip ? req.ip : 'unknown' : 'unknown'}, error: ${error.message}`);
+		emitter.emit(DENIED_EVENT, `Access denied to: ${req ? req.ip ? req.ip : 'unknown' : 'unknown'}, error: ${error.message}`);
 
 		res.sendStatus(401);
 

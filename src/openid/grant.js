@@ -35,7 +35,7 @@ const
 			});
 	},
 
-	returnGrant = ({ env, grant }) => {
+	convertGrantToCredentials = (grant) => {
 		return {
 			instanceUrl: grant.instance_url,
 			accessToken: grant.access_token
@@ -55,7 +55,7 @@ module.exports = {
 			.then(getIssuer)
 			.then(sharedFunctions.constructSignedJwt)
 			.then(sharedFunctions.obtainAuthorizationGrant)
-			.then(returnGrant)
+			.then(convertGrantToCredentials)
 			.catch(fail);
 	}
 

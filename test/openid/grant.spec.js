@@ -170,11 +170,8 @@ describe('grant.js', () => {
 			issuerGetAsyncMock.resolves(issuerInstanceMock);
 			sharedConstructSignedJwtMock.resolves('testJwtResult');
 			sharedObtainAuthorizationGrantMock.resolves({
-				env,
-				grant: {
-					['access_token']: '12345',
-					['instance_url']: 'https://something.com'
-				}
+				['access_token']: '12345',
+				['instance_url']: 'https://something.com'
 			});
 
 			// when - then

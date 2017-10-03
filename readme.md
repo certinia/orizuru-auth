@@ -56,7 +56,7 @@ The *user* object contains the following fields.
 
 #### Grant Checker
 
-The grant checker is designed to be used in tandem with the token Validator. It uses the user object on the request and attempts to obtain an OpenID Connect accesstoken using a JWT Bearer grant request. In order for this to use the Identity Provider must have a previously established authorisation for the user requested. With the Salesforce identity provider this is achieved using a Connected App and an uploaded Certificate.
+The grant checker is designed to be used in tandem with the token Validator. It uses the *user* object on the request's *nozomi* object and attempts to obtain an OpenID Connect access token using a JWT Bearer grant request. In order for this to work the Identity Provider must have a previously established authorisation for the user requested. With the Salesforce identity provider this is achieved using a Connected App and an uploaded Certificate.
 
 If this completes successfully it sets the *nozomi.grantChecked* property to be true, otherwise the user will be refused access.
 
@@ -90,7 +90,7 @@ This can be called at any time to obtain credentials to connect to Salesforce. T
 ```javascript
 
 const
-	tokenGranter = require('@financialforcedev/nozomi-auth').grant,
+	grant = require('@financialforcedev/nozomi-auth').grant,
 	jsforce = require('jsforce'),
 	env = {
     	jwtSigningKey: '--SOME KEY MATERIAL--';
@@ -98,16 +98,30 @@ const
     	openidHTTPTimeout: 4000;
     	openidIssuerURI: 'https://login.salesforce.com';
 	},
-	getToken = tokenGranter(env),
 	user = {
 		username: 'someuser@someorg.something',
 		organizationId: '00D80000000bSxXEAU'
+	},
+	getToken = grant.getToken(env);
+	getJsforceConnection = (credentials) => {
+		return new jsforce.Connection(credentials);
+	},
+	getLimits = (conn) => {
+		return Promise.all([conn, conn.limits()]);
+	},
+	displayLimits = ([conn, limits]) => {
+		console.log(limits);
+		return conn;
+	},
+	logout = (conn) => {
+		return conn.logout();
 	};
 
+
 getToken(user)
-	.then((credentials) => {
-		const
-			conn = new jsforce.Connection(credentials);
-	});
+	.then(getJsforceConnection)
+	.then(getLimits)
+	.then(displayLimits)
+	.then(logout);
 
 ```

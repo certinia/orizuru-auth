@@ -120,9 +120,9 @@ const
 
 	fail = (req, res) => error => {
 
-		res.sendStatus(401);
-
 		emitter.emit('deny', `Access denied to: ${req ? req.ip ? req.ip : 'unknown' : 'unknown'}, error: ${error.message}`);
+
+		res.sendStatus(401);
 
 	};
 

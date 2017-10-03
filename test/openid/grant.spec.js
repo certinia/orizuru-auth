@@ -68,7 +68,7 @@ describe('grant.js', () => {
 		sandbox.restore();
 	});
 
-	describe('token', () => {
+	describe('getToken', () => {
 
 		it('should reject if envValidator rejects', () => {
 
@@ -76,7 +76,7 @@ describe('grant.js', () => {
 			envValidatorMock.throws(new Error('some error or other'));
 
 			// when - then
-			expect(() => grant.token(env)).to.throw('some error or other');
+			expect(() => grant.getToken(env)).to.throw('some error or other');
 
 		});
 
@@ -86,7 +86,7 @@ describe('grant.js', () => {
 			envValidatorMock.resolves();
 
 			// when - then
-			return expect(grant.token(env)(null, 'something')).to.eventually.be.rejectedWith(usernameRequiredError);
+			return expect(grant.getToken(env)(null, 'something')).to.eventually.be.rejectedWith(usernameRequiredError);
 
 		});
 
@@ -96,7 +96,7 @@ describe('grant.js', () => {
 			envValidatorMock.resolves();
 
 			// when - then
-			return expect(grant.token(env)('', 'something')).to.eventually.be.rejectedWith(usernameNotEmptyError);
+			return expect(grant.getToken(env)('', 'something')).to.eventually.be.rejectedWith(usernameNotEmptyError);
 
 		});
 
@@ -106,7 +106,7 @@ describe('grant.js', () => {
 			envValidatorMock.resolves();
 
 			// when - then
-			return expect(grant.token(env)('something', null)).to.eventually.be.rejectedWith(organisationIdRequiredError);
+			return expect(grant.getToken(env)('something', null)).to.eventually.be.rejectedWith(organisationIdRequiredError);
 
 		});
 
@@ -116,7 +116,7 @@ describe('grant.js', () => {
 			envValidatorMock.resolves();
 
 			// when - then
-			return expect(grant.token(env)('something', '')).to.eventually.be.rejectedWith(organisationIdNotEmptyError);
+			return expect(grant.getToken(env)('something', '')).to.eventually.be.rejectedWith(organisationIdNotEmptyError);
 
 		});
 
@@ -127,7 +127,7 @@ describe('grant.js', () => {
 			issuerGetAsyncMock.rejects(new Error('something or other'));
 
 			// when - then
-			return expect(grant.token(env)('user', 'org')).to.eventually.be.rejectedWith(noIssuerError)
+			return expect(grant.getToken(env)('user', 'org')).to.eventually.be.rejectedWith(noIssuerError)
 				.then(() => {
 					calledOnce(issuerGetAsyncMock);
 					calledWith(issuerGetAsyncMock, env.openidHTTPTimeout, env.openidIssuerURI);
@@ -142,7 +142,7 @@ describe('grant.js', () => {
 			issuerGetAsyncMock.resolves(null);
 
 			// when - then
-			return expect(grant.token(env)('user', 'org')).to.eventually.be.rejectedWith(noIssuerError)
+			return expect(grant.getToken(env)('user', 'org')).to.eventually.be.rejectedWith(noIssuerError)
 				.then(() => {
 					calledOnce(issuerGetAsyncMock);
 					calledWith(issuerGetAsyncMock, env.openidHTTPTimeout, env.openidIssuerURI);
@@ -159,7 +159,7 @@ describe('grant.js', () => {
 			sharedObtainAuthorizationGrantMock.rejects(new Error('Shared function error'));
 
 			// when - then
-			return expect(grant.token(env)('user', 'org')).to.eventually.be.rejectedWith(`${baseError} Shared function error`)
+			return expect(grant.getToken(env)('user', 'org')).to.eventually.be.rejectedWith(`${baseError} Shared function error`)
 				.then(() => {
 					calledOnce(issuerGetAsyncMock);
 					calledWith(issuerGetAsyncMock, env.openidHTTPTimeout, env.openidIssuerURI);
@@ -191,7 +191,7 @@ describe('grant.js', () => {
 			});
 
 			// when - then
-			return expect(grant.token(env)('user', 'org')).to.eventually.eql('grantTest')
+			return expect(grant.getToken(env)('user', 'org')).to.eventually.eql('grantTest')
 				.then(() => {
 					calledOnce(issuerGetAsyncMock);
 					calledWith(issuerGetAsyncMock, env.openidHTTPTimeout, env.openidIssuerURI);

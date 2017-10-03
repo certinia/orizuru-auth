@@ -54,7 +54,7 @@ const
 		return { env, issuerClient, userInfo };
 	},
 
-	returnGrant = ({ env, grant, userInfo }) => grant,
+	returnGrant = ({ env, grant }) => grant,
 
 	fail = error => {
 		throw new Error(`Failed to grant token, error: ${error.message}`);
@@ -62,7 +62,7 @@ const
 
 module.exports = {
 
-	token: env => {
+	getToken: env => {
 		envValidator.validate(env);
 		return (username, organizationId) => Promise.resolve({ env, username, organizationId })
 			.then(validateUsernameAndOrgId)

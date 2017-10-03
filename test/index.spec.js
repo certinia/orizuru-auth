@@ -16,8 +16,8 @@ const
 describe('index.js', () => {
 
 	it('should contain the correct parts', () => {
-		expect(index.openid.middleware).to.eql(openidMiddlewareMock);
-		expect(index.openid.grant).to.eql(openidGrantMock);
+		expect(index.middleware).to.eql(openidMiddlewareMock);
+		expect(index.grant).to.eql(openidGrantMock);
 	});
 
 });

@@ -28,8 +28,6 @@ describe('grant.js', () => {
 	let baseError,
 		usernameRequiredError,
 		usernameNotEmptyError,
-		organisationIdRequiredError,
-		organisationIdNotEmptyError,
 		noIssuerError,
 
 		envValidatorMock,
@@ -45,8 +43,6 @@ describe('grant.js', () => {
 		baseError = 'Failed to grant token, error:';
 		usernameRequiredError = `${baseError} Missing required parameter: username.`;
 		usernameNotEmptyError = `${baseError} Invalid parameter: username cannot be empty.`;
-		organisationIdRequiredError = `${baseError} Missing required parameter: organizationId.`;
-		organisationIdNotEmptyError = `${baseError} Invalid parameter: organizationId cannot be empty.`;
 		noIssuerError = `${baseError} Could not get an issuer for timeout: ${env.openidHTTPTimeout} and URI: ${env.openidIssuerURI}`;
 
 		envValidatorMock = sandbox.stub(envValidator, 'validate');
@@ -80,13 +76,23 @@ describe('grant.js', () => {
 
 		});
 
-		it('should reject if username is null', () => {
+		it('should reject if user is null', () => {
 
 			// given
 			envValidatorMock.resolves();
 
 			// when - then
-			return expect(grant.getToken(env)(null, 'something')).to.eventually.be.rejectedWith(usernameRequiredError);
+			return expect(grant.getToken(env)(null)).to.eventually.be.rejectedWith(usernameNotEmptyError);
+
+		});
+
+		it('should reject if username is missing', () => {
+
+			// given
+			envValidatorMock.resolves();
+
+			// when - then
+			return expect(grant.getToken(env)({})).to.eventually.be.rejectedWith(usernameRequiredError);
 
 		});
 
@@ -96,27 +102,7 @@ describe('grant.js', () => {
 			envValidatorMock.resolves();
 
 			// when - then
-			return expect(grant.getToken(env)('', 'something')).to.eventually.be.rejectedWith(usernameNotEmptyError);
-
-		});
-
-		it('should reject if organisationId is null', () => {
-
-			// given
-			envValidatorMock.resolves();
-
-			// when - then
-			return expect(grant.getToken(env)('something', null)).to.eventually.be.rejectedWith(organisationIdRequiredError);
-
-		});
-
-		it('should reject if organisationId is empty', () => {
-
-			// given
-			envValidatorMock.resolves();
-
-			// when - then
-			return expect(grant.getToken(env)('something', '')).to.eventually.be.rejectedWith(organisationIdNotEmptyError);
+			return expect(grant.getToken(env)({ username: '' })).to.eventually.be.rejectedWith(usernameNotEmptyError);
 
 		});
 
@@ -127,7 +113,7 @@ describe('grant.js', () => {
 			issuerGetAsyncMock.rejects(new Error('something or other'));
 
 			// when - then
-			return expect(grant.getToken(env)('user', 'org')).to.eventually.be.rejectedWith(noIssuerError)
+			return expect(grant.getToken(env)({ username: 'user' })).to.eventually.be.rejectedWith(noIssuerError)
 				.then(() => {
 					calledOnce(issuerGetAsyncMock);
 					calledWith(issuerGetAsyncMock, env.openidHTTPTimeout, env.openidIssuerURI);
@@ -142,7 +128,7 @@ describe('grant.js', () => {
 			issuerGetAsyncMock.resolves(null);
 
 			// when - then
-			return expect(grant.getToken(env)('user', 'org')).to.eventually.be.rejectedWith(noIssuerError)
+			return expect(grant.getToken(env)({ username: 'user' })).to.eventually.be.rejectedWith(noIssuerError)
 				.then(() => {
 					calledOnce(issuerGetAsyncMock);
 					calledWith(issuerGetAsyncMock, env.openidHTTPTimeout, env.openidIssuerURI);
@@ -159,7 +145,7 @@ describe('grant.js', () => {
 			sharedObtainAuthorizationGrantMock.rejects(new Error('Shared function error'));
 
 			// when - then
-			return expect(grant.getToken(env)('user', 'org')).to.eventually.be.rejectedWith(`${baseError} Shared function error`)
+			return expect(grant.getToken(env)({ username: 'user' })).to.eventually.be.rejectedWith(`${baseError} Shared function error`)
 				.then(() => {
 					calledOnce(issuerGetAsyncMock);
 					calledWith(issuerGetAsyncMock, env.openidHTTPTimeout, env.openidIssuerURI);
@@ -167,9 +153,8 @@ describe('grant.js', () => {
 					calledWith(sharedConstructSignedJwtMock, {
 						env,
 						issuerClient: sinon.match.instanceOf(IssuerClientMock),
-						userInfo: {
-							['preferred_username']: 'user',
-							['organization_id']: 'org'
+						user: {
+							username: 'user'
 						}
 					});
 					calledOnce(sharedObtainAuthorizationGrantMock);
@@ -186,12 +171,14 @@ describe('grant.js', () => {
 			sharedConstructSignedJwtMock.resolves('testJwtResult');
 			sharedObtainAuthorizationGrantMock.resolves({
 				env,
-				grant: 'grantTest',
-				userInfo: 'userInfoTest'
+				grant: {
+					['access_token']: '12345',
+					['instance_url']: 'https://something.com'
+				}
 			});
 
 			// when - then
-			return expect(grant.getToken(env)('user', 'org')).to.eventually.eql('grantTest')
+			return expect(grant.getToken(env)({ username: 'user' })).to.eventually.eql({ instanceUrl: 'https://something.com', accessToken: '12345' })
 				.then(() => {
 					calledOnce(issuerGetAsyncMock);
 					calledWith(issuerGetAsyncMock, env.openidHTTPTimeout, env.openidIssuerURI);
@@ -199,9 +186,8 @@ describe('grant.js', () => {
 					calledWith(sharedConstructSignedJwtMock, {
 						env,
 						issuerClient: sinon.match.instanceOf(IssuerClientMock),
-						userInfo: {
-							['preferred_username']: 'user',
-							['organization_id']: 'org'
+						user: {
+							username: 'user'
 						}
 					});
 					calledOnce(sharedObtainAuthorizationGrantMock);

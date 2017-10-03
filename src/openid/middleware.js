@@ -38,7 +38,7 @@ const
 					env,
 					req,
 					accessToken,
-					issuer
+					issuerClient: new issuer.Client()
 				};
 			})
 			.catch(() => {
@@ -56,7 +56,7 @@ const
 
 		return {
 			env,
-			user: req.user
+			user: user
 		};
 	},
 
@@ -77,8 +77,7 @@ const
 			});
 	},
 
-	validateAccessToken = ({ env, req, accessToken, issuer }) => {
-		const issuerClient = new issuer.Client();
+	validateAccessToken = ({ env, req, accessToken, issuerClient }) => {
 		return issuerClient.userinfo(accessToken)
 			.then(userInfo => {
 				if (userInfo == null) {

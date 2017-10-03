@@ -490,6 +490,8 @@ describe('middleware.js', () => {
 					calledOnce(listener);
 					calledWith(listener, unableToSignJwtError);
 
+					calledWith(constructSignedJwtMock, { env, issuerClient: sinon.match.any, user: req.nozomi.user });
+
 					calledOnce(issuerGetAsyncMock);
 					calledWith(issuerGetAsyncMock, env.openidHTTPTimeout, env.openidIssuerURI);
 				});

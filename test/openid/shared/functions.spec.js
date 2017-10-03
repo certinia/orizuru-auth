@@ -109,7 +109,7 @@ describe('shared/functions.js', () => {
 
 			// when - then
 			return expect(sharedFunctions.obtainAuthorizationGrant({ env, issuerClient, assertion: 'assertionTest', user }))
-				.to.eventually.be.rejectedWith('Grant request failed')
+				.to.eventually.be.rejectedWith('Grant request failed: Some error or other')
 				.then(() => {
 					issuerClient.grant.resolves('test');
 					calledOnce(issuerClient.grant);
@@ -128,7 +128,7 @@ describe('shared/functions.js', () => {
 
 			// when - then
 			return expect(sharedFunctions.obtainAuthorizationGrant({ env, issuerClient, assertion: 'assertionTest', user }))
-				.to.eventually.be.rejectedWith('Grant request failed')
+				.to.eventually.be.rejectedWith('Grant request failed: No grant received.')
 				.then(() => {
 					issuerClient.grant.resolves('test');
 					calledOnce(issuerClient.grant);

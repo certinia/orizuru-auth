@@ -42,11 +42,11 @@ const
 			assertion: assertion
 		}).then(grant => {
 			if (grant == null) {
-				throw new Error( /* doesn't matter, catch assigns message */ );
+				throw new Error('No grant received.');
 			}
 			return grant;
-		}).catch(() => {
-			throw new Error('Grant request failed');
+		}).catch((error) => {
+			throw new Error('Grant request failed: ' + error.message);
 		});
 	};
 

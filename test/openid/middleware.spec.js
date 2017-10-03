@@ -398,11 +398,28 @@ describe('middleware.js', () => {
 
 		});
 
+		it('should emit a deny event if there is no user', () => {
+
+			// given
+			envValidatorMock.resolves();
+			req.nozomi = {};
+
+			// when
+			return auth.grantChecker(env)(req, res, next)
+				.then(() => {
+					// then
+					notCalled(next);
+					calledOnce(listener);
+					calledWith(listener, missingUserError);
+				});
+
+		});
+
 		it('should emit a deny event if the user has no username property', () => {
 
 			// given
 			envValidatorMock.resolves();
-			req.user = {};
+			req.nozomi = { user: {} };
 
 			// when
 			return auth.grantChecker(env)(req, res, next)
@@ -419,7 +436,7 @@ describe('middleware.js', () => {
 
 			// given
 			envValidatorMock.resolves();
-			req.user = { username: 'bob@test.com' };
+			req.nozomi = { user: { username: 'bob@test.com' } };
 			issuerGetAsyncMock.rejects(new Error('something or other'));
 
 			// when
@@ -440,7 +457,7 @@ describe('middleware.js', () => {
 
 			// given
 			envValidatorMock.resolves();
-			req.user = { username: 'bob@test.com' };
+			req.nozomi = { user: { username: 'bob@test.com' } };
 			issuerGetAsyncMock.resolves(null);
 
 			// when
@@ -461,7 +478,7 @@ describe('middleware.js', () => {
 
 			// given
 			envValidatorMock.resolves();
-			req.user = { username: 'bob@test.com' };
+			req.nozomi = { user: { username: 'bob@test.com' } };
 			issuerGetAsyncMock.resolves(issuerInstanceMock);
 			constructSignedJwtMock.rejects(new Error('Unable to sign JWT'));
 
@@ -484,7 +501,7 @@ describe('middleware.js', () => {
 			// given
 
 			envValidatorMock.resolves();
-			req.user = { username: 'bob@test.com' };
+			req.nozomi = { user: { username: 'bob@test.com' } };
 			issuerGetAsyncMock.resolves(issuerInstanceMock);
 			constructSignedJwtMock.resolves();
 			obtainAuthorizationGrantMock.rejects(new Error('Unable to obtain grant'));
@@ -508,7 +525,7 @@ describe('middleware.js', () => {
 
 			// given
 			envValidatorMock.resolves();
-			req.user = { username: 'bob@test.com' };
+			req.nozomi = { user: { username: 'bob@test.com' } };
 			issuerGetAsyncMock.resolves(issuerInstanceMock);
 			constructSignedJwtMock.resolves();
 			obtainAuthorizationGrantMock.resolves('12345');
@@ -518,7 +535,7 @@ describe('middleware.js', () => {
 				.then(() => {
 					// then
 
-					expect(req.nozomi.grantChecked).to.eql(true);
+					expect(req.nozomi.grantChecked).to.equal(true);
 
 					calledOnce(next);
 					calledOnce(issuerGetAsyncMock);

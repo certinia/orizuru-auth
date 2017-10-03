@@ -50,7 +50,7 @@ const
 
 	checkUserIsOnTheRequest = ({ env, req }) => {
 		const
-			user = req.user;
+			user = _.get(req, 'nozomi.user');
 
 		if (!user || !user.username) {
 			throw new Error('A valid User is not set on the request');
@@ -112,7 +112,7 @@ const
 
 	setGrant = (req) => (grant) => {
 
-		req.user.grant = true;
+		req.nozomi.grantChecked = true;
 
 		return undefined;
 

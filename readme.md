@@ -24,9 +24,15 @@ If the token is successfully validated then a *user* object is set on the reques
 ```javascript
 
 const
-	middleware = require('@financialforcedev/nozomi-auth');
+	middleware = require('@financialforcedev/nozomi-auth'),
+	env = {
+    	jwtSigningKey: '--SOME KEY MATERIAL--';
+    	openidClientId: '12312312413-7236762374';
+    	openidHTTPTimeout: 4000;
+    	openidIssuerURI: 'https://login.salesforce.com';
+	};
 
-app.use(middleware.tokenValidator);
+app.use(middleware.tokenValidator(env));
 
 ```
 
@@ -39,8 +45,15 @@ If this completes successfully it sets the *nozomi.grantChecked* property to be 
 ```javascript
 
 const
-	middleware = require('@financialforcedev/nozomi-auth');
+	middleware = require('@financialforcedev/nozomi-auth'),
+	env = {
+    	jwtSigningKey: '--SOME KEY MATERIAL--';
+    	openidClientId: '12312312413-7236762374';
+    	openidHTTPTimeout: 4000;
+    	openidIssuerURI: 'https://login.salesforce.com';
+	};
 
-app.use(middleware.grantChecker);
+
+app.use(middleware.grantChecker(env));
 
 ```

@@ -4,11 +4,11 @@
   "description": "Salesforce authentication for Heroku Node applications.",
   "main": "src/index.js",
   "scripts": {
-	"pretest": "eslint src test",
-	"test": "nyc mocha --recursive"
+    "pretest": "eslint src test",
+    "test": "nyc mocha --recursive"
   },
   "keywords": [
-	"nozomi",
+    "nozomi",
     "heroku",
     "salesforce",
     "authentication"

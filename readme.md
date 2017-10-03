@@ -36,7 +36,10 @@ const
 
 app.use(middleware.tokenValidator(env));
 
-middleware.emitter.on('deny', (message) => {
+middleware.emitter.on('denied', (message) => {
+	console.log(message);
+});
+middleware.emitter.on('token_validated', (message) => {
 	console.log(message);
 });
 
@@ -76,8 +79,11 @@ const
 
 app.use(middleware.grantChecker(env));
 
-middleware.emitter.on('deny', (message) => {
+middleware.emitter.on('denied', (message) => {
     console.log(message);
+});
+middleware.emitter.on('grant_checked', (message) => {
+	console.log(message);
 });
 
 

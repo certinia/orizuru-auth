@@ -2,14 +2,12 @@
 
 const
 	_ = require('lodash'),
+	EventEmitter = require('events'),
+
 	issuer = require('./shared/issuer'),
 	envValidator = require('./shared/envValidator'),
-
 	sharedFunctions = require('./shared/functions'),
-
 	constants = require('./shared/constants'),
-
-	EventEmitter = require('events'),
 
 	emitter = new EventEmitter(),
 

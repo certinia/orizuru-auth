@@ -28,16 +28,16 @@ Failure messages are emitted on the *emitter*.
 const
 	middleware = require('@financialforcedev/nozomi-auth').middleware,
 	env = {
-    	jwtSigningKey: '--SOME KEY MATERIAL--',
-    	openidClientId: '12312312413-7236762374',
-    	openidHTTPTimeout: 4000,
-    	openidIssuerURI: 'https://login.salesforce.com'
+		jwtSigningKey: '--SOME KEY MATERIAL--',
+		openidClientId: '12312312413-7236762374',
+		openidHTTPTimeout: 4000,
+		openidIssuerURI: 'https://login.salesforce.com'
 	};
 
 app.use(middleware.tokenValidator(env));
 
 middleware.emitter.on('deny', (message) => {
-    console.log(message);
+	console.log(message);
 });
 
 
@@ -67,10 +67,10 @@ Failure messages are emitted on the *emitter*.
 const
 	middleware = require('@financialforcedev/nozomi-auth').middleware,
 	env = {
-    	jwtSigningKey: '--SOME KEY MATERIAL--',
-    	openidClientId: '12312312413-7236762374',
-    	openidHTTPTimeout: 4000,
-    	openidIssuerURI: 'https://login.salesforce.com'
+		jwtSigningKey: '--SOME KEY MATERIAL--',
+		openidClientId: '12312312413-7236762374',
+		openidHTTPTimeout: 4000,
+		openidIssuerURI: 'https://login.salesforce.com'
 	};
 
 
@@ -87,16 +87,18 @@ middleware.emitter.on('deny', (message) => {
 
 This can be called at any time to obtain credentials to connect to Salesforce. This depends on the configuration of a Connected App in your Salesforce org, with pre-authorized users connected via a Permission Set to it and a certificate uploaded that corresponds to the *jwtSigningKey*.
 
+The credentials returned are in a form suitable to be used with [JSforce](https://jsforce.github.io/). See the example below.
+
 ```javascript
 
 const
 	grant = require('@financialforcedev/nozomi-auth').grant,
 	jsforce = require('jsforce'),
 	env = {
-    	jwtSigningKey: '--SOME KEY MATERIAL--';
-    	openidClientId: '12312312413-7236762374';
-    	openidHTTPTimeout: 4000;
-    	openidIssuerURI: 'https://login.salesforce.com';
+		jwtSigningKey: '--SOME KEY MATERIAL--',
+		openidClientId: '12312312413-7236762374',
+		openidHTTPTimeout: 4000,
+		openidIssuerURI: 'https://login.salesforce.com'
 	},
 	user = {
 		username: 'someuser@someorg.something',

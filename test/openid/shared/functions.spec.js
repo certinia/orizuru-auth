@@ -23,18 +23,7 @@ const
 
 chai.use(chaiAsPromised);
 
-let
-	IssuerClientMock;
-
 describe('shared/functions.js', () => {
-
-	beforeEach(() => {
-		IssuerClientMock = class {
-			userinfo(accessToken) {
-				return issuerClientUserInfoStub(accessToken);
-			}
-		};
-	});
 
 	afterEach(() => {
 		sandbox.restore();

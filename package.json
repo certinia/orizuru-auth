@@ -4,7 +4,8 @@
   "description": "Salesforce authentication for Heroku Node applications.",
   "main": "src/index.js",
   "scripts": {
-    "test": "nyc mocha --recursive"
+	"pretest": "eslint src test",
+	"test": "nyc mocha --recursive"
   },
   "keywords": [
     "heroku",

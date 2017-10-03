@@ -307,7 +307,7 @@ describe('middleware.js', () => {
 
 		});
 
-		it('should call next if client info resolves', () => {
+		it('should call next and set nozomi on the request if client info resolves', () => {
 
 			const
 				user = {
@@ -325,7 +325,39 @@ describe('middleware.js', () => {
 			return auth.tokenValidator(env)(req, res, next)
 				.then(() => {
 
-					expect(req.user).to.deep.eql(user);
+					expect(req.nozomi.user).to.deep.eql(user);
+
+					calledOnce(next);
+					calledOnce(issuerGetAsyncMock);
+					calledWith(issuerGetAsyncMock, env.openidHTTPTimeout, env.openidIssuerURI);
+					calledOnce(issuerClientUserInfoStub);
+					calledWith(issuerClientUserInfoStub, '12345');
+				});
+
+		});
+
+		it('should respect an existing nozomi object', () => {
+
+			const
+				user = {
+					username: userInfoMock.preferred_username,
+					organizationId: userInfoMock.organization_id
+				};
+
+			// given
+			envValidatorMock.resolves();
+			req.get.withArgs('Authorization').returns('Bearer 12345');
+			issuerGetAsyncMock.resolves(issuerInstanceMock);
+			issuerClientUserInfoStub.resolves(userInfoMock);
+
+			req.nozomi = { other: true };
+
+			// when - then
+			return auth.tokenValidator(env)(req, res, next)
+				.then(() => {
+
+					expect(req.nozomi.user).to.deep.eql(user);
+					expect(req.nozomi.other).to.eql(true);
 
 					calledOnce(next);
 					calledOnce(issuerGetAsyncMock);
@@ -485,6 +517,9 @@ describe('middleware.js', () => {
 			return auth.grantChecker(env)(req, res, next)
 				.then(() => {
 					// then
+
+					expect(req.nozomi.grantChecked).to.eql(true);
+
 					calledOnce(next);
 					calledOnce(issuerGetAsyncMock);
 					calledWith(issuerGetAsyncMock, env.openidHTTPTimeout, env.openidIssuerURI);

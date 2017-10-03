@@ -1,5 +1,5 @@
 {
-  "name": "heroku-salesforce-auth",
+  "name": "@financialforcedev/nozomi-auth",
   "version": "1.0.0",
   "description": "Salesforce authentication for Heroku Node applications.",
   "main": "src/index.js",
@@ -8,6 +8,7 @@
 	"test": "nyc mocha --recursive"
   },
   "keywords": [
+	"nozomi",
     "heroku",
     "salesforce",
     "authentication"

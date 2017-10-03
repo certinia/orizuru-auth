@@ -97,15 +97,15 @@ const
 	},
 
 	setUserOnRequest = ({ req, userInfo }) => {
-		const user = {
-			username: userInfo.preferred_username,
-			organizationId: userInfo.organization_id
-		};
 
-		/*
-		 * Attach to the request a la passport.
-		 */
-		req.user = user;
+		const user = {
+				username: userInfo.preferred_username,
+				organizationId: userInfo.organization_id
+			},
+			nozomi = req.nozomi || {};
+
+		nozomi.user = user;
+		req.nozomi = nozomi;
 
 		return undefined;
 	},

@@ -76,7 +76,7 @@ const
 		openidIssuerURI: 'https://login.salesforce.com'
 	};
 
-
+app.use(middleware.tokenValidator(env));
 app.use(middleware.grantChecker(env));
 
 middleware.emitter.on('denied', (message) => {

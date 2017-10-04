@@ -13,8 +13,8 @@
     "salesforce",
     "authentication"
   ],
-  "author": "sfry@financialforce.com",
-  "license": "ISC",
+  "author": "financialforce",
+  "license": "BSD-3-Clause",
   "dependencies": {
     "jsonwebtoken": "^8.0.1",
     "lodash": "^4.17.4",

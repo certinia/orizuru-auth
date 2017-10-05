@@ -1,6 +1,6 @@
 {
   "name": "@financialforcedev/nozomi-auth",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Salesforce authentication for Heroku Node applications.",
   "main": "src/index.js",
   "scripts": {

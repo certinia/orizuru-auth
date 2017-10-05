@@ -4,6 +4,7 @@
   "description": "Salesforce authentication for Heroku Node applications.",
   "main": "src/index.js",
   "scripts": {
+    "doc": "jsdoc src -r -d doc --readme readme.md",
     "pretest": "eslint src test",
     "test": "nyc mocha --recursive"
   },
@@ -13,8 +14,8 @@
     "salesforce",
     "authentication"
   ],
-  "author": "sfry@financialforce.com",
-  "license": "ISC",
+  "author": "financialforce",
+  "license": "BSD-3-Clause",
   "dependencies": {
     "jsonwebtoken": "^8.0.1",
     "lodash": "^4.17.4",
@@ -43,6 +44,7 @@
     "chai": "^4.1.2",
     "chai-as-promised": "^7.1.1",
     "eslint": "^4.8.0",
+    "jsdoc": "^3.5.5",
     "mocha": "^3.5.3",
     "nyc": "^11.2.1",
     "proxyquire": "^1.8.0",

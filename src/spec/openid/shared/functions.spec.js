@@ -31,7 +31,7 @@ const
 	chai = require('chai'),
 	chaiAsPromised = require('chai-as-promised'),
 
-	sharedFunctions = require('../../../src/openid/shared/functions'),
+	sharedFunctions = require('../../../lib/openid/shared/functions'),
 	jsonwebtoken = require('jsonwebtoken'),
 
 	env = {

@@ -30,7 +30,7 @@ const
 	chai = require('chai'),
 	chaiAsPromised = require('chai-as-promised'),
 
-	envValidator = require('../../../src/openid/shared/envValidator'),
+	envValidator = require('../../../lib/openid/shared/envValidator'),
 
 	expect = chai.expect;
 

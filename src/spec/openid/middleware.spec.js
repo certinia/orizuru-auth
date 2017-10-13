@@ -31,11 +31,11 @@ const
 	chai = require('chai'),
 	chaiAsPromised = require('chai-as-promised'),
 
-	auth = require('../../src/openid/middleware'),
-	issuer = require('../../src/openid/shared/issuer'),
-	envValidator = require('../../src/openid/shared/envValidator'),
+	auth = require('../../lib/openid/middleware'),
+	issuer = require('../../lib/openid/shared/issuer'),
+	envValidator = require('../../lib/openid/shared/envValidator'),
 
-	sharedFunctions = require('../../src/openid/shared/functions'),
+	sharedFunctions = require('../../lib/openid/shared/functions'),
 
 	env = {
 		openidIssuerURI: 'https://login.something.com/',

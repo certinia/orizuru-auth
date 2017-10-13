@@ -27,7 +27,7 @@
 'use strict';
 
 /**
- * Nozomi Auth module.
+ * Orizuru Auth module.
  * @module
  * @see module:openid/middleware
  * @see module:openid/grant

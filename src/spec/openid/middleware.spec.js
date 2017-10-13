@@ -335,7 +335,7 @@ describe('middleware.js', () => {
 
 		});
 
-		it('should call next and set nozomi on the request if client info resolves', () => {
+		it('should call next and set orizuru on the request if client info resolves', () => {
 
 			const
 				user = {
@@ -353,7 +353,7 @@ describe('middleware.js', () => {
 			return auth.tokenValidator(env)(req, res, next)
 				.then(() => {
 
-					expect(req.nozomi.user).to.deep.eql(user);
+					expect(req.orizuru.user).to.deep.eql(user);
 
 					calledOnce(next);
 					calledOnce(listener);
@@ -367,7 +367,7 @@ describe('middleware.js', () => {
 
 		});
 
-		it('should respect an existing nozomi object', () => {
+		it('should respect an existing orizuru object', () => {
 
 			const
 				user = {
@@ -381,14 +381,14 @@ describe('middleware.js', () => {
 			issuerGetAsyncMock.resolves(issuerInstanceMock);
 			issuerClientUserInfoStub.resolves(userInfoMock);
 
-			req.nozomi = { other: true };
+			req.orizuru = { other: true };
 
 			// when - then
 			return auth.tokenValidator(env)(req, res, next)
 				.then(() => {
 
-					expect(req.nozomi.user).to.deep.eql(user);
-					expect(req.nozomi.other).to.eql(true);
+					expect(req.orizuru.user).to.deep.eql(user);
+					expect(req.orizuru.other).to.eql(true);
 
 					calledOnce(next);
 					calledOnce(listener);
@@ -436,7 +436,7 @@ describe('middleware.js', () => {
 
 			// given
 			envValidatorMock.resolves();
-			req.nozomi = {};
+			req.orizuru = {};
 
 			// when
 			return auth.grantChecker(env)(req, res, next)
@@ -453,7 +453,7 @@ describe('middleware.js', () => {
 
 			// given
 			envValidatorMock.resolves();
-			req.nozomi = { user: {} };
+			req.orizuru = { user: {} };
 
 			// when
 			return auth.grantChecker(env)(req, res, next)
@@ -470,7 +470,7 @@ describe('middleware.js', () => {
 
 			// given
 			envValidatorMock.resolves();
-			req.nozomi = { user: { username: 'bob@test.com' } };
+			req.orizuru = { user: { username: 'bob@test.com' } };
 			issuerGetAsyncMock.rejects(new Error('something or other'));
 
 			// when
@@ -491,7 +491,7 @@ describe('middleware.js', () => {
 
 			// given
 			envValidatorMock.resolves();
-			req.nozomi = { user: { username: 'bob@test.com' } };
+			req.orizuru = { user: { username: 'bob@test.com' } };
 			issuerGetAsyncMock.resolves(null);
 
 			// when
@@ -512,7 +512,7 @@ describe('middleware.js', () => {
 
 			// given
 			envValidatorMock.resolves();
-			req.nozomi = { user: { username: 'bob@test.com' } };
+			req.orizuru = { user: { username: 'bob@test.com' } };
 			issuerGetAsyncMock.resolves(issuerInstanceMock);
 			constructSignedJwtMock.rejects(new Error('Unable to sign JWT'));
 
@@ -524,7 +524,7 @@ describe('middleware.js', () => {
 					calledOnce(listener);
 					calledWith(listener, unableToSignJwtError);
 
-					calledWith(constructSignedJwtMock, { env, issuerClient: sinon.match.any, user: req.nozomi.user });
+					calledWith(constructSignedJwtMock, { env, issuerClient: sinon.match.any, user: req.orizuru.user });
 
 					calledOnce(issuerGetAsyncMock);
 					calledWith(issuerGetAsyncMock, env.openidHTTPTimeout, env.openidIssuerURI);
@@ -537,7 +537,7 @@ describe('middleware.js', () => {
 			// given
 
 			envValidatorMock.resolves();
-			req.nozomi = { user: { username: 'bob@test.com' } };
+			req.orizuru = { user: { username: 'bob@test.com' } };
 			issuerGetAsyncMock.resolves(issuerInstanceMock);
 			constructSignedJwtMock.resolves();
 			obtainAuthorizationGrantMock.rejects(new Error('Unable to obtain grant'));
@@ -561,7 +561,7 @@ describe('middleware.js', () => {
 
 			// given
 			envValidatorMock.resolves();
-			req.nozomi = { user: { username: 'bob@test.com' } };
+			req.orizuru = { user: { username: 'bob@test.com' } };
 			issuerGetAsyncMock.resolves(issuerInstanceMock);
 			constructSignedJwtMock.resolves();
 			obtainAuthorizationGrantMock.resolves('12345');
@@ -571,7 +571,7 @@ describe('middleware.js', () => {
 				.then(() => {
 					// then
 
-					expect(req.nozomi.grantChecked).to.equal(true);
+					expect(req.orizuru.grantChecked).to.equal(true);
 
 					calledOnce(next);
 					calledOnce(listener);

@@ -36,10 +36,10 @@ const
 		openidHTTPTimeout: 4001
 	},
 
-	grant = require('../../src/openid/grant'),
-	issuer = require('../../src/openid/shared/issuer'),
-	sharedFunctions = require('../../src/openid/shared/functions'),
-	envValidator = require('../../src/openid/shared/envValidator'),
+	grant = require('../../lib/openid/grant'),
+	issuer = require('../../lib/openid/shared/issuer'),
+	sharedFunctions = require('../../lib/openid/shared/functions'),
+	envValidator = require('../../lib/openid/shared/envValidator'),
 
 	expect = chai.expect,
 	calledOnce = sinon.assert.calledOnce,

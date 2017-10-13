@@ -4,9 +4,9 @@
   "description": "Salesforce authentication for Heroku Node applications.",
   "main": "src/index.js",
   "scripts": {
-    "doc": "jsdoc src -r -d doc --readme readme.md",
+    "doc": "jsdoc src/lib -r -d doc --readme readme.md",
     "pretest": "eslint src test",
-    "test": "nyc mocha --recursive"
+    "test": "nyc mocha --recursive src/spec"
   },
   "keywords": [
     "nozomi",

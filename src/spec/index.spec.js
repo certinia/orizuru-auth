@@ -34,7 +34,7 @@ const
 	openidMiddlewareMock = { name: 'openidMiddlewareMock' },
 	openidGrantMock = { name: 'openidGrantMock' },
 
-	index = proxyquire('../src/index.js', {
+	index = proxyquire('../lib/index.js', {
 		'./openid/middleware': openidMiddlewareMock,
 		'./openid/grant': openidGrantMock
 	});

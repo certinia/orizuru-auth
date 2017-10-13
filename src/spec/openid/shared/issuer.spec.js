@@ -55,7 +55,7 @@ describe('openid/shared/issuer.js', () => {
 
 		oidc = { Issuer: Issuer };
 
-		issuer = proxyquire('../../../src/openid/shared/issuer', {
+		issuer = proxyquire('../../../lib/openid/shared/issuer', {
 			'openid-client': oidc
 		});
 

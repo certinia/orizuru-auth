@@ -29,7 +29,7 @@
 /**
  * Express middlewares for user identitfication and authorisation.
  * It is aimed at users of the Salesforce Identity Provider and designed
- * to be used with the Nozomi framework.
+ * to be used with the Orizuru framework.
  * 
  * @module
  */
@@ -86,7 +86,7 @@ const
 
 	checkUserIsOnTheRequest = ({ env, req }) => {
 		const
-			user = _.get(req, 'nozomi.user');
+			user = _.get(req, 'orizuru.user');
 
 		if (!user || !user.username) {
 			throw new Error('A valid User is not set on the request');
@@ -137,10 +137,10 @@ const
 				username: userInfo.preferred_username,
 				organizationId: userInfo.organization_id
 			},
-			nozomi = req.nozomi || {};
+			orizuru = req.orizuru || {};
 
-		nozomi.user = user;
-		req.nozomi = nozomi;
+		orizuru.user = user;
+		req.orizuru = orizuru;
 
 		emitter.emit(TOKEN_VALIDATED_EVENT, `Token validated for: ${req.ip}`);
 
@@ -149,7 +149,7 @@ const
 
 	setGrant = (req) => (grant) => {
 
-		req.nozomi.grantChecked = true;
+		req.orizuru.grantChecked = true;
 
 		emitter.emit(GRANT_CHECKED_EVENT, `Grant checked for: ${req.ip}`);
 

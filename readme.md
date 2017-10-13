@@ -1,12 +1,12 @@
-# Nozomi Authentication.
+# Orizuru Authentication.
 
-Nozomi authentication is [Express](http://expressjs.com/)-compatible authentication
-middleware for [Node.js](http://nodejs.org/). It is aimed at users of the [Nozomi]() framework, but can also be used standalone. It is aimed at users of the Salesforce Identity Provider.
+Orizuru authentication is [Express](http://expressjs.com/)-compatible authentication
+middleware for [Node.js](http://nodejs.org/). It is aimed at users of the [Orizuru]() framework, but can also be used standalone. It is aimed at users of the Salesforce Identity Provider.
 
 ## Install
 
 ```
-$ npm install @financialforcedev/nozomi-auth
+$ npm install @financialforcedev/orizuru-auth
 ```
 
 ## Usage
@@ -19,14 +19,14 @@ Multiple middleware functions are available.
 
 The token validator middleware checks that a valid OpenID Connect Bearer token exists in an **Authorization** HTTP header. It does this by calling the specified Identity Provider's UserInfo endpoint with the Bearer token.
 
-If the token is successfully validated then a *user* object is set on the request's *nozomi* object.
+If the token is successfully validated then a *user* object is set on the request's *orizuru* object.
 
 Failure messages are emitted on the *emitter*.
 
 ```javascript
 
 const
-	middleware = require('@financialforcedev/nozomi-auth').middleware,
+	middleware = require('@financialforcedev/orizuru-auth').middleware,
 	env = {
 		jwtSigningKey: '--SOME KEY MATERIAL--',
 		openidClientId: '12312312413-7236762374',
@@ -59,16 +59,16 @@ The *user* object contains the following fields.
 
 #### Grant Checker
 
-The grant checker is designed to be used in tandem with the token Validator. It uses the *user* object on the request's *nozomi* object and attempts to obtain an OpenID Connect access token using a JWT Bearer grant request. In order for this to work the Identity Provider must have a previously established authorisation for the user requested. With the Salesforce identity provider this is achieved using a Connected App and an uploaded Certificate.
+The grant checker is designed to be used in tandem with the token Validator. It uses the *user* object on the request's *orizuru* object and attempts to obtain an OpenID Connect access token using a JWT Bearer grant request. In order for this to work the Identity Provider must have a previously established authorisation for the user requested. With the Salesforce identity provider this is achieved using a Connected App and an uploaded Certificate.
 
-If this completes successfully it sets the *nozomi.grantChecked* property to be true, otherwise the user will be refused access.
+If this completes successfully it sets the *orizuru.grantChecked* property to be true, otherwise the user will be refused access.
 
 Failure messages are emitted on the *emitter*.
 
 ```javascript
 
 const
-	middleware = require('@financialforcedev/nozomi-auth').middleware,
+	middleware = require('@financialforcedev/orizuru-auth').middleware,
 	env = {
 		jwtSigningKey: '--SOME KEY MATERIAL--',
 		openidClientId: '12312312413-7236762374',
@@ -98,7 +98,7 @@ The credentials returned are in a form suitable to be used with [JSforce](https:
 ```javascript
 
 const
-	grant = require('@financialforcedev/nozomi-auth').grant,
+	grant = require('@financialforcedev/orizuru-auth').grant,
 	jsforce = require('jsforce'),
 	env = {
 		jwtSigningKey: '--SOME KEY MATERIAL--',

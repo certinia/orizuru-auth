@@ -3,6 +3,13 @@
 Orizuru authentication is [Express](http://expressjs.com/)-compatible authentication
 middleware for [Node.js](http://nodejs.org/). It is aimed at users of the [Orizuru]() framework, but can also be used standalone. It is aimed at users of the Salesforce Identity Provider.
 
+In a Salesforce context, using both of these middlewares in combination will establish the following.
+
+1. The caller has a current valid Salesforce access token.
+2. The Salesforce user for the token presented is linked by PermissionSet to the ConnectedApp corresponding to the OpenID Connect ClientID (Consumer Key).
+
+*It is extrememly important to treat your signing key as sensitive material, please ensure that this is stored in a secure location.*
+
 ## Install
 
 ```
@@ -59,7 +66,7 @@ The *user* object contains the following fields.
 
 #### Grant Checker
 
-The grant checker is designed to be used in tandem with the token Validator. It uses the *user* object on the request's *orizuru* object and attempts to obtain an OpenID Connect access token using a JWT Bearer grant request. In order for this to work the Identity Provider must have a previously established authorisation for the user requested. With the Salesforce identity provider this is achieved using a Connected App and an uploaded Certificate.
+The grant checker is designed to be used in tandem with the token Validator. It uses the *user* object on the request's *orizuru* object and attempts to obtain an OpenID Connect access token using a JWT Bearer grant request. In order for this to work the Identity Provider must have a previously established authorisation for the user requested. With the Salesforce identity provider this is achieved using a Connected App with a Certificate for the JWT signing key uploaded into it.
 
 If this completes successfully it sets the *orizuru.grantChecked* property to be true, otherwise the user will be refused access.
 
@@ -133,3 +140,7 @@ getToken(user)
 	.then(logout);
 
 ```
+## API Docs
+
+Click to view [JSDoc API documentation](http://htmlpreview.github.io/?https://github.com/financialforcedev/orizuru-auth/blob/master/doc/index.html).
+

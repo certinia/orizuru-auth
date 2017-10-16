@@ -1,7 +1,7 @@
 # Orizuru Authentication.
 
 Orizuru authentication is [Express](http://expressjs.com/)-compatible authentication
-middleware for [Node.js](http://nodejs.org/). It is aimed at users of the [Orizuru]() framework, but can also be used standalone. It is aimed at users of the Salesforce Identity Provider.
+middleware for [Node.js](http://nodejs.org/). It is aimed at users of the [Orizuru](https://www.npmjs.com/package/@financialforcedev/orizuru) framework, but can also be used standalone. It is aimed at users of the Salesforce Identity Provider.
 
 In a Salesforce context, using both of these middlewares in combination will establish the following.
 

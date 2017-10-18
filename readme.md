@@ -1,5 +1,7 @@
 # Orizuru Authentication
 
+
+[![Build Status](https://travis-ci.org/financialforcedev/orizuru-auth.svg?branch=master)](https://travis-ci.org/financialforcedev/orizuru-auth)
 [![NSP Status](https://nodesecurity.io/orgs/ffres/projects/4bb1b8ba-4d1b-4960-b5ad-3e1cf4e4e154/badge)](https://nodesecurity.io/orgs/ffres/projects/4bb1b8ba-4d1b-4960-b5ad-3e1cf4e4e154)
 
 Orizuru authentication is [Express](http://expressjs.com/)-compatible authentication
@@ -10,7 +12,7 @@ In a Salesforce context, using both of these middlewares in combination will est
 1. The caller has a current valid Salesforce access token.
 2. The Salesforce user for the token presented is linked by PermissionSet to the ConnectedApp corresponding to the OpenID Connect ClientID (Consumer Key).
 
-*It is extrememly important to treat your signing key as sensitive material, please ensure that this is stored in a secure location.*
+*It is extremely important to treat your signing key as sensitive material, please ensure that this is stored in a secure location.*
 
 ## Install
 

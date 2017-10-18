@@ -1,4 +1,6 @@
-# Orizuru Authentication.
+# Orizuru Authentication
+
+[![NSP Status](https://nodesecurity.io/orgs/ffres/projects/4bb1b8ba-4d1b-4960-b5ad-3e1cf4e4e154/badge)](https://nodesecurity.io/orgs/ffres/projects/4bb1b8ba-4d1b-4960-b5ad-3e1cf4e4e154)
 
 Orizuru authentication is [Express](http://expressjs.com/)-compatible authentication
 middleware for [Node.js](http://nodejs.org/). It is aimed at users of the [Orizuru](https://www.npmjs.com/package/@financialforcedev/orizuru) framework, but can also be used standalone. It is aimed at users of the Salesforce Identity Provider.

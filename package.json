@@ -1,6 +1,6 @@
 {
   "name": "@financialforcedev/orizuru-auth",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "description": "Salesforce authentication for Heroku Node applications.",
   "main": "src/lib/index.js",
   "scripts": {

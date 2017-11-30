@@ -21,9 +21,9 @@
   "author": "financialforce",
   "license": "BSD-3-Clause",
   "dependencies": {
-    "jsonwebtoken": "8.0.1",
+    "jsonwebtoken": "8.1.0",
     "lodash": "4.17.4",
-    "openid-client": "1.15.0"
+    "openid-client": "1.18.1"
   },
   "nyc": {
     "check-coverage": true,
@@ -49,9 +49,9 @@
     "chai": "4.1.2",
     "chai-as-promised": "7.1.1",
     "jsdoc": "3.5.5",
-    "mocha": "3.5.3",
-    "nyc": "11.2.1",
+    "mocha": "4.0.1",
+    "nyc": "11.3.0",
     "proxyquire": "1.8.0",
-    "sinon": "3.3.0"
+    "sinon": "4.1.2"
   }
 }

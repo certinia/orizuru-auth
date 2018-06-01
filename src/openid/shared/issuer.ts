@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017, FinancialForce.com, inc
+ * Copyright (c) 2017-2018, FinancialForce.com, inc
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, 
@@ -27,10 +27,34 @@
 'use strict';
 
 const
-	HTTP_AUTHORIZATION_HEADER = 'Authorization',
-	BEARER_PREFIX = 'Bearer ';
+	crypto = require('crypto'),
 
-module.exports = Object.freeze({
-	HTTP_AUTHORIZATION_HEADER,
-	BEARER_PREFIX
-});
+	openidClient = require('openid-client'),
+
+	cache = {};
+
+function createKey(httpTimeOut, openidIssuerUri) {
+	return crypto.createHash('sha1').update(openidIssuerUri + '|' + httpTimeOut).digest('hex');
+}
+
+function buildIssuer(httpTimeOut, openidIssuerUri) {
+	const issuer = openidClient.Issuer;
+	issuer.defaultHttpOptions = {
+		timeout: httpTimeOut
+	};
+	return issuer.discover(openidIssuerUri);
+}
+
+module.exports = {
+	getAsync: (httpTimeOut, openidIssuerUri) => {
+		const key = createKey(httpTimeOut, openidIssuerUri);
+		if (!cache[key]) {
+			return buildIssuer(httpTimeOut, openidIssuerUri)
+				.then(issuer => {
+					cache[key] = issuer;
+					return issuer;
+				});
+		}
+		return Promise.resolve(cache[key]);
+	}
+};

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017, FinancialForce.com, inc
+ * Copyright (c) 2017-2018, FinancialForce.com, inc
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, 
@@ -26,20 +26,11 @@
 
 'use strict';
 
-/**
- * Orizuru Auth module.
- * @module
- * @see module:openid/middleware
- * @see module:openid/grant
- */
+const
+	HTTP_AUTHORIZATION_HEADER = 'Authorization',
+	BEARER_PREFIX = 'Bearer ';
 
-module.exports = {
-	/**
-	 * The express middlewares module.
-	 */
-	middleware: require('./openid/middleware'),
-	/**
-	 * The token granter module.
-	 */
-	grant: require('./openid/grant')
-};
+module.exports = Object.freeze({
+	HTTP_AUTHORIZATION_HEADER,
+	BEARER_PREFIX
+});

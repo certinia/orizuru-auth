@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017, FinancialForce.com, inc
+ * Copyright (c) 2017-2018, FinancialForce.com, inc
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, 
@@ -26,24 +26,20 @@
 
 'use strict';
 
-const
-	proxyquire = require('proxyquire'),
-	chai = require('chai'),
+/**
+ * Orizuru Auth module.
+ * @module
+ * @see module:openid/middleware
+ * @see module:openid/grant
+ */
 
-	expect = chai.expect,
-	openidMiddlewareMock = { name: 'openidMiddlewareMock' },
-	openidGrantMock = { name: 'openidGrantMock' },
-
-	index = proxyquire('../lib/index.js', {
-		'./openid/middleware': openidMiddlewareMock,
-		'./openid/grant': openidGrantMock
-	});
-
-describe('index.js', () => {
-
-	it('should contain the correct parts', () => {
-		expect(index.middleware).to.eql(openidMiddlewareMock);
-		expect(index.grant).to.eql(openidGrantMock);
-	});
-
-});
+module.exports = {
+	/**
+	 * The express middlewares module.
+	 */
+	middleware: require('./openid/middleware'),
+	/**
+	 * The token granter module.
+	 */
+	grant: require('./openid/grant')
+};

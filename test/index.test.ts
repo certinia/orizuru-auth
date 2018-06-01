@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017, FinancialForce.com, inc
+ * Copyright (c) 2017-2018, FinancialForce.com, inc
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, 
@@ -27,34 +27,23 @@
 'use strict';
 
 const
-	crypto = require('crypto'),
+	proxyquire = require('proxyquire'),
+	chai = require('chai'),
 
-	openidClient = require('openid-client'),
+	expect = chai.expect,
+	openidMiddlewareMock = { name: 'openidMiddlewareMock' },
+	openidGrantMock = { name: 'openidGrantMock' },
 
-	cache = {};
+	index = proxyquire('../lib/index.js', {
+		'./openid/middleware': openidMiddlewareMock,
+		'./openid/grant': openidGrantMock
+	});
 
-function createKey(httpTimeOut, openidIssuerUri) {
-	return crypto.createHash('sha1').update(openidIssuerUri + '|' + httpTimeOut).digest('hex');
-}
+describe('index.js', () => {
 
-function buildIssuer(httpTimeOut, openidIssuerUri) {
-	const issuer = openidClient.Issuer;
-	issuer.defaultHttpOptions = {
-		timeout: httpTimeOut
-	};
-	return issuer.discover(openidIssuerUri);
-}
+	it('should contain the correct parts', () => {
+		expect(index.middleware).to.eql(openidMiddlewareMock);
+		expect(index.grant).to.eql(openidGrantMock);
+	});
 
-module.exports = {
-	getAsync: (httpTimeOut, openidIssuerUri) => {
-		const key = createKey(httpTimeOut, openidIssuerUri);
-		if (!cache[key]) {
-			return buildIssuer(httpTimeOut, openidIssuerUri)
-				.then(issuer => {
-					cache[key] = issuer;
-					return issuer;
-				});
-		}
-		return Promise.resolve(cache[key]);
-	}
-};
+});

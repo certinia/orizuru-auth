@@ -27,7 +27,8 @@
 		"no-namespace": [
 			false,
 			"allow-declarations"
-		]
+		],
+		"no-trailing-whitespace": true
 	},
 	"rulesDirectory": []
 }

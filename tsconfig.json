@@ -6,13 +6,15 @@
 		"outDir": "./dist",
 		"strict": true,
 		"strictNullChecks": true,
-		"noUnusedLocals": true,
+		"noUnusedLocals": false,
 		"noImplicitReturns": true,
 		"noFallthroughCasesInSwitch": true,
 		"moduleResolution": "node",
-		"esModuleInterop": true
+		"esModuleInterop": true,
+		"noImplicitAny": false
 	},
 	"include": [
-		"src"
+		"src",
+		"test"
 	]
 }

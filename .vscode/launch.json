@@ -1,9 +1,10 @@
 {
 	"version": "0.2.0",
-	"configurations": [{
+	"configurations": [
+		{
 			"type": "node",
 			"request": "launch",
-			"name": "Mocha Tests",
+			"name": "Debug Tests",
 			"program": "${workspaceRoot}/node_modules/mocha/bin/_mocha",
 			"args": [
 				"-u",
@@ -11,16 +12,14 @@
 				"--timeout",
 				"999999",
 				"--colors",
-				"--recursive",
-				"${workspaceRoot}/test"
+				"--require",
+				"ts-node/register",
+				"--watch-extensions",
+				"ts",
+				"${workspaceRoot}/test/**/*.test.ts",
+				"${workspaceRoot}/test/**/**/*.test.ts"
 			],
 			"internalConsoleOptions": "openOnSessionStart"
-		},
-		{
-			"type": "node",
-			"request": "launch",
-			"name": "Launch Program",
-			"program": "${workspaceRoot}/index.js"
 		}
 	]
 }

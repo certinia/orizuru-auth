@@ -2,117 +2,121 @@
  * Copyright (c) 2017-2018, FinancialForce.com, inc
  * All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without modification, 
+ * Redistribution and use in source and binary forms, with or without modification,
  *   are permitted provided that the following conditions are met:
  *
- * - Redistributions of source code must retain the above copyright notice, 
+ * - Redistributions of source code must retain the above copyright notice,
  *      this list of conditions and the following disclaimer.
- * - Redistributions in binary form must reproduce the above copyright notice, 
- *      this list of conditions and the following disclaimer in the documentation 
+ * - Redistributions in binary form must reproduce the above copyright notice,
+ *      this list of conditions and the following disclaimer in the documentation
  *      and/or other materials provided with the distribution.
- * - Neither the name of the FinancialForce.com, inc nor the names of its contributors 
- *      may be used to endorse or promote products derived from this software without 
+ * - Neither the name of the FinancialForce.com, inc nor the names of its contributors
+ *      may be used to endorse or promote products derived from this software without
  *      specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
- *  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES 
- *  OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL 
- *  THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ *  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ *  OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL
+ *  THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
  *  EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
  *  OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  *  OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- **/
+ */
 
-'use strict';
+import chai from 'chai';
+import chaiAsPromised from 'chai-as-promised';
+import sinon from 'sinon';
+import sinonChai from 'sinon-chai';
 
-const
-	proxyquire = require('proxyquire'),
-	chai = require('chai'),
-	chaiAsPromised = require('chai-as-promised'),
+import * as openIdClient from 'openid-client';
 
-	expect = chai.expect;
+import { Options } from '../../../src';
+
+import * as issuer from '../../../src/openid/shared/issuer';
+
+const expect = chai.expect;
 
 chai.use(chaiAsPromised);
+chai.use(sinonChai);
 
 describe('openid/shared/issuer.js', () => {
 
-	let IssuerMockClass, Issuer, issuer, oidc;
+	const env: Options.IAuth = {
+		jwtSigningKey: 'testJwtSigningKey',
+		openidClientId: 'testOpenidClientKey',
+		openidHTTPTimeout: 2000,
+		openidIssuerURI: 'https://login.salesforce.com'
+	};
 
-	beforeEach(() => {
-
-		IssuerMockClass = class {
-			constructor() {
-				this.test = 'test';
-			}
-		};
-
-		Issuer = {
-			discover: () => {
-				return Promise.resolve(new IssuerMockClass());
-			}
-		};
-
-		oidc = { Issuer: Issuer };
-
-		issuer = proxyquire('../../../lib/openid/shared/issuer', {
-			'openid-client': oidc
-		});
-
+	afterEach(() => {
+		sinon.restore();
+		issuer.clearCache();
 	});
 
-	describe('getAsync', () => {
+	describe('constructIssuer', () => {
 
-		it('should return a new issuer if one doesn\'t exist', () => {
+		it('should throw an error if discover rejects', () => {
 
-			return expect(issuer.getAsync(1000, 'testUri')).to.eventually.have.property('test', 'test');
+			// Given
+			const issuerMock = sinon.createStubInstance(openIdClient.Issuer);
+			sinon.stub(openIdClient.Issuer, 'discover').rejects(new Error('error'));
 
-		});
-
-		it('should return the cached issuer if one exist', () => {
-
-			let issuer1, issuer2;
-
-			return issuer.getAsync(1000, 'testUri')
-				.then(issuer => {
-					issuer1 = issuer;
-					return null;
-				})
-				.then(() => issuer.getAsync(1000, 'testUri'))
-				.then(issuer => {
-					issuer2 = issuer;
-					return null;
-				})
+			// When
+			return expect(issuer.constructIssuer(env))
+				.to.be.rejectedWith('Could not get an issuer for timeout: 2000 and URI: https://login.salesforce.com.')
 				.then(() => {
-					expect(issuer1).to.equal(issuer2);
+					// Then
+					expect(openIdClient.Issuer.discover).to.have.been.calledOnce;
+					expect(openIdClient.Issuer.discover).to.have.been.calledWith(env.openidIssuerURI);
 				});
+
 		});
 
-		it('should return the a new issuer if one exists with different params', () => {
+		it('should discover the issuer', async () => {
 
-			let issuer1, issuer2, issuer3;
+			// Given
+			const issuerMock = sinon.createStubInstance(openIdClient.Issuer);
 
-			return issuer.getAsync(1000, 'testUri')
-				.then(issuer => {
-					issuer1 = issuer;
-					return null;
-				})
-				.then(() => issuer.getAsync(1000, 'testUri2'))
-				.then(issuer => {
-					issuer2 = issuer;
-					return null;
-				})
-				.then(() => issuer.getAsync(2000, 'testUri2'))
-				.then(issuer => {
-					issuer3 = issuer;
-					return null;
-				})
-				.then(() => {
-					expect(issuer1).to.not.equal(issuer2);
-					expect(issuer1).to.not.equal(issuer3);
-					expect(issuer2).to.not.equal(issuer3);
-				});
+			issuerMock.Client = sinon.stub();
+			sinon.stub(openIdClient.Issuer, 'discover').resolves(issuerMock);
+
+			// When
+			const issuerClient = await issuer.constructIssuer(env);
+
+			// Then
+			expect(issuerClient).to.eql(issuerMock.Client.returnValues[0]);
+
+			expect(openIdClient.Issuer.discover).to.have.been.calledOnce;
+			expect(openIdClient.Issuer.discover).to.have.been.calledWith(env.openidIssuerURI);
+
+			expect(issuerMock.Client).to.have.been.calledWithNew;
+
 		});
+
+		it('should return the same issuer for multiple callouts', async () => {
+
+			// Given
+			const issuerMock = sinon.createStubInstance(openIdClient.Issuer);
+
+			issuerMock.Client = sinon.stub();
+			sinon.stub(openIdClient.Issuer, 'discover').resolves(issuerMock);
+
+			await issuer.constructIssuer(env);
+
+			// When
+			const issuerClient = await issuer.constructIssuer(env);
+
+			// Then
+			expect(issuerClient).to.eql(issuerMock.Client.returnValues[1]);
+
+			expect(openIdClient.Issuer.discover).to.have.been.calledOnce;
+			expect(openIdClient.Issuer.discover).to.have.been.calledWith(env.openidIssuerURI);
+
+			expect(issuerMock.Client).to.have.been.calledWithNew;
+
+		});
+
 	});
 
 });

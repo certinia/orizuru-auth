@@ -2,220 +2,187 @@
  * Copyright (c) 2017-2018, FinancialForce.com, inc
  * All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without modification, 
+ * Redistribution and use in source and binary forms, with or without modification,
  *   are permitted provided that the following conditions are met:
  *
- * - Redistributions of source code must retain the above copyright notice, 
+ * - Redistributions of source code must retain the above copyright notice,
  *      this list of conditions and the following disclaimer.
- * - Redistributions in binary form must reproduce the above copyright notice, 
- *      this list of conditions and the following disclaimer in the documentation 
+ * - Redistributions in binary form must reproduce the above copyright notice,
+ *      this list of conditions and the following disclaimer in the documentation
  *      and/or other materials provided with the distribution.
- * - Neither the name of the FinancialForce.com, inc nor the names of its contributors 
- *      may be used to endorse or promote products derived from this software without 
+ * - Neither the name of the FinancialForce.com, inc nor the names of its contributors
+ *      may be used to endorse or promote products derived from this software without
  *      specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
- *  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES 
- *  OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL 
- *  THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ *  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ *  OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL
+ *  THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
  *  EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
  *  OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  *  OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- **/
+ */
 
-'use strict';
+import chai from 'chai';
+import chaiAsPromised from 'chai-as-promised';
+import sinon, { SinonStub } from 'sinon';
+import sinonChai from 'sinon-chai';
 
-const
-	sinon = require('sinon'),
-	chai = require('chai'),
-	chaiAsPromised = require('chai-as-promised'),
+import { getToken } from '../../src/openid/grant';
 
-	env = {
-		openidIssuerURI: 'https://login.something.com/',
-		openidHTTPTimeout: 4001
-	},
+import * as envValidator from '../../src/openid/shared/envValidator';
+import * as sharedFunctions from '../../src/openid/shared/functions';
+import * as issuer from '../../src/openid/shared/issuer';
 
-	grant = require('../../lib/openid/grant'),
-	issuer = require('../../lib/openid/shared/issuer'),
-	sharedFunctions = require('../../lib/openid/shared/functions'),
-	envValidator = require('../../lib/openid/shared/envValidator'),
+const env = {
+	openidHTTPTimeout: 4001,
+	openidIssuerURI: 'https://login.something.com/'
+};
 
-	expect = chai.expect,
-	calledOnce = sinon.assert.calledOnce,
-	calledWith = sinon.assert.calledWith,
-
-	sandbox = sinon.sandbox.create();
+const expect = chai.expect;
 
 chai.use(chaiAsPromised);
+chai.use(sinonChai);
 
-describe('grant.js', () => {
+describe('grant.ts', () => {
 
-	let baseError,
-		usernameRequiredError,
-		usernameNotEmptyError,
-		noIssuerError,
-
-		envValidatorMock,
-		IssuerClientMock,
-		issuerInstanceMock,
-		issuerGetAsyncMock,
-
-		sharedConstructSignedJwtMock,
-		sharedObtainAuthorizationGrantMock;
+	let baseError: string;
+	let usernameRequiredError: string;
 
 	beforeEach(() => {
 
 		baseError = 'Failed to grant token, error:';
 		usernameRequiredError = `${baseError} Missing required parameter: username.`;
-		usernameNotEmptyError = `${baseError} Invalid parameter: username cannot be empty.`;
-		noIssuerError = `${baseError} Could not get an issuer for timeout: ${env.openidHTTPTimeout} and URI: ${env.openidIssuerURI}`;
 
-		envValidatorMock = sandbox.stub(envValidator, 'validate');
-
-		IssuerClientMock = class {};
-
-		issuerInstanceMock = {
-			Client: IssuerClientMock
-		};
-
-		issuerGetAsyncMock = sandbox.stub(issuer, 'getAsync');
-
-		sharedConstructSignedJwtMock = sandbox.stub(sharedFunctions, 'constructSignedJwt');
-		sharedObtainAuthorizationGrantMock = sandbox.stub(sharedFunctions, 'obtainAuthorizationGrant');
+		sinon.stub(envValidator, 'validate');
+		sinon.stub(issuer, 'constructIssuer');
+		sinon.stub(sharedFunctions, 'constructSignedJwt');
+		sinon.stub(sharedFunctions, 'obtainAuthorizationGrant');
 
 	});
 
 	afterEach(() => {
-		sandbox.restore();
+		sinon.restore();
 	});
 
 	describe('getToken', () => {
 
-		it('should reject if envValidator rejects', () => {
+		describe('should reject', () => {
 
-			// given
-			envValidatorMock.throws(new Error('some error or other'));
+			it('if envValidator rejects', () => {
 
-			// when - then
-			expect(() => grant.getToken(env)).to.throw('some error or other');
+				// given
+				(envValidator.validate as SinonStub).throws(new Error('some error or other'));
 
-		});
+				// when - then
+				expect(() => getToken(env as any)).to.throw('some error or other');
 
-		it('should reject if user is null', () => {
-
-			// given
-			envValidatorMock.resolves();
-
-			// when - then
-			return expect(grant.getToken(env)(null)).to.eventually.be.rejectedWith(usernameNotEmptyError);
-
-		});
-
-		it('should reject if username is missing', () => {
-
-			// given
-			envValidatorMock.resolves();
-
-			// when - then
-			return expect(grant.getToken(env)({})).to.eventually.be.rejectedWith(usernameRequiredError);
-
-		});
-
-		it('should reject if username is empty', () => {
-
-			// given
-			envValidatorMock.resolves();
-
-			// when - then
-			return expect(grant.getToken(env)({ username: '' })).to.eventually.be.rejectedWith(usernameNotEmptyError);
-
-		});
-
-		it('should reject if issuer getAsync rejects', () => {
-
-			// given
-			envValidatorMock.resolves();
-			issuerGetAsyncMock.rejects(new Error('something or other'));
-
-			// when - then
-			return expect(grant.getToken(env)({ username: 'user' })).to.eventually.be.rejectedWith(noIssuerError)
-				.then(() => {
-					calledOnce(issuerGetAsyncMock);
-					calledWith(issuerGetAsyncMock, env.openidHTTPTimeout, env.openidIssuerURI);
-				});
-
-		});
-
-		it('should reject if issuer getAsync resolves with null', () => {
-
-			// given
-			envValidatorMock.resolves();
-			issuerGetAsyncMock.resolves(null);
-
-			// when - then
-			return expect(grant.getToken(env)({ username: 'user' })).to.eventually.be.rejectedWith(noIssuerError)
-				.then(() => {
-					calledOnce(issuerGetAsyncMock);
-					calledWith(issuerGetAsyncMock, env.openidHTTPTimeout, env.openidIssuerURI);
-				});
-
-		});
-
-		it('should reject if a shared function rejects', () => {
-
-			// given
-			envValidatorMock.resolves();
-			issuerGetAsyncMock.resolves(issuerInstanceMock);
-			sharedConstructSignedJwtMock.resolves('testJwtResult');
-			sharedObtainAuthorizationGrantMock.rejects(new Error('Shared function error'));
-
-			// when - then
-			return expect(grant.getToken(env)({ username: 'user' })).to.eventually.be.rejectedWith(`${baseError} Shared function error`)
-				.then(() => {
-					calledOnce(issuerGetAsyncMock);
-					calledWith(issuerGetAsyncMock, env.openidHTTPTimeout, env.openidIssuerURI);
-					calledOnce(sharedConstructSignedJwtMock);
-					calledWith(sharedConstructSignedJwtMock, {
-						env,
-						issuerClient: sinon.match.instanceOf(IssuerClientMock),
-						user: {
-							username: 'user'
-						}
-					});
-					calledOnce(sharedObtainAuthorizationGrantMock);
-					calledWith(sharedObtainAuthorizationGrantMock, 'testJwtResult');
-				});
-
-		});
-
-		it('should resolve if shared functions resolve', () => {
-
-			// given
-			envValidatorMock.resolves();
-			issuerGetAsyncMock.resolves(issuerInstanceMock);
-			sharedConstructSignedJwtMock.resolves('testJwtResult');
-			sharedObtainAuthorizationGrantMock.resolves({
-				['access_token']: '12345',
-				['instance_url']: 'https://something.com'
 			});
 
-			// when - then
-			return expect(grant.getToken(env)({ username: 'user' })).to.eventually.eql({ instanceUrl: 'https://something.com', accessToken: '12345' })
-				.then(() => {
-					calledOnce(issuerGetAsyncMock);
-					calledWith(issuerGetAsyncMock, env.openidHTTPTimeout, env.openidIssuerURI);
-					calledOnce(sharedConstructSignedJwtMock);
-					calledWith(sharedConstructSignedJwtMock, {
-						env,
-						issuerClient: sinon.match.instanceOf(IssuerClientMock),
-						user: {
-							username: 'user'
-						}
+			it('if user is null', () => {
+
+				// given
+				(envValidator.validate as SinonStub).resolves();
+
+				// when - then
+				return expect(getToken(env as any)(null as any)).to.eventually.be.rejectedWith('Failed to grant token, error: Invalid parameter: username cannot be empty.');
+
+			});
+
+			it('if username is missing', () => {
+
+				// given
+				(envValidator.validate as SinonStub).resolves();
+
+				// when - then
+				return expect(getToken(env as any)({} as any)).to.eventually.be.rejectedWith(usernameRequiredError);
+
+			});
+
+			it('if username is empty', () => {
+
+				// given
+				(envValidator.validate as SinonStub).resolves();
+
+				// when - then
+				return expect(getToken(env as any)({ username: '' })).to.eventually.be.rejectedWith('Failed to grant token, error: Invalid parameter: username cannot be empty.');
+
+			});
+
+			it('if constructIssuer rejects', () => {
+
+				// given
+				(envValidator.validate as SinonStub).resolves();
+				(issuer.constructIssuer as SinonStub).rejects(new Error('something or other.'));
+
+				// when - then
+				return expect(getToken(env as any)({ username: 'user' }))
+					.to.eventually.be.rejectedWith('Failed to grant token, error: something or other.')
+					.then(() => {
+						expect(issuer.constructIssuer).to.have.been.calledOnce;
+						expect(issuer.constructIssuer).to.have.been.calledWith(env);
 					});
-					calledOnce(sharedObtainAuthorizationGrantMock);
-					calledWith(sharedObtainAuthorizationGrantMock, 'testJwtResult');
-				});
+
+			});
+
+			it('if constructSignedJwt rejects', () => {
+
+				// given
+				(envValidator.validate as SinonStub).resolves();
+				(issuer.constructIssuer as SinonStub).resolves();
+				(sharedFunctions.constructSignedJwt as SinonStub).rejects(new Error('something or other.'));
+
+				// when - then
+				return expect(getToken(env as any)({ username: 'user' }))
+					.to.eventually.be.rejectedWith('Failed to grant token, error: something or other.')
+					.then(() => {
+						expect(sharedFunctions.constructSignedJwt).to.have.been.calledOnce;
+						expect(sharedFunctions.constructSignedJwt).to.have.been.calledWith(env);
+					});
+
+			});
+
+			it('if obtainAuthorizationGrant rejects', () => {
+
+				// given
+				(envValidator.validate as SinonStub).resolves();
+				(issuer.constructIssuer as SinonStub).resolves();
+				(sharedFunctions.constructSignedJwt as SinonStub).resolves();
+				(sharedFunctions.obtainAuthorizationGrant as SinonStub).rejects(new Error('something or other.'));
+
+				// when - then
+				return expect(getToken(env as any)({ username: 'user' }))
+					.to.eventually.be.rejectedWith('Failed to grant token, error: something or other.')
+					.then(() => {
+						expect(sharedFunctions.constructSignedJwt).to.have.been.calledOnce;
+						expect(sharedFunctions.constructSignedJwt).to.have.been.calledWith(env);
+					});
+
+			});
+
+			it('if obtainAuthorizationGrant rejects', () => {
+
+				// given
+				(envValidator.validate as SinonStub).resolves();
+				(issuer.constructIssuer as SinonStub).resolves();
+				(sharedFunctions.constructSignedJwt as SinonStub).resolves();
+				(sharedFunctions.obtainAuthorizationGrant as SinonStub).resolves({ access_token: 'accessToken', instance_url: 'instanceUrl' });
+
+				// when - then
+				return expect(getToken(env as any)({ username: 'user' }))
+					.to.eventually.eql({
+						accessToken: 'accessToken',
+						instanceUrl: 'instanceUrl'
+					})
+					.then(() => {
+						expect(envValidator.validate).to.have.been.calledOnce;
+						expect(issuer.constructIssuer).to.have.been.calledOnce;
+						expect(sharedFunctions.constructSignedJwt).to.have.been.calledOnce;
+						expect(sharedFunctions.obtainAuthorizationGrant).to.have.been.calledOnce;
+					});
+
+			});
 
 		});
 

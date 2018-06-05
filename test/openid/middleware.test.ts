@@ -2,108 +2,81 @@
  * Copyright (c) 2017-2018, FinancialForce.com, inc
  * All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without modification, 
+ * Redistribution and use in source and binary forms, with or without modification,
  *   are permitted provided that the following conditions are met:
  *
- * - Redistributions of source code must retain the above copyright notice, 
+ * - Redistributions of source code must retain the above copyright notice,
  *      this list of conditions and the following disclaimer.
- * - Redistributions in binary form must reproduce the above copyright notice, 
- *      this list of conditions and the following disclaimer in the documentation 
+ * - Redistributions in binary form must reproduce the above copyright notice,
+ *      this list of conditions and the following disclaimer in the documentation
  *      and/or other materials provided with the distribution.
- * - Neither the name of the FinancialForce.com, inc nor the names of its contributors 
- *      may be used to endorse or promote products derived from this software without 
+ * - Neither the name of the FinancialForce.com, inc nor the names of its contributors
+ *      may be used to endorse or promote products derived from this software without
  *      specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
- *  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES 
- *  OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL 
- *  THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ *  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ *  OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL
+ *  THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
  *  EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
  *  OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  *  OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- **/
+ */
 
-'use strict';
+import chai from 'chai';
+import chaiAsPromised from 'chai-as-promised';
+import sinon, { SinonStub } from 'sinon';
+import sinonChai from 'sinon-chai';
 
-const
-	sinon = require('sinon'),
-	chai = require('chai'),
-	chaiAsPromised = require('chai-as-promised'),
+import { Options } from '../../src';
+import { emitter, grantChecker, tokenValidator } from '../../src/openid/middleware';
+import * as envValidator from '../../src/openid/shared/envValidator';
+import * as sharedFunctions from '../../src/openid/shared/functions';
+import * as issuer from '../../src/openid/shared/issuer';
 
-	auth = require('../../lib/openid/middleware'),
-	issuer = require('../../lib/openid/shared/issuer'),
-	envValidator = require('../../lib/openid/shared/envValidator'),
-
-	sharedFunctions = require('../../lib/openid/shared/functions'),
-
-	env = {
-		openidIssuerURI: 'https://login.something.com/',
-		openidHTTPTimeout: 4001
-	},
-
-	expect = chai.expect,
-	assert = sinon.assert,
-	notCalled = assert.notCalled,
-	calledOnce = assert.calledOnce,
-	calledWith = assert.calledWith,
-
-	sandbox = sinon.sandbox.create();
+const expect = chai.expect;
 
 chai.use(chaiAsPromised);
+chai.use(sinonChai);
 
-describe('middleware.js', () => {
+describe('middleware.ts', () => {
 
-	let req, res, next,
+	const env: Options.IAuth = {
+		jwtSigningKey: 'test',
+		openidClientId: 'test',
+		openidHTTPTimeout: 4001,
+		openidIssuerURI: 'https://login.something.com/'
+	};
 
-		baseError,
-		noHeaderTokenError,
-		noHeaderTokenErrorUnknown,
-		noIssuerError,
-		authenticationFailedError,
-		missingUserError,
-		unableToSignJwtError,
-		unableToObtainGrantError,
-		listener,
+	let req;
+	let res;
+	let next;
 
-		envValidatorMock,
-		userInfoMock,
-		issuerClientUserInfoStub,
-		IssuerClientMock,
-		issuerInstanceMock,
-		issuerGetAsyncMock,
-		constructSignedJwtMock,
-		obtainAuthorizationGrantMock;
+	let listener;
+
+	let userInfoMock;
+	let issuerClientUserInfoStub;
+	let issuerClientMock;
 
 	beforeEach(() => {
 
 		req = {
-			get: sandbox.stub(),
+			get: sinon.stub(),
 			ip: '1.1.1.1'
 		};
 
 		res = {
-			sendStatus: sandbox.stub()
+			sendStatus: sinon.stub()
 		};
 
-		next = sandbox.stub();
+		next = sinon.stub();
 
-		listener = sandbox.stub();
+		listener = sinon.stub();
 
-		auth.emitter.on('denied', listener);
-		auth.emitter.on('token_validated', listener);
-		auth.emitter.on('grant_checked', listener);
-
-		baseError = `Access denied to: ${req.ip}, error:`;
-		noHeaderTokenError = `${baseError} Authorization header with 'Bearer ***...' required`;
-		noHeaderTokenErrorUnknown = 'Access denied to: unknown, error: Authorization header with \'Bearer ***...\' required';
-		noIssuerError = `${baseError} Could not get an issuer for timeout: ${env.openidHTTPTimeout} and URI: ${env.openidIssuerURI}`;
-		authenticationFailedError = `${baseError} Failed to authenticate with Authorisation header`;
-		missingUserError = `${baseError} A valid User is not set on the request`;
-		unableToSignJwtError = `${baseError} Unable to sign JWT`;
-		unableToObtainGrantError = `${baseError} Unable to obtain grant`;
-
-		envValidatorMock = sandbox.stub(envValidator, 'validate');
+		emitter.on('denied', listener);
+		emitter.on('token_validated', listener);
+		emitter.on('grant_checked', listener);
 
 		userInfoMock = {
 			['preferred_username']: 'testPreferred_username',
@@ -111,26 +84,19 @@ describe('middleware.js', () => {
 			['user_id']: 'testUser_id'
 		};
 
-		issuerClientUserInfoStub = sandbox.stub();
+		issuerClientUserInfoStub = sinon.stub();
 
-		IssuerClientMock = class {
-			userinfo(accessToken) {
+		issuerClientMock = new class {
+			public userinfo(accessToken) {
 				return issuerClientUserInfoStub(accessToken);
 			}
-		};
+		}();
 
-		issuerInstanceMock = {
-			Client: IssuerClientMock
-		};
-
-		issuerGetAsyncMock = sandbox.stub(issuer, 'getAsync');
-		constructSignedJwtMock = sandbox.stub(sharedFunctions, 'constructSignedJwt');
-		obtainAuthorizationGrantMock = sandbox.stub(sharedFunctions, 'obtainAuthorizationGrant');
 	});
 
 	afterEach(() => {
-		sandbox.restore();
-		auth.emitter.removeAllListeners('deny');
+		sinon.restore();
+		emitter.removeAllListeners();
 	});
 
 	describe('tokenValidator', () => {
@@ -138,266 +104,220 @@ describe('middleware.js', () => {
 		it('should deny if envValidator rejects', () => {
 
 			// given
-			envValidatorMock.throws(new Error('some error or other'));
+			sinon.stub(envValidator, 'validate').throws(new Error('some error or other'));
 
 			// when
-			expect(() => auth.tokenValidator(env)).to.throw('some error or other');
+			expect(() => tokenValidator(env)).to.throw('some error or other');
 
 		});
 
-		it('should emit a deny event if the req is null', () => {
+		describe('should emit a deny event', () => {
 
-			// given
-			envValidatorMock.resolves();
-			req.get.withArgs('Authorization').returns(null);
+			beforeEach(() => {
+				sinon.stub(envValidator, 'validate').resolves();
+			});
 
-			// when
-			return auth.tokenValidator(env)(null, res, next)
-				.then(() => {
-					// then
-					notCalled(next);
-					calledOnce(listener);
-					calledWith(listener, noHeaderTokenErrorUnknown);
-				});
+			it('if the req is null', () => {
 
-		});
+				// given
+				req.get.withArgs('Authorization').returns(null);
 
-		it('should emit a deny event if the req has no get method', () => {
+				// when
+				return tokenValidator(env)(null as any, res, next)
+					.then(() => {
+						// then
+						expect(next).to.not.have.been.called;
+						expect(listener).to.have.been.calledOnce;
+						expect(listener).to.have.been.calledWith('Access denied to: unknown, error: Authorization header with \'Bearer ***...\' required.');
+					});
 
-			// given
-			envValidatorMock.resolves();
-			req.get.withArgs('Authorization').returns(null);
+			});
 
-			// when
-			return auth.tokenValidator(env)({}, res, next)
-				.then(() => {
-					// then
-					notCalled(next);
-					calledOnce(listener);
-					calledWith(listener, noHeaderTokenErrorUnknown);
-				});
+			it('if the req has no get method', () => {
 
-		});
+				// given
+				req.get.withArgs('Authorization').returns(null);
 
-		it('should emit a deny event if the header is null', () => {
+				// when
+				return tokenValidator(env)({} as any, res, next)
+					.then(() => {
+						// then
+						expect(next).to.not.have.been.called;
+						expect(listener).to.have.been.calledOnce;
+						expect(listener).to.have.been.calledWith('Access denied to: unknown, error: Authorization header with \'Bearer ***...\' required.');
+					});
 
-			// given
-			envValidatorMock.resolves();
-			req.get.withArgs('Authorization').returns(null);
+			});
 
-			// when
-			return auth.tokenValidator(env)(req, res, next)
-				.then(() => {
-					// then
-					notCalled(next);
-					calledOnce(listener);
-					calledWith(listener, noHeaderTokenError);
-				});
-		});
+			it('if the header is null', () => {
 
-		it('should emit a deny event if the header is empty', () => {
+				// given
+				req.get.withArgs('Authorization').returns(null);
 
-			// given
-			envValidatorMock.resolves();
-			req.get.withArgs('Authorization').returns('');
+				// when
+				return tokenValidator(env)(req, res, next)
+					.then(() => {
+						// then
+						expect(next).to.not.have.been.called;
+						expect(listener).to.have.been.calledOnce;
+						expect(listener).to.have.been.calledWith(`Access denied to: ${req.ip}, error: Authorization header with 'Bearer ***...' required.`);
+					});
+			});
 
-			// when
-			return auth.tokenValidator(env)(req, res, next)
-				.then(() => {
-					// then
-					notCalled(next);
-					calledOnce(listener);
-					calledWith(listener, noHeaderTokenError);
-				});
+			it('if the header is empty', () => {
 
-		});
+				// given
+				req.get.withArgs('Authorization').returns('');
 
-		it('should emit a deny event with no bearer', () => {
+				// when
+				return tokenValidator(env)(req, res, next)
+					.then(() => {
+						// then
+						expect(next).to.not.have.been.called;
+						expect(listener).to.have.been.calledOnce;
+						expect(listener).to.have.been.calledWith(`Access denied to: ${req.ip}, error: Authorization header with 'Bearer ***...' required.`);
+					});
 
-			// given
-			envValidatorMock.resolves();
-			req.get.withArgs('Authorization').returns('12345');
+			});
 
-			// when
-			return auth.tokenValidator(env)(req, res, next)
-				.then(() => {
-					// then
-					notCalled(next);
-					calledOnce(listener);
-					calledWith(listener, noHeaderTokenError);
-				});
+			it('with no bearer', () => {
 
-		});
+				// given
+				req.get.withArgs('Authorization').returns('12345');
 
-		it('should emit a deny event for bearer space', () => {
+				// when
+				return tokenValidator(env)(req, res, next)
+					.then(() => {
+						// then
+						expect(next).to.not.have.been.called;
+						expect(listener).to.have.been.calledOnce;
+						expect(listener).to.have.been.calledWith(`Access denied to: ${req.ip}, error: Authorization header with 'Bearer ***...' required.`);
+					});
 
-			// given
-			envValidatorMock.resolves();
-			req.get.withArgs('Authorization').returns('Bearer ');
+			});
 
-			// when
-			return auth.tokenValidator(env)(req, res, next)
-				.then(() => {
-					// then
-					notCalled(next);
-					calledOnce(listener);
-					calledWith(listener, noHeaderTokenError);
-				});
+			it('for \'Bearer \'', () => {
 
-		});
+				// given
+				req.get.withArgs('Authorization').returns('Bearer ');
 
-		it('should emit a deny event if issuer getAsync rejects', () => {
+				// when
+				return tokenValidator(env)(req, res, next)
+					.then(() => {
+						// then
+						expect(next).to.not.have.been.called;
+						expect(listener).to.have.been.calledOnce;
+						expect(listener).to.have.been.calledWith(`Access denied to: ${req.ip}, error: Authorization header with 'Bearer ***...' required.`);
+					});
 
-			// given
-			envValidatorMock.resolves();
-			req.get.withArgs('Authorization').returns('Bearer 12345');
-			issuerGetAsyncMock.rejects(new Error('something or other'));
+			});
 
-			// when
-			return auth.tokenValidator(env)(req, res, next)
-				.then(() => {
-					// then
-					notCalled(next);
-					calledOnce(listener);
-					calledWith(listener, noIssuerError);
+			it('if constructIssuer rejects', () => {
 
-					calledOnce(issuerGetAsyncMock);
-					calledWith(issuerGetAsyncMock, env.openidHTTPTimeout, env.openidIssuerURI);
-				});
-		});
+				// given
+				sinon.stub(issuer, 'constructIssuer').rejects(new Error('something or other'));
+				req.get.withArgs('Authorization').returns('Bearer 12345');
 
-		it('should emit a deny event if issuer getAsync resolves with null', () => {
+				// when
+				return tokenValidator(env)(req, res, next)
+					.then(() => {
+						// then
+						expect(next).to.not.have.been.called;
+						expect(listener).to.have.been.calledOnce;
+						expect(listener).to.have.been.calledWith(`Access denied to: ${req.ip}, error: something or other.`);
 
-			// given
-			envValidatorMock.resolves();
-			req.get.withArgs('Authorization').returns('Bearer 12345');
-			issuerGetAsyncMock.resolves(null);
+						expect(issuer.constructIssuer).to.have.been.calledOnce;
+						expect(issuer.constructIssuer).to.have.been.calledWith(env);
+					});
 
-			// when
-			return auth.tokenValidator(env)(req, res, next)
-				.then(() => {
-					// then
-					notCalled(next);
-					calledOnce(listener);
-					calledWith(listener, noIssuerError);
+			});
 
-					calledOnce(issuerGetAsyncMock);
-					calledWith(issuerGetAsyncMock, env.openidHTTPTimeout, env.openidIssuerURI);
-				});
+			it('if issuerClient userinfo rejects', () => {
 
-		});
+				// given
+				req.get.withArgs('Authorization').returns('Bearer 12345');
+				sinon.stub(issuer, 'constructIssuer').resolves(issuerClientMock);
+				issuerClientUserInfoStub.rejects(new Error('something or other'));
 
-		it('should emit a deny event if issuerClient userinfo rejects', () => {
+				// when
+				return tokenValidator(env)(req, res, next)
+					.then(() => {
+						// then
+						expect(next).to.not.have.been.called;
+						expect(listener).to.have.been.calledOnce;
+						expect(listener).to.have.been.calledWith(`Access denied to: ${req.ip}, error: Failed to authenticate with Authorisation header.`);
 
-			// given
-			envValidatorMock.resolves();
-			req.get.withArgs('Authorization').returns('Bearer 12345');
-			issuerGetAsyncMock.resolves(issuerInstanceMock);
-			issuerClientUserInfoStub.rejects(new Error('something or other'));
+						expect(issuer.constructIssuer).to.have.been.calledOnce;
+						expect(issuer.constructIssuer).to.have.been.calledWith(env);
+						expect(issuerClientUserInfoStub).to.have.been.calledOnce;
+						expect(issuerClientUserInfoStub).to.have.been.calledWith('12345');
+					});
 
-			// when
-			return auth.tokenValidator(env)(req, res, next)
-				.then(() => {
-					// then
-					notCalled(next);
-					calledOnce(listener);
-					calledWith(listener, authenticationFailedError);
-
-					calledOnce(issuerGetAsyncMock);
-					calledWith(issuerGetAsyncMock, env.openidHTTPTimeout, env.openidIssuerURI);
-					calledOnce(issuerClientUserInfoStub);
-					calledWith(issuerClientUserInfoStub, '12345');
-				});
-
-		});
-
-		it('should emit a deny event if issuerClient userinfo resolves with null', () => {
-
-			// given
-			envValidatorMock.resolves();
-			req.get.withArgs('Authorization').returns('Bearer 12345');
-			issuerGetAsyncMock.resolves(issuerInstanceMock);
-			issuerClientUserInfoStub.resolves(null);
-
-			// when
-			return auth.tokenValidator(env)(req, res, next)
-				.then(() => {
-					// then
-					notCalled(next);
-					calledOnce(listener);
-					calledWith(listener, authenticationFailedError);
-
-					calledOnce(issuerGetAsyncMock);
-					calledWith(issuerGetAsyncMock, env.openidHTTPTimeout, env.openidIssuerURI);
-					calledOnce(issuerClientUserInfoStub);
-					calledWith(issuerClientUserInfoStub, '12345');
-				});
+			});
 
 		});
 
 		it('should call next and set orizuru on the request if client info resolves', () => {
 
-			const
-				user = {
-					username: userInfoMock.preferred_username,
-					organizationId: userInfoMock.organization_id
-				};
-
 			// given
-			envValidatorMock.resolves();
+			const user = {
+				organizationId: userInfoMock.organization_id,
+				username: userInfoMock.preferred_username
+			};
+
+			sinon.stub(envValidator, 'validate').resolves(new Error('some error or other'));
 			req.get.withArgs('Authorization').returns('Bearer 12345');
-			issuerGetAsyncMock.resolves(issuerInstanceMock);
+			sinon.stub(issuer, 'constructIssuer').resolves(issuerClientMock);
 			issuerClientUserInfoStub.resolves(userInfoMock);
 
 			// when - then
-			return auth.tokenValidator(env)(req, res, next)
+			return tokenValidator(env)(req, res, next)
 				.then(() => {
 
-					expect(req.orizuru.user).to.deep.eql(user);
+					expect(req.orizuru.user).to.deep.eq(user);
 
-					calledOnce(next);
-					calledOnce(listener);
-					calledWith(listener, 'Token validated for: 1.1.1.1');
+					expect(next).to.have.been.calledOnce;
+					expect(listener).to.have.been.calledOnce;
+					expect(listener).to.have.been.calledWith(`Token validated for: ${req.ip}`);
 
-					calledOnce(issuerGetAsyncMock);
-					calledWith(issuerGetAsyncMock, env.openidHTTPTimeout, env.openidIssuerURI);
-					calledOnce(issuerClientUserInfoStub);
-					calledWith(issuerClientUserInfoStub, '12345');
+					expect(issuer.constructIssuer).to.have.been.calledOnce;
+					expect(issuer.constructIssuer).to.have.been.calledWith(env);
+					expect(issuerClientUserInfoStub).to.have.been.calledOnce;
+					expect(issuerClientUserInfoStub).to.have.been.calledWith('12345');
 				});
 
 		});
 
 		it('should respect an existing orizuru object', () => {
 
-			const
-				user = {
-					username: userInfoMock.preferred_username,
-					organizationId: userInfoMock.organization_id
-				};
+			const user = {
+				organizationId: userInfoMock.organization_id,
+				username: userInfoMock.preferred_username
+			};
 
 			// given
-			envValidatorMock.resolves();
+			sinon.stub(envValidator, 'validate').resolves(new Error('some error or other'));
 			req.get.withArgs('Authorization').returns('Bearer 12345');
-			issuerGetAsyncMock.resolves(issuerInstanceMock);
+			sinon.stub(issuer, 'constructIssuer').resolves(issuerClientMock);
 			issuerClientUserInfoStub.resolves(userInfoMock);
 
 			req.orizuru = { other: true };
 
 			// when - then
-			return auth.tokenValidator(env)(req, res, next)
+			return tokenValidator(env)(req, res, next)
 				.then(() => {
 
-					expect(req.orizuru.user).to.deep.eql(user);
+					expect(req.orizuru.user).to.deep.eq(user);
 					expect(req.orizuru.other).to.eql(true);
 
-					calledOnce(next);
-					calledOnce(listener);
-					calledWith(listener, 'Token validated for: 1.1.1.1');
+					expect(next).to.have.been.calledOnce;
+					expect(listener).to.have.been.calledOnce;
+					expect(listener).to.have.been.calledWith(`Token validated for: ${req.ip}`);
 
-					calledOnce(issuerGetAsyncMock);
-					calledWith(issuerGetAsyncMock, env.openidHTTPTimeout, env.openidIssuerURI);
-					calledOnce(issuerClientUserInfoStub);
-					calledWith(issuerClientUserInfoStub, '12345');
+					expect(issuer.constructIssuer).to.have.been.calledOnce;
+					expect(issuer.constructIssuer).to.have.been.calledWith(env);
+					expect(issuerClientUserInfoStub).to.have.been.calledOnce;
+					expect(issuerClientUserInfoStub).to.have.been.calledWith('12345');
 				});
 
 		});
@@ -409,178 +329,167 @@ describe('middleware.js', () => {
 		it('should error if the environment is invalid', () => {
 
 			// given
-			envValidatorMock.throws(new Error('some error or other'));
+			sinon.stub(envValidator, 'validate').throws(new Error('some error or other'));
 
 			// when - then
-			expect(() => auth.grantChecker(env)).to.throw('some error or other');
+			expect(() => grantChecker(env)).to.throw('some error or other');
 
 		});
 
-		it('should emit a deny event if there is no user on the request', () => {
+		describe('should emit a deny event', () => {
 
-			// given
-			envValidatorMock.resolves();
+			beforeEach(() => {
+				sinon.stub(envValidator, 'validate').resolves();
+			});
 
-			// when
-			return auth.grantChecker(env)(req, res, next)
-				.then(() => {
-					// then
-					notCalled(next);
-					calledOnce(listener);
-					calledWith(listener, missingUserError);
-				});
+			it('if there is no user on the request', () => {
+
+				// given
+				// when
+				return grantChecker(env)(req, res, next)
+					.then(() => {
+						// then
+						expect(next).to.not.have.been.calledOnce;
+						expect(listener).to.have.been.calledOnce;
+						expect(listener).to.have.been.calledWith(`Access denied to: ${req.ip}, error: A valid User is not set on the request.`);
+					});
+
+			});
+
+			it('if there is no user', () => {
+
+				// given
+				req.orizuru = {};
+
+				// when
+				return grantChecker(env)(req, res, next)
+					.then(() => {
+						// then
+						expect(next).to.not.have.been.calledOnce;
+						expect(listener).to.have.been.calledOnce;
+						expect(listener).to.have.been.calledWith(`Access denied to: ${req.ip}, error: A valid User is not set on the request.`);
+					});
+
+			});
+
+			it('if the user has no username property', () => {
+
+				// given
+				req.orizuru = { user: {} };
+
+				// when
+				return grantChecker(env)(req, res, next)
+					.then(() => {
+						// then
+						expect(next).to.not.have.been.calledOnce;
+						expect(listener).to.have.been.calledOnce;
+						expect(listener).to.have.been.calledWith(`Access denied to: ${req.ip}, error: A valid User is not set on the request.`);
+					});
+
+			});
+
+			it('if constructIssuer rejects', () => {
+
+				// given
+				req.orizuru = { user: { username: 'bob@test.com' } };
+				sinon.stub(issuer, 'constructIssuer').rejects(new Error('something or other'));
+
+				// when
+				return grantChecker(env)(req, res, next)
+					.then(() => {
+						// then
+						expect(next).to.not.have.been.calledOnce;
+						expect(listener).to.have.been.calledOnce;
+						expect(listener).to.have.been.calledWith(`Access denied to: ${req.ip}, error: something or other.`);
+
+						expect(issuer.constructIssuer).to.have.been.calledOnce;
+						expect(issuer.constructIssuer).to.have.been.calledWith(env);
+					});
+
+			});
+
+			it('if constructSignedJwt rejects', () => {
+
+				// given
+				req.orizuru = { user: { username: 'bob@test.com' } };
+				sinon.stub(issuer, 'constructIssuer').resolves(issuerClientMock);
+				sinon.stub(sharedFunctions, 'constructSignedJwt').rejects(new Error('Unable to sign JWT'));
+
+				// when
+				return grantChecker(env)(req, res, next)
+					.then(() => {
+						// then
+						expect(next).to.not.have.been.calledOnce;
+						expect(listener).to.have.been.calledOnce;
+						expect(listener).to.have.been.calledWith(`Access denied to: ${req.ip}, error: Unable to sign JWT.`);
+
+						expect(issuer.constructIssuer).to.have.been.calledOnce;
+						expect(issuer.constructIssuer).to.have.been.calledWith(env);
+
+						expect(sharedFunctions.constructSignedJwt).to.have.been.calledOnce;
+						expect(sharedFunctions.constructSignedJwt).to.have.been.calledWithExactly(env, issuerClientMock, req.orizuru.user);
+					});
+
+			});
+
+			it('if obtainAuthorizationGrantMock rejects', () => {
+
+				// given
+				req.orizuru = { user: { username: 'bob@test.com' } };
+				sinon.stub(issuer, 'constructIssuer').resolves(issuerClientMock);
+				sinon.stub(sharedFunctions, 'constructSignedJwt').resolves('assertion');
+				sinon.stub(sharedFunctions, 'obtainAuthorizationGrant').rejects(new Error('Unable to obtain grant'));
+
+				// when
+				return grantChecker(env)(req, res, next)
+					.then(() => {
+						// then
+						expect(next).to.not.have.been.calledOnce;
+						expect(listener).to.have.been.calledOnce;
+						expect(listener).to.have.been.calledWith(`Access denied to: ${req.ip}, error: Unable to obtain grant.`);
+
+						expect(issuer.constructIssuer).to.have.been.calledOnce;
+						expect(issuer.constructIssuer).to.have.been.calledWith(env);
+
+						expect(sharedFunctions.constructSignedJwt).to.have.been.calledOnce;
+						expect(sharedFunctions.constructSignedJwt).to.have.been.calledWithExactly(env, issuerClientMock, req.orizuru.user);
+
+						expect(sharedFunctions.obtainAuthorizationGrant).to.have.been.calledOnce;
+						expect(sharedFunctions.obtainAuthorizationGrant).to.have.been.calledWithExactly('assertion', issuerClientMock);
+					});
+
+			});
 
 		});
 
-		it('should emit a deny event if there is no user', () => {
+		it('should call next if successful', () => {
 
 			// given
-			envValidatorMock.resolves();
-			req.orizuru = {};
-
-			// when
-			return auth.grantChecker(env)(req, res, next)
-				.then(() => {
-					// then
-					notCalled(next);
-					calledOnce(listener);
-					calledWith(listener, missingUserError);
-				});
-
-		});
-
-		it('should emit a deny event if the user has no username property', () => {
-
-			// given
-			envValidatorMock.resolves();
-			req.orizuru = { user: {} };
-
-			// when
-			return auth.grantChecker(env)(req, res, next)
-				.then(() => {
-					// then
-					notCalled(next);
-					calledOnce(listener);
-					calledWith(listener, missingUserError);
-				});
-
-		});
-
-		it('should emit a deny event if issuer getAsync rejects', () => {
-
-			// given
-			envValidatorMock.resolves();
 			req.orizuru = { user: { username: 'bob@test.com' } };
-			issuerGetAsyncMock.rejects(new Error('something or other'));
+
+			sinon.stub(envValidator, 'validate').resolves();
+			sinon.stub(issuer, 'constructIssuer').resolves(issuerClientMock);
+			sinon.stub(sharedFunctions, 'constructSignedJwt').resolves('assertion');
+			sinon.stub(sharedFunctions, 'obtainAuthorizationGrant').resolves('12345');
 
 			// when
-			return auth.grantChecker(env)(req, res, next)
+			return grantChecker(env)(req, res, next)
 				.then(() => {
 					// then
-					notCalled(next);
-					calledOnce(listener);
-					calledWith(listener, noIssuerError);
-
-					calledOnce(issuerGetAsyncMock);
-					calledWith(issuerGetAsyncMock, env.openidHTTPTimeout, env.openidIssuerURI);
-				});
-
-		});
-
-		it('should emit a deny event if issuer getAsync resolves with null', () => {
-
-			// given
-			envValidatorMock.resolves();
-			req.orizuru = { user: { username: 'bob@test.com' } };
-			issuerGetAsyncMock.resolves(null);
-
-			// when
-			return auth.grantChecker(env)(req, res, next)
-				.then(() => {
-					// then
-					notCalled(next);
-					calledOnce(listener);
-					calledWith(listener, noIssuerError);
-
-					calledOnce(issuerGetAsyncMock);
-					calledWith(issuerGetAsyncMock, env.openidHTTPTimeout, env.openidIssuerURI);
-				});
-
-		});
-
-		it('should emit a deny event if constructSignedJwt rejects', () => {
-
-			// given
-			envValidatorMock.resolves();
-			req.orizuru = { user: { username: 'bob@test.com' } };
-			issuerGetAsyncMock.resolves(issuerInstanceMock);
-			constructSignedJwtMock.rejects(new Error('Unable to sign JWT'));
-
-			// when
-			return auth.grantChecker(env)(req, res, next)
-				.then(() => {
-					// then
-					notCalled(next);
-					calledOnce(listener);
-					calledWith(listener, unableToSignJwtError);
-
-					calledWith(constructSignedJwtMock, { env, issuerClient: sinon.match.any, user: req.orizuru.user });
-
-					calledOnce(issuerGetAsyncMock);
-					calledWith(issuerGetAsyncMock, env.openidHTTPTimeout, env.openidIssuerURI);
-				});
-
-		});
-
-		it('should emit a deny event if constructSignedJwt rejects', () => {
-
-			// given
-
-			envValidatorMock.resolves();
-			req.orizuru = { user: { username: 'bob@test.com' } };
-			issuerGetAsyncMock.resolves(issuerInstanceMock);
-			constructSignedJwtMock.resolves();
-			obtainAuthorizationGrantMock.rejects(new Error('Unable to obtain grant'));
-
-			// when
-			return auth.grantChecker(env)(req, res, next)
-				.then(() => {
-					// then
-					notCalled(next);
-					calledOnce(listener);
-					calledWith(listener, unableToObtainGrantError);
-
-					calledOnce(issuerGetAsyncMock);
-					calledWith(issuerGetAsyncMock, env.openidHTTPTimeout, env.openidIssuerURI);
-					calledOnce(constructSignedJwtMock);
-				});
-
-		});
-
-		it('should call next if all ok', () => {
-
-			// given
-			envValidatorMock.resolves();
-			req.orizuru = { user: { username: 'bob@test.com' } };
-			issuerGetAsyncMock.resolves(issuerInstanceMock);
-			constructSignedJwtMock.resolves();
-			obtainAuthorizationGrantMock.resolves('12345');
-
-			// when
-			return auth.grantChecker(env)(req, res, next)
-				.then(() => {
-					// then
-
 					expect(req.orizuru.grantChecked).to.equal(true);
 
-					calledOnce(next);
-					calledOnce(listener);
-					calledWith(listener, 'Grant checked for: 1.1.1.1');
+					expect(next).to.have.been.calledOnce;
+					expect(listener).to.have.been.calledOnce;
+					expect(listener).to.have.been.calledWith(`Grant checked for: ${req.ip}`);
 
-					calledOnce(issuerGetAsyncMock);
-					calledWith(issuerGetAsyncMock, env.openidHTTPTimeout, env.openidIssuerURI);
-					calledOnce(constructSignedJwtMock);
-					calledOnce(obtainAuthorizationGrantMock);
+					expect(issuer.constructIssuer).to.have.been.calledOnce;
+					expect(issuer.constructIssuer).to.have.been.calledWith(env);
+
+					expect(sharedFunctions.constructSignedJwt).to.have.been.calledOnce;
+					expect(sharedFunctions.constructSignedJwt).to.have.been.calledWithExactly(env, issuerClientMock, req.orizuru.user);
+
+					expect(sharedFunctions.obtainAuthorizationGrant).to.have.been.calledOnce;
+					expect(sharedFunctions.obtainAuthorizationGrant).to.have.been.calledWithExactly('assertion', issuerClientMock);
 				});
 
 		});

@@ -39,7 +39,9 @@ export {
 };
 
 declare global {
+
 	namespace Express {
+
 		interface Request {
 			orizuru?: {
 				grantChecked?: boolean,
@@ -49,6 +51,7 @@ declare global {
 				}
 			};
 		}
+
 	}
 }
 

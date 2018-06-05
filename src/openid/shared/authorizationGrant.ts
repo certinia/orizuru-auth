@@ -24,75 +24,33 @@
  *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { createHash } from 'crypto';
-
 import * as openidClient from 'openid-client';
-import { Options } from '../..';
 
 /**
  * @private
  */
-const cache: { [s: string]: openidClient.Issuer; } = {};
+const JWT_GRANT_TYPE = 'grant_type';
 
 /**
  * @private
  */
-function createKey(httpTimeOut: number, openidIssuerUri: string) {
-	return createHash('sha1').update(openidIssuerUri + '|' + httpTimeOut).digest('hex');
-}
+const JWT_BEARER_GRANT = 'urn:ietf:params:oauth:grant-type:jwt-bearer';
 
 /**
  * @private
  */
-async function buildIssuer(httpTimeOut: number, openidIssuerUri: string) {
+export function obtainAuthorizationGrant(assertion: string, issuerClient: openidClient.Client) {
 
-	openidClient.Issuer.defaultHttpOptions = {
-		timeout: httpTimeOut
-	};
-
-	return await openidClient.Issuer.discover(openidIssuerUri);
-
-}
-
-/**
- * @private
- */
-export function clearCache() {
-	Object.keys(cache).forEach((key) => {
-		delete cache[key];
+	return issuerClient.grant({
+		[JWT_GRANT_TYPE]: JWT_BEARER_GRANT,
+		assertion
+	}).then((grant) => {
+		if (grant == null) {
+			throw new Error('No grant received.');
+		}
+		return grant;
+	}).catch((error) => {
+		throw new Error('Grant request failed: ' + error.message);
 	});
-}
-
-/**
- * @private
- */
-export async function constructIssuer(env: Options.Auth) {
-
-	const httpTimeOut = env.openidHTTPTimeout;
-	const openidIssuerUri = env.openidIssuerURI;
-	const key = createKey(httpTimeOut, openidIssuerUri);
-
-	let issuer = cache[key];
-	if (!issuer) {
-		issuer = await buildIssuer(httpTimeOut, openidIssuerUri);
-		cache[key] = issuer;
-	}
-
-	return Promise.resolve(issuer);
-
-}
-
-/**
- * @private
- */
-export function constructIssuerClient(env: Options.Auth) {
-
-	return constructIssuer(env)
-		.then((issuer) => {
-			return new issuer.Client();
-		})
-		.catch(() => {
-			throw new Error(`Could not get an issuer for timeout: ${env.openidHTTPTimeout} and URI: ${env.openidIssuerURI}.`);
-		});
 
 }

@@ -1,11 +1,13 @@
-/* tslint:disable */
 declare module 'openid-client' {
 
-	interface IConstructable<T> {
+	interface Constructable<T> {
 		new(): T;
 	}
 
 	export class Issuer {
+
+		public authorization_endpoint: string;
+		public token_endpoint: string;
 
 		public static defaultHttpOptions: {
 			timeout: number;
@@ -15,26 +17,28 @@ declare module 'openid-client' {
 
 		public grant: () => string;
 
-		public Client: IConstructable<Client>;
+		public Client: Constructable<Client>;
 
 	}
 
 	export class Client {
 
+		public id_token_signed_response_alg: string;
+
 		constructor(options: any);
 
-		public grant({ grant_type, assertion }: { grant_type: string, assertion: string }): Promise<IOpenIdGrant>;
+		public grant({ grant_type, assertion }: { grant_type: string, assertion: string }): Promise<OpenIdGrant>;
 
-		public userinfo(accessToken: string, options?: any): Promise<IUserInfo>;
+		public userinfo(accessToken: string, options?: any): Promise<UserInfo>;
 
 	}
 
-	interface IOpenIdGrant {
+	interface OpenIdGrant {
 		instance_url: string,
 		access_token: string
 	}
 
-	interface IUserInfo {
+	interface UserInfo {
 		preferred_username: string;
 		organization_id: string;
 	}

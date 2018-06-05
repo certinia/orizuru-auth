@@ -33,12 +33,13 @@
 import { EventEmitter } from 'events';
 import { NextFunction, Request, Response } from 'express';
 import _ from 'lodash';
-import { Client, IUserInfo } from 'openid-client';
+import { Client, UserInfo } from 'openid-client';
 
-import { IOrizuruAuth, IUser, Options } from '..';
+import { Options, User } from '..';
+import { obtainAuthorizationGrant } from './shared/authorizationGrant';
 import { validate } from './shared/envValidator';
-import { constructSignedJwt, obtainAuthorizationGrant } from './shared/functions';
-import { constructIssuer } from './shared/issuer';
+import { constructIssuerClient } from './shared/issuer';
+import { createJwtBearerGrantAssertion } from './shared/jwt';
 
 /**
  * @private
@@ -87,7 +88,7 @@ function extractAccessToken(req: Request) {
  */
 function checkUserIsOnTheRequest(req: Request) {
 
-	const user: IUser = _.get(req, 'orizuru.user');
+	const user: User = _.get(req, 'orizuru.user');
 
 	if (!user || !user.username) {
 		throw new Error('A valid User is not set on the request');
@@ -113,7 +114,7 @@ function validateAccessToken(issuerClient: Client, accessToken: string) {
 /**
  * @private
  */
-function setUserOnRequest(req: Request, userInfo: IUserInfo) {
+function setUserOnRequest(req: Request, userInfo: UserInfo) {
 
 	const user = {
 		organizationId: userInfo.organization_id,
@@ -121,7 +122,6 @@ function setUserOnRequest(req: Request, userInfo: IUserInfo) {
 	};
 
 	const orizuru = req.orizuru || {};
-
 	orizuru.user = user;
 	req.orizuru = orizuru;
 
@@ -136,7 +136,7 @@ function setGrant(req: Request) {
 
 	return () => {
 
-		(req as Request & IOrizuruAuth).orizuru.grantChecked = true;
+		(req.orizuru as any).grantChecked = true;
 
 		emitter.emit(GRANT_CHECKED_EVENT, `Grant checked for: ${req.ip}`);
 
@@ -171,7 +171,7 @@ export const emitter: EventEmitter = new EventEmitter();
  * is configured to pre authorise users and the user is
  * authorised.
  */
-export function grantChecker(env: Options.IAuth) {
+export function grantChecker(env: Options.Auth) {
 
 	validate(env);
 
@@ -180,8 +180,8 @@ export function grantChecker(env: Options.IAuth) {
 		try {
 
 			const user = checkUserIsOnTheRequest(req);
-			const issuerClient = await constructIssuer(env);
-			const assertion = await constructSignedJwt(env, issuerClient, user);
+			const issuerClient = await constructIssuerClient(env);
+			const assertion = await createJwtBearerGrantAssertion(env, user);
 			await obtainAuthorizationGrant(assertion, issuerClient);
 			setGrant(req)();
 
@@ -200,7 +200,7 @@ export function grantChecker(env: Options.IAuth) {
  * access token passed in an HTTP Authorization header and if successful
  * sets the user object onto the request object.
  */
-export function tokenValidator(env: Options.IAuth) {
+export function tokenValidator(env: Options.Auth) {
 
 	validate(env);
 
@@ -209,7 +209,7 @@ export function tokenValidator(env: Options.IAuth) {
 		try {
 
 			const accessToken = extractAccessToken(req);
-			const issuerClient = await constructIssuer(env);
+			const issuerClient = await constructIssuerClient(env);
 
 			const userInfo = await validateAccessToken(issuerClient, accessToken);
 

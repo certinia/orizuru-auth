@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2018, FinancialForce.com, inc
+ * Copyright (c) 2018, FinancialForce.com, inc
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -24,74 +24,43 @@
  *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { sign } from 'jsonwebtoken';
-import * as openidClient from 'openid-client';
+import { default as request } from 'axios';
 
-import { IUser, Options } from '../..';
+import { AccessTokenReponse, Options } from '..';
+import { validate } from './shared/envValidator';
+import { constructIssuer } from './shared/issuer';
+import { createJwtBearerClientAssertion } from './shared/jwt';
 
-/**
- * @private
- */
-const JWT_GRANT_TYPE = 'grant_type';
+const ASSERTION_TYPE = 'urn:ietf:params:oauth:client-assertion-type:jwt-bearer';
 
-/**
- * @private
- */
-const JWT_BEARER_GRANT = 'urn:ietf:params:oauth:grant-type:jwt-bearer';
+export async function generateAuthorizeUrl(env: Options.Auth, redirectUri: string, state: string) {
 
-/**
- * @private
- */
-const RSA_256 = 'RS256';
+	validate(env);
 
-/**
- * @private
- */
-const RSA_256_ALGORITHM = { algorithm: RSA_256 };
+	const issuer = await constructIssuer(env);
 
-/**
- * @private
- */
-export async function constructSignedJwt(env: Options.IAuth, issuerClient: openidClient.Client, user: IUser) {
+	const responseType = 'response_type=code';
+	const clientId = `client_id=${env.openidClientId}`;
+	return `${issuer.authorization_endpoint}?${responseType}&${clientId}&redirect_uri=${redirectUri}&state=${state}`;
 
-	const nowPlusFourMinutes = () => {
-		return Math.floor(Date.now() / 1000) + (60 * 4);
-	};
-
-	const payload = {
-		aud: env.openidIssuerURI,
-		exp: nowPlusFourMinutes(),
-		iss: env.openidClientId,
-		sub: user.username
-	};
-
-	const createAssertion: Promise<string> = new Promise((resolve) => {
-		sign(payload, env.jwtSigningKey, RSA_256_ALGORITHM, (err, token) => {
-			if (!token) {
-				throw new Error('Failed to sign authentication token');
-			}
-			resolve(token);
-		});
-	});
-
-	return await createAssertion;
 }
 
-/**
- * @private
- */
-export function obtainAuthorizationGrant(assertion: string, issuerClient: openidClient.Client) {
+export async function requestAccessTokenWithClientAssertion(env: Options.Auth, redirectUri: string, state: string, code: string): Promise<AccessTokenReponse> {
 
-	return issuerClient.grant({
-		[JWT_GRANT_TYPE]: JWT_BEARER_GRANT,
-		assertion
-	}).then((grant) => {
-		if (grant == null) {
-			throw new Error('No grant received.');
-		}
-		return grant;
-	}).catch((error) => {
-		throw new Error('Grant request failed: ' + error.message);
-	});
+	validate(env);
+
+	const issuer = await constructIssuer(env);
+	const jwtBearerAssertion = await createJwtBearerClientAssertion(env, issuer);
+
+	const grantType = 'grant_type=authorization_code';
+	const clientId = `client_id=${env.openidClientId}`;
+	const clientAssertion = `client_assertion=${jwtBearerAssertion}`;
+
+	const clientAssertionType = `client_assertion_type=${ASSERTION_TYPE}`;
+
+	const authUri = `${issuer.token_endpoint}?${grantType}&$code=${code}&${clientId}&${clientAssertion}&${clientAssertionType}&redirect_uri=${redirectUri}&format=json`;
+
+	const response = await request.post(authUri);
+	return JSON.parse(response.data);
 
 }

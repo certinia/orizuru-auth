@@ -29,17 +29,18 @@
  * user.
  */
 
-import { IOpenIdGrant } from 'openid-client';
+import { OpenIdGrant } from 'openid-client';
 
-import { IGrant, IUser, Options } from '..';
+import { Grant, Options, User } from '..';
+import { obtainAuthorizationGrant } from './shared/authorizationGrant';
 import { validate } from './shared/envValidator';
-import { constructSignedJwt, obtainAuthorizationGrant } from './shared/functions';
-import { constructIssuer } from './shared/issuer';
+import { constructIssuerClient } from './shared/issuer';
+import { createJwtBearerGrantAssertion } from './shared/jwt';
 
 /**
  * @private
  */
-function validateUser(user: IUser) {
+function validateUser(user: User) {
 
 	if (!user || user.username === '') {
 		throw new Error('Invalid parameter: username cannot be empty.');
@@ -54,7 +55,7 @@ function validateUser(user: IUser) {
 /**
  * @private
  */
-function convertGrantToCredentials(grant: IOpenIdGrant): IGrant {
+function convertGrantToCredentials(grant: OpenIdGrant): Grant {
 	return {
 		accessToken: grant.access_token,
 		instanceUrl: grant.instance_url
@@ -64,18 +65,18 @@ function convertGrantToCredentials(grant: IOpenIdGrant): IGrant {
 /**
  * Returns a function that can obtain a token for the passed user.
  */
-export function getToken(env: Options.IAuth) {
+export function getToken(env: Options.Auth) {
 
 	validate(env);
 
-	return async (user: IUser) => {
+	return async (user: User) => {
 
 		try {
 
 			validateUser(user);
 
-			const issuerClient = await constructIssuer(env);
-			const assertion = await constructSignedJwt(env, issuerClient, user);
+			const issuerClient = await constructIssuerClient(env);
+			const assertion = await createJwtBearerGrantAssertion(env, user);
 			const grant = await obtainAuthorizationGrant(assertion, issuerClient);
 			return convertGrantToCredentials(grant);
 

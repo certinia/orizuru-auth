@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2018, FinancialForce.com, inc
+ * Copyright (c) 2018, FinancialForce.com, inc
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -24,75 +24,61 @@
  *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { createHash } from 'crypto';
+import { sign } from 'jsonwebtoken';
+import { Issuer } from 'openid-client';
+import uuid from 'uuid';
 
-import * as openidClient from 'openid-client';
-import { Options } from '../..';
-
-/**
- * @private
- */
-const cache: { [s: string]: openidClient.Issuer; } = {};
+import { Options, User } from '../..';
 
 /**
  * @private
  */
-function createKey(httpTimeOut: number, openidIssuerUri: string) {
-	return createHash('sha1').update(openidIssuerUri + '|' + httpTimeOut).digest('hex');
-}
+const RSA_256 = 'RS256';
 
 /**
  * @private
  */
-async function buildIssuer(httpTimeOut: number, openidIssuerUri: string) {
+const RSA_256_ALGORITHM = { algorithm: RSA_256 };
 
-	openidClient.Issuer.defaultHttpOptions = {
-		timeout: httpTimeOut
+export async function createJwtBearerClientAssertion(env: Options.Auth, issuer: Issuer) {
+
+	const nowPlusFourMinutes = () => {
+		return Math.floor(Date.now() / 1000) + (60 * 4);
 	};
 
-	return await openidClient.Issuer.discover(openidIssuerUri);
+	const payload = {
+		aud: issuer.token_endpoint,
+		exp: nowPlusFourMinutes(),
+		iss: env.openidClientId,
+		jti: uuid.v4(),
+		sub: env.openidClientId
+	};
 
-}
-
-/**
- * @private
- */
-export function clearCache() {
-	Object.keys(cache).forEach((key) => {
-		delete cache[key];
-	});
-}
-
-/**
- * @private
- */
-export async function constructIssuer(env: Options.Auth) {
-
-	const httpTimeOut = env.openidHTTPTimeout;
-	const openidIssuerUri = env.openidIssuerURI;
-	const key = createKey(httpTimeOut, openidIssuerUri);
-
-	let issuer = cache[key];
-	if (!issuer) {
-		issuer = await buildIssuer(httpTimeOut, openidIssuerUri);
-		cache[key] = issuer;
+	try {
+		return await sign(payload, env.jwtSigningKey, RSA_256_ALGORITHM);
+	} catch (error) {
+		throw new Error('Failed to sign client assertion');
 	}
 
-	return Promise.resolve(issuer);
-
 }
 
-/**
- * @private
- */
-export function constructIssuerClient(env: Options.Auth) {
+export async function createJwtBearerGrantAssertion(env: Options.Auth, user: User) {
 
-	return constructIssuer(env)
-		.then((issuer) => {
-			return new issuer.Client();
-		})
-		.catch(() => {
-			throw new Error(`Could not get an issuer for timeout: ${env.openidHTTPTimeout} and URI: ${env.openidIssuerURI}.`);
-		});
+	const nowPlusFourMinutes = () => {
+		return Math.floor(Date.now() / 1000) + (60 * 4);
+	};
+
+	const payload = {
+		aud: env.openidIssuerURI,
+		exp: nowPlusFourMinutes(),
+		iss: env.openidClientId,
+		sub: user.username
+	};
+
+	try {
+		return await sign(payload, env.jwtSigningKey, RSA_256_ALGORITHM);
+	} catch (error) {
+		throw new Error('Failed to sign grant assertion');
+	}
 
 }

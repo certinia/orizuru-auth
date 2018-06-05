@@ -42,7 +42,7 @@ chai.use(sinonChai);
 
 describe('openid/shared/issuer.js', () => {
 
-	const env: Options.IAuth = {
+	const env: Options.Auth = {
 		jwtSigningKey: 'testJwtSigningKey',
 		openidClientId: 'testOpenidClientKey',
 		openidHTTPTimeout: 2000,
@@ -54,16 +54,15 @@ describe('openid/shared/issuer.js', () => {
 		issuer.clearCache();
 	});
 
-	describe('constructIssuer', () => {
+	describe('constructIssuerClient', () => {
 
 		it('should throw an error if discover rejects', () => {
 
 			// Given
-			const issuerMock = sinon.createStubInstance(openIdClient.Issuer);
 			sinon.stub(openIdClient.Issuer, 'discover').rejects(new Error('error'));
 
 			// When
-			return expect(issuer.constructIssuer(env))
+			return expect(issuer.constructIssuerClient(env))
 				.to.be.rejectedWith('Could not get an issuer for timeout: 2000 and URI: https://login.salesforce.com.')
 				.then(() => {
 					// Then
@@ -76,13 +75,13 @@ describe('openid/shared/issuer.js', () => {
 		it('should discover the issuer', async () => {
 
 			// Given
-			const issuerMock = sinon.createStubInstance(openIdClient.Issuer);
+			const issuerMock: any = sinon.createStubInstance(openIdClient.Issuer);
 
 			issuerMock.Client = sinon.stub();
 			sinon.stub(openIdClient.Issuer, 'discover').resolves(issuerMock);
 
 			// When
-			const issuerClient = await issuer.constructIssuer(env);
+			const issuerClient = await issuer.constructIssuerClient(env);
 
 			// Then
 			expect(issuerClient).to.eql(issuerMock.Client.returnValues[0]);
@@ -97,15 +96,15 @@ describe('openid/shared/issuer.js', () => {
 		it('should return the same issuer for multiple callouts', async () => {
 
 			// Given
-			const issuerMock = sinon.createStubInstance(openIdClient.Issuer);
+			const issuerMock: any = sinon.createStubInstance(openIdClient.Issuer);
 
 			issuerMock.Client = sinon.stub();
 			sinon.stub(openIdClient.Issuer, 'discover').resolves(issuerMock);
 
-			await issuer.constructIssuer(env);
+			await issuer.constructIssuerClient(env);
 
 			// When
-			const issuerClient = await issuer.constructIssuer(env);
+			const issuerClient = await issuer.constructIssuerClient(env);
 
 			// Then
 			expect(issuerClient).to.eql(issuerMock.Client.returnValues[1]);

@@ -29,90 +29,17 @@ import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
 
-import jsonwebtoken from 'jsonwebtoken';
-
-import { Options } from '../../../src';
-import * as sharedFunctions from '../../../src/openid/shared/functions';
-
-const env: Options.IAuth = {
-	jwtSigningKey: 'testJwtSigningKey',
-	openidClientId: 'testOpenidClientKey',
-	openidHTTPTimeout: 2000,
-	openidIssuerURI: 'testOpenidIssuerUri'
-};
+import { obtainAuthorizationGrant } from '../../../src/openid/shared/authorizationGrant';
 
 const expect = chai.expect;
 
 chai.use(chaiAsPromised);
 chai.use(sinonChai);
 
-describe('shared/functions.ts', () => {
+describe('shared/authorizationGrant.ts', () => {
 
 	afterEach(() => {
 		sinon.restore();
-	});
-
-	describe('constructSignedJwt', () => {
-
-		let issuerClient: any;
-		let user: any;
-		let clock: any;
-
-		beforeEach(() => {
-
-			sinon.stub(jsonwebtoken, 'sign');
-			issuerClient = {};
-			user = {
-				username: 'testUsername'
-			};
-			clock = sinon.useFakeTimers();
-
-		});
-
-		afterEach(() => {
-			clock.restore();
-		});
-
-		it('should reject if jsonwebtoken sign returns an error', () => {
-
-			// given
-			(jsonwebtoken.sign as sinon.SinonStub).callsArgWith(3, 'Some error or other', null);
-
-			// when - then
-			return expect(sharedFunctions.constructSignedJwt(env, issuerClient, user))
-				.to.eventually.be.rejectedWith('Failed to sign authentication token')
-				.then(() => {
-					expect(jsonwebtoken.sign).to.have.been.calledOnce;
-					expect(jsonwebtoken.sign).to.have.been.calledWith({
-						aud: env.openidIssuerURI,
-						exp: 240,
-						iss: env.openidClientId,
-						sub: user.username
-					}, env.jwtSigningKey, { algorithm: 'RS256' }, sinon.match.func);
-				});
-
-		});
-
-		it('should resolve if jsonwebtoken sign returns a token', () => {
-
-			// given
-			(jsonwebtoken.sign as sinon.SinonStub).callsArgWith(3, null, 'token');
-
-			// when - then
-			return expect(sharedFunctions.constructSignedJwt(env, issuerClient, user))
-				.to.eventually.eql('token')
-				.then(() => {
-					expect(jsonwebtoken.sign).to.have.been.calledOnce;
-					expect(jsonwebtoken.sign).to.have.been.calledWith({
-						aud: env.openidIssuerURI,
-						exp: 240,
-						iss: env.openidClientId,
-						sub: user.username
-					}, env.jwtSigningKey, { algorithm: 'RS256' }, sinon.match.func);
-				});
-
-		});
-
 	});
 
 	describe('obtainAuthorizationGrant', () => {
@@ -131,7 +58,7 @@ describe('shared/functions.ts', () => {
 			issuerClient.grant.rejects(new Error('Some error or other'));
 
 			// when - then
-			return expect(sharedFunctions.obtainAuthorizationGrant('assertionTest', issuerClient))
+			return expect(obtainAuthorizationGrant('assertionTest', issuerClient))
 				.to.eventually.be.rejectedWith('Grant request failed: Some error or other')
 				.then(() => {
 					issuerClient.grant.resolves('test');
@@ -150,7 +77,7 @@ describe('shared/functions.ts', () => {
 			issuerClient.grant.resolves(null);
 
 			// when - then
-			return expect(sharedFunctions.obtainAuthorizationGrant('assertionTest', issuerClient))
+			return expect(obtainAuthorizationGrant('assertionTest', issuerClient))
 				.to.eventually.be.rejectedWith('Grant request failed: No grant received.')
 				.then(() => {
 					issuerClient.grant.resolves('test');
@@ -169,7 +96,7 @@ describe('shared/functions.ts', () => {
 			issuerClient.grant.resolves('test');
 
 			// when - then
-			return expect(sharedFunctions.obtainAuthorizationGrant('assertionTest', issuerClient))
+			return expect(obtainAuthorizationGrant('assertionTest', issuerClient))
 				.to.eventually.eql('test')
 				.then(() => {
 					issuerClient.grant.resolves('test');

@@ -30,7 +30,7 @@ import { Options } from '../..';
 /**
  * @private
  */
-export function validate({ jwtSigningKey, openidClientId, openidHTTPTimeout, openidIssuerURI }: Options.IAuth) {
+export function validate({ jwtSigningKey, openidClientId, openidHTTPTimeout, openidIssuerURI }: Options.Auth) {
 
 	if (jwtSigningKey === '') {
 		throw new Error('Invalid parameter: jwtSigningKey cannot be empty.');

@@ -26,14 +26,15 @@
 
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import sinon, { SinonStub } from 'sinon';
+import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
 
 import { Options } from '../../src';
 import { emitter, grantChecker, tokenValidator } from '../../src/openid/middleware';
+import * as authorizationGrant from '../../src/openid/shared/authorizationGrant';
 import * as envValidator from '../../src/openid/shared/envValidator';
-import * as sharedFunctions from '../../src/openid/shared/functions';
 import * as issuer from '../../src/openid/shared/issuer';
+import * as jwt from '../../src/openid/shared/jwt';
 
 const expect = chai.expect;
 
@@ -42,7 +43,7 @@ chai.use(sinonChai);
 
 describe('middleware.ts', () => {
 
-	const env: Options.IAuth = {
+	const env: Options.Auth = {
 		jwtSigningKey: 'test',
 		openidClientId: 'test',
 		openidHTTPTimeout: 4001,
@@ -212,10 +213,10 @@ describe('middleware.ts', () => {
 
 			});
 
-			it('if constructIssuer rejects', () => {
+			it('if constructIssuerClient rejects', () => {
 
 				// given
-				sinon.stub(issuer, 'constructIssuer').rejects(new Error('something or other'));
+				sinon.stub(issuer, 'constructIssuerClient').rejects(new Error('something or other'));
 				req.get.withArgs('Authorization').returns('Bearer 12345');
 
 				// when
@@ -226,8 +227,8 @@ describe('middleware.ts', () => {
 						expect(listener).to.have.been.calledOnce;
 						expect(listener).to.have.been.calledWith(`Access denied to: ${req.ip}, error: something or other.`);
 
-						expect(issuer.constructIssuer).to.have.been.calledOnce;
-						expect(issuer.constructIssuer).to.have.been.calledWith(env);
+						expect(issuer.constructIssuerClient).to.have.been.calledOnce;
+						expect(issuer.constructIssuerClient).to.have.been.calledWith(env);
 					});
 
 			});
@@ -236,7 +237,7 @@ describe('middleware.ts', () => {
 
 				// given
 				req.get.withArgs('Authorization').returns('Bearer 12345');
-				sinon.stub(issuer, 'constructIssuer').resolves(issuerClientMock);
+				sinon.stub(issuer, 'constructIssuerClient').resolves(issuerClientMock);
 				issuerClientUserInfoStub.rejects(new Error('something or other'));
 
 				// when
@@ -247,8 +248,8 @@ describe('middleware.ts', () => {
 						expect(listener).to.have.been.calledOnce;
 						expect(listener).to.have.been.calledWith(`Access denied to: ${req.ip}, error: Failed to authenticate with Authorisation header.`);
 
-						expect(issuer.constructIssuer).to.have.been.calledOnce;
-						expect(issuer.constructIssuer).to.have.been.calledWith(env);
+						expect(issuer.constructIssuerClient).to.have.been.calledOnce;
+						expect(issuer.constructIssuerClient).to.have.been.calledWith(env);
 						expect(issuerClientUserInfoStub).to.have.been.calledOnce;
 						expect(issuerClientUserInfoStub).to.have.been.calledWith('12345');
 					});
@@ -267,7 +268,7 @@ describe('middleware.ts', () => {
 
 			sinon.stub(envValidator, 'validate').resolves(new Error('some error or other'));
 			req.get.withArgs('Authorization').returns('Bearer 12345');
-			sinon.stub(issuer, 'constructIssuer').resolves(issuerClientMock);
+			sinon.stub(issuer, 'constructIssuerClient').resolves(issuerClientMock);
 			issuerClientUserInfoStub.resolves(userInfoMock);
 
 			// when - then
@@ -280,8 +281,8 @@ describe('middleware.ts', () => {
 					expect(listener).to.have.been.calledOnce;
 					expect(listener).to.have.been.calledWith(`Token validated for: ${req.ip}`);
 
-					expect(issuer.constructIssuer).to.have.been.calledOnce;
-					expect(issuer.constructIssuer).to.have.been.calledWith(env);
+					expect(issuer.constructIssuerClient).to.have.been.calledOnce;
+					expect(issuer.constructIssuerClient).to.have.been.calledWith(env);
 					expect(issuerClientUserInfoStub).to.have.been.calledOnce;
 					expect(issuerClientUserInfoStub).to.have.been.calledWith('12345');
 				});
@@ -296,9 +297,9 @@ describe('middleware.ts', () => {
 			};
 
 			// given
-			sinon.stub(envValidator, 'validate').resolves(new Error('some error or other'));
+			sinon.stub(envValidator, 'validate').resolves();
 			req.get.withArgs('Authorization').returns('Bearer 12345');
-			sinon.stub(issuer, 'constructIssuer').resolves(issuerClientMock);
+			sinon.stub(issuer, 'constructIssuerClient').resolves(issuerClientMock);
 			issuerClientUserInfoStub.resolves(userInfoMock);
 
 			req.orizuru = { other: true };
@@ -314,8 +315,8 @@ describe('middleware.ts', () => {
 					expect(listener).to.have.been.calledOnce;
 					expect(listener).to.have.been.calledWith(`Token validated for: ${req.ip}`);
 
-					expect(issuer.constructIssuer).to.have.been.calledOnce;
-					expect(issuer.constructIssuer).to.have.been.calledWith(env);
+					expect(issuer.constructIssuerClient).to.have.been.calledOnce;
+					expect(issuer.constructIssuerClient).to.have.been.calledWith(env);
 					expect(issuerClientUserInfoStub).to.have.been.calledOnce;
 					expect(issuerClientUserInfoStub).to.have.been.calledWith('12345');
 				});
@@ -388,11 +389,11 @@ describe('middleware.ts', () => {
 
 			});
 
-			it('if constructIssuer rejects', () => {
+			it('if constructIssuerClient rejects', () => {
 
 				// given
 				req.orizuru = { user: { username: 'bob@test.com' } };
-				sinon.stub(issuer, 'constructIssuer').rejects(new Error('something or other'));
+				sinon.stub(issuer, 'constructIssuerClient').rejects(new Error('something or other'));
 
 				// when
 				return grantChecker(env)(req, res, next)
@@ -402,8 +403,8 @@ describe('middleware.ts', () => {
 						expect(listener).to.have.been.calledOnce;
 						expect(listener).to.have.been.calledWith(`Access denied to: ${req.ip}, error: something or other.`);
 
-						expect(issuer.constructIssuer).to.have.been.calledOnce;
-						expect(issuer.constructIssuer).to.have.been.calledWith(env);
+						expect(issuer.constructIssuerClient).to.have.been.calledOnce;
+						expect(issuer.constructIssuerClient).to.have.been.calledWith(env);
 					});
 
 			});
@@ -412,8 +413,8 @@ describe('middleware.ts', () => {
 
 				// given
 				req.orizuru = { user: { username: 'bob@test.com' } };
-				sinon.stub(issuer, 'constructIssuer').resolves(issuerClientMock);
-				sinon.stub(sharedFunctions, 'constructSignedJwt').rejects(new Error('Unable to sign JWT'));
+				sinon.stub(issuer, 'constructIssuerClient').resolves(issuerClientMock);
+				sinon.stub(jwt, 'createJwtBearerGrantAssertion').rejects(new Error('Unable to sign JWT'));
 
 				// when
 				return grantChecker(env)(req, res, next)
@@ -423,11 +424,11 @@ describe('middleware.ts', () => {
 						expect(listener).to.have.been.calledOnce;
 						expect(listener).to.have.been.calledWith(`Access denied to: ${req.ip}, error: Unable to sign JWT.`);
 
-						expect(issuer.constructIssuer).to.have.been.calledOnce;
-						expect(issuer.constructIssuer).to.have.been.calledWith(env);
+						expect(issuer.constructIssuerClient).to.have.been.calledOnce;
+						expect(issuer.constructIssuerClient).to.have.been.calledWith(env);
 
-						expect(sharedFunctions.constructSignedJwt).to.have.been.calledOnce;
-						expect(sharedFunctions.constructSignedJwt).to.have.been.calledWithExactly(env, issuerClientMock, req.orizuru.user);
+						expect(jwt.createJwtBearerGrantAssertion).to.have.been.calledOnce;
+						expect(jwt.createJwtBearerGrantAssertion).to.have.been.calledWithExactly(env, req.orizuru.user);
 					});
 
 			});
@@ -436,9 +437,9 @@ describe('middleware.ts', () => {
 
 				// given
 				req.orizuru = { user: { username: 'bob@test.com' } };
-				sinon.stub(issuer, 'constructIssuer').resolves(issuerClientMock);
-				sinon.stub(sharedFunctions, 'constructSignedJwt').resolves('assertion');
-				sinon.stub(sharedFunctions, 'obtainAuthorizationGrant').rejects(new Error('Unable to obtain grant'));
+				sinon.stub(issuer, 'constructIssuerClient').resolves(issuerClientMock);
+				sinon.stub(jwt, 'createJwtBearerGrantAssertion').resolves('assertion');
+				sinon.stub(authorizationGrant, 'obtainAuthorizationGrant').rejects(new Error('Unable to obtain grant'));
 
 				// when
 				return grantChecker(env)(req, res, next)
@@ -448,14 +449,14 @@ describe('middleware.ts', () => {
 						expect(listener).to.have.been.calledOnce;
 						expect(listener).to.have.been.calledWith(`Access denied to: ${req.ip}, error: Unable to obtain grant.`);
 
-						expect(issuer.constructIssuer).to.have.been.calledOnce;
-						expect(issuer.constructIssuer).to.have.been.calledWith(env);
+						expect(issuer.constructIssuerClient).to.have.been.calledOnce;
+						expect(issuer.constructIssuerClient).to.have.been.calledWith(env);
 
-						expect(sharedFunctions.constructSignedJwt).to.have.been.calledOnce;
-						expect(sharedFunctions.constructSignedJwt).to.have.been.calledWithExactly(env, issuerClientMock, req.orizuru.user);
+						expect(jwt.createJwtBearerGrantAssertion).to.have.been.calledOnce;
+						expect(jwt.createJwtBearerGrantAssertion).to.have.been.calledWithExactly(env, req.orizuru.user);
 
-						expect(sharedFunctions.obtainAuthorizationGrant).to.have.been.calledOnce;
-						expect(sharedFunctions.obtainAuthorizationGrant).to.have.been.calledWithExactly('assertion', issuerClientMock);
+						expect(authorizationGrant.obtainAuthorizationGrant).to.have.been.calledOnce;
+						expect(authorizationGrant.obtainAuthorizationGrant).to.have.been.calledWithExactly('assertion', issuerClientMock);
 					});
 
 			});
@@ -468,9 +469,9 @@ describe('middleware.ts', () => {
 			req.orizuru = { user: { username: 'bob@test.com' } };
 
 			sinon.stub(envValidator, 'validate').resolves();
-			sinon.stub(issuer, 'constructIssuer').resolves(issuerClientMock);
-			sinon.stub(sharedFunctions, 'constructSignedJwt').resolves('assertion');
-			sinon.stub(sharedFunctions, 'obtainAuthorizationGrant').resolves('12345');
+			sinon.stub(issuer, 'constructIssuerClient').resolves(issuerClientMock);
+			sinon.stub(jwt, 'createJwtBearerGrantAssertion').resolves('assertion');
+			sinon.stub(authorizationGrant, 'obtainAuthorizationGrant').resolves('12345');
 
 			// when
 			return grantChecker(env)(req, res, next)
@@ -482,14 +483,52 @@ describe('middleware.ts', () => {
 					expect(listener).to.have.been.calledOnce;
 					expect(listener).to.have.been.calledWith(`Grant checked for: ${req.ip}`);
 
-					expect(issuer.constructIssuer).to.have.been.calledOnce;
-					expect(issuer.constructIssuer).to.have.been.calledWith(env);
+					expect(issuer.constructIssuerClient).to.have.been.calledOnce;
+					expect(issuer.constructIssuerClient).to.have.been.calledWith(env);
 
-					expect(sharedFunctions.constructSignedJwt).to.have.been.calledOnce;
-					expect(sharedFunctions.constructSignedJwt).to.have.been.calledWithExactly(env, issuerClientMock, req.orizuru.user);
+					expect(jwt.createJwtBearerGrantAssertion).to.have.been.calledOnce;
+					expect(jwt.createJwtBearerGrantAssertion).to.have.been.calledWithExactly(env, req.orizuru.user);
 
-					expect(sharedFunctions.obtainAuthorizationGrant).to.have.been.calledOnce;
-					expect(sharedFunctions.obtainAuthorizationGrant).to.have.been.calledWithExactly('assertion', issuerClientMock);
+					expect(authorizationGrant.obtainAuthorizationGrant).to.have.been.calledOnce;
+					expect(authorizationGrant.obtainAuthorizationGrant).to.have.been.calledWithExactly('assertion', issuerClientMock);
+				});
+
+		});
+
+		it('should respect an existing orizuru object', () => {
+
+			// given
+			const user = {
+				organizationId: userInfoMock.organization_id,
+				username: userInfoMock.preferred_username
+			};
+
+			sinon.stub(envValidator, 'validate').resolves();
+			sinon.stub(issuer, 'constructIssuerClient').resolves(issuerClientMock);
+			sinon.stub(jwt, 'createJwtBearerGrantAssertion').resolves('assertion');
+			sinon.stub(authorizationGrant, 'obtainAuthorizationGrant').resolves('12345');
+
+			req.orizuru = { user, other: true };
+
+			// when - then
+			return grantChecker(env)(req, res, next)
+				.then(() => {
+
+					expect(req.orizuru.grantChecked).to.eql(true);
+					expect(req.orizuru.other).to.eql(true);
+
+					expect(next).to.have.been.calledOnce;
+					expect(listener).to.have.been.calledOnce;
+					expect(listener).to.have.been.calledWith(`Grant checked for: ${req.ip}`);
+
+					expect(issuer.constructIssuerClient).to.have.been.calledOnce;
+					expect(issuer.constructIssuerClient).to.have.been.calledWith(env);
+
+					expect(jwt.createJwtBearerGrantAssertion).to.have.been.calledOnce;
+					expect(jwt.createJwtBearerGrantAssertion).to.have.been.calledWithExactly(env, req.orizuru.user);
+
+					expect(authorizationGrant.obtainAuthorizationGrant).to.have.been.calledOnce;
+					expect(authorizationGrant.obtainAuthorizationGrant).to.have.been.calledWithExactly('assertion', issuerClientMock);
 				});
 
 		});

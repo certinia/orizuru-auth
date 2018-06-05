@@ -105,10 +105,10 @@ describe('webFlow.ts', () => {
 			sinon.stub(jwt, 'createJwtBearerClientAssertion').resolves('signed');
 
 			// When
-			const accessTokenReponse = await requestAccessTokenWithClientAssertion(env, 'a', 'b', 'c');
+			const AccessTokenResponse = await requestAccessTokenWithClientAssertion(env, 'a', 'b', 'c');
 
 			// Then
-			expect(accessTokenReponse).to.eql(expectedAccessTokenResponse);
+			expect(AccessTokenResponse).to.eql(expectedAccessTokenResponse);
 
 		});
 

@@ -87,7 +87,7 @@ export declare namespace Options {
  * }
  * ```
  */
-export interface AccessTokenReponse {
+export interface AccessTokenResponse {
 
 	/**
 	 * Salesforce session ID that can be used with the web services API.

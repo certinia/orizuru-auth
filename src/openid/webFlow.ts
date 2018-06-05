@@ -26,7 +26,7 @@
 
 import { default as request } from 'axios';
 
-import { AccessTokenReponse, Options } from '..';
+import { AccessTokenResponse, Options } from '..';
 import { validate } from './shared/envValidator';
 import { constructIssuer } from './shared/issuer';
 import { createJwtBearerClientAssertion } from './shared/jwt';
@@ -45,7 +45,7 @@ export async function generateAuthorizeUrl(env: Options.Auth, redirectUri: strin
 
 }
 
-export async function requestAccessTokenWithClientAssertion(env: Options.Auth, redirectUri: string, state: string, code: string): Promise<AccessTokenReponse> {
+export async function requestAccessTokenWithClientAssertion(env: Options.Auth, redirectUri: string, state: string, code: string): Promise<AccessTokenResponse> {
 
 	validate(env);
 

@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>IOrizuruAuth | @financialforcedev/orizuru-auth</title>
+	<title>Auth | @financialforcedev/orizuru-auth</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -56,21 +56,31 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="iorizuruauth.html">IOrizuruAuth</a>
+					<a href="../modules/options.html">Options</a>
+				</li>
+				<li>
+					<a href="options.auth.html">Auth</a>
 				</li>
 			</ul>
-			<h1>Interface IOrizuruAuth</h1>
+			<h1>Interface Auth</h1>
 		</div>
 	</div>
 </header>
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>The OpenID environment parameters.</p>
+					</div>
+				</div>
+			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">IOrizuruAuth</span>
+						<span class="target">Auth</span>
 					</li>
 				</ul>
 			</section>
@@ -81,7 +91,10 @@
 						<section class="tsd-index-section tsd-is-external">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-external"><a href="iorizuruauth.html#orizuru" class="tsd-kind-icon">orizuru</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-external"><a href="options.auth.html#jwtsigningkey" class="tsd-kind-icon">jwt<wbr>Signing<wbr>Key</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-external"><a href="options.auth.html#openidclientid" class="tsd-kind-icon">openid<wbr>Client<wbr>Id</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-external"><a href="options.auth.html#openidhttptimeout" class="tsd-kind-icon">openidHTTPTimeout</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-external"><a href="options.auth.html#openidissueruri" class="tsd-kind-icon">openid<wbr>IssuerURI</a></li>
 							</ul>
 						</section>
 					</div>
@@ -90,30 +103,44 @@
 			<section class="tsd-panel-group tsd-member-group tsd-is-external">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-external">
-					<a name="orizuru" class="tsd-anchor"></a>
-					<h3>orizuru</h3>
-					<div class="tsd-signature tsd-kind-icon">orizuru<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
+					<a name="jwtsigningkey" class="tsd-anchor"></a>
+					<h3>jwt<wbr>Signing<wbr>Key</h3>
+					<div class="tsd-signature tsd-kind-icon">jwt<wbr>Signing<wbr>Key<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/4e84cbb/src/index.ts#L77">index.ts:77</a></li>
+							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/677bec4/src/index.ts#L62">index.ts:62</a></li>
 						</ul>
 					</aside>
-					<div class="tsd-type-declaration">
-						<h4>Type declaration</h4>
-						<ul class="tsd-parameters">
-							<li class="tsd-parameter">
-								<h5>grant<wbr>Checked<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></h5>
-							</li>
-							<li class="tsd-parameter">
-								<h5>user<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">object</span></h5>
-								<ul class="tsd-parameters">
-									<li class="tsd-parameter">
-										<h5>organization<wbr>Id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></h5>
-									</li>
-								</ul>
-							</li>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-external">
+					<a name="openidclientid" class="tsd-anchor"></a>
+					<h3>openid<wbr>Client<wbr>Id</h3>
+					<div class="tsd-signature tsd-kind-icon">openid<wbr>Client<wbr>Id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/677bec4/src/index.ts#L63">index.ts:63</a></li>
 						</ul>
-					</div>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-external">
+					<a name="openidhttptimeout" class="tsd-anchor"></a>
+					<h3>openidHTTPTimeout</h3>
+					<div class="tsd-signature tsd-kind-icon">openidHTTPTimeout<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/677bec4/src/index.ts#L64">index.ts:64</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-external">
+					<a name="openidissueruri" class="tsd-anchor"></a>
+					<h3>openid<wbr>IssuerURI</h3>
+					<div class="tsd-signature tsd-kind-icon">openid<wbr>IssuerURI<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/677bec4/src/index.ts#L65">index.ts:65</a></li>
+						</ul>
+					</aside>
 				</section>
 			</section>
 		</div>
@@ -123,118 +150,43 @@
 					<li class="globals  ">
 						<a href="../globals.html"><em>Globals</em></a>
 					</li>
+					<li class="label tsd-is-external">
+						<span>Externals</span>
+					</li>
+					<li class="current tsd-kind-module tsd-is-external">
+						<a href="../modules/options.html">Options</a>
+					</li>
+					<li class=" tsd-kind-module tsd-is-external tsd-is-not-exported">
+						<a href="../modules/__global.html">__global</a>
+					</li>
+					<li class=" tsd-kind-module tsd-parent-kind-module tsd-is-external tsd-is-not-exported">
+						<a href="../modules/__global.orizuru.html">__global.<wbr>Orizuru</a>
+					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
-					<li class=" tsd-kind-interface tsd-is-external">
-						<a href="igrant.html" class="tsd-kind-icon">IGrant</a>
-					</li>
 				</ul>
 				<ul class="current">
-					<li class="current tsd-kind-interface tsd-is-external">
-						<a href="iorizuruauth.html" class="tsd-kind-icon">IOrizuru<wbr>Auth</a>
+					<li class="current tsd-kind-interface tsd-parent-kind-module tsd-is-external">
+						<a href="options.auth.html" class="tsd-kind-icon">Auth</a>
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-external">
-								<a href="iorizuruauth.html#orizuru" class="tsd-kind-icon">orizuru</a>
+								<a href="options.auth.html#jwtsigningkey" class="tsd-kind-icon">jwt<wbr>Signing<wbr>Key</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-external">
+								<a href="options.auth.html#openidclientid" class="tsd-kind-icon">openid<wbr>Client<wbr>Id</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-external">
+								<a href="options.auth.html#openidhttptimeout" class="tsd-kind-icon">openidHTTPTimeout</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-external">
+								<a href="options.auth.html#openidissueruri" class="tsd-kind-icon">openid<wbr>IssuerURI</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
-					<li class=" tsd-kind-interface tsd-is-external">
-						<a href="iuser.html" class="tsd-kind-icon">IUser</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-is-private tsd-is-not-exported">
-						<a href="../globals.html#bearer_prefix" class="tsd-kind-icon">BEARER_<wbr>PREFIX</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-is-private tsd-is-not-exported">
-						<a href="../globals.html#denied_event" class="tsd-kind-icon">DENIED_<wbr>EVENT</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-is-private tsd-is-not-exported">
-						<a href="../globals.html#grant_checked_event" class="tsd-kind-icon">GRANT_<wbr>CHECKED_<wbr>EVENT</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-is-private tsd-is-not-exported">
-						<a href="../globals.html#http_authorization_header" class="tsd-kind-icon">HTTP_<wbr>AUTHORIZATION_<wbr>HEADER</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-is-private tsd-is-not-exported">
-						<a href="../globals.html#jwt_bearer_grant" class="tsd-kind-icon">JWT_<wbr>BEARER_<wbr>GRANT</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-is-private tsd-is-not-exported">
-						<a href="../globals.html#jwt_grant_type" class="tsd-kind-icon">JWT_<wbr>GRANT_<wbr>TYPE</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-is-private tsd-is-not-exported">
-						<a href="../globals.html#rsa_256" class="tsd-kind-icon">RSA_<wbr>256</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-is-private tsd-is-not-exported">
-						<a href="../globals.html#token_validated_event" class="tsd-kind-icon">TOKEN_<wbr>VALIDATED_<wbr>EVENT</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-is-private tsd-is-not-exported">
-						<a href="../globals.html#cache" class="tsd-kind-icon">cache</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="../globals.html#emitter" class="tsd-kind-icon">emitter</a>
-					</li>
-					<li class=" tsd-kind-function tsd-is-private tsd-is-not-exported">
-						<a href="../globals.html#buildissuer" class="tsd-kind-icon">build<wbr>Issuer</a>
-					</li>
-					<li class=" tsd-kind-function tsd-is-private tsd-is-not-exported">
-						<a href="../globals.html#checkuserisontherequest" class="tsd-kind-icon">check<wbr>User<wbr>IsOn<wbr>The<wbr>Request</a>
-					</li>
-					<li class=" tsd-kind-function tsd-is-private">
-						<a href="../globals.html#clearcache" class="tsd-kind-icon">clear<wbr>Cache</a>
-					</li>
-					<li class=" tsd-kind-function tsd-is-private">
-						<a href="../globals.html#constructissuer" class="tsd-kind-icon">construct<wbr>Issuer</a>
-					</li>
-					<li class=" tsd-kind-function tsd-is-private">
-						<a href="../globals.html#constructsignedjwt" class="tsd-kind-icon">construct<wbr>Signed<wbr>Jwt</a>
-					</li>
-					<li class=" tsd-kind-function tsd-is-private tsd-is-not-exported">
-						<a href="../globals.html#convertgranttocredentials" class="tsd-kind-icon">convert<wbr>Grant<wbr>ToCredentials</a>
-					</li>
-					<li class=" tsd-kind-function tsd-is-private tsd-is-not-exported">
-						<a href="../globals.html#createkey" class="tsd-kind-icon">create<wbr>Key</a>
-					</li>
-					<li class=" tsd-kind-function tsd-is-private tsd-is-not-exported">
-						<a href="../globals.html#extractaccesstoken" class="tsd-kind-icon">extract<wbr>Access<wbr>Token</a>
-					</li>
-					<li class=" tsd-kind-function tsd-is-private tsd-is-not-exported">
-						<a href="../globals.html#fail" class="tsd-kind-icon">fail</a>
-					</li>
-					<li class=" tsd-kind-function tsd-is-private tsd-is-not-exported">
-						<a href="../globals.html#getorcreate" class="tsd-kind-icon">get<wbr>OrCreate</a>
-					</li>
-					<li class=" tsd-kind-function">
-						<a href="../globals.html#gettoken" class="tsd-kind-icon">get<wbr>Token</a>
-					</li>
-					<li class=" tsd-kind-function">
-						<a href="../globals.html#grantchecker" class="tsd-kind-icon">grant<wbr>Checker</a>
-					</li>
-					<li class=" tsd-kind-function tsd-is-private">
-						<a href="../globals.html#obtainauthorizationgrant" class="tsd-kind-icon">obtain<wbr>Authorization<wbr>Grant</a>
-					</li>
-					<li class=" tsd-kind-function tsd-is-private tsd-is-not-exported">
-						<a href="../globals.html#setgrant" class="tsd-kind-icon">set<wbr>Grant</a>
-					</li>
-					<li class=" tsd-kind-function tsd-is-private tsd-is-not-exported">
-						<a href="../globals.html#setuseronrequest" class="tsd-kind-icon">set<wbr>User<wbr>OnRequest</a>
-					</li>
-					<li class=" tsd-kind-function">
-						<a href="../globals.html#tokenvalidator" class="tsd-kind-icon">token<wbr>Validator</a>
-					</li>
-					<li class=" tsd-kind-function tsd-is-private">
-						<a href="../globals.html#validate" class="tsd-kind-icon">validate</a>
-					</li>
-					<li class=" tsd-kind-function tsd-is-private tsd-is-not-exported">
-						<a href="../globals.html#validateaccesstoken" class="tsd-kind-icon">validate<wbr>Access<wbr>Token</a>
-					</li>
-					<li class=" tsd-kind-function tsd-is-private tsd-is-not-exported">
-						<a href="../globals.html#validateuser" class="tsd-kind-icon">validate<wbr>User</a>
-					</li>
-					<li class=" tsd-kind-object-literal tsd-is-private tsd-is-not-exported">
-						<a href="../globals.html#rsa_256_algorithm" class="tsd-kind-icon">RSA_<wbr>256_<wbr>ALGORITHM</a>
-					</li>
 				</ul>
 			</nav>
 		</div>

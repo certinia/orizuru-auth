@@ -77,14 +77,15 @@
 						<section class="tsd-index-section tsd-is-external">
 							<h3>Interfaces</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-interface tsd-is-external"><a href="interfaces/igrant.html" class="tsd-kind-icon">IGrant</a></li>
-								<li class="tsd-kind-interface tsd-is-external"><a href="interfaces/iorizuruauth.html" class="tsd-kind-icon">IOrizuru<wbr>Auth</a></li>
-								<li class="tsd-kind-interface tsd-is-external"><a href="interfaces/iuser.html" class="tsd-kind-icon">IUser</a></li>
+								<li class="tsd-kind-interface tsd-is-external"><a href="interfaces/accesstokenresponse.html" class="tsd-kind-icon">Access<wbr>Token<wbr>Response</a></li>
+								<li class="tsd-kind-interface tsd-is-external"><a href="interfaces/grant.html" class="tsd-kind-icon">Grant</a></li>
+								<li class="tsd-kind-interface tsd-is-external"><a href="interfaces/user.html" class="tsd-kind-icon">User</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Variables</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-variable tsd-is-not-exported"><a href="globals.html#assertion_type" class="tsd-kind-icon">ASSERTION_<wbr>TYPE</a></li>
 								<li class="tsd-kind-variable tsd-is-private tsd-is-not-exported"><a href="globals.html#bearer_prefix" class="tsd-kind-icon">BEARER_<wbr>PREFIX</a></li>
 								<li class="tsd-kind-variable tsd-is-private tsd-is-not-exported"><a href="globals.html#denied_event" class="tsd-kind-icon">DENIED_<wbr>EVENT</a></li>
 								<li class="tsd-kind-variable tsd-is-private tsd-is-not-exported"><a href="globals.html#grant_checked_event" class="tsd-kind-icon">GRANT_<wbr>CHECKED_<wbr>EVENT</a></li>
@@ -104,15 +105,18 @@
 								<li class="tsd-kind-function tsd-is-private tsd-is-not-exported"><a href="globals.html#checkuserisontherequest" class="tsd-kind-icon">check<wbr>User<wbr>IsOn<wbr>The<wbr>Request</a></li>
 								<li class="tsd-kind-function tsd-is-private"><a href="globals.html#clearcache" class="tsd-kind-icon">clear<wbr>Cache</a></li>
 								<li class="tsd-kind-function tsd-is-private"><a href="globals.html#constructissuer" class="tsd-kind-icon">construct<wbr>Issuer</a></li>
-								<li class="tsd-kind-function tsd-is-private"><a href="globals.html#constructsignedjwt" class="tsd-kind-icon">construct<wbr>Signed<wbr>Jwt</a></li>
+								<li class="tsd-kind-function tsd-is-private"><a href="globals.html#constructissuerclient" class="tsd-kind-icon">construct<wbr>Issuer<wbr>Client</a></li>
 								<li class="tsd-kind-function tsd-is-private tsd-is-not-exported"><a href="globals.html#convertgranttocredentials" class="tsd-kind-icon">convert<wbr>Grant<wbr>ToCredentials</a></li>
+								<li class="tsd-kind-function"><a href="globals.html#createjwtbearerclientassertion" class="tsd-kind-icon">create<wbr>Jwt<wbr>Bearer<wbr>Client<wbr>Assertion</a></li>
+								<li class="tsd-kind-function"><a href="globals.html#createjwtbearergrantassertion" class="tsd-kind-icon">create<wbr>Jwt<wbr>Bearer<wbr>Grant<wbr>Assertion</a></li>
 								<li class="tsd-kind-function tsd-is-private tsd-is-not-exported"><a href="globals.html#createkey" class="tsd-kind-icon">create<wbr>Key</a></li>
 								<li class="tsd-kind-function tsd-is-private tsd-is-not-exported"><a href="globals.html#extractaccesstoken" class="tsd-kind-icon">extract<wbr>Access<wbr>Token</a></li>
 								<li class="tsd-kind-function tsd-is-private tsd-is-not-exported"><a href="globals.html#fail" class="tsd-kind-icon">fail</a></li>
-								<li class="tsd-kind-function tsd-is-private tsd-is-not-exported"><a href="globals.html#getorcreate" class="tsd-kind-icon">get<wbr>OrCreate</a></li>
+								<li class="tsd-kind-function"><a href="globals.html#generateauthorizeurl" class="tsd-kind-icon">generate<wbr>Authorize<wbr>Url</a></li>
 								<li class="tsd-kind-function"><a href="globals.html#gettoken" class="tsd-kind-icon">get<wbr>Token</a></li>
 								<li class="tsd-kind-function"><a href="globals.html#grantchecker" class="tsd-kind-icon">grant<wbr>Checker</a></li>
 								<li class="tsd-kind-function tsd-is-private"><a href="globals.html#obtainauthorizationgrant" class="tsd-kind-icon">obtain<wbr>Authorization<wbr>Grant</a></li>
+								<li class="tsd-kind-function"><a href="globals.html#requestaccesstokenwithclientassertion" class="tsd-kind-icon">request<wbr>Access<wbr>Token<wbr>With<wbr>Client<wbr>Assertion</a></li>
 								<li class="tsd-kind-function tsd-is-private tsd-is-not-exported"><a href="globals.html#setgrant" class="tsd-kind-icon">set<wbr>Grant</a></li>
 								<li class="tsd-kind-function tsd-is-private tsd-is-not-exported"><a href="globals.html#setuseronrequest" class="tsd-kind-icon">set<wbr>User<wbr>OnRequest</a></li>
 								<li class="tsd-kind-function"><a href="globals.html#tokenvalidator" class="tsd-kind-icon">token<wbr>Validator</a></li>
@@ -132,13 +136,23 @@
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Variables</h2>
+				<section class="tsd-panel tsd-member tsd-kind-variable tsd-is-not-exported">
+					<a name="assertion_type" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> ASSERTION_<wbr>TYPE</h3>
+					<div class="tsd-signature tsd-kind-icon">ASSERTION_<wbr>TYPE<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"urn:ietf:params:oauth:client-assertion-type:jwt-bearer"</span><span class="tsd-signature-symbol"> =&nbsp;&quot;urn:ietf:params:oauth:client-assertion-type:jwt-bearer&quot;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/677bec4/src/openid/webFlow.ts#L34">openid/webFlow.ts:34</a></li>
+						</ul>
+					</aside>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-variable tsd-is-private tsd-is-not-exported">
 					<a name="bearer_prefix" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagPrivate">Private</span> <span class="tsd-flag ts-flagConst">Const</span> BEARER_<wbr>PREFIX</h3>
 					<div class="tsd-signature tsd-kind-icon">BEARER_<wbr>PREFIX<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;&quot;Bearer &quot;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/4e84cbb/src/openid/middleware.ts#L46">openid/middleware.ts:46</a></li>
+							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/677bec4/src/openid/middleware.ts#L48">openid/middleware.ts:48</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -150,7 +164,7 @@
 					<div class="tsd-signature tsd-kind-icon">DENIED_<wbr>EVENT<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"denied"</span><span class="tsd-signature-symbol"> =&nbsp;&quot;denied&quot;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/4e84cbb/src/openid/middleware.ts#L51">openid/middleware.ts:51</a></li>
+							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/677bec4/src/openid/middleware.ts#L53">openid/middleware.ts:53</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -162,7 +176,7 @@
 					<div class="tsd-signature tsd-kind-icon">GRANT_<wbr>CHECKED_<wbr>EVENT<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"grant_checked"</span><span class="tsd-signature-symbol"> =&nbsp;&quot;grant_checked&quot;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/4e84cbb/src/openid/middleware.ts#L56">openid/middleware.ts:56</a></li>
+							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/677bec4/src/openid/middleware.ts#L58">openid/middleware.ts:58</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -174,7 +188,7 @@
 					<div class="tsd-signature tsd-kind-icon">HTTP_<wbr>AUTHORIZATION_<wbr>HEADER<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;&quot;Authorization&quot;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/4e84cbb/src/openid/middleware.ts#L61">openid/middleware.ts:61</a></li>
+							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/677bec4/src/openid/middleware.ts#L63">openid/middleware.ts:63</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -186,7 +200,7 @@
 					<div class="tsd-signature tsd-kind-icon">JWT_<wbr>BEARER_<wbr>GRANT<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"urn:ietf:params:oauth:grant-type:jwt-bearer"</span><span class="tsd-signature-symbol"> =&nbsp;&quot;urn:ietf:params:oauth:grant-type:jwt-bearer&quot;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/4e84cbb/src/openid/shared/functions.ts#L40">openid/shared/functions.ts:40</a></li>
+							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/677bec4/src/openid/shared/authorizationGrant.ts#L37">openid/shared/authorizationGrant.ts:37</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -198,7 +212,7 @@
 					<div class="tsd-signature tsd-kind-icon">JWT_<wbr>GRANT_<wbr>TYPE<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"grant_type"</span><span class="tsd-signature-symbol"> =&nbsp;&quot;grant_type&quot;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/4e84cbb/src/openid/shared/functions.ts#L35">openid/shared/functions.ts:35</a></li>
+							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/677bec4/src/openid/shared/authorizationGrant.ts#L32">openid/shared/authorizationGrant.ts:32</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -210,7 +224,7 @@
 					<div class="tsd-signature tsd-kind-icon">RSA_<wbr>256<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"RS256"</span><span class="tsd-signature-symbol"> =&nbsp;&quot;RS256&quot;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/4e84cbb/src/openid/shared/functions.ts#L45">openid/shared/functions.ts:45</a></li>
+							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/677bec4/src/openid/shared/jwt.ts#L36">openid/shared/jwt.ts:36</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -222,7 +236,7 @@
 					<div class="tsd-signature tsd-kind-icon">TOKEN_<wbr>VALIDATED_<wbr>EVENT<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"token_validated"</span><span class="tsd-signature-symbol"> =&nbsp;&quot;token_validated&quot;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/4e84cbb/src/openid/middleware.ts#L66">openid/middleware.ts:66</a></li>
+							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/677bec4/src/openid/middleware.ts#L68">openid/middleware.ts:68</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -234,7 +248,7 @@
 					<div class="tsd-signature tsd-kind-icon">cache<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/4e84cbb/src/openid/shared/issuer.ts#L35">openid/shared/issuer.ts:35</a></li>
+							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/677bec4/src/openid/shared/issuer.ts#L35">openid/shared/issuer.ts:35</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -254,7 +268,7 @@
 					<div class="tsd-signature tsd-kind-icon">emitter<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">EventEmitter</span><span class="tsd-signature-symbol"> =&nbsp;new EventEmitter()</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/4e84cbb/src/openid/middleware.ts#L164">openid/middleware.ts:164</a></li>
+							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/677bec4/src/openid/middleware.ts#L165">openid/middleware.ts:165</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -271,7 +285,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/4e84cbb/src/openid/shared/issuer.ts#L47">openid/shared/issuer.ts:47</a></li>
+									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/677bec4/src/openid/shared/issuer.ts#L47">openid/shared/issuer.ts:47</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -293,13 +307,13 @@
 					<a name="checkuserisontherequest" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagPrivate">Private</span> check<wbr>User<wbr>IsOn<wbr>The<wbr>Request</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-is-private tsd-is-not-exported">
-						<li class="tsd-signature tsd-kind-icon">check<wbr>User<wbr>IsOn<wbr>The<wbr>Request<span class="tsd-signature-symbol">(</span>req<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Request</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="interfaces/iuser.html" class="tsd-signature-type">IUser</a></li>
+						<li class="tsd-signature tsd-kind-icon">check<wbr>User<wbr>IsOn<wbr>The<wbr>Request<span class="tsd-signature-symbol">(</span>req<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Request</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="interfaces/user.html" class="tsd-signature-type">User</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/4e84cbb/src/openid/middleware.ts#L88">openid/middleware.ts:88</a></li>
+									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/677bec4/src/openid/middleware.ts#L90">openid/middleware.ts:90</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -310,7 +324,7 @@
 									<h5>req: <span class="tsd-signature-type">Request</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="interfaces/iuser.html" class="tsd-signature-type">IUser</a></h4>
+							<h4 class="tsd-returns-title">Returns <a href="interfaces/user.html" class="tsd-signature-type">User</a></h4>
 						</li>
 					</ul>
 				</section>
@@ -324,7 +338,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/4e84cbb/src/openid/shared/issuer.ts#L79">openid/shared/issuer.ts:79</a></li>
+									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/677bec4/src/openid/shared/issuer.ts#L60">openid/shared/issuer.ts:60</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -337,13 +351,13 @@
 					<a name="constructissuer" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagPrivate">Private</span> construct<wbr>Issuer</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-is-private">
-						<li class="tsd-signature tsd-kind-icon">construct<wbr>Issuer<span class="tsd-signature-symbol">(</span>env<span class="tsd-signature-symbol">: </span><a href="interfaces/options.iauth.html" class="tsd-signature-type">IAuth</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Client</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">construct<wbr>Issuer<span class="tsd-signature-symbol">(</span>env<span class="tsd-signature-symbol">: </span><a href="interfaces/options.auth.html" class="tsd-signature-type">Auth</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Issuer</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/4e84cbb/src/openid/shared/issuer.ts#L87">openid/shared/issuer.ts:87</a></li>
+									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/677bec4/src/openid/shared/issuer.ts#L69">openid/shared/issuer.ts:69</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -351,24 +365,24 @@
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>env: <a href="interfaces/options.iauth.html" class="tsd-signature-type">IAuth</a></h5>
+									<h5>env: <a href="interfaces/options.auth.html" class="tsd-signature-type">Auth</a></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Client</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Issuer</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-function tsd-is-private">
-					<a name="constructsignedjwt" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagPrivate">Private</span> construct<wbr>Signed<wbr>Jwt</h3>
+					<a name="constructissuerclient" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> construct<wbr>Issuer<wbr>Client</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-is-private">
-						<li class="tsd-signature tsd-kind-icon">construct<wbr>Signed<wbr>Jwt<span class="tsd-signature-symbol">(</span>env<span class="tsd-signature-symbol">: </span><a href="interfaces/options.iauth.html" class="tsd-signature-type">IAuth</a>, issuerClient<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">openidClient.Client</span>, user<span class="tsd-signature-symbol">: </span><a href="interfaces/iuser.html" class="tsd-signature-type">IUser</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">construct<wbr>Issuer<wbr>Client<span class="tsd-signature-symbol">(</span>env<span class="tsd-signature-symbol">: </span><a href="interfaces/options.auth.html" class="tsd-signature-type">Auth</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Client</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/4e84cbb/src/openid/shared/functions.ts#L55">openid/shared/functions.ts:55</a></li>
+									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/677bec4/src/openid/shared/issuer.ts#L88">openid/shared/issuer.ts:88</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -376,16 +390,10 @@
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>env: <a href="interfaces/options.iauth.html" class="tsd-signature-type">IAuth</a></h5>
-								</li>
-								<li>
-									<h5>issuerClient: <span class="tsd-signature-type">openidClient.Client</span></h5>
-								</li>
-								<li>
-									<h5>user: <a href="interfaces/iuser.html" class="tsd-signature-type">IUser</a></h5>
+									<h5>env: <a href="interfaces/options.auth.html" class="tsd-signature-type">Auth</a></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Client</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -393,13 +401,13 @@
 					<a name="convertgranttocredentials" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagPrivate">Private</span> convert<wbr>Grant<wbr>ToCredentials</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-is-private tsd-is-not-exported">
-						<li class="tsd-signature tsd-kind-icon">convert<wbr>Grant<wbr>ToCredentials<span class="tsd-signature-symbol">(</span>grant<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">IOpenIdGrant</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="interfaces/igrant.html" class="tsd-signature-type">IGrant</a></li>
+						<li class="tsd-signature tsd-kind-icon">convert<wbr>Grant<wbr>ToCredentials<span class="tsd-signature-symbol">(</span>grant<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">OpenIdGrant</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="interfaces/grant.html" class="tsd-signature-type">Grant</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/4e84cbb/src/openid/grant.ts#L57">openid/grant.ts:57</a></li>
+									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/677bec4/src/openid/grant.ts#L58">openid/grant.ts:58</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -407,10 +415,62 @@
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>grant: <span class="tsd-signature-type">IOpenIdGrant</span></h5>
+									<h5>grant: <span class="tsd-signature-type">OpenIdGrant</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="interfaces/igrant.html" class="tsd-signature-type">IGrant</a></h4>
+							<h4 class="tsd-returns-title">Returns <a href="interfaces/grant.html" class="tsd-signature-type">Grant</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function">
+					<a name="createjwtbearerclientassertion" class="tsd-anchor"></a>
+					<h3>create<wbr>Jwt<wbr>Bearer<wbr>Client<wbr>Assertion</h3>
+					<ul class="tsd-signatures tsd-kind-function">
+						<li class="tsd-signature tsd-kind-icon">create<wbr>Jwt<wbr>Bearer<wbr>Client<wbr>Assertion<span class="tsd-signature-symbol">(</span>env<span class="tsd-signature-symbol">: </span><a href="interfaces/options.auth.html" class="tsd-signature-type">Auth</a>, issuer<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Issuer</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/677bec4/src/openid/shared/jwt.ts#L43">openid/shared/jwt.ts:43</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>env: <a href="interfaces/options.auth.html" class="tsd-signature-type">Auth</a></h5>
+								</li>
+								<li>
+									<h5>issuer: <span class="tsd-signature-type">Issuer</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function">
+					<a name="createjwtbearergrantassertion" class="tsd-anchor"></a>
+					<h3>create<wbr>Jwt<wbr>Bearer<wbr>Grant<wbr>Assertion</h3>
+					<ul class="tsd-signatures tsd-kind-function">
+						<li class="tsd-signature tsd-kind-icon">create<wbr>Jwt<wbr>Bearer<wbr>Grant<wbr>Assertion<span class="tsd-signature-symbol">(</span>env<span class="tsd-signature-symbol">: </span><a href="interfaces/options.auth.html" class="tsd-signature-type">Auth</a>, user<span class="tsd-signature-symbol">: </span><a href="interfaces/user.html" class="tsd-signature-type">User</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/677bec4/src/openid/shared/jwt.ts#L65">openid/shared/jwt.ts:65</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>env: <a href="interfaces/options.auth.html" class="tsd-signature-type">Auth</a></h5>
+								</li>
+								<li>
+									<h5>user: <a href="interfaces/user.html" class="tsd-signature-type">User</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -424,7 +484,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/4e84cbb/src/openid/shared/issuer.ts#L40">openid/shared/issuer.ts:40</a></li>
+									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/677bec4/src/openid/shared/issuer.ts#L40">openid/shared/issuer.ts:40</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -452,7 +512,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/4e84cbb/src/openid/middleware.ts#L71">openid/middleware.ts:71</a></li>
+									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/677bec4/src/openid/middleware.ts#L73">openid/middleware.ts:73</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -477,7 +537,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/4e84cbb/src/openid/middleware.ts#L152">openid/middleware.ts:152</a></li>
+									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/677bec4/src/openid/middleware.ts#L153">openid/middleware.ts:153</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -495,28 +555,32 @@
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-function tsd-is-private tsd-is-not-exported">
-					<a name="getorcreate" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagPrivate">Private</span> get<wbr>OrCreate</h3>
-					<ul class="tsd-signatures tsd-kind-function tsd-is-private tsd-is-not-exported">
-						<li class="tsd-signature tsd-kind-icon">get<wbr>OrCreate<span class="tsd-signature-symbol">(</span>env<span class="tsd-signature-symbol">: </span><a href="interfaces/options.iauth.html" class="tsd-signature-type">IAuth</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Issuer</span><span class="tsd-signature-symbol">&gt;</span></li>
+				<section class="tsd-panel tsd-member tsd-kind-function">
+					<a name="generateauthorizeurl" class="tsd-anchor"></a>
+					<h3>generate<wbr>Authorize<wbr>Url</h3>
+					<ul class="tsd-signatures tsd-kind-function">
+						<li class="tsd-signature tsd-kind-icon">generate<wbr>Authorize<wbr>Url<span class="tsd-signature-symbol">(</span>env<span class="tsd-signature-symbol">: </span><a href="interfaces/options.auth.html" class="tsd-signature-type">Auth</a>, redirectUri<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, state<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/4e84cbb/src/openid/shared/issuer.ts#L60">openid/shared/issuer.ts:60</a></li>
+									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/677bec4/src/openid/webFlow.ts#L36">openid/webFlow.ts:36</a></li>
 								</ul>
 							</aside>
-							<div class="tsd-comment tsd-typography">
-							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>env: <a href="interfaces/options.iauth.html" class="tsd-signature-type">IAuth</a></h5>
+									<h5>env: <a href="interfaces/options.auth.html" class="tsd-signature-type">Auth</a></h5>
+								</li>
+								<li>
+									<h5>redirectUri: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5>state: <span class="tsd-signature-type">string</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Issuer</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -524,13 +588,13 @@
 					<a name="gettoken" class="tsd-anchor"></a>
 					<h3>get<wbr>Token</h3>
 					<ul class="tsd-signatures tsd-kind-function">
-						<li class="tsd-signature tsd-kind-icon">get<wbr>Token<span class="tsd-signature-symbol">(</span>env<span class="tsd-signature-symbol">: </span><a href="interfaces/options.iauth.html" class="tsd-signature-type">IAuth</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">(Anonymous function)</span></li>
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Token<span class="tsd-signature-symbol">(</span>env<span class="tsd-signature-symbol">: </span><a href="interfaces/options.auth.html" class="tsd-signature-type">Auth</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">(Anonymous function)</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/4e84cbb/src/openid/grant.ts#L67">openid/grant.ts:67</a></li>
+									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/677bec4/src/openid/grant.ts#L68">openid/grant.ts:68</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -541,7 +605,7 @@
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>env: <a href="interfaces/options.iauth.html" class="tsd-signature-type">IAuth</a></h5>
+									<h5>env: <a href="interfaces/options.auth.html" class="tsd-signature-type">Auth</a></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">(Anonymous function)</span></h4>
@@ -552,13 +616,13 @@
 					<a name="grantchecker" class="tsd-anchor"></a>
 					<h3>grant<wbr>Checker</h3>
 					<ul class="tsd-signatures tsd-kind-function">
-						<li class="tsd-signature tsd-kind-icon">grant<wbr>Checker<span class="tsd-signature-symbol">(</span>env<span class="tsd-signature-symbol">: </span><a href="interfaces/options.iauth.html" class="tsd-signature-type">IAuth</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">(Anonymous function)</span></li>
+						<li class="tsd-signature tsd-kind-icon">grant<wbr>Checker<span class="tsd-signature-symbol">(</span>env<span class="tsd-signature-symbol">: </span><a href="interfaces/options.auth.html" class="tsd-signature-type">Auth</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">(Anonymous function)</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/4e84cbb/src/openid/middleware.ts#L174">openid/middleware.ts:174</a></li>
+									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/677bec4/src/openid/middleware.ts#L175">openid/middleware.ts:175</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -574,7 +638,7 @@
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>env: <a href="interfaces/options.iauth.html" class="tsd-signature-type">IAuth</a></h5>
+									<h5>env: <a href="interfaces/options.auth.html" class="tsd-signature-type">Auth</a></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">(Anonymous function)</span></h4>
@@ -585,13 +649,13 @@
 					<a name="obtainauthorizationgrant" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagPrivate">Private</span> obtain<wbr>Authorization<wbr>Grant</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-is-private">
-						<li class="tsd-signature tsd-kind-icon">obtain<wbr>Authorization<wbr>Grant<span class="tsd-signature-symbol">(</span>assertion<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, issuerClient<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">openidClient.Client</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">IOpenIdGrant</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">obtain<wbr>Authorization<wbr>Grant<span class="tsd-signature-symbol">(</span>assertion<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, issuerClient<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">openidClient.Client</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">OpenIdGrant</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/4e84cbb/src/openid/shared/functions.ts#L83">openid/shared/functions.ts:83</a></li>
+									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/677bec4/src/openid/shared/authorizationGrant.ts#L42">openid/shared/authorizationGrant.ts:42</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -605,7 +669,39 @@
 									<h5>issuerClient: <span class="tsd-signature-type">openidClient.Client</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">IOpenIdGrant</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">OpenIdGrant</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function">
+					<a name="requestaccesstokenwithclientassertion" class="tsd-anchor"></a>
+					<h3>request<wbr>Access<wbr>Token<wbr>With<wbr>Client<wbr>Assertion</h3>
+					<ul class="tsd-signatures tsd-kind-function">
+						<li class="tsd-signature tsd-kind-icon">request<wbr>Access<wbr>Token<wbr>With<wbr>Client<wbr>Assertion<span class="tsd-signature-symbol">(</span>env<span class="tsd-signature-symbol">: </span><a href="interfaces/options.auth.html" class="tsd-signature-type">Auth</a>, redirectUri<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, state<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, code<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="interfaces/accesstokenresponse.html" class="tsd-signature-type">AccessTokenResponse</a><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/677bec4/src/openid/webFlow.ts#L48">openid/webFlow.ts:48</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>env: <a href="interfaces/options.auth.html" class="tsd-signature-type">Auth</a></h5>
+								</li>
+								<li>
+									<h5>redirectUri: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5>state: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5>code: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="interfaces/accesstokenresponse.html" class="tsd-signature-type">AccessTokenResponse</a><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -619,7 +715,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/4e84cbb/src/openid/middleware.ts#L135">openid/middleware.ts:135</a></li>
+									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/677bec4/src/openid/middleware.ts#L136">openid/middleware.ts:136</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -638,13 +734,13 @@
 					<a name="setuseronrequest" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagPrivate">Private</span> set<wbr>User<wbr>OnRequest</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-is-private tsd-is-not-exported">
-						<li class="tsd-signature tsd-kind-icon">set<wbr>User<wbr>OnRequest<span class="tsd-signature-symbol">(</span>req<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Request</span>, userInfo<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">IUserInfo</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">set<wbr>User<wbr>OnRequest<span class="tsd-signature-symbol">(</span>req<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Request</span>, userInfo<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">UserInfo</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/4e84cbb/src/openid/middleware.ts#L116">openid/middleware.ts:116</a></li>
+									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/677bec4/src/openid/middleware.ts#L118">openid/middleware.ts:118</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -655,7 +751,7 @@
 									<h5>req: <span class="tsd-signature-type">Request</span></h5>
 								</li>
 								<li>
-									<h5>userInfo: <span class="tsd-signature-type">IUserInfo</span></h5>
+									<h5>userInfo: <span class="tsd-signature-type">UserInfo</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -666,13 +762,13 @@
 					<a name="tokenvalidator" class="tsd-anchor"></a>
 					<h3>token<wbr>Validator</h3>
 					<ul class="tsd-signatures tsd-kind-function">
-						<li class="tsd-signature tsd-kind-icon">token<wbr>Validator<span class="tsd-signature-symbol">(</span>env<span class="tsd-signature-symbol">: </span><a href="interfaces/options.iauth.html" class="tsd-signature-type">IAuth</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">(Anonymous function)</span></li>
+						<li class="tsd-signature tsd-kind-icon">token<wbr>Validator<span class="tsd-signature-symbol">(</span>env<span class="tsd-signature-symbol">: </span><a href="interfaces/options.auth.html" class="tsd-signature-type">Auth</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">(Anonymous function)</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/4e84cbb/src/openid/middleware.ts#L203">openid/middleware.ts:203</a></li>
+									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/677bec4/src/openid/middleware.ts#L204">openid/middleware.ts:204</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -685,7 +781,7 @@
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>env: <a href="interfaces/options.iauth.html" class="tsd-signature-type">IAuth</a></h5>
+									<h5>env: <a href="interfaces/options.auth.html" class="tsd-signature-type">Auth</a></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">(Anonymous function)</span></h4>
@@ -702,7 +798,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/4e84cbb/src/openid/shared/envValidator.ts#L33">openid/shared/envValidator.ts:33</a></li>
+									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/677bec4/src/openid/shared/envValidator.ts#L33">openid/shared/envValidator.ts:33</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -749,13 +845,13 @@
 					<a name="validateaccesstoken" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagPrivate">Private</span> validate<wbr>Access<wbr>Token</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-is-private tsd-is-not-exported">
-						<li class="tsd-signature tsd-kind-icon">validate<wbr>Access<wbr>Token<span class="tsd-signature-symbol">(</span>issuerClient<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Client</span>, accessToken<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">IUserInfo</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">validate<wbr>Access<wbr>Token<span class="tsd-signature-symbol">(</span>issuerClient<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Client</span>, accessToken<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">UserInfo</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/4e84cbb/src/openid/middleware.ts#L103">openid/middleware.ts:103</a></li>
+									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/677bec4/src/openid/middleware.ts#L105">openid/middleware.ts:105</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -769,7 +865,7 @@
 									<h5>accessToken: <span class="tsd-signature-type">string</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">IUserInfo</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">UserInfo</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -777,13 +873,13 @@
 					<a name="validateuser" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagPrivate">Private</span> validate<wbr>User</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-is-private tsd-is-not-exported">
-						<li class="tsd-signature tsd-kind-icon">validate<wbr>User<span class="tsd-signature-symbol">(</span>user<span class="tsd-signature-symbol">: </span><a href="interfaces/iuser.html" class="tsd-signature-type">IUser</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">validate<wbr>User<span class="tsd-signature-symbol">(</span>user<span class="tsd-signature-symbol">: </span><a href="interfaces/user.html" class="tsd-signature-type">User</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/4e84cbb/src/openid/grant.ts#L42">openid/grant.ts:42</a></li>
+									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/677bec4/src/openid/grant.ts#L43">openid/grant.ts:43</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -791,7 +887,7 @@
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>user: <a href="interfaces/iuser.html" class="tsd-signature-type">IUser</a></h5>
+									<h5>user: <a href="interfaces/user.html" class="tsd-signature-type">User</a></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -807,7 +903,7 @@
 					<div class="tsd-signature tsd-kind-icon">RSA_<wbr>256_<wbr>ALGORITHM<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/4e84cbb/src/openid/shared/functions.ts#L50">openid/shared/functions.ts:50</a></li>
+							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/677bec4/src/openid/shared/jwt.ts#L41">openid/shared/jwt.ts:41</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -818,7 +914,7 @@
 						<div class="tsd-signature tsd-kind-icon">algorithm<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;RSA_256</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/4e84cbb/src/openid/shared/functions.ts#L50">openid/shared/functions.ts:50</a></li>
+								<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/677bec4/src/openid/shared/jwt.ts#L41">openid/shared/jwt.ts:41</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -841,20 +937,23 @@
 						<a href="modules/__global.html">__global</a>
 					</li>
 					<li class=" tsd-kind-module tsd-parent-kind-module tsd-is-external tsd-is-not-exported">
-						<a href="modules/__global.express.html">__global.<wbr>Express</a>
+						<a href="modules/__global.orizuru.html">__global.<wbr>Orizuru</a>
 					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
 					<li class=" tsd-kind-interface tsd-is-external">
-						<a href="interfaces/igrant.html" class="tsd-kind-icon">IGrant</a>
+						<a href="interfaces/accesstokenresponse.html" class="tsd-kind-icon">Access<wbr>Token<wbr>Response</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-is-external">
-						<a href="interfaces/iorizuruauth.html" class="tsd-kind-icon">IOrizuru<wbr>Auth</a>
+						<a href="interfaces/grant.html" class="tsd-kind-icon">Grant</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-is-external">
-						<a href="interfaces/iuser.html" class="tsd-kind-icon">IUser</a>
+						<a href="interfaces/user.html" class="tsd-kind-icon">User</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-is-not-exported">
+						<a href="globals.html#assertion_type" class="tsd-kind-icon">ASSERTION_<wbr>TYPE</a>
 					</li>
 					<li class=" tsd-kind-variable tsd-is-private tsd-is-not-exported">
 						<a href="globals.html#bearer_prefix" class="tsd-kind-icon">BEARER_<wbr>PREFIX</a>
@@ -899,10 +998,16 @@
 						<a href="globals.html#constructissuer" class="tsd-kind-icon">construct<wbr>Issuer</a>
 					</li>
 					<li class=" tsd-kind-function tsd-is-private">
-						<a href="globals.html#constructsignedjwt" class="tsd-kind-icon">construct<wbr>Signed<wbr>Jwt</a>
+						<a href="globals.html#constructissuerclient" class="tsd-kind-icon">construct<wbr>Issuer<wbr>Client</a>
 					</li>
 					<li class=" tsd-kind-function tsd-is-private tsd-is-not-exported">
 						<a href="globals.html#convertgranttocredentials" class="tsd-kind-icon">convert<wbr>Grant<wbr>ToCredentials</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#createjwtbearerclientassertion" class="tsd-kind-icon">create<wbr>Jwt<wbr>Bearer<wbr>Client<wbr>Assertion</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#createjwtbearergrantassertion" class="tsd-kind-icon">create<wbr>Jwt<wbr>Bearer<wbr>Grant<wbr>Assertion</a>
 					</li>
 					<li class=" tsd-kind-function tsd-is-private tsd-is-not-exported">
 						<a href="globals.html#createkey" class="tsd-kind-icon">create<wbr>Key</a>
@@ -913,8 +1018,8 @@
 					<li class=" tsd-kind-function tsd-is-private tsd-is-not-exported">
 						<a href="globals.html#fail" class="tsd-kind-icon">fail</a>
 					</li>
-					<li class=" tsd-kind-function tsd-is-private tsd-is-not-exported">
-						<a href="globals.html#getorcreate" class="tsd-kind-icon">get<wbr>OrCreate</a>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#generateauthorizeurl" class="tsd-kind-icon">generate<wbr>Authorize<wbr>Url</a>
 					</li>
 					<li class=" tsd-kind-function">
 						<a href="globals.html#gettoken" class="tsd-kind-icon">get<wbr>Token</a>
@@ -924,6 +1029,9 @@
 					</li>
 					<li class=" tsd-kind-function tsd-is-private">
 						<a href="globals.html#obtainauthorizationgrant" class="tsd-kind-icon">obtain<wbr>Authorization<wbr>Grant</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#requestaccesstokenwithclientassertion" class="tsd-kind-icon">request<wbr>Access<wbr>Token<wbr>With<wbr>Client<wbr>Assertion</a>
 					</li>
 					<li class=" tsd-kind-function tsd-is-private tsd-is-not-exported">
 						<a href="globals.html#setgrant" class="tsd-kind-icon">set<wbr>Grant</a>

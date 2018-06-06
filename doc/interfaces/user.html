@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>IUser | @financialforcedev/orizuru-auth</title>
+	<title>User | @financialforcedev/orizuru-auth</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -56,10 +56,10 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="iuser.html">IUser</a>
+					<a href="user.html">User</a>
 				</li>
 			</ul>
-			<h1>Interface IUser</h1>
+			<h1>Interface User</h1>
 		</div>
 	</div>
 </header>
@@ -70,7 +70,7 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">IUser</span>
+						<span class="target">User</span>
 					</li>
 				</ul>
 			</section>
@@ -81,7 +81,7 @@
 						<section class="tsd-index-section tsd-is-external">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-external"><a href="iuser.html#username" class="tsd-kind-icon">username</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-external"><a href="user.html#username" class="tsd-kind-icon">username</a></li>
 							</ul>
 						</section>
 					</div>
@@ -95,7 +95,7 @@
 					<div class="tsd-signature tsd-kind-icon">username<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/4e84cbb/src/index.ts#L68">index.ts:68</a></li>
+							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/677bec4/src/index.ts#L148">index.ts:148</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -112,23 +112,26 @@
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
 					<li class=" tsd-kind-interface tsd-is-external">
-						<a href="igrant.html" class="tsd-kind-icon">IGrant</a>
+						<a href="accesstokenresponse.html" class="tsd-kind-icon">Access<wbr>Token<wbr>Response</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-is-external">
-						<a href="iorizuruauth.html" class="tsd-kind-icon">IOrizuru<wbr>Auth</a>
+						<a href="grant.html" class="tsd-kind-icon">Grant</a>
 					</li>
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface tsd-is-external">
-						<a href="iuser.html" class="tsd-kind-icon">IUser</a>
+						<a href="user.html" class="tsd-kind-icon">User</a>
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-external">
-								<a href="iuser.html#username" class="tsd-kind-icon">username</a>
+								<a href="user.html#username" class="tsd-kind-icon">username</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
+					<li class=" tsd-kind-variable tsd-is-not-exported">
+						<a href="../globals.html#assertion_type" class="tsd-kind-icon">ASSERTION_<wbr>TYPE</a>
+					</li>
 					<li class=" tsd-kind-variable tsd-is-private tsd-is-not-exported">
 						<a href="../globals.html#bearer_prefix" class="tsd-kind-icon">BEARER_<wbr>PREFIX</a>
 					</li>
@@ -172,10 +175,16 @@
 						<a href="../globals.html#constructissuer" class="tsd-kind-icon">construct<wbr>Issuer</a>
 					</li>
 					<li class=" tsd-kind-function tsd-is-private">
-						<a href="../globals.html#constructsignedjwt" class="tsd-kind-icon">construct<wbr>Signed<wbr>Jwt</a>
+						<a href="../globals.html#constructissuerclient" class="tsd-kind-icon">construct<wbr>Issuer<wbr>Client</a>
 					</li>
 					<li class=" tsd-kind-function tsd-is-private tsd-is-not-exported">
 						<a href="../globals.html#convertgranttocredentials" class="tsd-kind-icon">convert<wbr>Grant<wbr>ToCredentials</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="../globals.html#createjwtbearerclientassertion" class="tsd-kind-icon">create<wbr>Jwt<wbr>Bearer<wbr>Client<wbr>Assertion</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="../globals.html#createjwtbearergrantassertion" class="tsd-kind-icon">create<wbr>Jwt<wbr>Bearer<wbr>Grant<wbr>Assertion</a>
 					</li>
 					<li class=" tsd-kind-function tsd-is-private tsd-is-not-exported">
 						<a href="../globals.html#createkey" class="tsd-kind-icon">create<wbr>Key</a>
@@ -186,8 +195,8 @@
 					<li class=" tsd-kind-function tsd-is-private tsd-is-not-exported">
 						<a href="../globals.html#fail" class="tsd-kind-icon">fail</a>
 					</li>
-					<li class=" tsd-kind-function tsd-is-private tsd-is-not-exported">
-						<a href="../globals.html#getorcreate" class="tsd-kind-icon">get<wbr>OrCreate</a>
+					<li class=" tsd-kind-function">
+						<a href="../globals.html#generateauthorizeurl" class="tsd-kind-icon">generate<wbr>Authorize<wbr>Url</a>
 					</li>
 					<li class=" tsd-kind-function">
 						<a href="../globals.html#gettoken" class="tsd-kind-icon">get<wbr>Token</a>
@@ -197,6 +206,9 @@
 					</li>
 					<li class=" tsd-kind-function tsd-is-private">
 						<a href="../globals.html#obtainauthorizationgrant" class="tsd-kind-icon">obtain<wbr>Authorization<wbr>Grant</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="../globals.html#requestaccesstokenwithclientassertion" class="tsd-kind-icon">request<wbr>Access<wbr>Token<wbr>With<wbr>Client<wbr>Assertion</a>
 					</li>
 					<li class=" tsd-kind-function tsd-is-private tsd-is-not-exported">
 						<a href="../globals.html#setgrant" class="tsd-kind-icon">set<wbr>Grant</a>

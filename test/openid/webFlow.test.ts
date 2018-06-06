@@ -80,7 +80,7 @@ describe('webFlow.ts', () => {
 
 	describe('requestAccessTokenWithClientAssertion', () => {
 
-		it('should create the authorization URL', async () => {
+		it('should obtain the access token response', async () => {
 
 			// Given
 			const expectedAccessTokenResponse = {
@@ -95,7 +95,7 @@ describe('webFlow.ts', () => {
 			};
 
 			const expectedResponse = {
-				data: JSON.stringify(expectedAccessTokenResponse)
+				data: expectedAccessTokenResponse
 			};
 
 			sinon.stub(issuer, 'constructIssuer').resolves({

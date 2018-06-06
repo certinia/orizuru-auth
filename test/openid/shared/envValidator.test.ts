@@ -25,13 +25,10 @@
  */
 
 import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 
 import { validate } from '../../../src/openid/shared/envValidator';
 
 const expect = chai.expect;
-
-chai.use(chaiAsPromised);
 
 describe('shared/envValidator.ts', () => {
 

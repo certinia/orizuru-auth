@@ -58,7 +58,7 @@ export async function requestAccessTokenWithClientAssertion(env: Options.Auth, r
 
 	const clientAssertionType = `client_assertion_type=${ASSERTION_TYPE}`;
 
-	const authUri = `${issuer.token_endpoint}?${grantType}&$code=${code}&${clientId}&${clientAssertion}&${clientAssertionType}&redirect_uri=${encodeURIComponent(redirectUri)}&format=json`;
+	const authUri = `${issuer.token_endpoint}?${grantType}&code=${code}&${clientId}&${clientAssertion}&${clientAssertionType}&redirect_uri=${encodeURIComponent(redirectUri)}&format=json`;
 
 	const response = await request.post(authUri);
 	return JSON.parse(response.data);

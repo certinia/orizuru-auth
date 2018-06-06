@@ -99,9 +99,14 @@ describe('webFlow.ts', () => {
 			};
 
 			sinon.stub(issuer, 'constructIssuer').resolves({
-				authorization_endpoint: 'https://login.salesforce.com/services/oauth2/authorize'
+				authorization_endpoint: 'https://login.salesforce.com/services/oauth2/authorize',
+				token_endpoint: 'https://login.salesforce.com/services/oauth2/token'
 			});
-			sinon.stub(request, 'post').resolves(expectedResponse);
+
+			sinon.stub(request, 'post')
+				.withArgs('https://login.salesforce.com/services/oauth2/token?grant_type=authorization_code&code=c&client_id=test&client_assertion=signed&client_assertion_type=urn:ietf:params:oauth:client-assertion-type:jwt-bearer&redirect_uri=a&format=json')
+				.resolves(expectedResponse);
+
 			sinon.stub(jwt, 'createJwtBearerClientAssertion').resolves('signed');
 
 			// When

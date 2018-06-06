@@ -40,10 +40,14 @@ export {
 
 declare global {
 
-	namespace Express {
+	namespace Orizuru {
 
-		interface Request {
-			orizuru?: any;
+		interface Context {
+			grantChecked: boolean;
+			user: {
+				organizationId: string;
+				username: string;
+			};
 		}
 
 	}

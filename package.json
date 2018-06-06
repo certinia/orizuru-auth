@@ -38,6 +38,7 @@
 		"uuid": "3.2.1"
 	},
 	"devDependencies": {
+		"@financialforcedev/orizuru": "git://github.com/financialforcedev/orizuru.git#feature/adopt-typescript",
 		"@types/chai": "4.1.3",
 		"@types/chai-as-promised": "7.1.0",
 		"@types/mocha": "5.2.0",

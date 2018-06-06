@@ -31,9 +31,10 @@
  */
 
 import { EventEmitter } from 'events';
-import { NextFunction, Request, Response } from 'express';
 import _ from 'lodash';
 import { Client, UserInfo } from 'openid-client';
+
+import { NextFunction, Request, Response } from '@financialforcedev/orizuru';
 
 import { Options, User } from '..';
 import { obtainAuthorizationGrant } from './shared/authorizationGrant';
@@ -121,7 +122,7 @@ function setUserOnRequest(req: Request, userInfo: UserInfo) {
 		username: userInfo.preferred_username
 	};
 
-	const orizuru = req.orizuru || {};
+	const orizuru = req.orizuru || {} as Orizuru.Context;
 	orizuru.user = user;
 	req.orizuru = orizuru;
 
@@ -136,7 +137,7 @@ function setGrant(req: Request) {
 
 	return () => {
 
-		(req.orizuru as any).grantChecked = true;
+		(req.orizuru as Orizuru.Context).grantChecked = true;
 
 		emitter.emit(GRANT_CHECKED_EVENT, `Grant checked for: ${req.ip}`);
 

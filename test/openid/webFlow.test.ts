@@ -69,10 +69,10 @@ describe('webFlow.ts', () => {
 			});
 
 			// When
-			const authorizeUrl = await generateAuthorizeUrl(env, 'testRedirectUri', 'testState');
+			const authorizeUrl = await generateAuthorizeUrl(env, 'https://test.app.com/auth/callback', 'testState');
 
 			// Then
-			expect(authorizeUrl).to.eql('https://login.salesforce.com/services/oauth2/authorize?response_type=code&client_id=test&redirect_uri=testRedirectUri&state=testState');
+			expect(authorizeUrl).to.eql('https://login.salesforce.com/services/oauth2/authorize?response_type=code&client_id=test&redirect_uri=https%3A%2F%2Ftest.app.com%2Fauth%2Fcallback&state=testState');
 
 		});
 

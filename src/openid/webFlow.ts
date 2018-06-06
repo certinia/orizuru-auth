@@ -41,7 +41,7 @@ export async function generateAuthorizeUrl(env: Options.Auth, redirectUri: strin
 
 	const responseType = 'response_type=code';
 	const clientId = `client_id=${env.openidClientId}`;
-	return `${issuer.authorization_endpoint}?${responseType}&${clientId}&redirect_uri=${redirectUri}&state=${state}`;
+	return `${issuer.authorization_endpoint}?${responseType}&${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}`;
 
 }
 
@@ -58,7 +58,7 @@ export async function requestAccessTokenWithClientAssertion(env: Options.Auth, r
 
 	const clientAssertionType = `client_assertion_type=${ASSERTION_TYPE}`;
 
-	const authUri = `${issuer.token_endpoint}?${grantType}&$code=${code}&${clientId}&${clientAssertion}&${clientAssertionType}&redirect_uri=${redirectUri}&format=json`;
+	const authUri = `${issuer.token_endpoint}?${grantType}&$code=${code}&${clientId}&${clientAssertion}&${clientAssertionType}&redirect_uri=${encodeURIComponent(redirectUri)}&format=json`;
 
 	const response = await request.post(authUri);
 	return JSON.parse(response.data);

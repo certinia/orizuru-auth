@@ -21,9 +21,9 @@
   "author": "financialforce",
   "license": "BSD-3-Clause",
   "dependencies": {
-    "jsonwebtoken": "8.2.2",
-    "lodash": "4.17.10",
-    "openid-client": "2.1.0"
+    "jsonwebtoken": "^8.2.2",
+    "lodash": "^4.17.10",
+    "openid-client": "^2.1.0"
   },
   "nyc": {
     "check-coverage": true,
@@ -45,13 +45,13 @@
     "all": true
   },
   "devDependencies": {
-    "@financialforcedev/eslint-config": "4.0.0",
-    "chai": "4.1.2",
-    "chai-as-promised": "7.1.1",
-    "jsdoc": "3.5.5",
-    "mocha": "5.2.0",
-    "nyc": "12.0.2",
-    "proxyquire": "2.0.1",
-    "sinon": "5.1.0"
+    "@financialforcedev/eslint-config": "^4.0.0",
+    "chai": "^4.1.2",
+    "chai-as-promised": "^7.1.1",
+    "jsdoc": "^3.5.5",
+    "mocha": "^5.2.0",
+    "nyc": "^12.0.2",
+    "proxyquire": "^2.0.1",
+    "sinon": "^5.1.0"
   }
 }

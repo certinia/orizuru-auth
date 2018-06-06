@@ -43,13 +43,7 @@ declare global {
 	namespace Express {
 
 		interface Request {
-			orizuru?: {
-				grantChecked?: boolean,
-				user?: {
-					organizationId: string;
-					username: string;
-				}
-			};
+			orizuru?: any;
 		}
 
 	}

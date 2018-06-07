@@ -31,10 +31,9 @@
  */
 
 import { EventEmitter } from 'events';
+import { NextFunction, Request, Response } from 'express';
 import _ from 'lodash';
 import { Client, UserInfo } from 'openid-client';
-
-import { NextFunction, Request, Response } from '@financialforcedev/orizuru';
 
 import { Options, User } from '..';
 import { obtainAuthorizationGrant } from './shared/authorizationGrant';

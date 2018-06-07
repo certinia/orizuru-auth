@@ -40,6 +40,14 @@ export {
 
 declare global {
 
+	namespace Express {
+
+		interface Request {
+			orizuru?: Orizuru.Context;
+		}
+
+	}
+
 	namespace Orizuru {
 
 		interface Context {

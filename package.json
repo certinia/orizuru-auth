@@ -55,6 +55,9 @@
 		"typedoc": "0.11.1",
 		"typescript": "2.9.1"
 	},
+	"peerDependencies": {
+		"@financialforcedev/orizuru": "git://github.com/financialforcedev/orizuru.git#feature/adopt-typescript"
+	},
 	"nyc": {
 		"check-coverage": true,
 		"per-file": true,

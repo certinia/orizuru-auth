@@ -58,6 +58,10 @@ declare global {
 			};
 		}
 
+		interface IServer {
+			auth: Options.Auth;
+		}
+
 	}
 }
 

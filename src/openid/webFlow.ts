@@ -41,7 +41,7 @@ export async function generateAuthorizeUrl(env: Options.Auth, redirectUri: strin
 
 	const responseType = 'response_type=code';
 	const clientId = `client_id=${env.openidClientId}`;
-	return `${issuer.authorization_endpoint}?${responseType}&${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}`;
+	return `${issuer.authorization_endpoint}?${responseType}&${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}&prompt=login`;
 
 }
 

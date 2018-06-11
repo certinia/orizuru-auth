@@ -2,22 +2,22 @@
  * Copyright (c) 2017, FinancialForce.com, inc
  * All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without modification, 
+ * Redistribution and use in source and binary forms, with or without modification,
  *   are permitted provided that the following conditions are met:
  *
- * - Redistributions of source code must retain the above copyright notice, 
+ * - Redistributions of source code must retain the above copyright notice,
  *      this list of conditions and the following disclaimer.
- * - Redistributions in binary form must reproduce the above copyright notice, 
- *      this list of conditions and the following disclaimer in the documentation 
+ * - Redistributions in binary form must reproduce the above copyright notice,
+ *      this list of conditions and the following disclaimer in the documentation
  *      and/or other materials provided with the distribution.
- * - Neither the name of the FinancialForce.com, inc nor the names of its contributors 
- *      may be used to endorse or promote products derived from this software without 
+ * - Neither the name of the FinancialForce.com, inc nor the names of its contributors
+ *      may be used to endorse or promote products derived from this software without
  *      specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
- *  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES 
- *  OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL 
- *  THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ *  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ *  OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL
+ *  THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
  *  EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
  *  OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  *  OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
@@ -46,9 +46,7 @@ const
 	assert = sinon.assert,
 	notCalled = assert.notCalled,
 	calledOnce = assert.calledOnce,
-	calledWith = assert.calledWith,
-
-	sandbox = sinon.sandbox.create();
+	calledWith = assert.calledWith;
 
 chai.use(chaiAsPromised);
 
@@ -78,17 +76,17 @@ describe('middleware.js', () => {
 	beforeEach(() => {
 
 		req = {
-			get: sandbox.stub(),
+			get: sinon.stub(),
 			ip: '1.1.1.1'
 		};
 
 		res = {
-			sendStatus: sandbox.stub()
+			sendStatus: sinon.stub()
 		};
 
-		next = sandbox.stub();
+		next = sinon.stub();
 
-		listener = sandbox.stub();
+		listener = sinon.stub();
 
 		auth.emitter.on('denied', listener);
 		auth.emitter.on('token_validated', listener);
@@ -103,7 +101,7 @@ describe('middleware.js', () => {
 		unableToSignJwtError = `${baseError} Unable to sign JWT`;
 		unableToObtainGrantError = `${baseError} Unable to obtain grant`;
 
-		envValidatorMock = sandbox.stub(envValidator, 'validate');
+		envValidatorMock = sinon.stub(envValidator, 'validate');
 
 		userInfoMock = {
 			['preferred_username']: 'testPreferred_username',
@@ -111,7 +109,7 @@ describe('middleware.js', () => {
 			['user_id']: 'testUser_id'
 		};
 
-		issuerClientUserInfoStub = sandbox.stub();
+		issuerClientUserInfoStub = sinon.stub();
 
 		IssuerClientMock = class {
 			userinfo(accessToken) {
@@ -123,14 +121,17 @@ describe('middleware.js', () => {
 			Client: IssuerClientMock
 		};
 
-		issuerGetAsyncMock = sandbox.stub(issuer, 'getAsync');
-		constructSignedJwtMock = sandbox.stub(sharedFunctions, 'constructSignedJwt');
-		obtainAuthorizationGrantMock = sandbox.stub(sharedFunctions, 'obtainAuthorizationGrant');
+		issuerGetAsyncMock = sinon.stub(issuer, 'getAsync');
+		constructSignedJwtMock = sinon.stub(sharedFunctions, 'constructSignedJwt');
+		obtainAuthorizationGrantMock = sinon.stub(sharedFunctions, 'obtainAuthorizationGrant');
 	});
 
 	afterEach(() => {
-		sandbox.restore();
-		auth.emitter.removeAllListeners('deny');
+		sinon.restore();
+
+		auth.emitter.removeAllListeners('denied');
+		auth.emitter.removeAllListeners('token_validated');
+		auth.emitter.removeAllListeners('grant_checked');
 	});
 
 	describe('tokenValidator', () => {

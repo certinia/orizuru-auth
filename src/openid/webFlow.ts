@@ -25,8 +25,9 @@
  */
 
 import { default as request } from 'axios';
+import { decode } from 'jsonwebtoken';
 
-import { AccessTokenResponse, Options } from '..';
+import { AccessTokenResponse, Options, SalesforceJwt } from '..';
 import { validate } from './shared/envValidator';
 import { constructIssuer } from './shared/issuer';
 import { createJwtBearerClientAssertion } from './shared/jwt';
@@ -61,6 +62,14 @@ export async function requestAccessTokenWithClientAssertion(env: Options.Auth, r
 	const authUri = `${issuer.token_endpoint}?${grantType}&code=${code}&${clientId}&${clientAssertion}&${clientAssertionType}&redirect_uri=${encodeURIComponent(redirectUri)}&format=json`;
 
 	const response = await request.post(authUri);
-	return response.data;
+
+	const accessTokenResponse: AccessTokenResponse = response.data;
+	const idToken = accessTokenResponse.id_token;
+	if (idToken) {
+		const decodedToken = decode(idToken as string) as SalesforceJwt;
+		accessTokenResponse.id_token = decodedToken;
+	}
+
+	return accessTokenResponse;
 
 }

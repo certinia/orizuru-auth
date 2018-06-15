@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>User | @financialforcedev/orizuru-auth</title>
+	<title>webServer | @financialforcedev/orizuru-auth</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -56,48 +56,114 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="user.html">User</a>
+					<a href="webserver.html">webServer</a>
 				</li>
 			</ul>
-			<h1>Interface User</h1>
+			<h1>Module webServer</h1>
 		</div>
 	</div>
 </header>
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
-			<section class="tsd-panel tsd-hierarchy">
-				<h3>Hierarchy</h3>
-				<ul class="tsd-hierarchy">
-					<li>
-						<span class="target">User</span>
-					</li>
-				</ul>
-			</section>
 			<section class="tsd-panel-group tsd-index-group">
 				<h2>Index</h2>
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
-						<section class="tsd-index-section tsd-is-external">
-							<h3>Properties</h3>
+						<section class="tsd-index-section ">
+							<h3>Functions</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-external"><a href="user.html#username" class="tsd-kind-icon">username</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module"><a href="webserver.html#generateauthorizeurl" class="tsd-kind-icon">generate<wbr>Authorize<wbr>Url</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module"><a href="webserver.html#requestaccesstokenwithclientassertion" class="tsd-kind-icon">request<wbr>Access<wbr>Token<wbr>With<wbr>Client<wbr>Assertion</a></li>
 							</ul>
 						</section>
 					</div>
 				</section>
 			</section>
-			<section class="tsd-panel-group tsd-member-group tsd-is-external">
-				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-external">
-					<a name="username" class="tsd-anchor"></a>
-					<h3>username</h3>
-					<div class="tsd-signature tsd-kind-icon">username<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/f9918ad/src/index.ts#L94">index.ts:94</a></li>
-						</ul>
-					</aside>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Functions</h2>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module">
+					<a name="generateauthorizeurl" class="tsd-anchor"></a>
+					<h3>generate<wbr>Authorize<wbr>Url</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
+						<li class="tsd-signature tsd-kind-icon">generate<wbr>Authorize<wbr>Url<span class="tsd-signature-symbol">(</span>env<span class="tsd-signature-symbol">: </span><a href="../interfaces/options.auth.html" class="tsd-signature-type">Auth</a>, redirectUri<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, state<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in flow/webServer.ts:44</li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Creates the authorization endpoint to initialise the OAuth flow.</p>
+								</div>
+								<dl class="tsd-comment-tags">
+									<dt>see</dt>
+									<dd><p><a href="https://help.salesforce.com/articleView?id=remoteaccess_oauth_web_server_flow.htm">https://help.salesforce.com/articleView?id=remoteaccess_oauth_web_server_flow.htm</a></p>
+									</dd>
+								</dl>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>env: <a href="../interfaces/options.auth.html" class="tsd-signature-type">Auth</a></h5>
+								</li>
+								<li>
+									<h5>redirectUri: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5>state: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module">
+					<a name="requestaccesstokenwithclientassertion" class="tsd-anchor"></a>
+					<h3>request<wbr>Access<wbr>Token<wbr>With<wbr>Client<wbr>Assertion</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
+						<li class="tsd-signature tsd-kind-icon">request<wbr>Access<wbr>Token<wbr>With<wbr>Client<wbr>Assertion<span class="tsd-signature-symbol">(</span>env<span class="tsd-signature-symbol">: </span><a href="../interfaces/options.auth.html" class="tsd-signature-type">Auth</a>, redirectUri<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, state<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, code<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/accesstokenresponse.html" class="tsd-signature-type">AccessTokenResponse</a><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in flow/webServer.ts:64</li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Exchanges an authorization code for an access token.</p>
+								</div>
+								<p>Rather than using the client secret of the Salesforce Connected Application, this function creates a
+								signed JWT bearer assertion to validate the user.</p>
+								<dl class="tsd-comment-tags">
+									<dt>see</dt>
+									<dd><p><a href="https://help.salesforce.com/articleView?id=remoteaccess_oauth_web_server_flow.htm">https://help.salesforce.com/articleView?id=remoteaccess_oauth_web_server_flow.htm</a></p>
+									</dd>
+								</dl>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>env: <a href="../interfaces/options.auth.html" class="tsd-signature-type">Auth</a></h5>
+								</li>
+								<li>
+									<h5>redirectUri: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5>state: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5>code: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/accesstokenresponse.html" class="tsd-signature-type">AccessTokenResponse</a><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
 				</section>
 			</section>
 		</div>
@@ -107,120 +173,45 @@
 					<li class="globals  ">
 						<a href="../globals.html"><em>Globals</em></a>
 					</li>
+					<li class="label tsd-is-external">
+						<span>Internals</span>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="grant.html">grant</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="middleware.html">middleware</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="refreshtoken.html">refresh<wbr>Token</a>
+					</li>
+					<li class="current tsd-kind-module">
+						<a href="webserver.html">web<wbr>Server</a>
+					</li>
+					<li class="label tsd-is-external">
+						<span>Externals</span>
+					</li>
+					<li class=" tsd-kind-module tsd-is-external">
+						<a href="options.html">Options</a>
+					</li>
+					<li class=" tsd-kind-module tsd-is-external tsd-is-not-exported">
+						<a href="__global.html">__global</a>
+					</li>
+					<li class=" tsd-kind-module tsd-parent-kind-module tsd-is-external tsd-is-not-exported">
+						<a href="__global.express.html">__global.<wbr>Express</a>
+					</li>
+					<li class=" tsd-kind-module tsd-parent-kind-module tsd-is-external tsd-is-not-exported">
+						<a href="__global.orizuru.html">__global.<wbr>Orizuru</a>
+					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
-					<li class=" tsd-kind-interface">
-						<a href="accesstokenresponse.html" class="tsd-kind-icon">Access<wbr>Token<wbr>Response</a>
+					<li class=" tsd-kind-function tsd-parent-kind-module">
+						<a href="webserver.html#generateauthorizeurl" class="tsd-kind-icon">generate<wbr>Authorize<wbr>Url</a>
 					</li>
-					<li class=" tsd-kind-interface tsd-is-external">
-						<a href="grant.html" class="tsd-kind-icon">Grant</a>
-					</li>
-					<li class=" tsd-kind-interface">
-						<a href="salesforcejwt.html" class="tsd-kind-icon">Salesforce<wbr>Jwt</a>
-					</li>
-					<li class=" tsd-kind-interface">
-						<a href="salesforcejwtstandardclaims.html" class="tsd-kind-icon">Salesforce<wbr>Jwt<wbr>Standard<wbr>Claims</a>
-					</li>
-				</ul>
-				<ul class="current">
-					<li class="current tsd-kind-interface tsd-is-external">
-						<a href="user.html" class="tsd-kind-icon">User</a>
-						<ul>
-							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-external">
-								<a href="user.html#username" class="tsd-kind-icon">username</a>
-							</li>
-						</ul>
-					</li>
-				</ul>
-				<ul class="after-current">
-					<li class=" tsd-kind-variable tsd-is-not-exported">
-						<a href="../globals.html#assertion_type" class="tsd-kind-icon">ASSERTION_<wbr>TYPE</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-is-private tsd-is-not-exported">
-						<a href="../globals.html#bearer_prefix" class="tsd-kind-icon">BEARER_<wbr>PREFIX</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-is-private tsd-is-not-exported">
-						<a href="../globals.html#denied_event" class="tsd-kind-icon">DENIED_<wbr>EVENT</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-is-private tsd-is-not-exported">
-						<a href="../globals.html#grant_checked_event" class="tsd-kind-icon">GRANT_<wbr>CHECKED_<wbr>EVENT</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-is-private tsd-is-not-exported">
-						<a href="../globals.html#http_authorization_header" class="tsd-kind-icon">HTTP_<wbr>AUTHORIZATION_<wbr>HEADER</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-is-private tsd-is-not-exported">
-						<a href="../globals.html#jwt_bearer_grant" class="tsd-kind-icon">JWT_<wbr>BEARER_<wbr>GRANT</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-is-private tsd-is-not-exported">
-						<a href="../globals.html#jwt_grant_type" class="tsd-kind-icon">JWT_<wbr>GRANT_<wbr>TYPE</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-is-private tsd-is-not-exported">
-						<a href="../globals.html#rsa_256" class="tsd-kind-icon">RSA_<wbr>256</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-is-private tsd-is-not-exported">
-						<a href="../globals.html#token_validated_event" class="tsd-kind-icon">TOKEN_<wbr>VALIDATED_<wbr>EVENT</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-is-private tsd-is-not-exported">
-						<a href="../globals.html#cache" class="tsd-kind-icon">cache</a>
-					</li>
-					<li class=" tsd-kind-function tsd-is-private tsd-is-not-exported">
-						<a href="../globals.html#buildissuer" class="tsd-kind-icon">build<wbr>Issuer</a>
-					</li>
-					<li class=" tsd-kind-function tsd-is-private tsd-is-not-exported">
-						<a href="../globals.html#checkuserisontherequest" class="tsd-kind-icon">check<wbr>User<wbr>IsOn<wbr>The<wbr>Request</a>
-					</li>
-					<li class=" tsd-kind-function tsd-is-private">
-						<a href="../globals.html#clearcache" class="tsd-kind-icon">clear<wbr>Cache</a>
-					</li>
-					<li class=" tsd-kind-function tsd-is-private">
-						<a href="../globals.html#constructissuer" class="tsd-kind-icon">construct<wbr>Issuer</a>
-					</li>
-					<li class=" tsd-kind-function tsd-is-private">
-						<a href="../globals.html#constructissuerclient" class="tsd-kind-icon">construct<wbr>Issuer<wbr>Client</a>
-					</li>
-					<li class=" tsd-kind-function tsd-is-private tsd-is-not-exported">
-						<a href="../globals.html#convertgranttocredentials" class="tsd-kind-icon">convert<wbr>Grant<wbr>ToCredentials</a>
-					</li>
-					<li class=" tsd-kind-function tsd-is-private">
-						<a href="../globals.html#createjwtbearerclientassertion" class="tsd-kind-icon">create<wbr>Jwt<wbr>Bearer<wbr>Client<wbr>Assertion</a>
-					</li>
-					<li class=" tsd-kind-function tsd-is-private">
-						<a href="../globals.html#createjwtbearergrantassertion" class="tsd-kind-icon">create<wbr>Jwt<wbr>Bearer<wbr>Grant<wbr>Assertion</a>
-					</li>
-					<li class=" tsd-kind-function tsd-is-private tsd-is-not-exported">
-						<a href="../globals.html#createkey" class="tsd-kind-icon">create<wbr>Key</a>
-					</li>
-					<li class=" tsd-kind-function tsd-is-private tsd-is-not-exported">
-						<a href="../globals.html#extractaccesstoken" class="tsd-kind-icon">extract<wbr>Access<wbr>Token</a>
-					</li>
-					<li class=" tsd-kind-function tsd-is-private tsd-is-not-exported">
-						<a href="../globals.html#fail" class="tsd-kind-icon">fail</a>
-					</li>
-					<li class=" tsd-kind-function tsd-is-private">
-						<a href="../globals.html#obtainauthorizationgrant" class="tsd-kind-icon">obtain<wbr>Authorization<wbr>Grant</a>
-					</li>
-					<li class=" tsd-kind-function tsd-is-private tsd-is-not-exported">
-						<a href="../globals.html#setgrant" class="tsd-kind-icon">set<wbr>Grant</a>
-					</li>
-					<li class=" tsd-kind-function tsd-is-private tsd-is-not-exported">
-						<a href="../globals.html#setuseronrequest" class="tsd-kind-icon">set<wbr>User<wbr>OnRequest</a>
-					</li>
-					<li class=" tsd-kind-function tsd-is-private">
-						<a href="../globals.html#validate" class="tsd-kind-icon">validate</a>
-					</li>
-					<li class=" tsd-kind-function tsd-is-private tsd-is-not-exported">
-						<a href="../globals.html#validateaccesstoken" class="tsd-kind-icon">validate<wbr>Access<wbr>Token</a>
-					</li>
-					<li class=" tsd-kind-function tsd-is-private tsd-is-not-exported">
-						<a href="../globals.html#validateuser" class="tsd-kind-icon">validate<wbr>User</a>
-					</li>
-					<li class=" tsd-kind-object-literal tsd-is-private tsd-is-not-exported">
-						<a href="../globals.html#rsa_256_algorithm" class="tsd-kind-icon">RSA_<wbr>256_<wbr>ALGORITHM</a>
-					</li>
-					<li class=" tsd-kind-object-literal tsd-is-external tsd-is-not-exported">
-						<a href="../globals.html#flow" class="tsd-kind-icon">flow</a>
+					<li class=" tsd-kind-function tsd-parent-kind-module">
+						<a href="webserver.html#requestaccesstokenwithclientassertion" class="tsd-kind-icon">request<wbr>Access<wbr>Token<wbr>With<wbr>Client<wbr>Assertion</a>
 					</li>
 				</ul>
 			</nav>

@@ -28,48 +28,46 @@ import { default as request } from 'axios';
 import { decode } from 'jsonwebtoken';
 
 import { AccessTokenResponse, Options, SalesforceJwt } from '..';
-import { validate } from './shared/envValidator';
-import { constructIssuer } from './shared/issuer';
-import { createJwtBearerClientAssertion } from './shared/jwt';
+import { validate } from '../openid/shared/envValidator';
+import { constructIssuer } from '../openid/shared/issuer';
+import { createJwtBearerClientAssertion } from '../openid/shared/jwt';
 
 const ASSERTION_TYPE = 'urn:ietf:params:oauth:client-assertion-type:jwt-bearer';
 
-export async function generateAuthorizeUrl(env: Options.Auth, redirectUri: string, state: string) {
+/**
+ * The OAuth 2.0 refresh token flow is for renewing tokens issued by the web server or user-agent flows.
+ *
+ * @see https://help.salesforce.com/articleView?id=remoteaccess_oauth_refresh_token_flow.htm
+ */
+export namespace refreshToken {
 
-	validate(env);
+	export async function requestAccessTokenWithClientAssertion(env: Options.Auth, token: string): Promise<AccessTokenResponse> {
 
-	const issuer = await constructIssuer(env);
+		validate(env);
 
-	const responseType = 'response_type=code';
-	const clientId = `client_id=${env.openidClientId}`;
-	return `${issuer.authorization_endpoint}?${responseType}&${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}&prompt=login`;
+		const issuer = await constructIssuer(env);
+		const jwtBearerAssertion = await createJwtBearerClientAssertion(env, issuer);
 
-}
+		const grantType = 'grant_type=refresh_token';
+		const refreshTokenUri = `refresh_token=${token}`;
+		const clientId = `client_id=${env.openidClientId}`;
+		const clientAssertion = `client_assertion=${jwtBearerAssertion}`;
+		const clientAssertionType = `client_assertion_type=${ASSERTION_TYPE}`;
+		const format = 'format=json';
 
-export async function requestAccessTokenWithClientAssertion(env: Options.Auth, redirectUri: string, state: string, code: string): Promise<AccessTokenResponse> {
+		const authUri = `${issuer.token_endpoint}?${grantType}&${refreshTokenUri}&${clientId}&${clientAssertion}&${clientAssertionType}&${format}`;
 
-	validate(env);
+		const response = await request.post(authUri);
 
-	const issuer = await constructIssuer(env);
-	const jwtBearerAssertion = await createJwtBearerClientAssertion(env, issuer);
+		const accessTokenResponse: AccessTokenResponse = response.data;
+		const idToken = accessTokenResponse.id_token;
+		if (idToken) {
+			const decodedToken = decode(idToken as string) as SalesforceJwt;
+			accessTokenResponse.id_token = decodedToken;
+		}
 
-	const grantType = 'grant_type=authorization_code';
-	const clientId = `client_id=${env.openidClientId}`;
-	const clientAssertion = `client_assertion=${jwtBearerAssertion}`;
+		return accessTokenResponse;
 
-	const clientAssertionType = `client_assertion_type=${ASSERTION_TYPE}`;
-
-	const authUri = `${issuer.token_endpoint}?${grantType}&code=${code}&${clientId}&${clientAssertion}&${clientAssertionType}&redirect_uri=${encodeURIComponent(redirectUri)}&format=json`;
-
-	const response = await request.post(authUri);
-
-	const accessTokenResponse: AccessTokenResponse = response.data;
-	const idToken = accessTokenResponse.id_token;
-	if (idToken) {
-		const decodedToken = decode(idToken as string) as SalesforceJwt;
-		accessTokenResponse.id_token = decodedToken;
 	}
-
-	return accessTokenResponse;
 
 }

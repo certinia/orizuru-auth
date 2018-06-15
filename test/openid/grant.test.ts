@@ -36,7 +36,7 @@ import * as jwt from '../../src/openid/shared/jwt';
 
 import { Options } from '../../src';
 
-import { getToken } from '../../src/openid/grant';
+import { grant } from '../../src/openid/grant';
 
 const expect = chai.expect;
 
@@ -79,7 +79,7 @@ describe('grant.ts', () => {
 			sinon.stub(authorizationGrant, 'obtainAuthorizationGrant').resolves({ access_token: 'accessToken', instance_url: 'instanceUrl' });
 
 			// when - then
-			return expect(getToken(env)({ username: 'user' }))
+			return expect(grant.getToken(env)({ username: 'user' }))
 				.to.eventually.eql({
 					accessToken: 'accessToken',
 					instanceUrl: 'instanceUrl'
@@ -101,7 +101,7 @@ describe('grant.ts', () => {
 				sinon.stub(envValidator, 'validate').throws(new Error('some error or other'));
 
 				// when - then
-				expect(() => getToken(env)).to.throw('some error or other');
+				expect(() => grant.getToken(env)).to.throw('some error or other');
 
 			});
 
@@ -111,7 +111,7 @@ describe('grant.ts', () => {
 				sinon.stub(envValidator, 'validate').resolves();
 
 				// when - then
-				return expect(getToken(env)(null as any)).to.eventually.be.rejectedWith('Failed to grant token, error: Invalid parameter: username cannot be empty.');
+				return expect(grant.getToken(env)(null as any)).to.eventually.be.rejectedWith('Failed to grant token, error: Invalid parameter: username cannot be empty.');
 
 			});
 
@@ -121,7 +121,7 @@ describe('grant.ts', () => {
 				sinon.stub(envValidator, 'validate').resolves();
 
 				// when - then
-				return expect(getToken(env)({} as any)).to.eventually.be.rejectedWith(usernameRequiredError);
+				return expect(grant.getToken(env)({} as any)).to.eventually.be.rejectedWith(usernameRequiredError);
 
 			});
 
@@ -131,7 +131,7 @@ describe('grant.ts', () => {
 				sinon.stub(envValidator, 'validate').resolves();
 
 				// when - then
-				return expect(getToken(env)({ username: '' })).to.eventually.be.rejectedWith('Failed to grant token, error: Invalid parameter: username cannot be empty.');
+				return expect(grant.getToken(env)({ username: '' })).to.eventually.be.rejectedWith('Failed to grant token, error: Invalid parameter: username cannot be empty.');
 
 			});
 
@@ -142,7 +142,7 @@ describe('grant.ts', () => {
 				sinon.stub(issuer, 'constructIssuerClient').rejects(new Error('something or other.'));
 
 				// when - then
-				return expect(getToken(env)({ username: 'user' }))
+				return expect(grant.getToken(env)({ username: 'user' }))
 					.to.eventually.be.rejectedWith('Failed to grant token, error: something or other.')
 					.then(() => {
 						expect(issuer.constructIssuerClient).to.have.been.calledOnce;
@@ -159,7 +159,7 @@ describe('grant.ts', () => {
 				sinon.stub(jwt, 'createJwtBearerGrantAssertion').rejects(new Error('something or other.'));
 
 				// when - then
-				return expect(getToken(env)({ username: 'user' }))
+				return expect(grant.getToken(env)({ username: 'user' }))
 					.to.eventually.be.rejectedWith('Failed to grant token, error: something or other.')
 					.then(() => {
 						expect(issuer.constructIssuerClient).to.have.been.calledOnce;
@@ -179,7 +179,7 @@ describe('grant.ts', () => {
 				sinon.stub(authorizationGrant, 'obtainAuthorizationGrant').rejects(new Error('something or other.'));
 
 				// when - then
-				return expect(getToken(env)({ username: 'user' }))
+				return expect(grant.getToken(env)({ username: 'user' }))
 					.to.eventually.be.rejectedWith('Failed to grant token, error: something or other.')
 					.then(() => {
 						expect(jwt.createJwtBearerGrantAssertion).to.have.been.calledOnce;

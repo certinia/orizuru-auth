@@ -40,6 +40,9 @@ const RSA_256 = 'RS256';
  */
 const RSA_256_ALGORITHM = { algorithm: RSA_256 };
 
+/**
+ * @private
+ */
 export async function createJwtBearerClientAssertion(env: Options.Auth, issuer: Issuer) {
 
 	const nowPlusFourMinutes = () => {
@@ -62,6 +65,9 @@ export async function createJwtBearerClientAssertion(env: Options.Auth, issuer: 
 
 }
 
+/**
+ * @private
+ */
 export async function createJwtBearerGrantAssertion(env: Options.Auth, user: User) {
 
 	const nowPlusFourMinutes = () => {

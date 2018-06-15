@@ -31,7 +31,7 @@
 
 import { OpenIdGrant } from 'openid-client';
 
-import { Grant, Options, User } from '..';
+import { Grant as IGrant, Options, User } from '..';
 import { obtainAuthorizationGrant } from './shared/authorizationGrant';
 import { validate } from './shared/envValidator';
 import { constructIssuerClient } from './shared/issuer';
@@ -55,35 +55,39 @@ function validateUser(user: User) {
 /**
  * @private
  */
-function convertGrantToCredentials(grant: OpenIdGrant): Grant {
+function convertGrantToCredentials(authorizationGrant: OpenIdGrant): IGrant {
 	return {
-		accessToken: grant.access_token,
-		instanceUrl: grant.instance_url
+		accessToken: authorizationGrant.access_token,
+		instanceUrl: authorizationGrant.instance_url
 	};
 }
 
-/**
- * Returns a function that can obtain a token for the passed user.
- */
-export function getToken(env: Options.Auth) {
+export namespace grant {
 
-	validate(env);
+	/**
+	 * Returns a function that can obtain a token for the passed user.
+	 */
+	export function getToken(env: Options.Auth) {
 
-	return async (user: User) => {
+		validate(env);
 
-		try {
+		return async (user: User) => {
 
-			validateUser(user);
+			try {
 
-			const issuerClient = await constructIssuerClient(env);
-			const assertion = await createJwtBearerGrantAssertion(env, user);
-			const grant = await obtainAuthorizationGrant(assertion, issuerClient);
-			return convertGrantToCredentials(grant);
+				validateUser(user);
 
-		} catch (error) {
-			throw new Error(`Failed to grant token, error: ${error.message}`);
-		}
+				const issuerClient = await constructIssuerClient(env);
+				const assertion = await createJwtBearerGrantAssertion(env, user);
+				const authorizationGrant = await obtainAuthorizationGrant(assertion, issuerClient);
+				return convertGrantToCredentials(authorizationGrant);
 
-	};
+			} catch (error) {
+				throw new Error(`Failed to grant token, error: ${error.message}`);
+			}
+
+		};
+
+	}
 
 }

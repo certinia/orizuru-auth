@@ -36,7 +36,8 @@ describe('index.ts', () => {
 		// Given
 		// When
 		// Then
-		expect(index).to.contain.keys(['grant', 'middleware']);
+		expect(index).to.contain.keys(['grant', 'middleware', 'flow']);
+		expect(index.flow).to.contain.keys(['refreshToken', 'webServer']);
 		expect(index.grant).to.contain.keys(['getToken']);
 		expect(index.middleware).to.contain.keys(['emitter', 'grantChecker', 'tokenValidator']);
 

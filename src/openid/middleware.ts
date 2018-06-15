@@ -125,7 +125,7 @@ function setUserOnRequest(req: Request, userInfo: UserInfo) {
 	orizuru.user = user;
 	req.orizuru = orizuru;
 
-	emitter.emit(TOKEN_VALIDATED_EVENT, `Token validated for: ${req.ip}`);
+	middleware.emitter.emit(TOKEN_VALIDATED_EVENT, `Token validated for: ${req.ip}`);
 
 }
 
@@ -138,7 +138,7 @@ function setGrant(req: Request) {
 
 		(req.orizuru as Orizuru.Context).grantChecked = true;
 
-		emitter.emit(GRANT_CHECKED_EVENT, `Grant checked for: ${req.ip}`);
+		middleware.emitter.emit(GRANT_CHECKED_EVENT, `Grant checked for: ${req.ip}`);
 
 		return undefined;
 
@@ -153,7 +153,7 @@ function fail(req: Request, res: Response) {
 
 	return (error: Error) => {
 
-		emitter.emit(DENIED_EVENT, `Access denied to: ${req ? req.ip ? req.ip : 'unknown' : 'unknown'}, error: ${error.message}.`);
+		middleware.emitter.emit(DENIED_EVENT, `Access denied to: ${req ? req.ip ? req.ip : 'unknown' : 'unknown'}, error: ${error.message}.`);
 
 		res.sendStatus(401);
 
@@ -161,66 +161,70 @@ function fail(req: Request, res: Response) {
 
 }
 
-export const emitter: EventEmitter = new EventEmitter();
+export namespace middleware {
 
-/**
- * Returns an express middleware that checks that an access token
- * can be retrieved for the user specified on the request.
- * Should be used in tandem with the tokenValidator middleware,
- * and must be executed after that. This requires that a ConnectedApp
- * is configured to pre authorise users and the user is
- * authorised.
- */
-export function grantChecker(env: Options.Auth) {
+	export const emitter: EventEmitter = new EventEmitter();
 
-	validate(env);
+	/**
+	 * Returns an express middleware that checks that an access token
+	 * can be retrieved for the user specified on the request.
+	 * Should be used in tandem with the tokenValidator middleware,
+	 * and must be executed after that. This requires that a ConnectedApp
+	 * is configured to pre authorise users and the user is
+	 * authorised.
+	 */
+	export function grantChecker(env: Options.Auth) {
 
-	return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+		validate(env);
 
-		try {
+		return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 
-			const user = checkUserIsOnTheRequest(req);
-			const issuerClient = await constructIssuerClient(env);
-			const assertion = await createJwtBearerGrantAssertion(env, user);
-			await obtainAuthorizationGrant(assertion, issuerClient);
-			setGrant(req)();
+			try {
 
-			next();
+				const user = checkUserIsOnTheRequest(req);
+				const issuerClient = await constructIssuerClient(env);
+				const assertion = await createJwtBearerGrantAssertion(env, user);
+				await obtainAuthorizationGrant(assertion, issuerClient);
+				setGrant(req)();
 
-		} catch (error) {
-			fail(req, res)(error);
-		}
+				next();
 
-	};
+			} catch (error) {
+				fail(req, res)(error);
+			}
 
-}
+		};
 
-/**
- * Returns an express middleware that validates the OpenID Connect
- * access token passed in an HTTP Authorization header and if successful
- * sets the user object onto the request object.
- */
-export function tokenValidator(env: Options.Auth) {
+	}
 
-	validate(env);
+	/**
+	 * Returns an express middleware that validates the OpenID Connect
+	 * access token passed in an HTTP Authorization header and if successful
+	 * sets the user object onto the request object.
+	 */
+	export function tokenValidator(env: Options.Auth) {
 
-	return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+		validate(env);
 
-		try {
+		return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 
-			const accessToken = extractAccessToken(req);
-			const issuerClient = await constructIssuerClient(env);
+			try {
 
-			const userInfo = await validateAccessToken(issuerClient, accessToken);
+				const accessToken = extractAccessToken(req);
+				const issuerClient = await constructIssuerClient(env);
 
-			setUserOnRequest(req, userInfo);
+				const userInfo = await validateAccessToken(issuerClient, accessToken);
 
-			next();
+				setUserOnRequest(req, userInfo);
 
-		} catch (error) {
-			fail(req, res)(error);
-		}
+				next();
 
-	};
+			} catch (error) {
+				fail(req, res)(error);
+			}
+
+		};
+
+	}
 
 }

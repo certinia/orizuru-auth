@@ -30,7 +30,7 @@ import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
 
 import { Options } from '../../src';
-import { emitter, grantChecker, tokenValidator } from '../../src/openid/middleware';
+import { middleware } from '../../src/openid/middleware';
 import * as authorizationGrant from '../../src/openid/shared/authorizationGrant';
 import * as envValidator from '../../src/openid/shared/envValidator';
 import * as issuer from '../../src/openid/shared/issuer';
@@ -75,9 +75,9 @@ describe('middleware.ts', () => {
 
 		listener = sinon.stub();
 
-		emitter.on('denied', listener);
-		emitter.on('token_validated', listener);
-		emitter.on('grant_checked', listener);
+		middleware.emitter.on('denied', listener);
+		middleware.emitter.on('token_validated', listener);
+		middleware.emitter.on('grant_checked', listener);
 
 		userInfoMock = {
 			['preferred_username']: 'testPreferred_username',
@@ -97,7 +97,7 @@ describe('middleware.ts', () => {
 
 	afterEach(() => {
 		sinon.restore();
-		emitter.removeAllListeners();
+		middleware.emitter.removeAllListeners();
 	});
 
 	describe('tokenValidator', () => {
@@ -108,7 +108,7 @@ describe('middleware.ts', () => {
 			sinon.stub(envValidator, 'validate').throws(new Error('some error or other'));
 
 			// when
-			expect(() => tokenValidator(env)).to.throw('some error or other');
+			expect(() => middleware.tokenValidator(env)).to.throw('some error or other');
 
 		});
 
@@ -124,7 +124,7 @@ describe('middleware.ts', () => {
 				req.get.withArgs('Authorization').returns(null);
 
 				// when
-				return tokenValidator(env)(null as any, res, next)
+				return middleware.tokenValidator(env)(null as any, res, next)
 					.then(() => {
 						// then
 						expect(next).to.not.have.been.called;
@@ -140,7 +140,7 @@ describe('middleware.ts', () => {
 				req.get.withArgs('Authorization').returns(null);
 
 				// when
-				return tokenValidator(env)({} as any, res, next)
+				return middleware.tokenValidator(env)({} as any, res, next)
 					.then(() => {
 						// then
 						expect(next).to.not.have.been.called;
@@ -156,7 +156,7 @@ describe('middleware.ts', () => {
 				req.get.withArgs('Authorization').returns(null);
 
 				// when
-				return tokenValidator(env)(req, res, next)
+				return middleware.tokenValidator(env)(req, res, next)
 					.then(() => {
 						// then
 						expect(next).to.not.have.been.called;
@@ -171,7 +171,7 @@ describe('middleware.ts', () => {
 				req.get.withArgs('Authorization').returns('');
 
 				// when
-				return tokenValidator(env)(req, res, next)
+				return middleware.tokenValidator(env)(req, res, next)
 					.then(() => {
 						// then
 						expect(next).to.not.have.been.called;
@@ -187,7 +187,7 @@ describe('middleware.ts', () => {
 				req.get.withArgs('Authorization').returns('12345');
 
 				// when
-				return tokenValidator(env)(req, res, next)
+				return middleware.tokenValidator(env)(req, res, next)
 					.then(() => {
 						// then
 						expect(next).to.not.have.been.called;
@@ -203,7 +203,7 @@ describe('middleware.ts', () => {
 				req.get.withArgs('Authorization').returns('Bearer ');
 
 				// when
-				return tokenValidator(env)(req, res, next)
+				return middleware.tokenValidator(env)(req, res, next)
 					.then(() => {
 						// then
 						expect(next).to.not.have.been.called;
@@ -220,7 +220,7 @@ describe('middleware.ts', () => {
 				req.get.withArgs('Authorization').returns('Bearer 12345');
 
 				// when
-				return tokenValidator(env)(req, res, next)
+				return middleware.tokenValidator(env)(req, res, next)
 					.then(() => {
 						// then
 						expect(next).to.not.have.been.called;
@@ -241,7 +241,7 @@ describe('middleware.ts', () => {
 				issuerClientUserInfoStub.rejects(new Error('something or other'));
 
 				// when
-				return tokenValidator(env)(req, res, next)
+				return middleware.tokenValidator(env)(req, res, next)
 					.then(() => {
 						// then
 						expect(next).to.not.have.been.called;
@@ -272,7 +272,7 @@ describe('middleware.ts', () => {
 			issuerClientUserInfoStub.resolves(userInfoMock);
 
 			// when - then
-			return tokenValidator(env)(req, res, next)
+			return middleware.tokenValidator(env)(req, res, next)
 				.then(() => {
 
 					expect(req.orizuru.user).to.deep.eq(user);
@@ -305,7 +305,7 @@ describe('middleware.ts', () => {
 			req.orizuru = { other: true };
 
 			// when - then
-			return tokenValidator(env)(req, res, next)
+			return middleware.tokenValidator(env)(req, res, next)
 				.then(() => {
 
 					expect(req.orizuru.user).to.deep.eq(user);
@@ -333,7 +333,7 @@ describe('middleware.ts', () => {
 			sinon.stub(envValidator, 'validate').throws(new Error('some error or other'));
 
 			// when - then
-			expect(() => grantChecker(env)).to.throw('some error or other');
+			expect(() => middleware.grantChecker(env)).to.throw('some error or other');
 
 		});
 
@@ -347,7 +347,7 @@ describe('middleware.ts', () => {
 
 				// given
 				// when
-				return grantChecker(env)(req, res, next)
+				return middleware.grantChecker(env)(req, res, next)
 					.then(() => {
 						// then
 						expect(next).to.not.have.been.calledOnce;
@@ -363,7 +363,7 @@ describe('middleware.ts', () => {
 				req.orizuru = {};
 
 				// when
-				return grantChecker(env)(req, res, next)
+				return middleware.grantChecker(env)(req, res, next)
 					.then(() => {
 						// then
 						expect(next).to.not.have.been.calledOnce;
@@ -379,7 +379,7 @@ describe('middleware.ts', () => {
 				req.orizuru = { user: {} };
 
 				// when
-				return grantChecker(env)(req, res, next)
+				return middleware.grantChecker(env)(req, res, next)
 					.then(() => {
 						// then
 						expect(next).to.not.have.been.calledOnce;
@@ -396,7 +396,7 @@ describe('middleware.ts', () => {
 				sinon.stub(issuer, 'constructIssuerClient').rejects(new Error('something or other'));
 
 				// when
-				return grantChecker(env)(req, res, next)
+				return middleware.grantChecker(env)(req, res, next)
 					.then(() => {
 						// then
 						expect(next).to.not.have.been.calledOnce;
@@ -417,7 +417,7 @@ describe('middleware.ts', () => {
 				sinon.stub(jwt, 'createJwtBearerGrantAssertion').rejects(new Error('Unable to sign JWT'));
 
 				// when
-				return grantChecker(env)(req, res, next)
+				return middleware.grantChecker(env)(req, res, next)
 					.then(() => {
 						// then
 						expect(next).to.not.have.been.calledOnce;
@@ -442,7 +442,7 @@ describe('middleware.ts', () => {
 				sinon.stub(authorizationGrant, 'obtainAuthorizationGrant').rejects(new Error('Unable to obtain grant'));
 
 				// when
-				return grantChecker(env)(req, res, next)
+				return middleware.grantChecker(env)(req, res, next)
 					.then(() => {
 						// then
 						expect(next).to.not.have.been.calledOnce;
@@ -474,7 +474,7 @@ describe('middleware.ts', () => {
 			sinon.stub(authorizationGrant, 'obtainAuthorizationGrant').resolves('12345');
 
 			// when
-			return grantChecker(env)(req, res, next)
+			return middleware.grantChecker(env)(req, res, next)
 				.then(() => {
 					// then
 					expect(req.orizuru.grantChecked).to.equal(true);
@@ -511,7 +511,7 @@ describe('middleware.ts', () => {
 			req.orizuru = { user, other: true };
 
 			// when - then
-			return grantChecker(env)(req, res, next)
+			return middleware.grantChecker(env)(req, res, next)
 				.then(() => {
 
 					expect(req.orizuru.grantChecked).to.eql(true);

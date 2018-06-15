@@ -35,18 +35,18 @@ import { Options, SalesforceJwt } from '../../src';
 import * as issuer from '../../src/openid/shared/issuer';
 import * as jwt from '../../src/openid/shared/jwt';
 
-import { generateAuthorizeUrl, requestAccessTokenWithClientAssertion } from '../../src/openid/webFlow';
+import { webServer } from '../../src/flow/webServer';
 
 const expect = chai.expect;
 
 chai.use(chaiAsPromised);
 chai.use(sinonChai);
 
-describe('webFlow.ts', () => {
+describe('webServer.ts', () => {
 
 	let env: Options.Auth;
 
-	before(async () => {
+	before(() => {
 		env = {
 			jwtSigningKey: 'testJwtSigningKey',
 			openidClientId: 'test',
@@ -69,7 +69,7 @@ describe('webFlow.ts', () => {
 			});
 
 			// When
-			const authorizeUrl = await generateAuthorizeUrl(env, 'https://test.app.com/auth/callback', 'testState');
+			const authorizeUrl = await webServer.generateAuthorizeUrl(env, 'https://test.app.com/auth/callback', 'testState');
 
 			// Then
 			expect(authorizeUrl).to.eql('https://login.salesforce.com/services/oauth2/authorize?response_type=code&client_id=test&redirect_uri=https%3A%2F%2Ftest.app.com%2Fauth%2Fcallback&state=testState&prompt=login');
@@ -110,7 +110,7 @@ describe('webFlow.ts', () => {
 			sinon.stub(jwt, 'createJwtBearerClientAssertion').resolves('signed');
 
 			// When
-			const accessTokenResponse = await requestAccessTokenWithClientAssertion(env, 'a', 'b', 'c');
+			const accessTokenResponse = await webServer.requestAccessTokenWithClientAssertion(env, 'a', 'b', 'c');
 
 			// Then
 			expect(accessTokenResponse).to.eql(expectedAccessTokenResponse);
@@ -149,7 +149,7 @@ describe('webFlow.ts', () => {
 			sinon.stub(jwt, 'createJwtBearerClientAssertion').resolves('signed');
 
 			// When
-			const accessTokenResponse = await requestAccessTokenWithClientAssertion(env, 'a', 'b', 'c');
+			const accessTokenResponse = await webServer.requestAccessTokenWithClientAssertion(env, 'a', 'b', 'c');
 
 			// Then
 			expect(accessTokenResponse).to.eql(expectedAccessTokenResponse);

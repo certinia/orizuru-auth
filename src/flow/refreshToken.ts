@@ -25,6 +25,7 @@
  */
 
 import { default as request } from 'axios';
+import formUrlencoded from 'form-urlencoded';
 import { decode } from 'jsonwebtoken';
 
 import { AccessTokenResponse, Options, SalesforceJwt } from '..';
@@ -48,14 +49,16 @@ export namespace refreshToken {
 		const issuer = await constructIssuer(env);
 		const jwtBearerAssertion = await createJwtBearerClientAssertion(env, issuer);
 
-		const grantType = 'grant_type=refresh_token';
-		const refreshTokenUri = `refresh_token=${token}`;
-		const clientId = `client_id=${env.openidClientId}`;
-		const clientAssertion = `client_assertion=${jwtBearerAssertion}`;
-		const clientAssertionType = `client_assertion_type=${ASSERTION_TYPE}`;
-		const format = 'format=json';
+		const parameters = {
+			['grant_type']: 'refresh_token',
+			['refresh_token']: token,
+			['client_id']: env.openidClientId,
+			['client_assertion']: jwtBearerAssertion,
+			['client_assertion_type']: ASSERTION_TYPE,
+			format: 'json'
+		};
 
-		const authUri = `${issuer.token_endpoint}?${grantType}&${refreshTokenUri}&${clientId}&${clientAssertion}&${clientAssertionType}&${format}`;
+		const authUri = `${issuer.token_endpoint}?${formUrlencoded(parameters)}`;
 
 		const response = await request.post(authUri);
 

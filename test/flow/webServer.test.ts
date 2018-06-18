@@ -104,7 +104,7 @@ describe('webServer.ts', () => {
 			});
 
 			sinon.stub(request, 'post')
-				.withArgs('https://login.salesforce.com/services/oauth2/token?grant_type=authorization_code&code=c&client_id=test&client_assertion=signed&client_assertion_type=urn:ietf:params:oauth:client-assertion-type:jwt-bearer&redirect_uri=a&format=json')
+				.withArgs('https://login.salesforce.com/services/oauth2/token?grant_type=authorization_code&code=c&client_id=test&client_assertion=signed&client_assertion_type=urn%3Aietf%3Aparams%3Aoauth%3Aclient-assertion-type%3Ajwt-bearer&redirect_uri=a&format=json')
 				.resolves(expectedResponse);
 
 			sinon.stub(jwt, 'createJwtBearerClientAssertion').resolves('signed');
@@ -143,7 +143,7 @@ describe('webServer.ts', () => {
 			});
 
 			sinon.stub(request, 'post')
-				.withArgs('https://login.salesforce.com/services/oauth2/token?grant_type=authorization_code&code=c&client_id=test&client_assertion=signed&client_assertion_type=urn:ietf:params:oauth:client-assertion-type:jwt-bearer&redirect_uri=a&format=json')
+				.withArgs('https://login.salesforce.com/services/oauth2/token?grant_type=authorization_code&code=c&client_id=test&client_assertion=signed&client_assertion_type=urn%3Aietf%3Aparams%3Aoauth%3Aclient-assertion-type%3Ajwt-bearer&redirect_uri=a&format=json')
 				.resolves(expectedResponse);
 
 			sinon.stub(jwt, 'createJwtBearerClientAssertion').resolves('signed');

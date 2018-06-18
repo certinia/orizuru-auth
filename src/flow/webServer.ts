@@ -25,12 +25,15 @@
  */
 
 import { default as request } from 'axios';
+import formUrlencoded from 'form-urlencoded';
 import { decode } from 'jsonwebtoken';
 
-import { AccessTokenResponse, Options, SalesforceJwt } from '..';
+import { Options } from '..';
 import { validate } from '../openid/shared/envValidator';
 import { constructIssuer } from '../openid/shared/issuer';
 import { createJwtBearerClientAssertion } from '../openid/shared/jwt';
+import { AccessTokenResponse } from './response/accessToken';
+import { SalesforceJwt } from './response/salesforceJwt';
 
 const ASSERTION_TYPE = 'urn:ietf:params:oauth:client-assertion-type:jwt-bearer';
 
@@ -68,14 +71,17 @@ export namespace webServer {
 		const issuer = await constructIssuer(env);
 		const jwtBearerAssertion = await createJwtBearerClientAssertion(env, issuer);
 
-		const grantType = 'grant_type=authorization_code';
-		const codeUri = `code=${code}`;
-		const clientId = `client_id=${env.openidClientId}`;
-		const clientAssertion = `client_assertion=${jwtBearerAssertion}`;
-		const clientAssertionType = `client_assertion_type=${ASSERTION_TYPE}`;
-		const format = 'format=json';
+		const parameters = {
+			['grant_type']: 'authorization_code',
+			code,
+			['client_id']: env.openidClientId,
+			['client_assertion']: jwtBearerAssertion,
+			['client_assertion_type']: ASSERTION_TYPE,
+			['redirect_uri']: redirectUri,
+			format: 'json'
+		};
 
-		const authUri = `${issuer.token_endpoint}?${grantType}&${codeUri}&${clientId}&${clientAssertion}&${clientAssertionType}&redirect_uri=${encodeURIComponent(redirectUri)}&${format}`;
+		const authUri = `${issuer.token_endpoint}?${formUrlencoded(parameters)}`;
 
 		const response = await request.post(authUri);
 

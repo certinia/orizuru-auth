@@ -67,6 +67,7 @@ export namespace refreshToken {
 		if (idToken) {
 			const decodedToken = decode(idToken as string) as SalesforceJwt;
 			accessTokenResponse.id_token = decodedToken;
+			accessTokenResponse.refresh_token = token;
 		}
 
 		return accessTokenResponse;

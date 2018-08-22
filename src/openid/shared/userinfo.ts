@@ -24,79 +24,21 @@
  *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import { UserInfo } from 'openid-client';
+import { Options } from '../..';
+import { constructIssuerClient } from './issuer';
+
 /**
- * Orizuru Auth module.
+ * Get the user info from an access token.
+ * @param accessToken The access token.
  */
+export function getUserInfo(options: Options.Auth, accessToken: string): Promise<UserInfo> {
 
-import { refreshToken } from './flow/refreshToken';
-import { webServer } from './flow/webServer';
+	return constructIssuerClient(options)
+		.then((issuerClient) => issuerClient.userinfo(accessToken))
+		.then((userInfo) => userInfo)
+		.catch(() => {
+			throw new Error('Failed to get the user info.');
+		});
 
-import { grant } from './openid/grant';
-import { middleware } from './openid/middleware';
-
-export { AccessTokenResponse } from './flow/response/accessToken';
-export { SalesforceJwt } from './flow/response/salesforceJwt';
-export { SalesforceJwtStandardClaims } from './flow/response/salesforceJwtStandardClaims';
-
-export { getUserInfo } from './openid/shared/userinfo';
-
-const flow = {
-	refreshToken,
-	webServer
-};
-
-export {
-	flow,
-	grant,
-	middleware
-};
-
-declare global {
-
-	namespace Express {
-
-		interface Request {
-			orizuru?: Orizuru.Context;
-		}
-
-	}
-
-	namespace Orizuru {
-
-		interface Context {
-			grantChecked: boolean;
-			user: {
-				organizationId: string;
-				username: string;
-			};
-		}
-
-		interface IServer {
-			auth: Options.Auth;
-		}
-
-	}
-}
-
-export declare namespace Options {
-
-	/**
-	 * The OpenID environment parameters.
-	 */
-	export interface Auth {
-		jwtSigningKey: string;
-		openidClientId: string;
-		openidHTTPTimeout: number;
-		openidIssuerURI: string;
-	}
-
-}
-
-export interface User {
-	username: string;
-}
-
-export interface Grant {
-	accessToken: string;
-	instanceUrl: string;
 }

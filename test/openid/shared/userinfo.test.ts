@@ -24,79 +24,78 @@
  *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/**
- * Orizuru Auth module.
- */
+import chai from 'chai';
+import chaiAsPromised from 'chai-as-promised';
+import sinon from 'sinon';
+import sinonChai from 'sinon-chai';
 
-import { refreshToken } from './flow/refreshToken';
-import { webServer } from './flow/webServer';
+import { UserInfo } from 'openid-client';
 
-import { grant } from './openid/grant';
-import { middleware } from './openid/middleware';
+import * as issuer from '../../../src/openid/shared/issuer';
 
-export { AccessTokenResponse } from './flow/response/accessToken';
-export { SalesforceJwt } from './flow/response/salesforceJwt';
-export { SalesforceJwtStandardClaims } from './flow/response/salesforceJwtStandardClaims';
+import { Options } from '../../../src';
 
-export { getUserInfo } from './openid/shared/userinfo';
+import * as userinfo from '../../../src/openid/shared/userinfo';
 
-const flow = {
-	refreshToken,
-	webServer
-};
+const expect = chai.expect;
 
-export {
-	flow,
-	grant,
-	middleware
-};
+chai.use(chaiAsPromised);
+chai.use(sinonChai);
 
-declare global {
+describe('openid/shared/userinfo.js', () => {
 
-	namespace Express {
+	const env: Options.Auth = {
+		jwtSigningKey: 'testJwtSigningKey',
+		openidClientId: 'testOpenidClientKey',
+		openidHTTPTimeout: 2000,
+		openidIssuerURI: 'https://login.salesforce.com'
+	};
 
-		interface Request {
-			orizuru?: Orizuru.Context;
-		}
+	afterEach(() => {
+		sinon.restore();
+	});
 
-	}
+	describe('getUserInfo', () => {
 
-	namespace Orizuru {
+		it('should return the user info on success', async () => {
 
-		interface Context {
-			grantChecked: boolean;
-			user: {
-				organizationId: string;
-				username: string;
+			const issuerClient = {
+				userinfo: sinon.stub()
 			};
-		}
 
-		interface IServer {
-			auth: Options.Auth;
-		}
+			// Given
+			sinon.stub(issuer, 'constructIssuerClient').resolves(issuerClient);
+			issuerClient.userinfo.returns({
+				organization_id: '123',
+				preferred_username: 'bob'
+			});
 
-	}
-}
+			// When
 
-export declare namespace Options {
+			const result: UserInfo = await userinfo.getUserInfo(env, 'ABCDE123');
 
-	/**
-	 * The OpenID environment parameters.
-	 */
-	export interface Auth {
-		jwtSigningKey: string;
-		openidClientId: string;
-		openidHTTPTimeout: number;
-		openidIssuerURI: string;
-	}
+			// Then
 
-}
+			expect(result).to.eql({
+				organization_id: '123',
+				preferred_username: 'bob'
+			});
 
-export interface User {
-	username: string;
-}
+		});
 
-export interface Grant {
-	accessToken: string;
-	instanceUrl: string;
-}
+		it('should throw an error on failure', async () => {
+
+			// Given
+
+			sinon.stub(issuer, 'constructIssuerClient').rejects(new Error());
+
+			// When - Then
+
+			expect(userinfo.getUserInfo(env, 'ABCDE123'))
+				.to.be.rejectedWith(Error, 'Failed to get the user info.');
+
+		});
+
+	});
+
+});

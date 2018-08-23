@@ -24,19 +24,28 @@
  *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { UserInfo } from 'openid-client';
 import { Options } from '../..';
 import { constructIssuerClient } from './issuer';
+
+export interface UserInformation {
+	preferredUsername: string;
+	organizationId: string;
+}
 
 /**
  * Get the user info from an access token.
  * @param accessToken The access token.
  */
-export function getUserInfo(options: Options.Auth, accessToken: string): Promise<UserInfo> {
+export function getUserInfo(options: Options.Auth, accessToken: string): Promise<UserInformation> {
 
 	return constructIssuerClient(options)
 		.then((issuerClient) => issuerClient.userinfo(accessToken))
-		.then((userInfo) => userInfo)
+		.then((userInfo) => {
+			return {
+				organizationId: userInfo.organization_id,
+				preferredUsername: userInfo.preferred_username
+			};
+		})
 		.catch(() => {
 			throw new Error('Failed to get the user info.');
 		});

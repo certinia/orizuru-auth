@@ -29,8 +29,6 @@ import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
 
-import { UserInfo } from 'openid-client';
-
 import * as issuer from '../../../src/openid/shared/issuer';
 
 import { Options } from '../../../src';
@@ -72,13 +70,13 @@ describe('openid/shared/userinfo.js', () => {
 
 			// When
 
-			const result: UserInfo = await userinfo.getUserInfo(env, 'ABCDE123');
+			const result: userinfo.UserInformation = await userinfo.getUserInfo(env, 'ABCDE123');
 
 			// Then
 
 			expect(result).to.eql({
-				organization_id: '123',
-				preferred_username: 'bob'
+				organizationId: '123',
+				preferredUsername: 'bob'
 			});
 
 		});

@@ -38,7 +38,7 @@ export { AccessTokenResponse } from './flow/response/accessToken';
 export { SalesforceJwt } from './flow/response/salesforceJwt';
 export { SalesforceJwtStandardClaims } from './flow/response/salesforceJwtStandardClaims';
 
-export { getUserInfo } from './openid/shared/userinfo';
+export { getUserInfo, UserInformation } from './openid/shared/userinfo';
 
 const flow = {
 	refreshToken,

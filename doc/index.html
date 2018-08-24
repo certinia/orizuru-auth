@@ -1,132 +1,174 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html class="default no-js">
 <head>
-    <meta charset="utf-8">
-    <title>JSDoc: Home</title>
-
-    <script src="scripts/prettify/prettify.js"> </script>
-    <script src="scripts/prettify/lang-css.js"> </script>
-    <!--[if lt IE 9]>
-      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
-    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>@financialforcedev/orizuru-auth</title>
+	<meta name="description" content="">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="assets/css/main.css">
 </head>
-
 <body>
-
-<div id="main">
-
-    <h1 class="page-title">Home</h1>
-
-    
-
-
-
-    
-
-
-    <h3> </h3>
-
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
-    <section>
-        <article><h1>Orizuru Authentication.</h1><p>Orizuru authentication is <a href="http://expressjs.com/">Express</a>-compatible authentication
-middleware for <a href="http://nodejs.org/">Node.js</a>. It is aimed at users of the <a href="">Orizuru</a> framework, but can also be used standalone. It is aimed at users of the Salesforce Identity Provider.</p>
-<p>In a Salesforce context, using both of these middlewares in combination will establish the following.</p>
-<ol>
-<li>The caller has a current valid Salesforce access token.</li>
-<li>The Salesforce user for the token presented is linked by PermissionSet to the ConnectedApp corresponding to the OpenID Connect ClientID (Consumer Key).</li>
-</ol>
-<p><em>It is extrememly important to treat your signing key as sensitive material, please ensure that this is stored in a secure location.</em></p>
-<h2>Install</h2><pre class="prettyprint source"><code>$ npm install @financialforcedev/orizuru-auth</code></pre><h2>Usage</h2><h3>Middleware</h3><p>Multiple middleware functions are available.</p>
-<h4>Token Validator</h4><p>The token validator middleware checks that a valid OpenID Connect Bearer token exists in an <strong>Authorization</strong> HTTP header. It does this by calling the specified Identity Provider's UserInfo endpoint with the Bearer token.</p>
-<p>If the token is successfully validated then a <em>user</em> object is set on the request's <em>orizuru</em> object.</p>
-<p>Failure messages are emitted on the <em>emitter</em>.</p>
-<pre class="prettyprint source lang-javascript"><code>
-const
-    middleware = require('@financialforcedev/orizuru-auth').middleware,
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="assets/js/search.js" data-base=".">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="index.html" class="title">@financialforcedev/orizuru-auth</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-externals" checked />
+							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
+							<input type="checkbox" id="tsd-filter-only-exported" />
+							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="globals.html">Globals</a>
+				</li>
+			</ul>
+			<h1> @financialforcedev/orizuru-auth</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<div class="tsd-panel tsd-typography">
+				<h1 id="orizuru-authentication">Orizuru Authentication</h1>
+				<p><a href="https://travis-ci.org/financialforcedev/orizuru-auth"><img src="https://travis-ci.org/financialforcedev/orizuru-auth.svg?branch=master" alt="Build Status"></a>
+				<a href="https://nodesecurity.io/orgs/ffres/projects/4bb1b8ba-4d1b-4960-b5ad-3e1cf4e4e154"><img src="https://nodesecurity.io/orgs/ffres/projects/4bb1b8ba-4d1b-4960-b5ad-3e1cf4e4e154/badge" alt="NSP Status"></a></p>
+				<p>Orizuru authentication is <a href="http://expressjs.com/">Express</a>-compatible authentication
+				middleware for <a href="http://nodejs.org/">Node.js</a>. It is aimed at users of the <a href="https://www.npmjs.com/package/@financialforcedev/orizuru">Orizuru</a> framework, but can also be used standalone. It is aimed at users of the Salesforce Identity Provider.</p>
+				<p>In a Salesforce context, using both of these middlewares in combination will establish the following.</p>
+				<ol>
+					<li>The caller has a current valid Salesforce access token.</li>
+					<li>The Salesforce user for the token presented is linked by PermissionSet to the ConnectedApp corresponding to the OpenID Connect ClientID (Consumer Key).</li>
+				</ol>
+				<p><em>It is extremely important to treat your signing key as sensitive material, please ensure that this is stored in a secure location.</em></p>
+				<h2 id="install">Install</h2>
+				<pre><code>$ <span class="hljs-built_in">npm</span> install @financialforcedev/orizuru-auth
+</code></pre><h2 id="usage">Usage</h2>
+				<h3 id="middleware">Middleware</h3>
+				<p>Multiple middleware functions are available.</p>
+				<h4 id="token-validator">Token Validator</h4>
+				<p>The token validator middleware checks that a valid OpenID Connect Bearer token exists in an <strong>Authorization</strong> HTTP header. It does this by calling the specified Identity Provider&#39;s UserInfo endpoint with the Bearer token.</p>
+				<p>If the token is successfully validated then a <em>user</em> object is set on the request&#39;s <em>orizuru</em> object.</p>
+				<p>Failure messages are emitted on the <em>emitter</em>.</p>
+				<pre><code class="lang-javascript">
+<span class="hljs-keyword">const</span>
+    middleware = <span class="hljs-built_in">require</span>(<span class="hljs-string">'@financialforcedev/orizuru-auth'</span>).middleware,
     env = {
-        jwtSigningKey: '--SOME KEY MATERIAL--',
-        openidClientId: '12312312413-7236762374',
-        openidHTTPTimeout: 4000,
-        openidIssuerURI: 'https://login.salesforce.com'
+        <span class="hljs-attr">jwtSigningKey</span>: <span class="hljs-string">'--SOME KEY MATERIAL--'</span>,
+        <span class="hljs-attr">openidClientId</span>: <span class="hljs-string">'12312312413-7236762374'</span>,
+        <span class="hljs-attr">openidHTTPTimeout</span>: <span class="hljs-number">4000</span>,
+        <span class="hljs-attr">openidIssuerURI</span>: <span class="hljs-string">'https://login.salesforce.com'</span>
     };
 
 app.use(middleware.tokenValidator(env));
 
-middleware.emitter.on('denied', (message) => {
-    console.log(message);
+middleware.emitter.on(<span class="hljs-string">'denied'</span>, (message) =&gt; {
+    <span class="hljs-built_in">console</span>.log(message);
 });
-middleware.emitter.on('token_validated', (message) => {
-    console.log(message);
-});</code></pre><p>The <em>user</em> object contains the following fields.</p>
-<pre class="prettyprint source lang-json"><code>
+middleware.emitter.on(<span class="hljs-string">'token_validated'</span>, (message) =&gt; {
+    <span class="hljs-built_in">console</span>.log(message);
+});
+
+
+</code></pre>
+				<p>The <em>user</em> object contains the following fields.</p>
+				<pre><code class="lang-json">
 {
-    &quot;username&quot;: &quot;someuser@someorg.something&quot;,
-    &quot;organizationId&quot;: &quot;00D80000000bSxXEAU&quot;
-}</code></pre><h4>Grant Checker</h4><p>The grant checker is designed to be used in tandem with the token Validator. It uses the <em>user</em> object on the request's <em>orizuru</em> object and attempts to obtain an OpenID Connect access token using a JWT Bearer grant request. In order for this to work the Identity Provider must have a previously established authorisation for the user requested. With the Salesforce identity provider this is achieved using a Connected App with a Certificate for the JWT signing key uploaded into it.</p>
-<p>If this completes successfully it sets the <em>orizuru.grantChecked</em> property to be true, otherwise the user will be refused access.</p>
-<p>Failure messages are emitted on the <em>emitter</em>.</p>
-<pre class="prettyprint source lang-javascript"><code>
-const
-    middleware = require('@financialforcedev/orizuru-auth').middleware,
+    <span class="hljs-attr">"username"</span>: <span class="hljs-string">"someuser@someorg.something"</span>,
+    <span class="hljs-attr">"organizationId"</span>: <span class="hljs-string">"00D80000000bSxXEAU"</span>
+}
+
+</code></pre>
+				<h4 id="grant-checker">Grant Checker</h4>
+				<p>The grant checker is designed to be used in tandem with the token Validator. It uses the <em>user</em> object on the request&#39;s <em>orizuru</em> object and attempts to obtain an OpenID Connect access token using a JWT Bearer grant request. In order for this to work the Identity Provider must have a previously established authorisation for the user requested. With the Salesforce identity provider this is achieved using a Connected App with a Certificate for the JWT signing key uploaded into it.</p>
+				<p>If this completes successfully it sets the <em>orizuru.grantChecked</em> property to be true, otherwise the user will be refused access.</p>
+				<p>Failure messages are emitted on the <em>emitter</em>.</p>
+				<pre><code class="lang-javascript">
+<span class="hljs-keyword">const</span>
+    middleware = <span class="hljs-built_in">require</span>(<span class="hljs-string">'@financialforcedev/orizuru-auth'</span>).middleware,
     env = {
-        jwtSigningKey: '--SOME KEY MATERIAL--',
-        openidClientId: '12312312413-7236762374',
-        openidHTTPTimeout: 4000,
-        openidIssuerURI: 'https://login.salesforce.com'
+        <span class="hljs-attr">jwtSigningKey</span>: <span class="hljs-string">'--SOME KEY MATERIAL--'</span>,
+        <span class="hljs-attr">openidClientId</span>: <span class="hljs-string">'12312312413-7236762374'</span>,
+        <span class="hljs-attr">openidHTTPTimeout</span>: <span class="hljs-number">4000</span>,
+        <span class="hljs-attr">openidIssuerURI</span>: <span class="hljs-string">'https://login.salesforce.com'</span>
     };
 
 app.use(middleware.tokenValidator(env));
 app.use(middleware.grantChecker(env));
 
-middleware.emitter.on('denied', (message) => {
-    console.log(message);
+middleware.emitter.on(<span class="hljs-string">'denied'</span>, (message) =&gt; {
+    <span class="hljs-built_in">console</span>.log(message);
 });
-middleware.emitter.on('grant_checked', (message) => {
-    console.log(message);
-});</code></pre><h3>Token Granter</h3><p>This can be called at any time to obtain credentials to connect to Salesforce. This depends on the configuration of a Connected App in your Salesforce org, with pre-authorized users connected via a Permission Set to it and a certificate uploaded that corresponds to the <em>jwtSigningKey</em>.</p>
-<p>The credentials returned are in a form suitable to be used with <a href="https://jsforce.github.io/">JSforce</a>. See the example below.</p>
-<pre class="prettyprint source lang-javascript"><code>
-const
-    grant = require('@financialforcedev/orizuru-auth').grant,
-    jsforce = require('jsforce'),
+middleware.emitter.on(<span class="hljs-string">'grant_checked'</span>, (message) =&gt; {
+    <span class="hljs-built_in">console</span>.log(message);
+});
+
+
+</code></pre>
+				<h3 id="token-granter">Token Granter</h3>
+				<p>This can be called at any time to obtain credentials to connect to Salesforce. This depends on the configuration of a Connected App in your Salesforce org, with pre-authorized users connected via a Permission Set to it and a certificate uploaded that corresponds to the <em>jwtSigningKey</em>.</p>
+				<p>The credentials returned are in a form suitable to be used with <a href="https://jsforce.github.io/">JSforce</a>. See the example below.</p>
+				<pre><code class="lang-javascript">
+<span class="hljs-keyword">const</span>
+    grant = <span class="hljs-built_in">require</span>(<span class="hljs-string">'@financialforcedev/orizuru-auth'</span>).grant,
+    jsforce = <span class="hljs-built_in">require</span>(<span class="hljs-string">'jsforce'</span>),
     env = {
-        jwtSigningKey: '--SOME KEY MATERIAL--',
-        openidClientId: '12312312413-7236762374',
-        openidHTTPTimeout: 4000,
-        openidIssuerURI: 'https://login.salesforce.com'
+        <span class="hljs-attr">jwtSigningKey</span>: <span class="hljs-string">'--SOME KEY MATERIAL--'</span>,
+        <span class="hljs-attr">openidClientId</span>: <span class="hljs-string">'12312312413-7236762374'</span>,
+        <span class="hljs-attr">openidHTTPTimeout</span>: <span class="hljs-number">4000</span>,
+        <span class="hljs-attr">openidIssuerURI</span>: <span class="hljs-string">'https://login.salesforce.com'</span>
     },
     user = {
-        username: 'someuser@someorg.something',
-        organizationId: '00D80000000bSxXEAU'
+        <span class="hljs-attr">username</span>: <span class="hljs-string">'someuser@someorg.something'</span>,
+        <span class="hljs-attr">organizationId</span>: <span class="hljs-string">'00D80000000bSxXEAU'</span>
     },
     getToken = grant.getToken(env);
-    getJsforceConnection = (credentials) => {
-        return new jsforce.Connection(credentials);
+    getJsforceConnection = <span class="hljs-function">(<span class="hljs-params">credentials</span>) =&gt;</span> {
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> jsforce.Connection(credentials);
     },
-    getLimits = (conn) => {
-        return Promise.all([conn, conn.limits()]);
+    getLimits = <span class="hljs-function">(<span class="hljs-params">conn</span>) =&gt;</span> {
+        <span class="hljs-keyword">return</span> <span class="hljs-built_in">Promise</span>.all([conn, conn.limits()]);
     },
-    displayLimits = ([conn, limits]) => {
-        console.log(limits);
-        return conn;
+    displayLimits = <span class="hljs-function">(<span class="hljs-params">[conn, limits]</span>) =&gt;</span> {
+        <span class="hljs-built_in">console</span>.log(limits);
+        <span class="hljs-keyword">return</span> conn;
     },
-    logout = (conn) => {
-        return conn.logout();
+    logout = <span class="hljs-function">(<span class="hljs-params">conn</span>) =&gt;</span> {
+        <span class="hljs-keyword">return</span> conn.logout();
     };
 
 
@@ -134,27 +176,224 @@ getToken(user)
     .then(getJsforceConnection)
     .then(getLimits)
     .then(displayLimits)
-    .then(logout);</code></pre><h2>API Docs</h2><p>Click to view <a href="http://htmlpreview.github.io/?https://github.com/financialforcedev/orizuru-auth/blob/master/doc/index.html">JSDoc API documentation</a>.</p></article>
-    </section>
+    .then(logout);
 
-
-
-
-
-
+</code></pre>
+				<h2 id="api-docs">API Docs</h2>
+				<p>Click to view <a href="http://htmlpreview.github.io/?https://github.com/financialforcedev/orizuru-auth/blob/master/doc/index.html">JSDoc API documentation</a>.</p>
+			</div>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class="globals  ">
+						<a href="globals.html"><em>Globals</em></a>
+					</li>
+					<li class="label tsd-is-external">
+						<span>Internals</span>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/grant.html">grant</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/middleware.html">middleware</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/refreshtoken.html">refresh<wbr>Token</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/webserver.html">web<wbr>Server</a>
+					</li>
+					<li class="label tsd-is-external">
+						<span>Externals</span>
+					</li>
+					<li class=" tsd-kind-module tsd-is-external">
+						<a href="modules/options.html">Options</a>
+					</li>
+					<li class=" tsd-kind-module tsd-is-external tsd-is-not-exported">
+						<a href="modules/__global.html">__global</a>
+					</li>
+					<li class=" tsd-kind-module tsd-parent-kind-module tsd-is-external tsd-is-not-exported">
+						<a href="modules/__global.express.html">__global.<wbr>Express</a>
+					</li>
+					<li class=" tsd-kind-module tsd-parent-kind-module tsd-is-external tsd-is-not-exported">
+						<a href="modules/__global.orizuru.html">__global.<wbr>Orizuru</a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/accesstokenresponse.html" class="tsd-kind-icon">Access<wbr>Token<wbr>Response</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-is-external">
+						<a href="interfaces/grant.html" class="tsd-kind-icon">Grant</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/salesforcejwt.html" class="tsd-kind-icon">Salesforce<wbr>Jwt</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/salesforcejwtstandardclaims.html" class="tsd-kind-icon">Salesforce<wbr>Jwt<wbr>Standard<wbr>Claims</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-is-external">
+						<a href="interfaces/user.html" class="tsd-kind-icon">User</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-is-not-exported">
+						<a href="globals.html#assertion_type" class="tsd-kind-icon">ASSERTION_<wbr>TYPE</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-is-private tsd-is-not-exported">
+						<a href="globals.html#bearer_prefix" class="tsd-kind-icon">BEARER_<wbr>PREFIX</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-is-private tsd-is-not-exported">
+						<a href="globals.html#denied_event" class="tsd-kind-icon">DENIED_<wbr>EVENT</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-is-private tsd-is-not-exported">
+						<a href="globals.html#grant_checked_event" class="tsd-kind-icon">GRANT_<wbr>CHECKED_<wbr>EVENT</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-is-private tsd-is-not-exported">
+						<a href="globals.html#http_authorization_header" class="tsd-kind-icon">HTTP_<wbr>AUTHORIZATION_<wbr>HEADER</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-is-private tsd-is-not-exported">
+						<a href="globals.html#jwt_bearer_grant" class="tsd-kind-icon">JWT_<wbr>BEARER_<wbr>GRANT</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-is-private tsd-is-not-exported">
+						<a href="globals.html#jwt_grant_type" class="tsd-kind-icon">JWT_<wbr>GRANT_<wbr>TYPE</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-is-private tsd-is-not-exported">
+						<a href="globals.html#rsa_256" class="tsd-kind-icon">RSA_<wbr>256</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-is-private tsd-is-not-exported">
+						<a href="globals.html#token_validated_event" class="tsd-kind-icon">TOKEN_<wbr>VALIDATED_<wbr>EVENT</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-is-private tsd-is-not-exported">
+						<a href="globals.html#cache" class="tsd-kind-icon">cache</a>
+					</li>
+					<li class=" tsd-kind-function tsd-is-private tsd-is-not-exported">
+						<a href="globals.html#buildissuer" class="tsd-kind-icon">build<wbr>Issuer</a>
+					</li>
+					<li class=" tsd-kind-function tsd-is-private tsd-is-not-exported">
+						<a href="globals.html#checkuserisontherequest" class="tsd-kind-icon">check<wbr>User<wbr>IsOn<wbr>The<wbr>Request</a>
+					</li>
+					<li class=" tsd-kind-function tsd-is-private">
+						<a href="globals.html#clearcache" class="tsd-kind-icon">clear<wbr>Cache</a>
+					</li>
+					<li class=" tsd-kind-function tsd-is-private">
+						<a href="globals.html#constructissuer" class="tsd-kind-icon">construct<wbr>Issuer</a>
+					</li>
+					<li class=" tsd-kind-function tsd-is-private">
+						<a href="globals.html#constructissuerclient" class="tsd-kind-icon">construct<wbr>Issuer<wbr>Client</a>
+					</li>
+					<li class=" tsd-kind-function tsd-is-private tsd-is-not-exported">
+						<a href="globals.html#convertgranttocredentials" class="tsd-kind-icon">convert<wbr>Grant<wbr>ToCredentials</a>
+					</li>
+					<li class=" tsd-kind-function tsd-is-private">
+						<a href="globals.html#createjwtbearerclientassertion" class="tsd-kind-icon">create<wbr>Jwt<wbr>Bearer<wbr>Client<wbr>Assertion</a>
+					</li>
+					<li class=" tsd-kind-function tsd-is-private">
+						<a href="globals.html#createjwtbearergrantassertion" class="tsd-kind-icon">create<wbr>Jwt<wbr>Bearer<wbr>Grant<wbr>Assertion</a>
+					</li>
+					<li class=" tsd-kind-function tsd-is-private tsd-is-not-exported">
+						<a href="globals.html#createkey" class="tsd-kind-icon">create<wbr>Key</a>
+					</li>
+					<li class=" tsd-kind-function tsd-is-private tsd-is-not-exported">
+						<a href="globals.html#extractaccesstoken" class="tsd-kind-icon">extract<wbr>Access<wbr>Token</a>
+					</li>
+					<li class=" tsd-kind-function tsd-is-private tsd-is-not-exported">
+						<a href="globals.html#fail" class="tsd-kind-icon">fail</a>
+					</li>
+					<li class=" tsd-kind-function tsd-is-private">
+						<a href="globals.html#obtainauthorizationgrant" class="tsd-kind-icon">obtain<wbr>Authorization<wbr>Grant</a>
+					</li>
+					<li class=" tsd-kind-function tsd-is-private tsd-is-not-exported">
+						<a href="globals.html#setgrant" class="tsd-kind-icon">set<wbr>Grant</a>
+					</li>
+					<li class=" tsd-kind-function tsd-is-private tsd-is-not-exported">
+						<a href="globals.html#setuseronrequest" class="tsd-kind-icon">set<wbr>User<wbr>OnRequest</a>
+					</li>
+					<li class=" tsd-kind-function tsd-is-private">
+						<a href="globals.html#validate" class="tsd-kind-icon">validate</a>
+					</li>
+					<li class=" tsd-kind-function tsd-is-private tsd-is-not-exported">
+						<a href="globals.html#validateaccesstoken" class="tsd-kind-icon">validate<wbr>Access<wbr>Token</a>
+					</li>
+					<li class=" tsd-kind-function tsd-is-private tsd-is-not-exported">
+						<a href="globals.html#validateuser" class="tsd-kind-icon">validate<wbr>User</a>
+					</li>
+					<li class=" tsd-kind-object-literal tsd-is-private tsd-is-not-exported">
+						<a href="globals.html#rsa_256_algorithm" class="tsd-kind-icon">RSA_<wbr>256_<wbr>ALGORITHM</a>
+					</li>
+					<li class=" tsd-kind-object-literal tsd-is-external tsd-is-not-exported">
+						<a href="globals.html#flow" class="tsd-kind-icon">flow</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</div>
 </div>
-
-<nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-index.html">index</a></li><li><a href="module-openid_grant.html">openid/grant</a></li><li><a href="module-openid_middleware.html">openid/middleware</a></li></ul>
-</nav>
-
-<br class="clear">
-
-<footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Mon Oct 16 2017 13:15:03 GMT+0100 (BST)
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-module"><span class="tsd-kind-icon">Module</span></li>
+				<li class="tsd-kind-object-literal"><span class="tsd-kind-icon">Object literal</span></li>
+				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
+				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
+				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
+				<li class="tsd-kind-index-signature"><span class="tsd-kind-icon">Index signature</span></li>
+				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
+				<li class="tsd-kind-enum-member"><span class="tsd-kind-icon">Enumeration member</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-enum"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-enum"><span class="tsd-kind-icon">Method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
+				<li class="tsd-kind-interface tsd-has-type-parameter"><span class="tsd-kind-icon">Interface with type parameter</span></li>
+				<li class="tsd-kind-constructor tsd-parent-kind-interface"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-interface"><span class="tsd-kind-icon">Method</span></li>
+				<li class="tsd-kind-index-signature tsd-parent-kind-interface"><span class="tsd-kind-icon">Index signature</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
+				<li class="tsd-kind-class tsd-has-type-parameter"><span class="tsd-kind-icon">Class with type parameter</span></li>
+				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class"><span class="tsd-kind-icon">Accessor</span></li>
+				<li class="tsd-kind-index-signature tsd-parent-kind-class"><span class="tsd-kind-icon">Index signature</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static property</span></li>
+				<li class="tsd-kind-call-signature tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static method</span></li>
+			</ul>
+		</div>
+	</div>
 </footer>
-
-<script> prettyPrint(); </script>
-<script src="scripts/linenumber.js"> </script>
+<div class="container tsd-generator">
+	<p>Generated using <a href="http://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="assets/js/main.js"></script>
+<script>if (location.protocol == 'file:') document.write('<script src="assets/js/search.js"><' + '/script>');</script>
 </body>
 </html>

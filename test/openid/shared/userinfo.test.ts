@@ -89,7 +89,7 @@ describe('openid/shared/userinfo.js', () => {
 
 			// When - Then
 
-			expect(userinfo.getUserInfo(env, 'ABCDE123'))
+			return expect(userinfo.getUserInfo(env, 'ABCDE123'))
 				.to.be.rejectedWith(Error, 'Failed to get the user info.');
 
 		});

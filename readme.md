@@ -2,7 +2,6 @@
 
 
 [![Build Status](https://travis-ci.org/financialforcedev/orizuru-auth.svg?branch=master)](https://travis-ci.org/financialforcedev/orizuru-auth)
-[![NSP Status](https://nodesecurity.io/orgs/ffres/projects/4bb1b8ba-4d1b-4960-b5ad-3e1cf4e4e154/badge)](https://nodesecurity.io/orgs/ffres/projects/4bb1b8ba-4d1b-4960-b5ad-3e1cf4e4e154)
 
 Orizuru authentication is [Express](http://expressjs.com/)-compatible authentication
 middleware for [Node.js](http://nodejs.org/). It is aimed at users of the [Orizuru](https://www.npmjs.com/package/@financialforcedev/orizuru) framework, but can also be used standalone. It is aimed at users of the Salesforce Identity Provider.
@@ -34,16 +33,16 @@ If the token is successfully validated then a *user* object is set on the reques
 
 Failure messages are emitted on the *emitter*.
 
-```javascript
+```typescript
 
-const
-	middleware = require('@financialforcedev/orizuru-auth').middleware,
-	env = {
-		jwtSigningKey: '--SOME KEY MATERIAL--',
-		openidClientId: '12312312413-7236762374',
-		openidHTTPTimeout: 4000,
-		openidIssuerURI: 'https://login.salesforce.com'
-	};
+import { middleware } from '@financialforcedev/orizuru-auth';
+
+const env = {
+	jwtSigningKey: '--SOME KEY MATERIAL--',
+	openidClientId: '12312312413-7236762374',
+	openidHTTPTimeout: 4000,
+	openidIssuerURI: 'https://login.salesforce.com'
+};
 
 app.use(middleware.tokenValidator(env));
 
@@ -76,16 +75,16 @@ If this completes successfully it sets the *orizuru.grantChecked* property to be
 
 Failure messages are emitted on the *emitter*.
 
-```javascript
+```typescript
 
-const
-	middleware = require('@financialforcedev/orizuru-auth').middleware,
-	env = {
-		jwtSigningKey: '--SOME KEY MATERIAL--',
-		openidClientId: '12312312413-7236762374',
-		openidHTTPTimeout: 4000,
-		openidIssuerURI: 'https://login.salesforce.com'
-	};
+import { middleware } from '@financialforcedev/orizuru-auth';
+
+const env = {
+	jwtSigningKey: '--SOME KEY MATERIAL--',
+	openidClientId: '12312312413-7236762374',
+	openidHTTPTimeout: 4000,
+	openidIssuerURI: 'https://login.salesforce.com'
+};
 
 app.use(middleware.tokenValidator(env));
 app.use(middleware.grantChecker(env));
@@ -106,36 +105,39 @@ This can be called at any time to obtain credentials to connect to Salesforce. T
 
 The credentials returned are in a form suitable to be used with [JSforce](https://jsforce.github.io/). See the example below.
 
-```javascript
+```typescript
 
-const
-	grant = require('@financialforcedev/orizuru-auth').grant,
-	jsforce = require('jsforce'),
-	env = {
-		jwtSigningKey: '--SOME KEY MATERIAL--',
-		openidClientId: '12312312413-7236762374',
-		openidHTTPTimeout: 4000,
-		openidIssuerURI: 'https://login.salesforce.com'
-	},
-	user = {
-		username: 'someuser@someorg.something',
-		organizationId: '00D80000000bSxXEAU'
-	},
-	getToken = grant.getToken(env);
-	getJsforceConnection = (credentials) => {
-		return new jsforce.Connection(credentials);
-	},
-	getLimits = (conn) => {
-		return Promise.all([conn, conn.limits()]);
-	},
-	displayLimits = ([conn, limits]) => {
-		console.log(limits);
-		return conn;
-	},
-	logout = (conn) => {
-		return conn.logout();
-	};
+import { grant } from '@financialforcedev/orizuru-auth';
+import * as jsforce from 'jsforce';
 
+const env = {
+	jwtSigningKey: '--SOME KEY MATERIAL--',
+	openidClientId: '12312312413-7236762374',
+	openidHTTPTimeout: 4000,
+	openidIssuerURI: 'https://login.salesforce.com'
+};
+const user = {
+	organizationId: '00D80000000bSxXEAU',
+	username: 'someuser@someorg.something'
+};
+const getToken = grant.getToken(env);
+
+function getJsforceConnection(credentials: any) {
+	return new jsforce.Connection(credentials);
+}
+
+function getLimits(conn: jsforce.Connection) {
+	return Promise.all([conn, conn.limits()]);
+}
+
+function displayLimits([conn, limits]: [any, any]) {
+	console.log(limits);
+	return conn;
+}
+
+function logout(conn) {
+	return conn.logout();
+}
 
 getToken(user)
 	.then(getJsforceConnection)

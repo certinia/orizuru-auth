@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2018, FinancialForce.com, inc
+ * Copyright (c) 2018, FinancialForce.com, inc
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -24,82 +24,36 @@
  *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/**
- * Orizuru Auth module.
- */
+import { AxiosRequestConfig, default as request } from 'axios';
+import { Options } from '..';
 
-import { refreshToken } from './flow/refreshToken';
-import { webServer } from './flow/webServer';
+import { validate } from '../openid/shared/envValidator';
+import { constructIssuer } from '../openid/shared/issuer';
 
-import { revocation } from './revocation/revoke';
-
-import { grant } from './openid/grant';
-import { middleware } from './openid/middleware';
-
-export { AccessTokenResponse } from './flow/response/accessToken';
-export { SalesforceJwt } from './flow/response/salesforceJwt';
-export { SalesforceJwtStandardClaims } from './flow/response/salesforceJwtStandardClaims';
-
-export { getUserInfo, UserInformation } from './openid/shared/userinfo';
-
-const flow = {
-	refreshToken,
-	webServer
-};
-
-export {
-	flow,
-	grant,
-	middleware,
-	revocation
-};
-
-declare global {
-
-	namespace Express {
-
-		interface Request {
-			orizuru?: Orizuru.Context;
-		}
-
-	}
-
-	namespace Orizuru {
-
-		interface Context {
-			grantChecked: boolean;
-			user: {
-				organizationId: string;
-				username: string;
-			};
-		}
-
-		interface IServer {
-			auth: Options.Auth;
-		}
-
-	}
-}
-
-export declare namespace Options {
+export namespace revocation {
 
 	/**
-	 * The OpenID environment parameters.
+	 * Revokes the given OAuth token using the Salesforce GET support.
+	 *
+	 * @see https://help.salesforce.com/articleView?id=remoteaccess_revoke_token.htm
 	 */
-	export interface Auth {
-		jwtSigningKey: string;
-		openidClientId: string;
-		openidHTTPTimeout: number;
-		openidIssuerURI: string;
+	export async function revokeOAuthToken(env: Options.Auth, token: string) {
+
+		validate(env);
+
+		const issuer = await constructIssuer(env);
+
+		const revocationUri = `${issuer.revocation_endpoint}?token=${token}`;
+
+		const config: AxiosRequestConfig = {
+			validateStatus: () => {
+				return true;
+			}
+		};
+
+		const response = await request.get(revocationUri, config);
+		return response.status === 200;
+
 	}
 
-}
-
-export interface User {
-	username: string;
-}
-
-export interface Grant {
-	accessToken: string;
-	instanceUrl: string;
 }

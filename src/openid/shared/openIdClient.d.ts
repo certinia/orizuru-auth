@@ -33,6 +33,7 @@ declare module 'openid-client' {
 	export class Issuer {
 
 		public authorization_endpoint: string;
+		public revocation_endpoint: string;
 		public token_endpoint: string;
 
 		public static defaultHttpOptions: {

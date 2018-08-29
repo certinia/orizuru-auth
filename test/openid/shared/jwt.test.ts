@@ -42,7 +42,7 @@ const expect = chai.expect;
 chai.use(chaiAsPromised);
 chai.use(sinonChai);
 
-describe('shared/jwt.ts', () => {
+describe('openid/shared/jwt.ts', () => {
 
 	const env: Options.Auth = {
 		jwtSigningKey: 'testJwtSigningKey',

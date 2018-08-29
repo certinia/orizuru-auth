@@ -30,7 +30,7 @@ import { validate } from '../../../src/openid/shared/envValidator';
 
 const expect = chai.expect;
 
-describe('shared/envValidator.ts', () => {
+describe('openid/shared/envValidator.ts', () => {
 
 	let env: any;
 

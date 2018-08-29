@@ -36,7 +36,7 @@ const expect = chai.expect;
 chai.use(chaiAsPromised);
 chai.use(sinonChai);
 
-describe('shared/authorizationGrant.ts', () => {
+describe('openid/shared/authorizationGrant.ts', () => {
 
 	afterEach(() => {
 		sinon.restore();

@@ -42,7 +42,7 @@ const expect = chai.expect;
 chai.use(chaiAsPromised);
 chai.use(sinonChai);
 
-describe('refreshToken.ts', () => {
+describe('flow/refreshToken.ts', () => {
 
 	let env: Options.Auth;
 

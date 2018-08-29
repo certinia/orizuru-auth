@@ -43,7 +43,7 @@ const expect = chai.expect;
 chai.use(chaiAsPromised);
 chai.use(sinonChai);
 
-describe('grant.ts', () => {
+describe('openid/grant.ts', () => {
 
 	const env: Options.Auth = {
 		jwtSigningKey: 'test',

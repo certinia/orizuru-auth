@@ -74,7 +74,8 @@
 			"coverage",
 			"dist",
 			"doc",
-			"**/*.d.ts"
+			"**/*.d.ts",
+			"src/flow/response"
 		],
 		"reporter": [
 			"lcov",

@@ -25,6 +25,7 @@
  */
 
 import chai from 'chai';
+
 import * as index from '../src/index';
 
 const expect = chai.expect;
@@ -36,10 +37,11 @@ describe('index.ts', () => {
 		// Given
 		// When
 		// Then
-		expect(index).to.contain.keys(['grant', 'middleware', 'flow']);
+		expect(index).to.contain.keys(['grant', 'middleware', 'flow', 'revocation']);
 		expect(index.flow).to.contain.keys(['refreshToken', 'webServer']);
 		expect(index.grant).to.contain.keys(['getToken']);
 		expect(index.middleware).to.contain.keys(['emitter', 'grantChecker', 'tokenValidator']);
+		expect(index.revocation).to.contain.keys(['revokeOAuthToken']);
 
 	});
 

@@ -31,7 +31,7 @@
 		"@types/jsonwebtoken": "^7.2.8",
 		"@types/lodash": "^4.14.116",
 		"@types/node": "^10.9.3",
-		"@types/uuid": "^3.4.3",
+		"@types/uuid": "^3.4.4",
 		"axios": "^0.18.0",
 		"form-urlencoded": "^3.0.0",
 		"jsonwebtoken": "^8.3.0",
@@ -54,7 +54,7 @@
 		"ts-node": "^7.0.1",
 		"tslint": "^5.11.0",
 		"typedoc": "^0.12.0",
-		"typescript": "^3.0.1"
+		"typescript": "^3.0.3"
 	},
 	"nyc": {
 		"all": true,

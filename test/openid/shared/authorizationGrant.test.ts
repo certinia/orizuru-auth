@@ -92,9 +92,10 @@ describe('openid/shared/authorizationGrant.ts', () => {
 			issuerClient.grant.resolves('test');
 
 			// When
-			await expect(obtainAuthorizationGrant('assertionTest', issuerClient)).to.eventually.eql('test')
+			const grant = await obtainAuthorizationGrant('assertionTest', issuerClient);
 
 			// Then
+			expect(grant).to.eql('test');
 			expect(issuerClient.grant).to.have.been.calledOnce;
 			expect(issuerClient.grant).to.have.been.calledWith({
 				['grant_type']: 'urn:ietf:params:oauth:grant-type:jwt-bearer',

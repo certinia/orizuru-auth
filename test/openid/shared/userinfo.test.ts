@@ -87,10 +87,9 @@ describe('openid/shared/userinfo.js', () => {
 
 			sinon.stub(issuer, 'constructIssuerClient').rejects(new Error());
 
-			// When - Then
-
-			return expect(userinfo.getUserInfo(env, 'ABCDE123'))
-				.to.be.rejectedWith(Error, 'Failed to get the user info.');
+			// When
+			// Then
+			await expect(userinfo.getUserInfo(env, 'ABCDE123')).to.be.rejectedWith(Error, 'Failed to get the user info.');
 
 		});
 

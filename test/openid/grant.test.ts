@@ -68,9 +68,9 @@ describe('openid/grant.ts', () => {
 
 	describe('getToken', () => {
 
-		it('should resolve if successful', () => {
+		it('should resolve if successful', async () => {
 
-			// given
+			// Given
 			const issuerClientMock = sinon.stub();
 
 			sinon.stub(envValidator, 'validate').resolves();
@@ -78,18 +78,18 @@ describe('openid/grant.ts', () => {
 			sinon.stub(jwt, 'createJwtBearerGrantAssertion').resolves('assertion');
 			sinon.stub(authorizationGrant, 'obtainAuthorizationGrant').resolves({ access_token: 'accessToken', instance_url: 'instanceUrl' });
 
-			// when - then
-			return expect(grant.getToken(env)({ username: 'user' }))
-				.to.eventually.eql({
-					accessToken: 'accessToken',
-					instanceUrl: 'instanceUrl'
-				})
-				.then(() => {
-					expect(envValidator.validate).to.have.been.calledOnce;
-					expect(issuer.constructIssuerClient).to.have.been.calledOnce;
-					expect(jwt.createJwtBearerGrantAssertion).to.have.been.calledOnce;
-					expect(authorizationGrant.obtainAuthorizationGrant).to.have.been.calledWith('assertion', issuerClientMock);
-				});
+			// When
+			const token = await grant.getToken(env)({ username: 'user' });
+
+			// Then
+			expect(token).to.eql({
+				accessToken: 'accessToken',
+				instanceUrl: 'instanceUrl'
+			});
+			expect(envValidator.validate).to.have.been.calledOnce;
+			expect(issuer.constructIssuerClient).to.have.been.calledOnce;
+			expect(jwt.createJwtBearerGrantAssertion).to.have.been.calledOnce;
+			expect(authorizationGrant.obtainAuthorizationGrant).to.have.been.calledWith('assertion', issuerClientMock);
 
 		});
 
@@ -97,80 +97,83 @@ describe('openid/grant.ts', () => {
 
 			it('if envValidator rejects', () => {
 
-				// given
+				// Given
 				sinon.stub(envValidator, 'validate').throws(new Error('some error or other'));
 
-				// when - then
+				// When
+				// Then
 				expect(() => grant.getToken(env)).to.throw('some error or other');
 
 			});
 
-			it('if user is null', () => {
+			it('if user is null', async () => {
 
-				// given
+				// Given
 				sinon.stub(envValidator, 'validate').resolves();
 
-				// when - then
-				return expect(grant.getToken(env)(null as any)).to.eventually.be.rejectedWith('Failed to grant token, error: Invalid parameter: username cannot be empty.');
+				// When
+				// Then
+				await expect(grant.getToken(env)(null as any)).to.eventually.be.rejectedWith('Failed to grant token, error: Invalid parameter: username cannot be empty.');
 
 			});
 
-			it('if username is missing', () => {
+			it('if username is missing', async () => {
 
-				// given
+				// Given
 				sinon.stub(envValidator, 'validate').resolves();
 
-				// when - then
-				return expect(grant.getToken(env)({} as any)).to.eventually.be.rejectedWith(usernameRequiredError);
+				// When
+				// Then
+				await expect(grant.getToken(env)({} as any)).to.eventually.be.rejectedWith(usernameRequiredError);
 
 			});
 
-			it('if username is empty', () => {
+			it('if username is empty', async () => {
 
-				// given
+				// Given
 				sinon.stub(envValidator, 'validate').resolves();
 
-				// when - then
-				return expect(grant.getToken(env)({ username: '' })).to.eventually.be.rejectedWith('Failed to grant token, error: Invalid parameter: username cannot be empty.');
+				// When
+				// Then
+				await expect(grant.getToken(env)({ username: '' })).to.eventually.be.rejectedWith('Failed to grant token, error: Invalid parameter: username cannot be empty.');
 
 			});
 
-			it('if constructIssuerClient rejects', () => {
+			it('if constructIssuerClient rejects', async () => {
 
-				// given
+				// Given
 				sinon.stub(envValidator, 'validate').resolves();
 				sinon.stub(issuer, 'constructIssuerClient').rejects(new Error('something or other.'));
 
-				// when - then
-				return expect(grant.getToken(env)({ username: 'user' }))
-					.to.eventually.be.rejectedWith('Failed to grant token, error: something or other.')
-					.then(() => {
-						expect(issuer.constructIssuerClient).to.have.been.calledOnce;
-						expect(issuer.constructIssuerClient).to.have.been.calledWith(env);
-					});
+				// When
+				await expect(grant.getToken(env)({ username: 'user' })).to.eventually.be.rejectedWith('Failed to grant token, error: something or other.');
+
+				// Then
+				expect(issuer.constructIssuerClient).to.have.been.calledOnce;
+				expect(issuer.constructIssuerClient).to.have.been.calledWith(env);
 
 			});
 
-			it('if createJwtBearerGrantAssertion rejects', () => {
+			it('if createJwtBearerGrantAssertion rejects', async () => {
 
-				// given
+				// Given
 				sinon.stub(envValidator, 'validate').resolves();
 				sinon.stub(issuer, 'constructIssuerClient').resolves();
 				sinon.stub(jwt, 'createJwtBearerGrantAssertion').rejects(new Error('something or other.'));
 
-				// when - then
-				return expect(grant.getToken(env)({ username: 'user' }))
-					.to.eventually.be.rejectedWith('Failed to grant token, error: something or other.')
-					.then(() => {
-						expect(issuer.constructIssuerClient).to.have.been.calledOnce;
-						expect(jwt.createJwtBearerGrantAssertion).to.have.been.calledWith(env);
-					});
+				// When
+				await expect(grant.getToken(env)({ username: 'user' })).to.eventually.be.rejectedWith('Failed to grant token, error: something or other.');
+
+				// Then
+				expect(issuer.constructIssuerClient).to.have.been.calledOnce;
+				expect(jwt.createJwtBearerGrantAssertion).to.have.been.calledWith(env);
+
 
 			});
 
-			it('if obtainAuthorizationGrant rejects', () => {
+			it('if obtainAuthorizationGrant rejects', async () => {
 
-				// given
+				// Given
 				const issuerClientMock = sinon.stub();
 
 				sinon.stub(envValidator, 'validate').resolves();
@@ -178,13 +181,12 @@ describe('openid/grant.ts', () => {
 				sinon.stub(jwt, 'createJwtBearerGrantAssertion').resolves('assertion');
 				sinon.stub(authorizationGrant, 'obtainAuthorizationGrant').rejects(new Error('something or other.'));
 
-				// when - then
-				return expect(grant.getToken(env)({ username: 'user' }))
-					.to.eventually.be.rejectedWith('Failed to grant token, error: something or other.')
-					.then(() => {
-						expect(jwt.createJwtBearerGrantAssertion).to.have.been.calledOnce;
-						expect(authorizationGrant.obtainAuthorizationGrant).to.have.been.calledWith('assertion', issuerClientMock);
-					});
+				// When
+				await expect(grant.getToken(env)({ username: 'user' })).to.eventually.be.rejectedWith('Failed to grant token, error: something or other.');
+
+				// Then
+				expect(jwt.createJwtBearerGrantAssertion).to.have.been.calledOnce;
+				expect(authorizationGrant.obtainAuthorizationGrant).to.have.been.calledWith('assertion', issuerClientMock);
 
 			});
 

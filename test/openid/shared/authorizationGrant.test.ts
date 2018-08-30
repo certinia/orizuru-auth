@@ -52,60 +52,54 @@ describe('openid/shared/authorizationGrant.ts', () => {
 			};
 		});
 
-		it('should reject if issuerClient grant rejects', () => {
+		it('should reject if issuerClient grant rejects', async () => {
 
-			// given
+			// Given
 			issuerClient.grant.rejects(new Error('Some error or other'));
 
-			// when - then
-			return expect(obtainAuthorizationGrant('assertionTest', issuerClient))
-				.to.eventually.be.rejectedWith('Grant request failed: Some error or other')
-				.then(() => {
-					issuerClient.grant.resolves('test');
-					expect(issuerClient.grant).to.have.been.calledOnce;
-					expect(issuerClient.grant).to.have.been.calledWith({
-						['grant_type']: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
-						assertion: 'assertionTest'
-					});
-				});
+			// When
+			await expect(obtainAuthorizationGrant('assertionTest', issuerClient)).to.eventually.be.rejectedWith('Grant request failed: Some error or other');
+
+			// Then
+			expect(issuerClient.grant).to.have.been.calledOnce;
+			expect(issuerClient.grant).to.have.been.calledWith({
+				['grant_type']: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+				assertion: 'assertionTest'
+			});
 
 		});
 
-		it('should reject if issuerClient grant resolves with null', () => {
+		it('should reject if issuerClient grant resolves with null', async () => {
 
-			// given
+			// Given
 			issuerClient.grant.resolves(null);
 
-			// when - then
-			return expect(obtainAuthorizationGrant('assertionTest', issuerClient))
-				.to.eventually.be.rejectedWith('Grant request failed: No grant received.')
-				.then(() => {
-					issuerClient.grant.resolves('test');
-					expect(issuerClient.grant).to.have.been.calledOnce;
-					expect(issuerClient.grant).to.have.been.calledWith({
-						['grant_type']: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
-						assertion: 'assertionTest'
-					});
-				});
+			// When
+			await expect(obtainAuthorizationGrant('assertionTest', issuerClient)).to.eventually.be.rejectedWith('Grant request failed: No grant received.');
+
+			// Then
+			expect(issuerClient.grant).to.have.been.calledOnce;
+			expect(issuerClient.grant).to.have.been.calledWith({
+				['grant_type']: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+				assertion: 'assertionTest'
+			});
 
 		});
 
-		it('should resolve if issuerClient grant resolves', () => {
+		it('should resolve if issuerClient grant resolves', async () => {
 
-			// given
+			// Given
 			issuerClient.grant.resolves('test');
 
-			// when - then
-			return expect(obtainAuthorizationGrant('assertionTest', issuerClient))
-				.to.eventually.eql('test')
-				.then(() => {
-					issuerClient.grant.resolves('test');
-					expect(issuerClient.grant).to.have.been.calledOnce;
-					expect(issuerClient.grant).to.have.been.calledWith({
-						['grant_type']: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
-						assertion: 'assertionTest'
-					});
-				});
+			// When
+			await expect(obtainAuthorizationGrant('assertionTest', issuerClient)).to.eventually.eql('test')
+
+			// Then
+			expect(issuerClient.grant).to.have.been.calledOnce;
+			expect(issuerClient.grant).to.have.been.calledWith({
+				['grant_type']: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+				assertion: 'assertionTest'
+			});
 
 		});
 

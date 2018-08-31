@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2018, FinancialForce.com, inc
+ * Copyright (c) 2018, FinancialForce.com, inc
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -24,25 +24,39 @@
  *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import chai from 'chai';
+import { AxiosRequestConfig, default as request } from 'axios';
+import { Options } from '..';
 
-import * as index from '../src/index';
+import { validate } from '../openid/shared/envValidator';
+import { constructIssuer } from '../openid/shared/issuer';
 
-const expect = chai.expect;
+export namespace revocation {
 
-describe('index.ts', () => {
+	/**
+	 * Revokes the given access token using the Salesforce GET support.
+	 *
+	 * We need to use axios rather than the OpenID issuer client revoke function as it does not follow redirects.
+	 * Specifically, the 302 http response code with the POST method and the got NPM module.
+	 *
+	 * @see https://help.salesforce.com/articleView?id=remoteaccess_revoke_token.htm
+	 */
+	export async function revokeAccessToken(env: Options.Auth, token: string) {
 
-	it('should contain the correct parts', () => {
+		validate(env);
 
-		// Given
-		// When
-		// Then
-		expect(index).to.contain.keys(['grant', 'middleware', 'flow', 'revocation']);
-		expect(index.flow).to.contain.keys(['refreshToken', 'webServer']);
-		expect(index.grant).to.contain.keys(['getToken']);
-		expect(index.middleware).to.contain.keys(['emitter', 'grantChecker', 'tokenValidator']);
-		expect(index.revocation).to.contain.keys(['revokeAccessToken']);
+		const issuer = await constructIssuer(env);
 
-	});
+		const revocationUri = `${issuer.revocation_endpoint}?token=${token}`;
 
-});
+		const config: AxiosRequestConfig = {
+			validateStatus: () => {
+				return true;
+			}
+		};
+
+		const response = await request.get(revocationUri, config);
+		return response.status === 200;
+
+	}
+
+}

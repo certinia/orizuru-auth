@@ -31,6 +31,8 @@
 import { refreshToken } from './flow/refreshToken';
 import { webServer } from './flow/webServer';
 
+import { revocation } from './revocation/revoke';
+
 import { grant } from './openid/grant';
 import { middleware } from './openid/middleware';
 
@@ -48,7 +50,8 @@ const flow = {
 export {
 	flow,
 	grant,
-	middleware
+	middleware,
+	revocation
 };
 
 declare global {

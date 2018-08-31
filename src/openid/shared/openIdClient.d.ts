@@ -32,14 +32,15 @@ declare module 'openid-client' {
 
 	export class Issuer {
 
-		public authorization_endpoint: string;
-		public token_endpoint: string;
-
 		public static defaultHttpOptions: {
 			timeout: number;
 		};
 
 		public static discover: (openidIssuerUri: string) => Promise<Issuer>;
+
+		public authorization_endpoint: string;
+		public revocation_endpoint: string;
+		public token_endpoint: string;
 
 		public grant: () => string;
 
@@ -60,8 +61,8 @@ declare module 'openid-client' {
 	}
 
 	interface OpenIdGrant {
-		instance_url: string,
-		access_token: string
+		instance_url: string;
+		access_token: string;
 	}
 
 	interface UserInfo {

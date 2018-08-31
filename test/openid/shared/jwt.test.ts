@@ -42,7 +42,7 @@ const expect = chai.expect;
 chai.use(chaiAsPromised);
 chai.use(sinonChai);
 
-describe('shared/jwt.ts', () => {
+describe('openid/shared/jwt.ts', () => {
 
 	const env: Options.Auth = {
 		jwtSigningKey: 'testJwtSigningKey',
@@ -72,49 +72,46 @@ describe('shared/jwt.ts', () => {
 			sinon.restore();
 		});
 
-		it('should reject if jsonwebtoken sign returns an error', () => {
+		it('should reject if jsonwebtoken sign returns an error', async () => {
 
 			// Given
 			sinon.stub(uuid, 'v4').returns('testId');
 			sinon.stub(jsonwebtoken, 'sign').rejects('error');
 
 			// When
-			return expect(createJwtBearerClientAssertion(env, issuer as openidClient.Issuer))
-				.to.eventually.be.rejectedWith('Failed to sign client assertion')
-				.then(() => {
-					// Then
-					expect(jsonwebtoken.sign).to.have.been.calledOnce;
-					expect(jsonwebtoken.sign).to.have.been.calledWith({
-						aud: 'testTokenEndpoint',
-						exp: 240,
-						iss: env.openidClientId,
-						jti: 'testId',
-						sub: env.openidClientId
-					}, env.jwtSigningKey, { algorithm: 'RS256' });
-				});
+			await expect(createJwtBearerClientAssertion(env, issuer as openidClient.Issuer)).to.eventually.be.rejectedWith('Failed to sign client assertion');
+
+			// Then
+			expect(jsonwebtoken.sign).to.have.been.calledOnce;
+			expect(jsonwebtoken.sign).to.have.been.calledWith({
+				aud: 'testTokenEndpoint',
+				exp: 240,
+				iss: env.openidClientId,
+				jti: 'testId',
+				sub: env.openidClientId
+			}, env.jwtSigningKey, { algorithm: 'RS256' });
 
 		});
 
-		it('should resolve if jsonwebtoken sign returns a token', () => {
+		it('should resolve if jsonwebtoken sign returns a token', async () => {
 
 			// Given
 			sinon.stub(uuid, 'v4').returns('testId');
 			sinon.stub(jsonwebtoken, 'sign').resolves('token');
 
 			// When
-			return expect(createJwtBearerClientAssertion(env, issuer as openidClient.Issuer))
-				.to.eventually.eql('token')
-				.then(() => {
-					// Then
-					expect(jsonwebtoken.sign).to.have.been.calledOnce;
-					expect(jsonwebtoken.sign).to.have.been.calledWith({
-						aud: 'testTokenEndpoint',
-						exp: 240,
-						iss: env.openidClientId,
-						jti: 'testId',
-						sub: env.openidClientId
-					}, env.jwtSigningKey, { algorithm: 'RS256' });
-				});
+			const token = await createJwtBearerClientAssertion(env, issuer as openidClient.Issuer);
+
+			// Then
+			expect(token).to.eql('token');
+			expect(jsonwebtoken.sign).to.have.been.calledOnce;
+			expect(jsonwebtoken.sign).to.have.been.calledWith({
+				aud: 'testTokenEndpoint',
+				exp: 240,
+				iss: env.openidClientId,
+				jti: 'testId',
+				sub: env.openidClientId
+			}, env.jwtSigningKey, { algorithm: 'RS256' });
 
 		});
 
@@ -139,45 +136,42 @@ describe('shared/jwt.ts', () => {
 			sinon.restore();
 		});
 
-		it('should reject if jsonwebtoken sign returns an error', () => {
+		it('should reject if jsonwebtoken sign returns an error', async () => {
 
 			// Given
 			sinon.stub(jsonwebtoken, 'sign').rejects('error');
 
 			// When
-			return expect(createJwtBearerGrantAssertion(env, user))
-				.to.eventually.be.rejectedWith('Failed to sign grant assertion')
-				.then(() => {
-					// Then
-					expect(jsonwebtoken.sign).to.have.been.calledOnce;
-					expect(jsonwebtoken.sign).to.have.been.calledWith({
-						aud: env.openidIssuerURI,
-						exp: 240,
-						iss: env.openidClientId,
-						sub: user.username
-					}, env.jwtSigningKey, { algorithm: 'RS256' });
-				});
+			await expect(createJwtBearerGrantAssertion(env, user)).to.eventually.be.rejectedWith('Failed to sign grant assertion');
+
+			// Then
+			expect(jsonwebtoken.sign).to.have.been.calledOnce;
+			expect(jsonwebtoken.sign).to.have.been.calledWith({
+				aud: env.openidIssuerURI,
+				exp: 240,
+				iss: env.openidClientId,
+				sub: user.username
+			}, env.jwtSigningKey, { algorithm: 'RS256' });
 
 		});
 
-		it('should resolve if jsonwebtoken sign returns a token', () => {
+		it('should resolve if jsonwebtoken sign returns a token', async () => {
 
 			// Given
 			sinon.stub(jsonwebtoken, 'sign').resolves('token');
 
 			// When
-			return expect(createJwtBearerGrantAssertion(env, user))
-				.to.eventually.eql('token')
-				.then(() => {
-					// Then
-					expect(jsonwebtoken.sign).to.have.been.calledOnce;
-					expect(jsonwebtoken.sign).to.have.been.calledWith({
-						aud: env.openidIssuerURI,
-						exp: 240,
-						iss: env.openidClientId,
-						sub: user.username
-					}, env.jwtSigningKey, { algorithm: 'RS256' });
-				});
+			const token = await createJwtBearerGrantAssertion(env, user);
+
+			// Then
+			expect(token).to.eql('token');
+			expect(jsonwebtoken.sign).to.have.been.calledOnce;
+			expect(jsonwebtoken.sign).to.have.been.calledWith({
+				aud: env.openidIssuerURI,
+				exp: 240,
+				iss: env.openidClientId,
+				sub: user.username
+			}, env.jwtSigningKey, { algorithm: 'RS256' });
 
 		});
 

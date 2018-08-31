@@ -56,19 +56,17 @@ describe('openid/shared/issuer.js', () => {
 
 	describe('constructIssuerClient', () => {
 
-		it('should throw an error if discover rejects', () => {
+		it('should throw an error if discover rejects', async () => {
 
 			// Given
 			sinon.stub(openIdClient.Issuer, 'discover').rejects(new Error('error'));
 
 			// When
-			return expect(issuer.constructIssuerClient(env))
-				.to.be.rejectedWith('Could not get an issuer for timeout: 2000 and URI: https://login.salesforce.com.')
-				.then(() => {
-					// Then
-					expect(openIdClient.Issuer.discover).to.have.been.calledOnce;
-					expect(openIdClient.Issuer.discover).to.have.been.calledWith(env.openidIssuerURI);
-				});
+			await expect(issuer.constructIssuerClient(env)).to.be.rejectedWith('Could not get an issuer for timeout: 2000 and URI: https://login.salesforce.com.');
+
+			// Then
+			expect(openIdClient.Issuer.discover).to.have.been.calledOnce;
+			expect(openIdClient.Issuer.discover).to.have.been.calledWith(env.openidIssuerURI);
 
 		});
 

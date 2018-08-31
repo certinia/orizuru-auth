@@ -30,7 +30,7 @@ import { validate } from '../../../src/openid/shared/envValidator';
 
 const expect = chai.expect;
 
-describe('shared/envValidator.ts', () => {
+describe('openid/shared/envValidator.ts', () => {
 
 	let env: any;
 
@@ -47,80 +47,88 @@ describe('shared/envValidator.ts', () => {
 
 		it('if jwtSigningKey is null', () => {
 
-			// given
+			// Given
 			env.jwtSigningKey = null;
 
-			// when - then
+			// When
+			// Then
 			expect(() => validate(env)).to.throw('Missing required parameter: jwtSigningKey.');
 
 		});
 
 		it('if jwtSigningKey is empty', () => {
 
-			// given
+			// Given
 			env.jwtSigningKey = '';
 
-			// when - then
+			// When
+			// Then
 			expect(() => validate(env)).to.throw('Invalid parameter: jwtSigningKey cannot be empty.');
 
 		});
 
 		it('if openidClientId is null', () => {
 
-			// given
+			// Given
 			env.openidClientId = null;
 
-			// when - then
+			// When
+			// Then
 			expect(() => validate(env)).to.throw('Missing required parameter: openidClientId.');
 
 		});
 
 		it('if openidClientId is empty', () => {
 
-			// given
+			// Given
 			env.openidClientId = '';
 
-			// when - then
+			// When
+			// Then
 			expect(() => validate(env)).to.throw('Invalid parameter: openidClientId cannot be empty.');
 
 		});
 
 		it('if openidHTTPTimeout is null', () => {
 
-			// given
+			// Given
 			env.openidHTTPTimeout = null;
 
-			// when - then
+			// When
+			// Then
 			expect(() => validate(env)).to.throw('Invalid parameter: openidHTTPTimeout is not an integer.');
 
 		});
 
 		it('if openidHTTPTimeout is not an integer', () => {
 
-			// given
+			// Given
 			env.openidHTTPTimeout = '';
 
-			// when - then
+			// When
+			// Then
 			expect(() => validate(env)).to.throw('Invalid parameter: openidHTTPTimeout is not an integer.');
 
 		});
 
 		it('if openidIssuerURI is null', () => {
 
-			// given
+			// Given
 			env.openidIssuerURI = null;
 
-			// when - then
+			// When
+			// Then
 			expect(() => validate(env)).to.throw('Missing required parameter: openidIssuerURI.');
 
 		});
 
 		it('if openidIssuerURI is empty', () => {
 
-			// given
+			// Given
 			env.openidIssuerURI = '';
 
-			// when - then
+			// When
+			// Then
 			expect(() => validate(env)).to.throw('Invalid parameter: openidIssuerURI cannot be empty.');
 
 		});
@@ -129,7 +137,9 @@ describe('shared/envValidator.ts', () => {
 
 	it('should resolve with env if env is ok', () => {
 
-		// given - when - then
+		// Given
+		// When
+		// Then
 		expect(validate(env)).to.deep.equal(env);
 
 	});

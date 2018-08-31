@@ -42,7 +42,7 @@ const expect = chai.expect;
 chai.use(chaiAsPromised);
 chai.use(sinonChai);
 
-describe('webServer.ts', () => {
+describe('flow/webServer.ts', () => {
 
 	let env: Options.Auth;
 

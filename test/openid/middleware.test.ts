@@ -199,7 +199,7 @@ describe('openid/middleware.ts', () => {
 				req.get.withArgs('Authorization').returns('Bearer ');
 
 				// When
-				await middleware.tokenValidator(env)(req, res, next)
+				await middleware.tokenValidator(env)(req, res, next);
 
 				// Then
 				expect(next).to.not.have.been.called;
@@ -265,7 +265,7 @@ describe('openid/middleware.ts', () => {
 			issuerClientUserInfoStub.resolves(userInfoMock);
 
 			// When
-			await middleware.tokenValidator(env)(req, res, next)
+			await middleware.tokenValidator(env)(req, res, next);
 
 			// Then
 			expect(req.orizuru.user).to.deep.eq(user);
@@ -495,7 +495,7 @@ describe('openid/middleware.ts', () => {
 
 			req.orizuru = { user, other: true };
 
-			// When 
+			// When
 			await middleware.grantChecker(env)(req, res, next);
 
 			// Then

@@ -168,7 +168,6 @@ describe('openid/grant.ts', () => {
 				expect(issuer.constructIssuerClient).to.have.been.calledOnce;
 				expect(jwt.createJwtBearerGrantAssertion).to.have.been.calledWith(env);
 
-
 			});
 
 			it('if obtainAuthorizationGrant rejects', async () => {

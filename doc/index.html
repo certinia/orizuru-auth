@@ -65,8 +65,7 @@
 		<div class="col-8 col-content">
 			<div class="tsd-panel tsd-typography">
 				<h1 id="orizuru-authentication">Orizuru Authentication</h1>
-				<p><a href="https://travis-ci.org/financialforcedev/orizuru-auth"><img src="https://travis-ci.org/financialforcedev/orizuru-auth.svg?branch=master" alt="Build Status"></a>
-				<a href="https://nodesecurity.io/orgs/ffres/projects/4bb1b8ba-4d1b-4960-b5ad-3e1cf4e4e154"><img src="https://nodesecurity.io/orgs/ffres/projects/4bb1b8ba-4d1b-4960-b5ad-3e1cf4e4e154/badge" alt="NSP Status"></a></p>
+				<p><a href="https://travis-ci.org/financialforcedev/orizuru-auth"><img src="https://travis-ci.org/financialforcedev/orizuru-auth.svg?branch=master" alt="Build Status"></a></p>
 				<p>Orizuru authentication is <a href="http://expressjs.com/">Express</a>-compatible authentication
 				middleware for <a href="http://nodejs.org/">Node.js</a>. It is aimed at users of the <a href="https://www.npmjs.com/package/@financialforcedev/orizuru">Orizuru</a> framework, but can also be used standalone. It is aimed at users of the Salesforce Identity Provider.</p>
 				<p>In a Salesforce context, using both of these middlewares in combination will establish the following.</p>
@@ -76,108 +75,106 @@
 				</ol>
 				<p><em>It is extremely important to treat your signing key as sensitive material, please ensure that this is stored in a secure location.</em></p>
 				<h2 id="install">Install</h2>
-				<pre><code>$ <span class="hljs-built_in">npm</span> install @financialforcedev/orizuru-auth
-</code></pre><h2 id="usage">Usage</h2>
+				<pre><code>$ <span class="hljs-built_in">npm</span> install @financialforcedev/orizuru-auth</code></pre><h2 id="usage">Usage</h2>
 				<h3 id="middleware">Middleware</h3>
 				<p>Multiple middleware functions are available.</p>
 				<h4 id="token-validator">Token Validator</h4>
 				<p>The token validator middleware checks that a valid OpenID Connect Bearer token exists in an <strong>Authorization</strong> HTTP header. It does this by calling the specified Identity Provider&#39;s UserInfo endpoint with the Bearer token.</p>
 				<p>If the token is successfully validated then a <em>user</em> object is set on the request&#39;s <em>orizuru</em> object.</p>
 				<p>Failure messages are emitted on the <em>emitter</em>.</p>
-				<pre><code class="lang-javascript">
-<span class="hljs-keyword">const</span>
-    middleware = <span class="hljs-built_in">require</span>(<span class="hljs-string">'@financialforcedev/orizuru-auth'</span>).middleware,
-    env = {
-        <span class="hljs-attr">jwtSigningKey</span>: <span class="hljs-string">'--SOME KEY MATERIAL--'</span>,
-        <span class="hljs-attr">openidClientId</span>: <span class="hljs-string">'12312312413-7236762374'</span>,
-        <span class="hljs-attr">openidHTTPTimeout</span>: <span class="hljs-number">4000</span>,
-        <span class="hljs-attr">openidIssuerURI</span>: <span class="hljs-string">'https://login.salesforce.com'</span>
-    };
+				<pre><code class="language-typescript">
+<span class="hljs-keyword">import</span> { middleware } <span class="hljs-keyword">from</span> <span class="hljs-string">'@financialforcedev/orizuru-auth'</span>;
+
+<span class="hljs-keyword">const</span> env = {
+    jwtSigningKey: <span class="hljs-string">'--SOME KEY MATERIAL--'</span>,
+    openidClientId: <span class="hljs-string">'12312312413-7236762374'</span>,
+    openidHTTPTimeout: <span class="hljs-number">4000</span>,
+    openidIssuerURI: <span class="hljs-string">'https://login.salesforce.com'</span>
+};
 
 app.use(middleware.tokenValidator(env));
 
-middleware.emitter.on(<span class="hljs-string">'denied'</span>, (message) =&gt; {
+middleware.emitter.on(<span class="hljs-string">'denied'</span>, <span class="hljs-function">(<span class="hljs-params">message</span>) =&gt;</span> {
     <span class="hljs-built_in">console</span>.log(message);
 });
-middleware.emitter.on(<span class="hljs-string">'token_validated'</span>, (message) =&gt; {
+middleware.emitter.on(<span class="hljs-string">'token_validated'</span>, <span class="hljs-function">(<span class="hljs-params">message</span>) =&gt;</span> {
     <span class="hljs-built_in">console</span>.log(message);
 });
-
 
 </code></pre>
 				<p>The <em>user</em> object contains the following fields.</p>
-				<pre><code class="lang-json">
+				<pre><code class="language-json">
 {
     <span class="hljs-attr">"username"</span>: <span class="hljs-string">"someuser@someorg.something"</span>,
     <span class="hljs-attr">"organizationId"</span>: <span class="hljs-string">"00D80000000bSxXEAU"</span>
 }
-
 </code></pre>
 				<h4 id="grant-checker">Grant Checker</h4>
 				<p>The grant checker is designed to be used in tandem with the token Validator. It uses the <em>user</em> object on the request&#39;s <em>orizuru</em> object and attempts to obtain an OpenID Connect access token using a JWT Bearer grant request. In order for this to work the Identity Provider must have a previously established authorisation for the user requested. With the Salesforce identity provider this is achieved using a Connected App with a Certificate for the JWT signing key uploaded into it.</p>
 				<p>If this completes successfully it sets the <em>orizuru.grantChecked</em> property to be true, otherwise the user will be refused access.</p>
 				<p>Failure messages are emitted on the <em>emitter</em>.</p>
-				<pre><code class="lang-javascript">
-<span class="hljs-keyword">const</span>
-    middleware = <span class="hljs-built_in">require</span>(<span class="hljs-string">'@financialforcedev/orizuru-auth'</span>).middleware,
-    env = {
-        <span class="hljs-attr">jwtSigningKey</span>: <span class="hljs-string">'--SOME KEY MATERIAL--'</span>,
-        <span class="hljs-attr">openidClientId</span>: <span class="hljs-string">'12312312413-7236762374'</span>,
-        <span class="hljs-attr">openidHTTPTimeout</span>: <span class="hljs-number">4000</span>,
-        <span class="hljs-attr">openidIssuerURI</span>: <span class="hljs-string">'https://login.salesforce.com'</span>
-    };
+				<pre><code class="language-typescript">
+<span class="hljs-keyword">import</span> { middleware } <span class="hljs-keyword">from</span> <span class="hljs-string">'@financialforcedev/orizuru-auth'</span>;
+
+<span class="hljs-keyword">const</span> env = {
+    jwtSigningKey: <span class="hljs-string">'--SOME KEY MATERIAL--'</span>,
+    openidClientId: <span class="hljs-string">'12312312413-7236762374'</span>,
+    openidHTTPTimeout: <span class="hljs-number">4000</span>,
+    openidIssuerURI: <span class="hljs-string">'https://login.salesforce.com'</span>
+};
 
 app.use(middleware.tokenValidator(env));
 app.use(middleware.grantChecker(env));
 
-middleware.emitter.on(<span class="hljs-string">'denied'</span>, (message) =&gt; {
+middleware.emitter.on(<span class="hljs-string">'denied'</span>, <span class="hljs-function">(<span class="hljs-params">message</span>) =&gt;</span> {
     <span class="hljs-built_in">console</span>.log(message);
 });
-middleware.emitter.on(<span class="hljs-string">'grant_checked'</span>, (message) =&gt; {
+middleware.emitter.on(<span class="hljs-string">'grant_checked'</span>, <span class="hljs-function">(<span class="hljs-params">message</span>) =&gt;</span> {
     <span class="hljs-built_in">console</span>.log(message);
 });
-
 
 </code></pre>
 				<h3 id="token-granter">Token Granter</h3>
 				<p>This can be called at any time to obtain credentials to connect to Salesforce. This depends on the configuration of a Connected App in your Salesforce org, with pre-authorized users connected via a Permission Set to it and a certificate uploaded that corresponds to the <em>jwtSigningKey</em>.</p>
 				<p>The credentials returned are in a form suitable to be used with <a href="https://jsforce.github.io/">JSforce</a>. See the example below.</p>
-				<pre><code class="lang-javascript">
-<span class="hljs-keyword">const</span>
-    grant = <span class="hljs-built_in">require</span>(<span class="hljs-string">'@financialforcedev/orizuru-auth'</span>).grant,
-    jsforce = <span class="hljs-built_in">require</span>(<span class="hljs-string">'jsforce'</span>),
-    env = {
-        <span class="hljs-attr">jwtSigningKey</span>: <span class="hljs-string">'--SOME KEY MATERIAL--'</span>,
-        <span class="hljs-attr">openidClientId</span>: <span class="hljs-string">'12312312413-7236762374'</span>,
-        <span class="hljs-attr">openidHTTPTimeout</span>: <span class="hljs-number">4000</span>,
-        <span class="hljs-attr">openidIssuerURI</span>: <span class="hljs-string">'https://login.salesforce.com'</span>
-    },
-    user = {
-        <span class="hljs-attr">username</span>: <span class="hljs-string">'someuser@someorg.something'</span>,
-        <span class="hljs-attr">organizationId</span>: <span class="hljs-string">'00D80000000bSxXEAU'</span>
-    },
-    getToken = grant.getToken(env);
-    getJsforceConnection = <span class="hljs-function">(<span class="hljs-params">credentials</span>) =&gt;</span> {
-        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> jsforce.Connection(credentials);
-    },
-    getLimits = <span class="hljs-function">(<span class="hljs-params">conn</span>) =&gt;</span> {
-        <span class="hljs-keyword">return</span> <span class="hljs-built_in">Promise</span>.all([conn, conn.limits()]);
-    },
-    displayLimits = <span class="hljs-function">(<span class="hljs-params">[conn, limits]</span>) =&gt;</span> {
-        <span class="hljs-built_in">console</span>.log(limits);
-        <span class="hljs-keyword">return</span> conn;
-    },
-    logout = <span class="hljs-function">(<span class="hljs-params">conn</span>) =&gt;</span> {
-        <span class="hljs-keyword">return</span> conn.logout();
-    };
+				<pre><code class="language-typescript">
+<span class="hljs-keyword">import</span> { grant } <span class="hljs-keyword">from</span> <span class="hljs-string">'@financialforcedev/orizuru-auth'</span>;
+<span class="hljs-keyword">import</span> * <span class="hljs-keyword">as</span> jsforce <span class="hljs-keyword">from</span> <span class="hljs-string">'jsforce'</span>;
 
+<span class="hljs-keyword">const</span> env = {
+    jwtSigningKey: <span class="hljs-string">'--SOME KEY MATERIAL--'</span>,
+    openidClientId: <span class="hljs-string">'12312312413-7236762374'</span>,
+    openidHTTPTimeout: <span class="hljs-number">4000</span>,
+    openidIssuerURI: <span class="hljs-string">'https://login.salesforce.com'</span>
+};
+<span class="hljs-keyword">const</span> user = {
+    organizationId: <span class="hljs-string">'00D80000000bSxXEAU'</span>,
+    username: <span class="hljs-string">'someuser@someorg.something'</span>
+};
+<span class="hljs-keyword">const</span> getToken = grant.getToken(env);
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">getJsforceConnection</span>(<span class="hljs-params">credentials: <span class="hljs-built_in">any</span></span>) </span>{
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> jsforce.Connection(credentials);
+}
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">getLimits</span>(<span class="hljs-params">conn: jsforce.Connection</span>) </span>{
+    <span class="hljs-keyword">return</span> <span class="hljs-built_in">Promise</span>.all([conn, conn.limits()]);
+}
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">displayLimits</span>(<span class="hljs-params">[conn, limits]: [<span class="hljs-built_in">any</span>, <span class="hljs-built_in">any</span>]</span>) </span>{
+    <span class="hljs-built_in">console</span>.log(limits);
+    <span class="hljs-keyword">return</span> conn;
+}
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">logout</span>(<span class="hljs-params">conn</span>) </span>{
+    <span class="hljs-keyword">return</span> conn.logout();
+}
 
 getToken(user)
     .then(getJsforceConnection)
     .then(getLimits)
     .then(displayLimits)
     .then(logout);
-
 </code></pre>
 				<h2 id="api-docs">API Docs</h2>
 				<p>Click to view <a href="http://htmlpreview.github.io/?https://github.com/financialforcedev/orizuru-auth/blob/master/doc/index.html">JSDoc API documentation</a>.</p>
@@ -200,6 +197,9 @@ getToken(user)
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="modules/refreshtoken.html">refresh<wbr>Token</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/revocation.html">revocation</a>
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="modules/webserver.html">web<wbr>Server</a>
@@ -237,6 +237,9 @@ getToken(user)
 					</li>
 					<li class=" tsd-kind-interface tsd-is-external">
 						<a href="interfaces/user.html" class="tsd-kind-icon">User</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/userinformation.html" class="tsd-kind-icon">User<wbr>Information</a>
 					</li>
 					<li class=" tsd-kind-variable tsd-is-not-exported">
 						<a href="globals.html#assertion_type" class="tsd-kind-icon">ASSERTION_<wbr>TYPE</a>
@@ -300,6 +303,9 @@ getToken(user)
 					</li>
 					<li class=" tsd-kind-function tsd-is-private tsd-is-not-exported">
 						<a href="globals.html#fail" class="tsd-kind-icon">fail</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#getuserinfo" class="tsd-kind-icon">get<wbr>User<wbr>Info</a>
 					</li>
 					<li class=" tsd-kind-function tsd-is-private">
 						<a href="globals.html#obtainauthorizationgrant" class="tsd-kind-icon">obtain<wbr>Authorization<wbr>Grant</a>

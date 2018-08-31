@@ -24,15 +24,19 @@
  *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import { AxiosRequestConfig, default as request } from 'axios';
 import { Options } from '..';
 
 import { validate } from '../openid/shared/envValidator';
-import { constructIssuerClient } from '../openid/shared/issuer';
+import { constructIssuer } from '../openid/shared/issuer';
 
 export namespace revocation {
 
 	/**
-	 * Revokes the given access token.
+	 * Revokes the given access token using the Salesforce GET support.
+	 *
+	 * We need to use axios rather than the OpenID issuer client revoke function as it does not follow redirects.
+	 * Specifically, the 302 http response code with the POST method and the got NPM module.
 	 *
 	 * @see https://help.salesforce.com/articleView?id=remoteaccess_revoke_token.htm
 	 */
@@ -40,14 +44,18 @@ export namespace revocation {
 
 		validate(env);
 
-		const issuerClient = await constructIssuerClient(env);
+		const issuer = await constructIssuer(env);
 
-		try {
-			await issuerClient.revoke(token, 'access_token');
-			return true;
-		} catch (error) {
-			return false;
-		}
+		const revocationUri = `${issuer.revocation_endpoint}?token=${token}`;
+
+		const config: AxiosRequestConfig = {
+			validateStatus: () => {
+				return true;
+			}
+		};
+
+		const response = await request.get(revocationUri, config);
+		return response.status === 200;
 
 	}
 

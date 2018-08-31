@@ -56,8 +56,6 @@ declare module 'openid-client' {
 
 		public grant({ grant_type, assertion }: { grant_type: string, assertion: string }): Promise<OpenIdGrant>;
 
-		public revoke(token: string, hint?: string): Promise<any>;
-
 		public userinfo(accessToken: string, options?: any): Promise<UserInfo>;
 
 	}

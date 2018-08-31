@@ -28,6 +28,8 @@ import chai from 'chai';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
 
+import axios from 'axios';
+
 import { Options } from '../../src';
 import * as issuer from '../../src/openid/shared/issuer';
 
@@ -52,43 +54,68 @@ describe('revocation/revoke.ts', () => {
 
 	describe('revoke', () => {
 
-		let clientStub: any;
-
-		beforeEach(() => {
-
-			clientStub = {
-				revoke: sinon.stub()
-			};
-
-			sinon.stub(issuer, 'constructIssuerClient').returns(clientStub);
-
-		});
-
 		it('should return false if the request fails', async () => {
 
 			// Given
-			clientStub.revoke.rejects(new Error('error'));
+			sinon.stub(issuer, 'constructIssuer').resolves({
+				revocation_endpoint: 'https://login.salesforce.com/services/oauth2/revoke'
+			});
+
+			sinon.stub(axios, 'get').resolves({ status: 400 });
 
 			// When
 			const result = await revocation.revokeAccessToken(env, 'testToken');
 
 			// Then
 			expect(result).to.be.false;
-			expect(clientStub.revoke).to.have.been.calledOnce;
-			expect(clientStub.revoke).to.have.been.calledWith('testToken', 'access_token');
+			expect(axios.get).to.have.been.calledOnce;
+			expect(axios.get).to.have.been.calledWith('https://login.salesforce.com/services/oauth2/revoke?token=testToken', { validateStatus: sinon.match.func });
 
 		});
 
 		it('should return true if the request succeeds', async () => {
 
 			// Given
+			sinon.stub(issuer, 'constructIssuer').resolves({
+				revocation_endpoint: 'https://login.salesforce.com/services/oauth2/revoke'
+			});
+
+			sinon.stub(axios, 'get').resolves({ status: 200 });
+
 			// When
 			const result = await revocation.revokeAccessToken(env, 'testToken');
 
 			// Then
 			expect(result).to.be.true;
-			expect(clientStub.revoke).to.have.been.calledOnce;
-			expect(clientStub.revoke).to.have.been.calledWith('testToken', 'access_token');
+			expect(axios.get).to.have.been.calledOnce;
+			expect(axios.get).to.have.been.calledWith('https://login.salesforce.com/services/oauth2/revoke?token=testToken', { validateStatus: sinon.match.func });
+
+		});
+
+		it('should call the validateStatus function which returns true', async () => {
+
+			// Given
+			sinon.stub(issuer, 'constructIssuer').resolves({
+				revocation_endpoint: 'https://login.salesforce.com/services/oauth2/revoke'
+			});
+
+			let spy;
+
+			sinon.stub(axios, 'get').callsFake((token, config) => {
+				spy = sinon.spy(config, 'validateStatus');
+				config.validateStatus();
+				return { status: 200 };
+			});
+
+			// When
+			const result = await revocation.revokeAccessToken(env, 'testToken');
+
+			// Then
+			expect(result).to.be.true;
+			expect(spy).to.have.been.calledOnce;
+			expect(spy).to.have.returned(true);
+			expect(axios.get).to.have.been.calledOnce;
+			expect(axios.get).to.have.been.calledWith('https://login.salesforce.com/services/oauth2/revoke?token=testToken', { validateStatus: sinon.match.func });
 
 		});
 

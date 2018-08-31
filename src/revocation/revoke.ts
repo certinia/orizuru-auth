@@ -24,35 +24,30 @@
  *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { AxiosRequestConfig, default as request } from 'axios';
 import { Options } from '..';
 
 import { validate } from '../openid/shared/envValidator';
-import { constructIssuer } from '../openid/shared/issuer';
+import { constructIssuerClient } from '../openid/shared/issuer';
 
 export namespace revocation {
 
 	/**
-	 * Revokes the given OAuth token using the Salesforce GET support.
+	 * Revokes the given access token.
 	 *
 	 * @see https://help.salesforce.com/articleView?id=remoteaccess_revoke_token.htm
 	 */
-	export async function revokeOAuthToken(env: Options.Auth, token: string) {
+	export async function revokeAccessToken(env: Options.Auth, token: string) {
 
 		validate(env);
 
-		const issuer = await constructIssuer(env);
+		const issuerClient = await constructIssuerClient(env);
 
-		const revocationUri = `${issuer.revocation_endpoint}?token=${token}`;
-
-		const config: AxiosRequestConfig = {
-			validateStatus: () => {
-				return true;
-			}
-		};
-
-		const response = await request.get(revocationUri, config);
-		return response.status === 200;
+		try {
+			await issuerClient.revoke(token, 'access_token');
+			return true;
+		} catch (error) {
+			return false;
+		}
 
 	}
 

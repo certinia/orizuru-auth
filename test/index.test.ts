@@ -41,7 +41,7 @@ describe('index.ts', () => {
 		expect(index.flow).to.contain.keys(['refreshToken', 'webServer']);
 		expect(index.grant).to.contain.keys(['getToken']);
 		expect(index.middleware).to.contain.keys(['emitter', 'grantChecker', 'tokenValidator']);
-		expect(index.revocation).to.contain.keys(['revokeOAuthToken']);
+		expect(index.revocation).to.contain.keys(['revokeAccessToken']);
 
 	});
 

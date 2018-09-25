@@ -67,8 +67,8 @@ declare global {
 	namespace Orizuru {
 
 		interface Context {
-			grantChecked: boolean;
-			user: {
+			grantChecked?: boolean;
+			user?: {
 				organizationId: string;
 				username: string;
 			};

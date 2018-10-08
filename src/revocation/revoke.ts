@@ -25,7 +25,7 @@
  */
 
 import { AxiosRequestConfig, default as request } from 'axios';
-import { Options } from '..';
+import { Environment } from '..';
 
 import { validate } from '../openid/shared/envValidator';
 import { constructIssuer } from '../openid/shared/issuer';
@@ -40,7 +40,7 @@ export namespace revocation {
 	 *
 	 * @see https://help.salesforce.com/articleView?id=remoteaccess_revoke_token.htm
 	 */
-	export async function revokeAccessToken(env: Options.Auth, token: string) {
+	export async function revokeAccessToken(env: Environment, token: string) {
 
 		validate(env);
 

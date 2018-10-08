@@ -30,7 +30,7 @@ import sinonChai from 'sinon-chai';
 
 import axios from 'axios';
 
-import { Options } from '../../src';
+import { Environment } from '../../src';
 import * as issuer from '../../src/openid/shared/issuer';
 
 import { revocation } from '../../src/revocation/revoke';
@@ -41,7 +41,7 @@ chai.use(sinonChai);
 
 describe('revocation/revoke.ts', () => {
 
-	const env: Options.Auth = {
+	const env: Environment = {
 		jwtSigningKey: 'test',
 		openidClientId: 'test',
 		openidHTTPTimeout: 4001,

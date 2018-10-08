@@ -33,7 +33,7 @@ import jsonwebtoken from 'jsonwebtoken';
 import openidClient from 'openid-client';
 import uuid from 'uuid';
 
-import { Options } from '../../../src';
+import { Environment } from '../../../src';
 
 import { createJwtBearerClientAssertion, createJwtBearerGrantAssertion } from '../../../src/openid/shared/jwt';
 
@@ -44,7 +44,7 @@ chai.use(sinonChai);
 
 describe('openid/shared/jwt.ts', () => {
 
-	const env: Options.Auth = {
+	const env: Environment = {
 		jwtSigningKey: 'testJwtSigningKey',
 		openidClientId: 'testOpenidClientKey',
 		openidHTTPTimeout: 2000,

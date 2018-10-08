@@ -28,7 +28,7 @@ import { default as request } from 'axios';
 import formUrlencoded from 'form-urlencoded';
 import { decode } from 'jsonwebtoken';
 
-import { Options } from '..';
+import { Environment } from '..';
 import { validate } from '../openid/shared/envValidator';
 import { constructIssuer } from '../openid/shared/issuer';
 import { createJwtBearerClientAssertion } from '../openid/shared/jwt';
@@ -44,7 +44,7 @@ export namespace webServer {
 	 *
 	 * @see https://help.salesforce.com/articleView?id=remoteaccess_oauth_web_server_flow.htm
 	 */
-	export async function generateAuthorizeUrl(env: Options.Auth, redirectUri: string, state: string) {
+	export async function generateAuthorizeUrl(env: Environment, redirectUri: string, state: string) {
 
 		validate(env);
 
@@ -64,7 +64,7 @@ export namespace webServer {
 	 *
 	 * @see https://help.salesforce.com/articleView?id=remoteaccess_oauth_web_server_flow.htm
 	 */
-	export async function requestAccessTokenWithClientAssertion(env: Options.Auth, redirectUri: string, state: string, code: string): Promise<AccessTokenResponse> {
+	export async function requestAccessTokenWithClientAssertion(env: Environment, redirectUri: string, state: string, code: string): Promise<AccessTokenResponse> {
 
 		validate(env);
 

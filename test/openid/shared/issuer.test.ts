@@ -31,7 +31,7 @@ import sinonChai from 'sinon-chai';
 
 import * as openIdClient from 'openid-client';
 
-import { Options } from '../../../src';
+import { Environment } from '../../../src';
 
 import * as issuer from '../../../src/openid/shared/issuer';
 
@@ -42,7 +42,7 @@ chai.use(sinonChai);
 
 describe('openid/shared/issuer.js', () => {
 
-	const env: Options.Auth = {
+	const env: Environment = {
 		jwtSigningKey: 'testJwtSigningKey',
 		openidClientId: 'testOpenidClientKey',
 		openidHTTPTimeout: 2000,

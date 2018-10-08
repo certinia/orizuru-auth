@@ -28,7 +28,7 @@ import { default as request } from 'axios';
 import formUrlencoded from 'form-urlencoded';
 import { decode } from 'jsonwebtoken';
 
-import { AccessTokenResponse, Options, SalesforceJwt } from '..';
+import { AccessTokenResponse, Environment, SalesforceJwt } from '..';
 import { validate } from '../openid/shared/envValidator';
 import { constructIssuer } from '../openid/shared/issuer';
 import { createJwtBearerClientAssertion } from '../openid/shared/jwt';
@@ -42,7 +42,7 @@ const ASSERTION_TYPE = 'urn:ietf:params:oauth:client-assertion-type:jwt-bearer';
  */
 export namespace refreshToken {
 
-	export async function requestAccessTokenWithClientAssertion(env: Options.Auth, token: string): Promise<AccessTokenResponse> {
+	export async function requestAccessTokenWithClientAssertion(env: Environment, token: string): Promise<AccessTokenResponse> {
 
 		validate(env);
 

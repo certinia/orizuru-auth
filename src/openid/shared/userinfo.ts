@@ -24,7 +24,7 @@
  *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { Options } from '../..';
+import { Environment } from '../..';
 import { constructIssuerClient } from './issuer';
 
 export interface UserInformation {
@@ -36,9 +36,9 @@ export interface UserInformation {
  * Get the user info from an access token.
  * @param accessToken The access token.
  */
-export function getUserInfo(options: Options.Auth, accessToken: string): Promise<UserInformation> {
+export function getUserInfo(env: Environment, accessToken: string): Promise<UserInformation> {
 
-	return constructIssuerClient(options)
+	return constructIssuerClient(env)
 		.then((issuerClient) => issuerClient.userinfo(accessToken))
 		.then((userInfo) => {
 			return {

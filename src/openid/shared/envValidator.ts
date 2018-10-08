@@ -25,12 +25,12 @@
  */
 
 import _ from 'lodash';
-import { Options } from '../..';
+import { Environment } from '../..';
 
 /**
  * @private
  */
-export function validate({ jwtSigningKey, openidClientId, openidHTTPTimeout, openidIssuerURI }: Options.Auth) {
+export function validate({ jwtSigningKey, openidClientId, openidHTTPTimeout, openidIssuerURI }: Environment) {
 
 	if (jwtSigningKey === '') {
 		throw new Error('Invalid parameter: jwtSigningKey cannot be empty.');

@@ -35,7 +35,7 @@ import { NextFunction, Request, Response } from 'express';
 import _ from 'lodash';
 import { Client, UserInfo } from 'openid-client';
 
-import { Options, User } from '..';
+import { Environment, User } from '..';
 import { obtainAuthorizationGrant } from './shared/authorizationGrant';
 import { validate } from './shared/envValidator';
 import { constructIssuerClient } from './shared/issuer';
@@ -173,7 +173,7 @@ export namespace middleware {
 	 * is configured to pre authorise users and the user is
 	 * authorised.
 	 */
-	export function grantChecker(env: Options.Auth) {
+	export function grantChecker(env: Environment) {
 
 		validate(env);
 
@@ -202,7 +202,7 @@ export namespace middleware {
 	 * access token passed in an HTTP Authorization header and if successful
 	 * sets the user object onto the request object.
 	 */
-	export function tokenValidator(env: Options.Auth) {
+	export function tokenValidator(env: Environment) {
 
 		validate(env);
 

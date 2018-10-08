@@ -28,7 +28,7 @@ import { sign } from 'jsonwebtoken';
 import { Issuer } from 'openid-client';
 import uuid from 'uuid';
 
-import { Options, User } from '../..';
+import { Environment, User } from '../..';
 
 /**
  * @private
@@ -43,7 +43,7 @@ const RSA_256_ALGORITHM = { algorithm: RSA_256 };
 /**
  * @private
  */
-export async function createJwtBearerClientAssertion(env: Options.Auth, issuer: Issuer) {
+export async function createJwtBearerClientAssertion(env: Environment, issuer: Issuer) {
 
 	const nowPlusFourMinutes = () => {
 		return Math.floor(Date.now() / 1000) + (60 * 4);
@@ -68,7 +68,7 @@ export async function createJwtBearerClientAssertion(env: Options.Auth, issuer: 
 /**
  * @private
  */
-export async function createJwtBearerGrantAssertion(env: Options.Auth, user: User) {
+export async function createJwtBearerGrantAssertion(env: Environment, user: User) {
 
 	const nowPlusFourMinutes = () => {
 		return Math.floor(Date.now() / 1000) + (60 * 4);

@@ -31,7 +31,7 @@
 
 import { OpenIdGrant } from 'openid-client';
 
-import { Grant as IGrant, Options, User } from '..';
+import { Environment, Grant as IGrant, User } from '..';
 import { obtainAuthorizationGrant } from './shared/authorizationGrant';
 import { validate } from './shared/envValidator';
 import { constructIssuerClient } from './shared/issuer';
@@ -67,7 +67,7 @@ export namespace grant {
 	/**
 	 * Returns a function that can obtain a token for the passed user.
 	 */
-	export function getToken(env: Options.Auth) {
+	export function getToken(env: Environment) {
 
 		validate(env);
 

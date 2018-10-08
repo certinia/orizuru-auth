@@ -27,7 +27,7 @@
 import { createHash } from 'crypto';
 
 import * as openidClient from 'openid-client';
-import { Options } from '../..';
+import { Environment } from '../..';
 
 /**
  * @private
@@ -66,7 +66,7 @@ export function clearCache() {
 /**
  * @private
  */
-export async function constructIssuer(env: Options.Auth) {
+export async function constructIssuer(env: Environment) {
 
 	const httpTimeOut = env.openidHTTPTimeout;
 	const openidIssuerUri = env.openidIssuerURI;
@@ -85,7 +85,7 @@ export async function constructIssuer(env: Options.Auth) {
 /**
  * @private
  */
-export function constructIssuerClient(env: Options.Auth) {
+export function constructIssuerClient(env: Environment) {
 
 	return constructIssuer(env)
 		.then((issuer) => {

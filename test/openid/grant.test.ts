@@ -34,7 +34,7 @@ import * as envValidator from '../../src/openid/shared/envValidator';
 import * as issuer from '../../src/openid/shared/issuer';
 import * as jwt from '../../src/openid/shared/jwt';
 
-import { Options } from '../../src';
+import { Environment } from '../../src';
 
 import { grant } from '../../src/openid/grant';
 
@@ -45,7 +45,7 @@ chai.use(sinonChai);
 
 describe('openid/grant.ts', () => {
 
-	const env: Options.Auth = {
+	const env: Environment = {
 		jwtSigningKey: 'test',
 		openidClientId: 'test',
 		openidHTTPTimeout: 4001,

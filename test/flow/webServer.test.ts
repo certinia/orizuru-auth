@@ -31,7 +31,7 @@ import sinonChai from 'sinon-chai';
 
 import { default as request } from 'axios';
 
-import { Options, SalesforceJwt } from '../../src';
+import { Environment, SalesforceJwt } from '../../src';
 import * as issuer from '../../src/openid/shared/issuer';
 import * as jwt from '../../src/openid/shared/jwt';
 
@@ -44,7 +44,7 @@ chai.use(sinonChai);
 
 describe('flow/webServer.ts', () => {
 
-	let env: Options.Auth;
+	let env: Environment;
 
 	before(() => {
 		env = {

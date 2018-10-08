@@ -29,7 +29,7 @@ import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
 
-import { Options } from '../../src';
+import { Environment } from '../../src';
 import { middleware } from '../../src/openid/middleware';
 import * as authorizationGrant from '../../src/openid/shared/authorizationGrant';
 import * as envValidator from '../../src/openid/shared/envValidator';
@@ -43,7 +43,7 @@ chai.use(sinonChai);
 
 describe('openid/middleware.ts', () => {
 
-	const env: Options.Auth = {
+	const env: Environment = {
 		jwtSigningKey: 'test',
 		openidClientId: 'test',
 		openidHTTPTimeout: 4001,

@@ -74,25 +74,25 @@ declare global {
 			};
 		}
 
-		interface IServer {
-			auth: Options.Auth;
+		namespace Options {
+
+			interface IServer {
+				auth: Environment;
+			}
+
 		}
 
 	}
 }
 
-export declare namespace Options {
-
-	/**
-	 * The OpenID environment parameters.
-	 */
-	export interface Auth {
-		jwtSigningKey: string;
-		openidClientId: string;
-		openidHTTPTimeout: number;
-		openidIssuerURI: string;
-	}
-
+/**
+ * The OpenID environment parameters.
+ */
+export interface Environment {
+	jwtSigningKey: string;
+	openidClientId: string;
+	openidHTTPTimeout: number;
+	openidIssuerURI: string;
 }
 
 export interface User {

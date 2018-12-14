@@ -45,7 +45,7 @@ function validateIdentityUrl(opts: webServer.RequestAccessTokenOptions, openidCl
 		const hmac = crypto.createHmac('sha256', openidClientSecret);
 		hmac.update(`${accessTokenResponse.id}${accessTokenResponse.issued_at}`);
 
-		const expectedSignature = Buffer.from(hmac.digest('hex'));
+		const expectedSignature = Buffer.from(hmac.digest('base64'));
 		const actualSignature = Buffer.from(accessTokenResponse.signature);
 
 		if (expectedSignature.length !== actualSignature.length) {

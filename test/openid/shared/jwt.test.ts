@@ -47,6 +47,7 @@ describe('openid/shared/jwt.ts', () => {
 	const env: Environment = {
 		jwtSigningKey: 'testJwtSigningKey',
 		openidClientId: 'testOpenidClientKey',
+		openidClientSecret: 'testOpenidClientSecret',
 		openidHTTPTimeout: 2000,
 		openidIssuerURI: 'testOpenidIssuerUri'
 	};

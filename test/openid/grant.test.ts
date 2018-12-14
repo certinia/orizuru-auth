@@ -48,6 +48,7 @@ describe('openid/grant.ts', () => {
 	const env: Environment = {
 		jwtSigningKey: 'test',
 		openidClientId: 'test',
+		openidClientSecret: 'test',
 		openidHTTPTimeout: 4001,
 		openidIssuerURI: 'https://login.something.com/'
 	};

@@ -45,6 +45,7 @@ describe('openid/shared/issuer.js', () => {
 	const env: Environment = {
 		jwtSigningKey: 'testJwtSigningKey',
 		openidClientId: 'testOpenidClientKey',
+		openidClientSecret: 'testOpenidClientSecret',
 		openidHTTPTimeout: 2000,
 		openidIssuerURI: 'https://login.salesforce.com'
 	};

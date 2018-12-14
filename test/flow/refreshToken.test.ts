@@ -50,6 +50,7 @@ describe('flow/refreshToken.ts', () => {
 		env = {
 			jwtSigningKey: 'testJwtSigningKey',
 			openidClientId: 'test',
+			openidClientSecret: 'test',
 			openidHTTPTimeout: 4001,
 			openidIssuerURI: 'https://login.salesforce.com/'
 		};

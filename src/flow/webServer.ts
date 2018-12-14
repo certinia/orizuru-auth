@@ -38,11 +38,11 @@ import { SalesforceJwt } from './response/salesforceJwt';
 
 const ASSERTION_TYPE = 'urn:ietf:params:oauth:client-assertion-type:jwt-bearer';
 
-function validateIdentityUrl(opts: webServer.RequestAccessTokenOptions, jwtSigningKey: string, accessTokenResponse: AccessTokenResponse) {
+function validateIdentityUrl(opts: webServer.RequestAccessTokenOptions, openidClientSecret: string, accessTokenResponse: AccessTokenResponse) {
 
 	if (opts.validateIdentityURL) {
 
-		const hmac = crypto.createHmac('sha256', jwtSigningKey);
+		const hmac = crypto.createHmac('sha256', openidClientSecret);
 		hmac.update(`${accessTokenResponse.id}${accessTokenResponse.issued_at}`);
 
 		const expectedSignature = Buffer.from(hmac.digest('hex'));
@@ -118,7 +118,7 @@ export namespace webServer {
 		const response = await request.post(authUri);
 
 		const accessTokenResponse: AccessTokenResponse = response.data;
-		validateIdentityUrl(mergedOpts, env.jwtSigningKey, accessTokenResponse);
+		validateIdentityUrl(mergedOpts, env.openidClientSecret, accessTokenResponse);
 
 		const idToken = accessTokenResponse.id_token;
 		if (idToken) {

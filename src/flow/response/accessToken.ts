@@ -81,6 +81,11 @@ export interface AccessTokenResponse {
 	id: string;
 
 	/**
+	 * This parameter is returned if the scope parameter includes openid.
+	 */
+	scope?: string;
+
+	/**
 	 * If the user is a member of a Salesforce community, the community URL is provided.
 	 */
 	sfdc_community_url?: string;

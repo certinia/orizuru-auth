@@ -75,7 +75,8 @@ describe('openid/shared/jwt.ts', () => {
 		it('should reject if jsonwebtoken sign returns an error', async () => {
 
 			// Given
-			sinon.stub(uuid, 'v4').returns('testId');
+			const testId = Buffer.from('testId');
+			sinon.stub(uuid, 'v4').returns(testId);
 			sinon.stub(jsonwebtoken, 'sign').rejects('error');
 
 			// When
@@ -87,7 +88,7 @@ describe('openid/shared/jwt.ts', () => {
 				aud: 'testTokenEndpoint',
 				exp: 240,
 				iss: env.openidClientId,
-				jti: 'testId',
+				jti: testId,
 				sub: env.openidClientId
 			}, env.jwtSigningKey, { algorithm: 'RS256' });
 
@@ -96,7 +97,8 @@ describe('openid/shared/jwt.ts', () => {
 		it('should resolve if jsonwebtoken sign returns a token', async () => {
 
 			// Given
-			sinon.stub(uuid, 'v4').returns('testId');
+			const testId = Buffer.from('testId');
+			sinon.stub(uuid, 'v4').returns(testId);
 			sinon.stub(jsonwebtoken, 'sign').resolves('token');
 
 			// When
@@ -109,7 +111,7 @@ describe('openid/shared/jwt.ts', () => {
 				aud: 'testTokenEndpoint',
 				exp: 240,
 				iss: env.openidClientId,
-				jti: 'testId',
+				jti: testId,
 				sub: env.openidClientId
 			}, env.jwtSigningKey, { algorithm: 'RS256' });
 

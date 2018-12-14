@@ -49,9 +49,7 @@ export namespace revocation {
 		const revocationUri = `${issuer.revocation_endpoint}?token=${token}`;
 
 		const config: AxiosRequestConfig = {
-			validateStatus: () => {
-				return true;
-			}
+			validateStatus: () => true
 		};
 
 		const response = await request.get(revocationUri, config);

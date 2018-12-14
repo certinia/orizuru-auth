@@ -91,6 +91,7 @@ declare global {
 export interface Environment {
 	jwtSigningKey: string;
 	openidClientId: string;
+	openidClientSecret: string;
 	openidHTTPTimeout: number;
 	openidIssuerURI: string;
 }

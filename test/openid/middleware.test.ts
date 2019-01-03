@@ -458,7 +458,10 @@ describe('openid/middleware.ts', () => {
 			sinon.stub(envValidator, 'validate').resolves();
 			sinon.stub(issuer, 'constructIssuerClient').resolves(issuerClientMock);
 			sinon.stub(jwt, 'createJwtBearerGrantAssertion').resolves('assertion');
-			sinon.stub(authorizationGrant, 'obtainAuthorizationGrant').resolves('12345');
+			sinon.stub(authorizationGrant, 'obtainAuthorizationGrant').resolves({
+				access_token: 'testAccessToken',
+				instance_url: 'testInstanceUrl'
+			});
 
 			// When
 			await middleware.grantChecker(env)(req, res, next);
@@ -492,7 +495,10 @@ describe('openid/middleware.ts', () => {
 			sinon.stub(envValidator, 'validate').resolves();
 			sinon.stub(issuer, 'constructIssuerClient').resolves(issuerClientMock);
 			sinon.stub(jwt, 'createJwtBearerGrantAssertion').resolves('assertion');
-			sinon.stub(authorizationGrant, 'obtainAuthorizationGrant').resolves('12345');
+			sinon.stub(authorizationGrant, 'obtainAuthorizationGrant').resolves({
+				access_token: 'testAccessToken',
+				instance_url: 'testInstanceUrl'
+			});
 
 			req.orizuru = { user, other: true };
 

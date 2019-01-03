@@ -29,6 +29,7 @@ import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
 
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
+import openidClient from 'openid-client';
 
 import { Environment } from '../../src';
 import * as issuer from '../../src/openid/shared/issuer';
@@ -60,7 +61,7 @@ describe('revocation/revoke.ts', () => {
 			// Given
 			sinon.stub(issuer, 'constructIssuer').resolves({
 				revocation_endpoint: 'https://login.salesforce.com/services/oauth2/revoke'
-			});
+			} as openidClient.Issuer);
 
 			sinon.stub(axios, 'get').resolves({ status: 400 } as unknown as AxiosResponse);
 
@@ -79,7 +80,7 @@ describe('revocation/revoke.ts', () => {
 			// Given
 			sinon.stub(issuer, 'constructIssuer').resolves({
 				revocation_endpoint: 'https://login.salesforce.com/services/oauth2/revoke'
-			});
+			} as openidClient.Issuer);
 
 			sinon.stub(axios, 'get').resolves({ status: 200 } as unknown as AxiosResponse);
 
@@ -98,7 +99,7 @@ describe('revocation/revoke.ts', () => {
 			// Given
 			sinon.stub(issuer, 'constructIssuer').resolves({
 				revocation_endpoint: 'https://login.salesforce.com/services/oauth2/revoke'
-			});
+			} as openidClient.Issuer);
 
 			sinon.stub(axios, 'get').callsFake((uri: string, config?: AxiosRequestConfig) => {
 				config && config.validateStatus && config.validateStatus(200);

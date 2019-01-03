@@ -29,6 +29,8 @@ import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
 
+import openidClient from 'openid-client';
+
 import * as issuer from '../../../src/openid/shared/issuer';
 
 import { Environment } from '../../../src';
@@ -63,7 +65,7 @@ describe('openid/shared/userinfo.js', () => {
 			};
 
 			// Given
-			sinon.stub(issuer, 'constructIssuerClient').resolves(issuerClient);
+			sinon.stub(issuer, 'constructIssuerClient').resolves(issuerClient as unknown as openidClient.Client);
 			issuerClient.userinfo.returns({
 				organization_id: '123',
 				preferred_username: 'bob'

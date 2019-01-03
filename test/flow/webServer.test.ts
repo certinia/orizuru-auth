@@ -31,6 +31,7 @@ import sinonChai from 'sinon-chai';
 
 import { AxiosResponse, default as request } from 'axios';
 import crypto from 'crypto';
+import openidClient from 'openid-client';
 
 import { AccessTokenResponse, Environment, SalesforceJwt } from '../../src';
 import * as issuer from '../../src/openid/shared/issuer';
@@ -68,7 +69,7 @@ describe('flow/webServer.ts', () => {
 			// Given
 			sinon.stub(issuer, 'constructIssuer').resolves({
 				authorization_endpoint: 'https://login.salesforce.com/services/oauth2/authorize'
-			});
+			} as openidClient.Issuer);
 
 			// When
 			const authorizeUrl = await webServer.generateAuthorizeUrl(env, 'https://test.app.com/auth/callback', 'testState');
@@ -108,7 +109,7 @@ describe('flow/webServer.ts', () => {
 			sinon.stub(issuer, 'constructIssuer').resolves({
 				authorization_endpoint: 'https://login.salesforce.com/services/oauth2/authorize',
 				token_endpoint: 'https://login.salesforce.com/services/oauth2/token'
-			});
+			} as openidClient.Issuer);
 
 		});
 

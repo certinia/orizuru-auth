@@ -2,8 +2,11 @@
 	"name": "@financialforcedev/orizuru-auth",
 	"version": "5.0.0",
 	"description": "Salesforce authentication for Heroku Node applications.",
-	"main": "dist/index.js",
-	"types": "dist/index.d.ts",
+	"main": "dist/src/index.js",
+	"types": "dist/src/index.d.ts",
+	"files": [
+		"dist/src"
+	],
 	"scripts": {
 		"build": "tsc",
 		"doc": "typedoc --gitRevision master --ignoreCompilerErrors --out doc src/**/* --mode file",

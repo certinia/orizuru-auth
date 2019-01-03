@@ -26,7 +26,7 @@
 
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import sinon from 'sinon';
+import sinon, { SinonStub } from 'sinon';
 import sinonChai from 'sinon-chai';
 
 import jsonwebtoken from 'jsonwebtoken';
@@ -100,7 +100,9 @@ describe('openid/shared/jwt.ts', () => {
 			// Given
 			const testId = Buffer.from('testId');
 			sinon.stub(uuid, 'v4').returns(testId);
-			sinon.stub(jsonwebtoken, 'sign').resolves('token');
+
+			const stub: SinonStub<any> = sinon.stub(jsonwebtoken, 'sign');
+			stub.resolves('token');
 
 			// When
 			const token = await createJwtBearerClientAssertion(env, issuer as openidClient.Issuer);
@@ -161,7 +163,8 @@ describe('openid/shared/jwt.ts', () => {
 		it('should resolve if jsonwebtoken sign returns a token', async () => {
 
 			// Given
-			sinon.stub(jsonwebtoken, 'sign').resolves('token');
+			const stub: SinonStub<any> = sinon.stub(jsonwebtoken, 'sign');
+			stub.resolves('token');
 
 			// When
 			const token = await createJwtBearerGrantAssertion(env, user);

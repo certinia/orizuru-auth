@@ -29,7 +29,7 @@ import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
 
-import { default as request } from 'axios';
+import { AxiosResponse, default as request } from 'axios';
 import crypto from 'crypto';
 
 import { AccessTokenResponse, Environment, SalesforceJwt } from '../../src';
@@ -122,7 +122,7 @@ describe('flow/webServer.ts', () => {
 
 			sinon.stub(request, 'post')
 				.withArgs('https://login.salesforce.com/services/oauth2/token?grant_type=authorization_code&code=c&client_id=test&client_assertion=signed&client_assertion_type=urn%3Aietf%3Aparams%3Aoauth%3Aclient-assertion-type%3Ajwt-bearer&redirect_uri=a&format=json')
-				.resolves(expectedResponse);
+				.resolves(expectedResponse as unknown as AxiosResponse);
 
 			sinon.stub(jwt, 'createJwtBearerClientAssertion').resolves('signed');
 
@@ -146,7 +146,7 @@ describe('flow/webServer.ts', () => {
 
 			sinon.stub(request, 'post')
 				.withArgs('https://login.salesforce.com/services/oauth2/token?grant_type=authorization_code&code=c&client_id=test&client_assertion=signed&client_assertion_type=urn%3Aietf%3Aparams%3Aoauth%3Aclient-assertion-type%3Ajwt-bearer&redirect_uri=a&format=json')
-				.resolves(expectedResponse);
+				.resolves(expectedResponse as unknown as AxiosResponse);
 
 			sinon.stub(jwt, 'createJwtBearerClientAssertion').resolves('signed');
 
@@ -171,7 +171,7 @@ describe('flow/webServer.ts', () => {
 
 			sinon.stub(request, 'post')
 				.withArgs('https://login.salesforce.com/services/oauth2/token?grant_type=authorization_code&code=c&client_id=test&client_assertion=signed&client_assertion_type=urn%3Aietf%3Aparams%3Aoauth%3Aclient-assertion-type%3Ajwt-bearer&redirect_uri=a&format=json')
-				.resolves(expectedResponse);
+				.resolves(expectedResponse as unknown as AxiosResponse);
 
 			sinon.stub(jwt, 'createJwtBearerClientAssertion').resolves('signed');
 
@@ -199,7 +199,7 @@ describe('flow/webServer.ts', () => {
 
 			sinon.stub(request, 'post')
 				.withArgs('https://login.salesforce.com/services/oauth2/token?grant_type=authorization_code&code=c&client_id=test&client_assertion=signed&client_assertion_type=urn%3Aietf%3Aparams%3Aoauth%3Aclient-assertion-type%3Ajwt-bearer&redirect_uri=a&format=json')
-				.resolves(expectedResponse);
+				.resolves(expectedResponse as unknown as AxiosResponse);
 
 			sinon.stub(jwt, 'createJwtBearerClientAssertion').resolves('signed');
 
@@ -231,7 +231,7 @@ describe('flow/webServer.ts', () => {
 
 			sinon.stub(request, 'post')
 				.withArgs('https://login.salesforce.com/services/oauth2/token?grant_type=authorization_code&code=c&client_id=test&client_assertion=signed&client_assertion_type=urn%3Aietf%3Aparams%3Aoauth%3Aclient-assertion-type%3Ajwt-bearer&redirect_uri=a&format=json')
-				.resolves(expectedResponse);
+				.resolves(expectedResponse as unknown as AxiosResponse);
 
 			sinon.stub(jwt, 'createJwtBearerClientAssertion').resolves('signed');
 

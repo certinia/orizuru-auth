@@ -260,7 +260,7 @@ describe('openid/middleware.ts', () => {
 				username: userInfoMock.preferred_username
 			};
 
-			sinon.stub(envValidator, 'validate').resolves(new Error('some error or other'));
+			sinon.stub(envValidator, 'validate').resolves();
 			req.get.withArgs('Authorization').returns('Bearer 12345');
 			sinon.stub(issuer, 'constructIssuerClient').resolves(issuerClientMock);
 			issuerClientUserInfoStub.resolves(userInfoMock);

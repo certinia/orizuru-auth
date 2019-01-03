@@ -28,7 +28,7 @@ import chai from 'chai';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
 
-import axios, { AxiosRequestConfig } from 'axios';
+import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 
 import { Environment } from '../../src';
 import * as issuer from '../../src/openid/shared/issuer';
@@ -62,7 +62,7 @@ describe('revocation/revoke.ts', () => {
 				revocation_endpoint: 'https://login.salesforce.com/services/oauth2/revoke'
 			});
 
-			sinon.stub(axios, 'get').resolves({ status: 400 });
+			sinon.stub(axios, 'get').resolves({ status: 400 } as unknown as AxiosResponse);
 
 			// When
 			const result = await revocation.revokeAccessToken(env, 'testToken');
@@ -81,7 +81,7 @@ describe('revocation/revoke.ts', () => {
 				revocation_endpoint: 'https://login.salesforce.com/services/oauth2/revoke'
 			});
 
-			sinon.stub(axios, 'get').resolves({ status: 200 });
+			sinon.stub(axios, 'get').resolves({ status: 200 } as unknown as AxiosResponse);
 
 			// When
 			const result = await revocation.revokeAccessToken(env, 'testToken');

@@ -63,7 +63,11 @@ describe('revocation/revoke.ts', () => {
 				revocation_endpoint: 'https://login.salesforce.com/services/oauth2/revoke'
 			} as openidClient.Issuer);
 
-			sinon.stub(axios, 'get').resolves({ status: 400 } as unknown as AxiosResponse);
+			const expectedResponse: Partial<AxiosResponse> = {
+				status: 400
+			};
+
+			sinon.stub(axios, 'get').resolves(expectedResponse as AxiosResponse);
 
 			// When
 			const result = await revocation.revokeAccessToken(env, 'testToken');
@@ -82,7 +86,11 @@ describe('revocation/revoke.ts', () => {
 				revocation_endpoint: 'https://login.salesforce.com/services/oauth2/revoke'
 			} as openidClient.Issuer);
 
-			sinon.stub(axios, 'get').resolves({ status: 200 } as unknown as AxiosResponse);
+			const expectedResponse: Partial<AxiosResponse> = {
+				status: 200
+			};
+
+			sinon.stub(axios, 'get').resolves(expectedResponse as AxiosResponse);
 
 			// When
 			const result = await revocation.revokeAccessToken(env, 'testToken');

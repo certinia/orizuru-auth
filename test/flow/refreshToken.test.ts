@@ -77,7 +77,7 @@ describe('flow/refreshToken.ts', () => {
 				token_type: 'Bearer'
 			};
 
-			const expectedResponse = {
+			const expectedResponse: Partial<AxiosResponse> = {
 				data: expectedAccessTokenResponse
 			};
 
@@ -88,7 +88,7 @@ describe('flow/refreshToken.ts', () => {
 
 			sinon.stub(request, 'post')
 				.withArgs('https://login.salesforce.com/services/oauth2/token?grant_type=refresh_token&refresh_token=token&client_id=test&client_assertion=signed&client_assertion_type=urn%3Aietf%3Aparams%3Aoauth%3Aclient-assertion-type%3Ajwt-bearer&format=json')
-				.resolves(expectedResponse as unknown as AxiosResponse);
+				.resolves(expectedResponse as AxiosResponse);
 
 			sinon.stub(jwt, 'createJwtBearerClientAssertion').resolves('signed');
 
@@ -116,7 +116,7 @@ describe('flow/refreshToken.ts', () => {
 				token_type: 'Bearer'
 			};
 
-			const expectedResponse = {
+			const expectedResponse: Partial<AxiosResponse> = {
 				data: expectedAccessTokenResponse
 			};
 
@@ -127,7 +127,7 @@ describe('flow/refreshToken.ts', () => {
 
 			sinon.stub(request, 'post')
 				.withArgs('https://login.salesforce.com/services/oauth2/token?grant_type=refresh_token&refresh_token=token&client_id=test&client_assertion=signed&client_assertion_type=urn%3Aietf%3Aparams%3Aoauth%3Aclient-assertion-type%3Ajwt-bearer&format=json')
-				.resolves(expectedResponse as unknown as AxiosResponse);
+				.resolves(expectedResponse as AxiosResponse);
 
 			sinon.stub(jwt, 'createJwtBearerClientAssertion').resolves('signed');
 

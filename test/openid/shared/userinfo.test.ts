@@ -66,7 +66,7 @@ describe('openid/shared/userinfo.js', () => {
 
 			// Given
 			sinon.stub(issuer, 'constructIssuerClient').resolves(issuerClient as unknown as openidClient.Client);
-			issuerClient.userinfo.returns({
+			issuerClient.userinfo.resolves({
 				organization_id: '123',
 				preferred_username: 'bob'
 			});

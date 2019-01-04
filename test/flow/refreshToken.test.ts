@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018, FinancialForce.com, inc
+ * Copyright (c) 2018-2019, FinancialForce.com, inc
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -29,7 +29,8 @@ import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
 
-import { default as request } from 'axios';
+import { AxiosResponse, default as request } from 'axios';
+import openidClient from 'openid-client';
 
 import { Environment, SalesforceJwt } from '../../src';
 import * as issuer from '../../src/openid/shared/issuer';
@@ -50,6 +51,7 @@ describe('flow/refreshToken.ts', () => {
 		env = {
 			jwtSigningKey: 'testJwtSigningKey',
 			openidClientId: 'test',
+			openidClientSecret: 'test',
 			openidHTTPTimeout: 4001,
 			openidIssuerURI: 'https://login.salesforce.com/'
 		};
@@ -75,18 +77,18 @@ describe('flow/refreshToken.ts', () => {
 				token_type: 'Bearer'
 			};
 
-			const expectedResponse = {
+			const expectedResponse: Partial<AxiosResponse> = {
 				data: expectedAccessTokenResponse
 			};
 
 			sinon.stub(issuer, 'constructIssuer').resolves({
 				authorization_endpoint: 'https://login.salesforce.com/services/oauth2/authorize',
 				token_endpoint: 'https://login.salesforce.com/services/oauth2/token'
-			});
+			} as openidClient.Issuer);
 
 			sinon.stub(request, 'post')
 				.withArgs('https://login.salesforce.com/services/oauth2/token?grant_type=refresh_token&refresh_token=token&client_id=test&client_assertion=signed&client_assertion_type=urn%3Aietf%3Aparams%3Aoauth%3Aclient-assertion-type%3Ajwt-bearer&format=json')
-				.resolves(expectedResponse);
+				.resolves(expectedResponse as AxiosResponse);
 
 			sinon.stub(jwt, 'createJwtBearerClientAssertion').resolves('signed');
 
@@ -114,18 +116,18 @@ describe('flow/refreshToken.ts', () => {
 				token_type: 'Bearer'
 			};
 
-			const expectedResponse = {
+			const expectedResponse: Partial<AxiosResponse> = {
 				data: expectedAccessTokenResponse
 			};
 
 			sinon.stub(issuer, 'constructIssuer').resolves({
 				authorization_endpoint: 'https://login.salesforce.com/services/oauth2/authorize',
 				token_endpoint: 'https://login.salesforce.com/services/oauth2/token'
-			});
+			} as openidClient.Issuer);
 
 			sinon.stub(request, 'post')
 				.withArgs('https://login.salesforce.com/services/oauth2/token?grant_type=refresh_token&refresh_token=token&client_id=test&client_assertion=signed&client_assertion_type=urn%3Aietf%3Aparams%3Aoauth%3Aclient-assertion-type%3Ajwt-bearer&format=json')
-				.resolves(expectedResponse);
+				.resolves(expectedResponse as AxiosResponse);
 
 			sinon.stub(jwt, 'createJwtBearerClientAssertion').resolves('signed');
 

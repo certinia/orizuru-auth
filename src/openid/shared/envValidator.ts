@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2018, FinancialForce.com, inc
+ * Copyright (c) 2017-2019, FinancialForce.com, inc
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -30,36 +30,44 @@ import { Environment } from '../..';
 /**
  * @private
  */
-export function validate({ jwtSigningKey, openidClientId, openidHTTPTimeout, openidIssuerURI }: Environment) {
+export function validate(env: Environment) {
 
-	if (jwtSigningKey === '') {
+	if (env.jwtSigningKey === '') {
 		throw new Error('Invalid parameter: jwtSigningKey cannot be empty.');
 	}
 
-	if (!jwtSigningKey) {
+	if (!env.jwtSigningKey) {
 		throw new Error('Missing required parameter: jwtSigningKey.');
 	}
 
-	if (openidClientId === '') {
+	if (env.openidClientId === '') {
 		throw new Error('Invalid parameter: openidClientId cannot be empty.');
 	}
 
-	if (!openidClientId) {
+	if (!env.openidClientId) {
 		throw new Error('Missing required parameter: openidClientId.');
 	}
 
-	if (!_.isInteger(openidHTTPTimeout)) {
+	if (env.openidClientSecret === '') {
+		throw new Error('Invalid parameter: openidClientSecret cannot be empty.');
+	}
+
+	if (!env.openidClientSecret) {
+		throw new Error('Missing required parameter: openidClientSecret.');
+	}
+
+	if (!_.isInteger(env.openidHTTPTimeout)) {
 		throw new Error('Invalid parameter: openidHTTPTimeout is not an integer.');
 	}
 
-	if (openidIssuerURI === '') {
+	if (env.openidIssuerURI === '') {
 		throw new Error('Invalid parameter: openidIssuerURI cannot be empty.');
 	}
 
-	if (!openidIssuerURI) {
+	if (!env.openidIssuerURI) {
 		throw new Error('Missing required parameter: openidIssuerURI.');
 	}
 
-	return { jwtSigningKey, openidClientId, openidHTTPTimeout, openidIssuerURI };
+	return env;
 
 }

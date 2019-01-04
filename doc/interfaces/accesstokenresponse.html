@@ -109,6 +109,7 @@
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="accesstokenresponse.html#instance_url" class="tsd-kind-icon">instance_<wbr>url</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="accesstokenresponse.html#issued_at" class="tsd-kind-icon">issued_<wbr>at</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="accesstokenresponse.html#refresh_token" class="tsd-kind-icon">refresh_<wbr>token</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="accesstokenresponse.html#scope" class="tsd-kind-icon">scope</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="accesstokenresponse.html#sfdc_community_id" class="tsd-kind-icon">sfdc_<wbr>community_<wbr>id</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="accesstokenresponse.html#sfdc_community_url" class="tsd-kind-icon">sfdc_<wbr>community_<wbr>url</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="accesstokenresponse.html#signature" class="tsd-kind-icon">signature</a></li>
@@ -187,7 +188,7 @@
 					<div class="tsd-signature tsd-kind-icon">issued_<wbr>at<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/flow/response/accessToken.ts#L103">flow/response/accessToken.ts:103</a></li>
+							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/flow/response/accessToken.ts#L108">flow/response/accessToken.ts:108</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -214,12 +215,27 @@
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="scope" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> scope</h3>
+					<div class="tsd-signature tsd-kind-icon">scope<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/flow/response/accessToken.ts#L86">flow/response/accessToken.ts:86</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>This parameter is returned if the scope parameter includes openid.</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="sfdc_community_id" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagOptional">Optional</span> sfdc_<wbr>community_<wbr>id</h3>
 					<div class="tsd-signature tsd-kind-icon">sfdc_<wbr>community_<wbr>id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/flow/response/accessToken.ts#L91">flow/response/accessToken.ts:91</a></li>
+							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/flow/response/accessToken.ts#L96">flow/response/accessToken.ts:96</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -234,7 +250,7 @@
 					<div class="tsd-signature tsd-kind-icon">sfdc_<wbr>community_<wbr>url<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/flow/response/accessToken.ts#L86">flow/response/accessToken.ts:86</a></li>
+							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/flow/response/accessToken.ts#L91">flow/response/accessToken.ts:91</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -249,7 +265,7 @@
 					<div class="tsd-signature tsd-kind-icon">signature<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/flow/response/accessToken.ts#L98">flow/response/accessToken.ts:98</a></li>
+							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/flow/response/accessToken.ts#L103">flow/response/accessToken.ts:103</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -309,6 +325,9 @@
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
 								<a href="accesstokenresponse.html#refresh_token" class="tsd-kind-icon">refresh_<wbr>token</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="accesstokenresponse.html#scope" class="tsd-kind-icon">scope</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
 								<a href="accesstokenresponse.html#sfdc_community_id" class="tsd-kind-icon">sfdc_<wbr>community_<wbr>id</a>

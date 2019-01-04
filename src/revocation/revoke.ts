@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018, FinancialForce.com, inc
+ * Copyright (c) 2018-2019, FinancialForce.com, inc
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -49,9 +49,7 @@ export namespace revocation {
 		const revocationUri = `${issuer.revocation_endpoint}?token=${token}`;
 
 		const config: AxiosRequestConfig = {
-			validateStatus: () => {
-				return true;
-			}
+			validateStatus: () => true
 		};
 
 		const response = await request.get(revocationUri, config);

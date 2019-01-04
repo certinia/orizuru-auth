@@ -1,19 +1,25 @@
 {
 	"compilerOptions": {
-		"target": "es2017",
-		"module": "commonjs",
 		"declaration": true,
+		"esModuleInterop": true,
+		"module": "commonjs",
+		"moduleResolution": "node",
+		"noFallthroughCasesInSwitch": true,
+		"noImplicitAny": false,
+		"noImplicitReturns": true,
+		"noUnusedLocals": true,
 		"outDir": "./dist",
 		"strict": true,
 		"strictNullChecks": true,
-		"noUnusedLocals": true,
-		"noImplicitReturns": true,
-		"noFallthroughCasesInSwitch": true,
-		"moduleResolution": "node",
-		"esModuleInterop": true,
-		"noImplicitAny": false
+		"target": "es2017",
+		"typeRoots": [
+			"./node_modules/@types",
+			"./typings"
+		]
 	},
 	"include": [
-		"src"
+		"src",
+		"test",
+		"typings"
 	]
 }

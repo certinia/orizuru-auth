@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2018, FinancialForce.com, inc
+ * Copyright (c) 2017-2019, FinancialForce.com, inc
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -45,6 +45,7 @@ describe('openid/shared/issuer.js', () => {
 	const env: Environment = {
 		jwtSigningKey: 'testJwtSigningKey',
 		openidClientId: 'testOpenidClientKey',
+		openidClientSecret: 'testOpenidClientSecret',
 		openidHTTPTimeout: 2000,
 		openidIssuerURI: 'https://login.salesforce.com'
 	};

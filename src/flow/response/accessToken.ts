@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018, FinancialForce.com, inc
+ * Copyright (c) 2018-2019, FinancialForce.com, inc
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -79,6 +79,11 @@ export interface AccessTokenResponse {
 	 * Identity URL that can be used to both identify the user and query for more information about the user.See Identity URLs.
 	 */
 	id: string;
+
+	/**
+	 * This parameter is returned if the scope parameter includes openid.
+	 */
+	scope?: string;
 
 	/**
 	 * If the user is a member of a Salesforce community, the community URL is provided.

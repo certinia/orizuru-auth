@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2018, FinancialForce.com, inc
+ * Copyright (c) 2017-2019, FinancialForce.com, inc
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -29,6 +29,8 @@ import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
 
+import openidClient from 'openid-client';
+
 import * as authorizationGrant from '../../src/openid/shared/authorizationGrant';
 import * as envValidator from '../../src/openid/shared/envValidator';
 import * as issuer from '../../src/openid/shared/issuer';
@@ -48,6 +50,7 @@ describe('openid/grant.ts', () => {
 	const env: Environment = {
 		jwtSigningKey: 'test',
 		openidClientId: 'test',
+		openidClientSecret: 'test',
 		openidHTTPTimeout: 4001,
 		openidIssuerURI: 'https://login.something.com/'
 	};
@@ -74,7 +77,7 @@ describe('openid/grant.ts', () => {
 			const issuerClientMock = sinon.stub();
 
 			sinon.stub(envValidator, 'validate').resolves();
-			sinon.stub(issuer, 'constructIssuerClient').resolves(issuerClientMock);
+			sinon.stub(issuer, 'constructIssuerClient').resolves(issuerClientMock as unknown as openidClient.Client);
 			sinon.stub(jwt, 'createJwtBearerGrantAssertion').resolves('assertion');
 			sinon.stub(authorizationGrant, 'obtainAuthorizationGrant').resolves({ access_token: 'accessToken', instance_url: 'instanceUrl' });
 
@@ -176,7 +179,7 @@ describe('openid/grant.ts', () => {
 				const issuerClientMock = sinon.stub();
 
 				sinon.stub(envValidator, 'validate').resolves();
-				sinon.stub(issuer, 'constructIssuerClient').resolves(issuerClientMock);
+				sinon.stub(issuer, 'constructIssuerClient').resolves(issuerClientMock as unknown as openidClient.Client);
 				sinon.stub(jwt, 'createJwtBearerGrantAssertion').resolves('assertion');
 				sinon.stub(authorizationGrant, 'obtainAuthorizationGrant').rejects(new Error('something or other.'));
 

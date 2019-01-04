@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2018, FinancialForce.com, inc
+ * Copyright (c) 2018-2019, FinancialForce.com, inc
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -28,7 +28,8 @@ import chai from 'chai';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
 
-import axios from 'axios';
+import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
+import openidClient from 'openid-client';
 
 import { Environment } from '../../src';
 import * as issuer from '../../src/openid/shared/issuer';
@@ -44,6 +45,7 @@ describe('revocation/revoke.ts', () => {
 	const env: Environment = {
 		jwtSigningKey: 'test',
 		openidClientId: 'test',
+		openidClientSecret: 'test',
 		openidHTTPTimeout: 4001,
 		openidIssuerURI: 'https://login.something.com/'
 	};
@@ -59,9 +61,13 @@ describe('revocation/revoke.ts', () => {
 			// Given
 			sinon.stub(issuer, 'constructIssuer').resolves({
 				revocation_endpoint: 'https://login.salesforce.com/services/oauth2/revoke'
-			});
+			} as openidClient.Issuer);
 
-			sinon.stub(axios, 'get').resolves({ status: 400 });
+			const expectedResponse: Partial<AxiosResponse> = {
+				status: 400
+			};
+
+			sinon.stub(axios, 'get').resolves(expectedResponse as AxiosResponse);
 
 			// When
 			const result = await revocation.revokeAccessToken(env, 'testToken');
@@ -78,9 +84,13 @@ describe('revocation/revoke.ts', () => {
 			// Given
 			sinon.stub(issuer, 'constructIssuer').resolves({
 				revocation_endpoint: 'https://login.salesforce.com/services/oauth2/revoke'
-			});
+			} as openidClient.Issuer);
 
-			sinon.stub(axios, 'get').resolves({ status: 200 });
+			const expectedResponse: Partial<AxiosResponse> = {
+				status: 200
+			};
+
+			sinon.stub(axios, 'get').resolves(expectedResponse as AxiosResponse);
 
 			// When
 			const result = await revocation.revokeAccessToken(env, 'testToken');
@@ -97,14 +107,11 @@ describe('revocation/revoke.ts', () => {
 			// Given
 			sinon.stub(issuer, 'constructIssuer').resolves({
 				revocation_endpoint: 'https://login.salesforce.com/services/oauth2/revoke'
-			});
+			} as openidClient.Issuer);
 
-			let spy;
-
-			sinon.stub(axios, 'get').callsFake((token, config) => {
-				spy = sinon.spy(config, 'validateStatus');
-				config.validateStatus();
-				return { status: 200 };
+			sinon.stub(axios, 'get').callsFake((uri: string, config?: AxiosRequestConfig) => {
+				config && config.validateStatus && config.validateStatus(200);
+				return { status: 200 } as any;
 			});
 
 			// When
@@ -112,8 +119,6 @@ describe('revocation/revoke.ts', () => {
 
 			// Then
 			expect(result).to.be.true;
-			expect(spy).to.have.been.calledOnce;
-			expect(spy).to.have.returned(true);
 			expect(axios.get).to.have.been.calledOnce;
 			expect(axios.get).to.have.been.calledWith('https://login.salesforce.com/services/oauth2/revoke?token=testToken', { validateStatus: sinon.match.func });
 

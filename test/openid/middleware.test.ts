@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2018, FinancialForce.com, inc
+ * Copyright (c) 2017-2019, FinancialForce.com, inc
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -46,6 +46,7 @@ describe('openid/middleware.ts', () => {
 	const env: Environment = {
 		jwtSigningKey: 'test',
 		openidClientId: 'test',
+		openidClientSecret: 'test',
 		openidHTTPTimeout: 4001,
 		openidIssuerURI: 'https://login.something.com/'
 	};
@@ -259,7 +260,7 @@ describe('openid/middleware.ts', () => {
 				username: userInfoMock.preferred_username
 			};
 
-			sinon.stub(envValidator, 'validate').resolves(new Error('some error or other'));
+			sinon.stub(envValidator, 'validate').resolves();
 			req.get.withArgs('Authorization').returns('Bearer 12345');
 			sinon.stub(issuer, 'constructIssuerClient').resolves(issuerClientMock);
 			issuerClientUserInfoStub.resolves(userInfoMock);
@@ -457,7 +458,10 @@ describe('openid/middleware.ts', () => {
 			sinon.stub(envValidator, 'validate').resolves();
 			sinon.stub(issuer, 'constructIssuerClient').resolves(issuerClientMock);
 			sinon.stub(jwt, 'createJwtBearerGrantAssertion').resolves('assertion');
-			sinon.stub(authorizationGrant, 'obtainAuthorizationGrant').resolves('12345');
+			sinon.stub(authorizationGrant, 'obtainAuthorizationGrant').resolves({
+				access_token: 'testAccessToken',
+				instance_url: 'testInstanceUrl'
+			});
 
 			// When
 			await middleware.grantChecker(env)(req, res, next);
@@ -491,7 +495,10 @@ describe('openid/middleware.ts', () => {
 			sinon.stub(envValidator, 'validate').resolves();
 			sinon.stub(issuer, 'constructIssuerClient').resolves(issuerClientMock);
 			sinon.stub(jwt, 'createJwtBearerGrantAssertion').resolves('assertion');
-			sinon.stub(authorizationGrant, 'obtainAuthorizationGrant').resolves('12345');
+			sinon.stub(authorizationGrant, 'obtainAuthorizationGrant').resolves({
+				access_token: 'testAccessToken',
+				instance_url: 'testInstanceUrl'
+			});
 
 			req.orizuru = { user, other: true };
 

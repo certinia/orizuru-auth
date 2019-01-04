@@ -3,6 +3,8 @@ coverage
 dist
 node_modules
 
-local.*.properties
+.env
 
+*.cert
+*.key
 *.tgz

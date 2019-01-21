@@ -154,7 +154,7 @@ function fail(req: Request, res: Response) {
 
 export namespace middleware {
 
-	export const emitter: EventEmitter = new EventEmitter();
+	export let emitter: EventEmitter = new EventEmitter();
 
 	/**
 	 * Returns an express middleware that checks that an access token

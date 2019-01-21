@@ -49,22 +49,13 @@ const BEARER_PREFIX: string = 'Bearer ';
 /**
  * @private
  */
-const DENIED_EVENT = 'denied';
-
-/**
- * @private
- */
-const GRANT_CHECKED_EVENT = 'grant_checked';
-
-/**
- * @private
- */
 const HTTP_AUTHORIZATION_HEADER: string = 'Authorization';
 
-/**
- * @private
- */
-const TOKEN_VALIDATED_EVENT = 'token_validated';
+export const DENIED_EVENT = 'denied';
+
+export const GRANT_CHECKED_EVENT = 'grant_checked';
+
+export const TOKEN_VALIDATED_EVENT = 'token_validated';
 
 /**
  * @private

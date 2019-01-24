@@ -459,8 +459,11 @@ describe('openid/middleware.ts', () => {
 			sinon.stub(issuer, 'constructIssuerClient').resolves(issuerClientMock);
 			sinon.stub(jwt, 'createJwtBearerGrantAssertion').resolves('assertion');
 			sinon.stub(authorizationGrant, 'obtainAuthorizationGrant').resolves({
-				access_token: 'testAccessToken',
-				instance_url: 'testInstanceUrl'
+				access_token: 'accessToken',
+				expires_in: 3600,
+				id_token: 'testId',
+				instance_url: 'instanceUrl',
+				token_type: 'Bearer'
 			});
 
 			// When
@@ -496,8 +499,11 @@ describe('openid/middleware.ts', () => {
 			sinon.stub(issuer, 'constructIssuerClient').resolves(issuerClientMock);
 			sinon.stub(jwt, 'createJwtBearerGrantAssertion').resolves('assertion');
 			sinon.stub(authorizationGrant, 'obtainAuthorizationGrant').resolves({
-				access_token: 'testAccessToken',
-				instance_url: 'testInstanceUrl'
+				access_token: 'accessToken',
+				expires_in: 3600,
+				id_token: 'testId',
+				instance_url: 'instanceUrl',
+				token_type: 'Bearer'
 			});
 
 			req.orizuru = { user, other: true };

@@ -1,7 +1,10 @@
 {
 	"compilerOptions": {
 		"declaration": true,
+		"declarationDir": "dist/types",
 		"esModuleInterop": true,
+		"inlineSourceMap": true,
+		"inlineSources": true,
 		"module": "commonjs",
 		"moduleResolution": "node",
 		"noFallthroughCasesInSwitch": true,

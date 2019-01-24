@@ -3,12 +3,15 @@
 	"version": "5.0.0",
 	"description": "Salesforce authentication for Heroku Node applications.",
 	"main": "dist/src/index.js",
-	"types": "dist/src/index.d.ts",
+	"types": "dist/types/src/index.d.ts",
 	"files": [
-		"dist/src"
+		"dist/src",
+		"dist/types"
 	],
 	"scripts": {
-		"build": "tsc",
+		"build": "npm run build-clean && npm run build-compile",
+		"build-clean": "rm -rf dist",
+		"build-compile": "tsc",
 		"doc": "typedoc --gitRevision master --ignoreCompilerErrors --out doc src/**/* --mode file",
 		"init-project": "cp run.properties local.run.properties && cp test.properties local.test.properties",
 		"lint-fix": "tslint -p tsconfig.json --fix",

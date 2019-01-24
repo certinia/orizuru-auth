@@ -108,6 +108,6 @@ export interface UserInfo {
 
 export interface Grant {
 	accessToken: string;
-	instanceUrl: string;
+	instanceUrl?: string;
 	userInfo?: UserInfo;
 }

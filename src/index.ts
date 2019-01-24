@@ -100,7 +100,14 @@ export interface User {
 	username: string;
 }
 
+export interface UserInfo {
+	id: string;
+	organizationId: string;
+	url: string;
+}
+
 export interface Grant {
 	accessToken: string;
 	instanceUrl: string;
+	userInfo?: UserInfo;
 }

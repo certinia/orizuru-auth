@@ -144,13 +144,16 @@ middleware.emitter.on(<span class="hljs-string">'grant_checked'</span>, <span cl
 <span class="hljs-keyword">const</span> env = {
     jwtSigningKey: <span class="hljs-string">'--SOME KEY MATERIAL--'</span>,
     openidClientId: <span class="hljs-string">'12312312413-7236762374'</span>,
+    openidClientSecret: <span class="hljs-string">'12345678910'</span>,
     openidHTTPTimeout: <span class="hljs-number">4000</span>,
     openidIssuerURI: <span class="hljs-string">'https://login.salesforce.com'</span>
 };
+
 <span class="hljs-keyword">const</span> user = {
     organizationId: <span class="hljs-string">'00D80000000bSxXEAU'</span>,
     username: <span class="hljs-string">'someuser@someorg.something'</span>
 };
+
 <span class="hljs-keyword">const</span> getToken = grant.getToken(env);
 
 <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">getJsforceConnection</span>(<span class="hljs-params">credentials: <span class="hljs-built_in">any</span></span>) </span>{

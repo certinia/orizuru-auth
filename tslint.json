@@ -10,6 +10,15 @@
 			"tabs",
 			4
 		],
+		"interface-name": false,
+		"max-line-length": false,
+		"no-any": false,
+		"no-namespace": [
+			false,
+			"allow-declarations"
+		],
+		"no-trailing-whitespace": true,
+		"no-unused-expression": false,
 		"quotemark": [
 			true,
 			"single"
@@ -20,16 +29,7 @@
 				"multiline": "never",
 				"singleline": "never"
 			}
-		],
-		"interface-name": false,
-		"max-line-length": false,
-		"no-unused-expression": false,
-		"no-any": false,
-		"no-namespace": [
-			false,
-			"allow-declarations"
-		],
-		"no-trailing-whitespace": true
+		]
 	},
 	"rulesDirectory": []
 }

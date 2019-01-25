@@ -26,8 +26,11 @@
 
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import sinon from 'sinon';
+import sinon, { SinonStub, SinonStubbedInstance } from 'sinon';
 import sinonChai from 'sinon-chai';
+
+import { NextFunction, Request, Response } from 'express';
+import * as openidClient from 'openid-client';
 
 import { Environment } from '../../src';
 import { middleware } from '../../src/openid/middleware';
@@ -41,6 +44,19 @@ const expect = chai.expect;
 chai.use(chaiAsPromised);
 chai.use(sinonChai);
 
+interface ExtendedOrizuru extends Orizuru.Context {
+	grantChecked: boolean;
+	other: boolean;
+	user: {
+		organizationId: string;
+		username: string;
+	};
+}
+
+interface ExtendedRequest extends Request {
+	orizuru: ExtendedOrizuru;
+}
+
 describe('openid/middleware.ts', () => {
 
 	const env: Environment = {
@@ -51,27 +67,38 @@ describe('openid/middleware.ts', () => {
 		openidIssuerURI: 'https://login.something.com/'
 	};
 
-	let req;
-	let res;
-	let next;
+	let req: ExtendedRequest;
+	let res: Response;
+	let next: NextFunction;
 
-	let listener;
+	let getStub: SinonStub;
+	let listener: SinonStub;
 
-	let userInfoMock;
-	let issuerClientUserInfoStub;
-	let issuerClientMock;
+	let issuerClientStubInstance: SinonStubbedInstance<openidClient.Client>;
 
 	beforeEach(() => {
 
-		req = {
-			get: sinon.stub(),
-			ip: '1.1.1.1'
+		getStub = sinon.stub();
+
+		const partialRequest: Partial<ExtendedRequest> = {
+			get: getStub,
+			ip: '1.1.1.1',
+			orizuru: {
+				grantChecked: false,
+				other: true,
+				user: {
+					organizationId: 'testOrganizationId',
+					username: 'bob@test.com'
+				}
+			}
 		};
 
-		res = {
+		const partialResponse: Partial<Response> = {
 			sendStatus: sinon.stub()
 		};
 
+		req = partialRequest as ExtendedRequest;
+		res = partialResponse as Response;
 		next = sinon.stub();
 
 		listener = sinon.stub();
@@ -80,19 +107,10 @@ describe('openid/middleware.ts', () => {
 		middleware.emitter.on('token_validated', listener);
 		middleware.emitter.on('grant_checked', listener);
 
-		userInfoMock = {
-			['preferred_username']: 'testPreferred_username',
-			['organization_id']: 'testOrganization_id',
-			['user_id']: 'testUser_id'
+		issuerClientStubInstance = {
+			grant: sinon.stub(),
+			userinfo: sinon.stub()
 		};
-
-		issuerClientUserInfoStub = sinon.stub();
-
-		issuerClientMock = new class {
-			public userinfo(accessToken) {
-				return issuerClientUserInfoStub(accessToken);
-			}
-		}();
 
 	});
 
@@ -102,6 +120,10 @@ describe('openid/middleware.ts', () => {
 	});
 
 	describe('tokenValidator', () => {
+
+		beforeEach(() => {
+			delete req.orizuru.user;
+		});
 
 		it('should deny if envValidator rejects', () => {
 
@@ -119,13 +141,17 @@ describe('openid/middleware.ts', () => {
 				sinon.stub(envValidator, 'validate').resolves();
 			});
 
-			it('if the req is null', async () => {
+			it('if the req is undefined', async () => {
 
 				// Given
-				req.get.withArgs('Authorization').returns(null);
+				const wrappedReq = {
+					req
+				};
+
+				delete wrappedReq.req;
 
 				// When
-				await middleware.tokenValidator(env)(null as any, res, next);
+				await middleware.tokenValidator(env)(wrappedReq.req, res, next);
 
 				// Then
 				expect(next).to.not.have.been.called;
@@ -137,10 +163,11 @@ describe('openid/middleware.ts', () => {
 			it('if the req has no get method', async () => {
 
 				// Given
-				req.get.withArgs('Authorization').returns(null);
+				delete req.ip;
+				delete req.get;
 
 				// When
-				await middleware.tokenValidator(env)({} as any, res, next);
+				await middleware.tokenValidator(env)(req, res, next);
 
 				// Then
 				expect(next).to.not.have.been.called;
@@ -152,7 +179,7 @@ describe('openid/middleware.ts', () => {
 			it('if the header is null', async () => {
 
 				// Given
-				req.get.withArgs('Authorization').returns(null);
+				getStub.withArgs('Authorization').returns(null);
 
 				// When
 				await middleware.tokenValidator(env)(req, res, next);
@@ -167,7 +194,7 @@ describe('openid/middleware.ts', () => {
 			it('if the header is empty', async () => {
 
 				// Given
-				req.get.withArgs('Authorization').returns('');
+				getStub.withArgs('Authorization').returns('');
 
 				// When
 				await middleware.tokenValidator(env)(req, res, next);
@@ -182,7 +209,7 @@ describe('openid/middleware.ts', () => {
 			it('with no bearer', async () => {
 
 				// Given
-				req.get.withArgs('Authorization').returns('12345');
+				getStub.withArgs('Authorization').returns('12345');
 
 				// When
 				await middleware.tokenValidator(env)(req, res, next);
@@ -197,7 +224,7 @@ describe('openid/middleware.ts', () => {
 			it('for \'Bearer \'', async () => {
 
 				// Given
-				req.get.withArgs('Authorization').returns('Bearer ');
+				getStub.withArgs('Authorization').returns('Bearer ');
 
 				// When
 				await middleware.tokenValidator(env)(req, res, next);
@@ -213,7 +240,7 @@ describe('openid/middleware.ts', () => {
 
 				// Given
 				sinon.stub(issuer, 'constructIssuerClient').rejects(new Error('something or other'));
-				req.get.withArgs('Authorization').returns('Bearer 12345');
+				getStub.withArgs('Authorization').returns('Bearer 12345');
 
 				// When
 				await middleware.tokenValidator(env)(req, res, next);
@@ -231,9 +258,9 @@ describe('openid/middleware.ts', () => {
 			it('if issuerClient userinfo rejects', async () => {
 
 				// Given
-				req.get.withArgs('Authorization').returns('Bearer 12345');
-				sinon.stub(issuer, 'constructIssuerClient').resolves(issuerClientMock);
-				issuerClientUserInfoStub.rejects(new Error('something or other'));
+				getStub.withArgs('Authorization').returns('Bearer 12345');
+				sinon.stub(issuer, 'constructIssuerClient').resolves(issuerClientStubInstance);
+				issuerClientStubInstance.userinfo.rejects(new Error('something or other'));
 
 				// When
 				await middleware.tokenValidator(env)(req, res, next);
@@ -245,8 +272,8 @@ describe('openid/middleware.ts', () => {
 
 				expect(issuer.constructIssuerClient).to.have.been.calledOnce;
 				expect(issuer.constructIssuerClient).to.have.been.calledWith(env);
-				expect(issuerClientUserInfoStub).to.have.been.calledOnce;
-				expect(issuerClientUserInfoStub).to.have.been.calledWith('12345');
+				expect(issuerClientStubInstance.userinfo).to.have.been.calledOnce;
+				expect(issuerClientStubInstance.userinfo).to.have.been.calledWith('12345');
 
 			});
 
@@ -255,21 +282,24 @@ describe('openid/middleware.ts', () => {
 		it('should call next and set orizuru on the request if client info resolves', async () => {
 
 			// Given
-			const user = {
-				organizationId: userInfoMock.organization_id,
-				username: userInfoMock.preferred_username
-			};
+			delete req.orizuru;
 
 			sinon.stub(envValidator, 'validate').resolves();
-			req.get.withArgs('Authorization').returns('Bearer 12345');
-			sinon.stub(issuer, 'constructIssuerClient').resolves(issuerClientMock);
-			issuerClientUserInfoStub.resolves(userInfoMock);
+			getStub.withArgs('Authorization').returns('Bearer 12345');
+			sinon.stub(issuer, 'constructIssuerClient').resolves(issuerClientStubInstance);
+			issuerClientStubInstance.userinfo.resolves({
+				['preferred_username']: 'testPreferredUsername',
+				['organization_id']: 'testOrganizationId'
+			});
 
 			// When
 			await middleware.tokenValidator(env)(req, res, next);
 
 			// Then
-			expect(req.orizuru.user).to.deep.eq(user);
+			expect(req.orizuru).to.have.property('user').that.eqls({
+				organizationId: 'testOrganizationId',
+				username: 'testPreferredUsername'
+			});
 
 			expect(next).to.have.been.calledOnce;
 			expect(listener).to.have.been.calledOnce;
@@ -277,32 +307,33 @@ describe('openid/middleware.ts', () => {
 
 			expect(issuer.constructIssuerClient).to.have.been.calledOnce;
 			expect(issuer.constructIssuerClient).to.have.been.calledWith(env);
-			expect(issuerClientUserInfoStub).to.have.been.calledOnce;
-			expect(issuerClientUserInfoStub).to.have.been.calledWith('12345');
+			expect(issuerClientStubInstance.userinfo).to.have.been.calledOnce;
+			expect(issuerClientStubInstance.userinfo).to.have.been.calledWith('12345');
 
 		});
 
 		it('should respect an existing orizuru object', async () => {
 
-			const user = {
-				organizationId: userInfoMock.organization_id,
-				username: userInfoMock.preferred_username
-			};
-
 			// Given
-			sinon.stub(envValidator, 'validate').resolves();
-			req.get.withArgs('Authorization').returns('Bearer 12345');
-			sinon.stub(issuer, 'constructIssuerClient').resolves(issuerClientMock);
-			issuerClientUserInfoStub.resolves(userInfoMock);
+			delete req.orizuru.user;
 
-			req.orizuru = { other: true };
+			sinon.stub(envValidator, 'validate').resolves();
+			getStub.withArgs('Authorization').returns('Bearer 12345');
+			sinon.stub(issuer, 'constructIssuerClient').resolves(issuerClientStubInstance);
+			issuerClientStubInstance.userinfo.resolves({
+				['preferred_username']: 'testPreferredUsername',
+				['organization_id']: 'testOrganizationId'
+			});
 
 			// When
 			await middleware.tokenValidator(env)(req, res, next);
 
 			// Then
-			expect(req.orizuru.user).to.deep.eq(user);
-			expect(req.orizuru.other).to.eql(true);
+			expect(req.orizuru).to.have.property('user').that.eqls({
+				organizationId: 'testOrganizationId',
+				username: 'testPreferredUsername'
+			});
+			expect(req.orizuru).to.have.property('other', true);
 
 			expect(next).to.have.been.calledOnce;
 			expect(listener).to.have.been.calledOnce;
@@ -310,14 +341,18 @@ describe('openid/middleware.ts', () => {
 
 			expect(issuer.constructIssuerClient).to.have.been.calledOnce;
 			expect(issuer.constructIssuerClient).to.have.been.calledWith(env);
-			expect(issuerClientUserInfoStub).to.have.been.calledOnce;
-			expect(issuerClientUserInfoStub).to.have.been.calledWith('12345');
+			expect(issuerClientStubInstance.userinfo).to.have.been.calledOnce;
+			expect(issuerClientStubInstance.userinfo).to.have.been.calledWith('12345');
 
 		});
 
 	});
 
 	describe('grantChecker', () => {
+
+		beforeEach(() => {
+			delete req.orizuru.grantChecked;
+		});
 
 		it('should error if the environment is invalid', () => {
 
@@ -339,6 +374,8 @@ describe('openid/middleware.ts', () => {
 			it('if there is no user on the request', async () => {
 
 				// Given
+				delete req.orizuru;
+
 				// When
 				await middleware.grantChecker(env)(req, res, next);
 
@@ -352,7 +389,7 @@ describe('openid/middleware.ts', () => {
 			it('if there is no user', async () => {
 
 				// Given
-				req.orizuru = {};
+				delete req.orizuru.user;
 
 				// When
 				await middleware.grantChecker(env)(req, res, next);
@@ -367,7 +404,7 @@ describe('openid/middleware.ts', () => {
 			it('if the user has no username property', async () => {
 
 				// Given
-				req.orizuru = { user: {} };
+				delete req.orizuru.user;
 
 				// When
 				await middleware.grantChecker(env)(req, res, next);
@@ -382,7 +419,6 @@ describe('openid/middleware.ts', () => {
 			it('if constructIssuerClient rejects', async () => {
 
 				// Given
-				req.orizuru = { user: { username: 'bob@test.com' } };
 				sinon.stub(issuer, 'constructIssuerClient').rejects(new Error('something or other'));
 
 				// When
@@ -401,8 +437,7 @@ describe('openid/middleware.ts', () => {
 			it('if constructSignedJwt rejects', async () => {
 
 				// Given
-				req.orizuru = { user: { username: 'bob@test.com' } };
-				sinon.stub(issuer, 'constructIssuerClient').resolves(issuerClientMock);
+				sinon.stub(issuer, 'constructIssuerClient').resolves(issuerClientStubInstance);
 				sinon.stub(jwt, 'createJwtBearerGrantAssertion').rejects(new Error('Unable to sign JWT'));
 
 				// When
@@ -424,8 +459,7 @@ describe('openid/middleware.ts', () => {
 			it('if obtainAuthorizationGrantMock rejects', async () => {
 
 				// Given
-				req.orizuru = { user: { username: 'bob@test.com' } };
-				sinon.stub(issuer, 'constructIssuerClient').resolves(issuerClientMock);
+				sinon.stub(issuer, 'constructIssuerClient').resolves(issuerClientStubInstance);
 				sinon.stub(jwt, 'createJwtBearerGrantAssertion').resolves('assertion');
 				sinon.stub(authorizationGrant, 'obtainAuthorizationGrant').rejects(new Error('Unable to obtain grant'));
 
@@ -444,7 +478,7 @@ describe('openid/middleware.ts', () => {
 				expect(jwt.createJwtBearerGrantAssertion).to.have.been.calledWithExactly(env, req.orizuru.user);
 
 				expect(authorizationGrant.obtainAuthorizationGrant).to.have.been.calledOnce;
-				expect(authorizationGrant.obtainAuthorizationGrant).to.have.been.calledWithExactly('assertion', issuerClientMock);
+				expect(authorizationGrant.obtainAuthorizationGrant).to.have.been.calledWithExactly('assertion', issuerClientStubInstance);
 
 			});
 
@@ -453,10 +487,10 @@ describe('openid/middleware.ts', () => {
 		it('should call next if successful', async () => {
 
 			// Given
-			req.orizuru = { user: { username: 'bob@test.com' } };
+			delete req.orizuru.grantChecked;
 
 			sinon.stub(envValidator, 'validate').resolves();
-			sinon.stub(issuer, 'constructIssuerClient').resolves(issuerClientMock);
+			sinon.stub(issuer, 'constructIssuerClient').resolves(issuerClientStubInstance);
 			sinon.stub(jwt, 'createJwtBearerGrantAssertion').resolves('assertion');
 			sinon.stub(authorizationGrant, 'obtainAuthorizationGrant').resolves({
 				access_token: 'accessToken',
@@ -470,7 +504,7 @@ describe('openid/middleware.ts', () => {
 			await middleware.grantChecker(env)(req, res, next);
 
 			// Then
-			expect(req.orizuru.grantChecked).to.equal(true);
+			expect(req.orizuru).to.have.property('grantChecked', true);
 
 			expect(next).to.have.been.calledOnce;
 			expect(listener).to.have.been.calledOnce;
@@ -483,20 +517,17 @@ describe('openid/middleware.ts', () => {
 			expect(jwt.createJwtBearerGrantAssertion).to.have.been.calledWithExactly(env, req.orizuru.user);
 
 			expect(authorizationGrant.obtainAuthorizationGrant).to.have.been.calledOnce;
-			expect(authorizationGrant.obtainAuthorizationGrant).to.have.been.calledWithExactly('assertion', issuerClientMock);
+			expect(authorizationGrant.obtainAuthorizationGrant).to.have.been.calledWithExactly('assertion', issuerClientStubInstance);
 
 		});
 
 		it('should respect an existing orizuru object', async () => {
 
 			// Given
-			const user = {
-				organizationId: userInfoMock.organization_id,
-				username: userInfoMock.preferred_username
-			};
+			delete req.orizuru.grantChecked;
 
 			sinon.stub(envValidator, 'validate').resolves();
-			sinon.stub(issuer, 'constructIssuerClient').resolves(issuerClientMock);
+			sinon.stub(issuer, 'constructIssuerClient').resolves(issuerClientStubInstance);
 			sinon.stub(jwt, 'createJwtBearerGrantAssertion').resolves('assertion');
 			sinon.stub(authorizationGrant, 'obtainAuthorizationGrant').resolves({
 				access_token: 'accessToken',
@@ -506,13 +537,11 @@ describe('openid/middleware.ts', () => {
 				token_type: 'Bearer'
 			});
 
-			req.orizuru = { user, other: true };
-
 			// When
 			await middleware.grantChecker(env)(req, res, next);
 
 			// Then
-			expect(req.orizuru.grantChecked).to.eql(true);
+			expect(req.orizuru).to.have.property('grantChecked', true);
 			expect(req.orizuru.other).to.eql(true);
 
 			expect(next).to.have.been.calledOnce;
@@ -526,7 +555,7 @@ describe('openid/middleware.ts', () => {
 			expect(jwt.createJwtBearerGrantAssertion).to.have.been.calledWithExactly(env, req.orizuru.user);
 
 			expect(authorizationGrant.obtainAuthorizationGrant).to.have.been.calledOnce;
-			expect(authorizationGrant.obtainAuthorizationGrant).to.have.been.calledWithExactly('assertion', issuerClientMock);
+			expect(authorizationGrant.obtainAuthorizationGrant).to.have.been.calledWithExactly('assertion', issuerClientStubInstance);
 
 		});
 

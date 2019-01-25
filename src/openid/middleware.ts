@@ -32,7 +32,7 @@
 
 import { EventEmitter } from 'events';
 import { NextFunction, Request, Response } from 'express';
-import _ from 'lodash';
+import { get, isEmpty, isNull } from 'lodash';
 import { Client, UserInfo } from 'openid-client';
 
 import { Environment, User } from '..';
@@ -66,7 +66,7 @@ function extractAccessToken(req: Request) {
 	const authorizationHeader = req ? req.get ? req.get(HTTP_AUTHORIZATION_HEADER) : null : null;
 	const accessToken = authorizationHeader ? authorizationHeader.substring(BEARER_PREFIX.length) : null;
 
-	if (_.isNull(accessToken) || _.isEmpty(accessToken)) {
+	if (isNull(accessToken) || isEmpty(accessToken)) {
 		throw new Error('Authorization header with \'Bearer ***...\' required');
 	}
 
@@ -79,7 +79,7 @@ function extractAccessToken(req: Request) {
  */
 function checkUserIsOnTheRequest(req: Request) {
 
-	const user: User = _.get(req, 'orizuru.user');
+	const user: User = get(req, 'orizuru.user');
 
 	if (!user || !user.username) {
 		throw new Error('A valid User is not set on the request');
@@ -92,13 +92,13 @@ function checkUserIsOnTheRequest(req: Request) {
 /**
  * @private
  */
-function validateAccessToken(issuerClient: Client, accessToken: string) {
+async function validateAccessToken(issuerClient: Client, accessToken: string) {
 
-	return issuerClient.userinfo(accessToken)
-		.then((userInfo) => userInfo)
-		.catch(() => {
-			throw new Error('Failed to authenticate with Authorisation header');
-		});
+	try {
+		return await issuerClient.userinfo(accessToken);
+	} catch (error) {
+		throw new Error('Failed to authenticate with Authorisation header');
+	}
 
 }
 

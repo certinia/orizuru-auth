@@ -24,7 +24,7 @@
  *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import _ from 'lodash';
+import { isInteger } from 'lodash';
 import { Environment } from '../..';
 
 /**
@@ -56,7 +56,7 @@ export function validate(env: Environment) {
 		throw new Error('Missing required parameter: openidClientSecret.');
 	}
 
-	if (!_.isInteger(env.openidHTTPTimeout)) {
+	if (!isInteger(env.openidHTTPTimeout)) {
 		throw new Error('Invalid parameter: openidHTTPTimeout is not an integer.');
 	}
 

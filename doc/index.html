@@ -144,13 +144,16 @@ middleware.emitter.on(<span class="hljs-string">'grant_checked'</span>, <span cl
 <span class="hljs-keyword">const</span> env = {
     jwtSigningKey: <span class="hljs-string">'--SOME KEY MATERIAL--'</span>,
     openidClientId: <span class="hljs-string">'12312312413-7236762374'</span>,
+    openidClientSecret: <span class="hljs-string">'12345678910'</span>,
     openidHTTPTimeout: <span class="hljs-number">4000</span>,
     openidIssuerURI: <span class="hljs-string">'https://login.salesforce.com'</span>
 };
+
 <span class="hljs-keyword">const</span> user = {
     organizationId: <span class="hljs-string">'00D80000000bSxXEAU'</span>,
     username: <span class="hljs-string">'someuser@someorg.something'</span>
 };
+
 <span class="hljs-keyword">const</span> getToken = grant.getToken(env);
 
 <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">getJsforceConnection</span>(<span class="hljs-params">credentials: <span class="hljs-built_in">any</span></span>) </span>{
@@ -241,6 +244,9 @@ getToken(user)
 					<li class=" tsd-kind-interface tsd-is-external">
 						<a href="interfaces/user.html" class="tsd-kind-icon">User</a>
 					</li>
+					<li class=" tsd-kind-interface tsd-is-external">
+						<a href="interfaces/userinfo.html" class="tsd-kind-icon">User<wbr>Info</a>
+					</li>
 					<li class=" tsd-kind-interface">
 						<a href="interfaces/userinformation.html" class="tsd-kind-icon">User<wbr>Information</a>
 					</li>
@@ -250,11 +256,14 @@ getToken(user)
 					<li class=" tsd-kind-variable tsd-is-private tsd-is-not-exported">
 						<a href="globals.html#bearer_prefix" class="tsd-kind-icon">BEARER_<wbr>PREFIX</a>
 					</li>
-					<li class=" tsd-kind-variable tsd-is-private tsd-is-not-exported">
-						<a href="globals.html#denied_event" class="tsd-kind-icon">DENIED_<wbr>EVENT</a>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#event_denied" class="tsd-kind-icon">EVENT_<wbr>DENIED</a>
 					</li>
-					<li class=" tsd-kind-variable tsd-is-private tsd-is-not-exported">
-						<a href="globals.html#grant_checked_event" class="tsd-kind-icon">GRANT_<wbr>CHECKED_<wbr>EVENT</a>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#event_grant_checked" class="tsd-kind-icon">EVENT_<wbr>GRANT_<wbr>CHECKED</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#event_token_validated" class="tsd-kind-icon">EVENT_<wbr>TOKEN_<wbr>VALIDATED</a>
 					</li>
 					<li class=" tsd-kind-variable tsd-is-private tsd-is-not-exported">
 						<a href="globals.html#http_authorization_header" class="tsd-kind-icon">HTTP_<wbr>AUTHORIZATION_<wbr>HEADER</a>
@@ -267,9 +276,6 @@ getToken(user)
 					</li>
 					<li class=" tsd-kind-variable tsd-is-private tsd-is-not-exported">
 						<a href="globals.html#rsa_256" class="tsd-kind-icon">RSA_<wbr>256</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-is-private tsd-is-not-exported">
-						<a href="globals.html#token_validated_event" class="tsd-kind-icon">TOKEN_<wbr>VALIDATED_<wbr>EVENT</a>
 					</li>
 					<li class=" tsd-kind-variable tsd-is-private tsd-is-not-exported">
 						<a href="globals.html#cache" class="tsd-kind-icon">cache</a>

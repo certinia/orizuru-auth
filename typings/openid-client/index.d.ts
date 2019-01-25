@@ -50,8 +50,6 @@ declare module 'openid-client' {
 
 	export class Client {
 
-		public id_token_signed_response_alg: string;
-
 		constructor(options: any);
 
 		public grant({ grant_type, assertion }: { grant_type: string, assertion: string }): Promise<OpenIdGrant>;

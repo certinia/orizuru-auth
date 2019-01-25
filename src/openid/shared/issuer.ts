@@ -85,14 +85,13 @@ export async function constructIssuer(env: Environment) {
 /**
  * @private
  */
-export function constructIssuerClient(env: Environment) {
+export async function constructIssuerClient(env: Environment) {
 
-	return constructIssuer(env)
-		.then((issuer) => {
-			return new issuer.Client();
-		})
-		.catch(() => {
-			throw new Error(`Could not get an issuer for timeout: ${env.openidHTTPTimeout} and URI: ${env.openidIssuerURI}.`);
-		});
+	try {
+		const issuer = await constructIssuer(env);
+		return new issuer.Client();
+	} catch (error) {
+		throw new Error(`Could not get an issuer for timeout: ${env.openidHTTPTimeout} and URI: ${env.openidIssuerURI}.`);
+	}
 
 }

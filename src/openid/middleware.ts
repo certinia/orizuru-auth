@@ -92,13 +92,13 @@ function checkUserIsOnTheRequest(req: Request) {
 /**
  * @private
  */
-function validateAccessToken(issuerClient: Client, accessToken: string) {
+async function validateAccessToken(issuerClient: Client, accessToken: string) {
 
-	return issuerClient.userinfo(accessToken)
-		.then((userInfo) => userInfo)
-		.catch(() => {
-			throw new Error('Failed to authenticate with Authorisation header');
-		});
+	try {
+		return await issuerClient.userinfo(accessToken);
+	} catch (error) {
+		throw new Error('Failed to authenticate with Authorisation header');
+	}
 
 }
 

@@ -50,8 +50,6 @@ declare module 'openid-client' {
 
 	export class Client {
 
-		public id_token_signed_response_alg: string;
-
 		constructor(options: any);
 
 		public grant({ grant_type, assertion }: { grant_type: string, assertion: string }): Promise<OpenIdGrant>;
@@ -60,9 +58,50 @@ declare module 'openid-client' {
 
 	}
 
+	/**
+	 * OpenID Success Response
+	 * 
+	 * As defined in https://openid.net/specs/openid-connect-core-1_0.html#ImplicitAuthResponse.
+	 */
 	interface OpenIdGrant {
-		instance_url: string;
+
+		/**
+		 * OAuth 2.0 Access Token.
+		 */
 		access_token: string;
+
+		/**
+		 * Expiration time of the Access Token in seconds since the response was generated.
+		 */
+		expires_in: number;
+
+		/**
+		 * ID Token.
+		 */
+		id_token: string;
+
+		/**
+		 * OAuth 2.0 state value.
+		 */
+		state?: string;
+
+		/** 
+		 * OAuth 2.0 Token Type value.
+		 */
+		token_type: string;
+
+		// Optional Salesforce related properties in their response.
+
+		/**
+		 * Identity URL that can be used to both identify the user and query for more information about the user in Salesforce.
+		 */
+		id?: string;
+
+		/**
+		 * A URL indicating the instance of the user’s Salesforce org.
+		 */
+		instance_url?: string;
+
 	}
 
 	interface UserInfo {

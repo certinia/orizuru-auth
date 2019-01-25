@@ -87,21 +87,22 @@
 								<li class="tsd-kind-interface"><a href="interfaces/salesforcejwt.html" class="tsd-kind-icon">Salesforce<wbr>Jwt</a></li>
 								<li class="tsd-kind-interface"><a href="interfaces/salesforcejwtstandardclaims.html" class="tsd-kind-icon">Salesforce<wbr>Jwt<wbr>Standard<wbr>Claims</a></li>
 								<li class="tsd-kind-interface tsd-is-external"><a href="interfaces/user.html" class="tsd-kind-icon">User</a></li>
+								<li class="tsd-kind-interface tsd-is-external"><a href="interfaces/userinfo.html" class="tsd-kind-icon">User<wbr>Info</a></li>
 								<li class="tsd-kind-interface"><a href="interfaces/userinformation.html" class="tsd-kind-icon">User<wbr>Information</a></li>
 							</ul>
 						</section>
-						<section class="tsd-index-section tsd-is-not-exported">
+						<section class="tsd-index-section ">
 							<h3>Variables</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-variable tsd-is-not-exported"><a href="globals.html#assertion_type" class="tsd-kind-icon">ASSERTION_<wbr>TYPE</a></li>
 								<li class="tsd-kind-variable tsd-is-private tsd-is-not-exported"><a href="globals.html#bearer_prefix" class="tsd-kind-icon">BEARER_<wbr>PREFIX</a></li>
-								<li class="tsd-kind-variable tsd-is-private tsd-is-not-exported"><a href="globals.html#denied_event" class="tsd-kind-icon">DENIED_<wbr>EVENT</a></li>
-								<li class="tsd-kind-variable tsd-is-private tsd-is-not-exported"><a href="globals.html#grant_checked_event" class="tsd-kind-icon">GRANT_<wbr>CHECKED_<wbr>EVENT</a></li>
+								<li class="tsd-kind-variable"><a href="globals.html#event_denied" class="tsd-kind-icon">EVENT_<wbr>DENIED</a></li>
+								<li class="tsd-kind-variable"><a href="globals.html#event_grant_checked" class="tsd-kind-icon">EVENT_<wbr>GRANT_<wbr>CHECKED</a></li>
+								<li class="tsd-kind-variable"><a href="globals.html#event_token_validated" class="tsd-kind-icon">EVENT_<wbr>TOKEN_<wbr>VALIDATED</a></li>
 								<li class="tsd-kind-variable tsd-is-private tsd-is-not-exported"><a href="globals.html#http_authorization_header" class="tsd-kind-icon">HTTP_<wbr>AUTHORIZATION_<wbr>HEADER</a></li>
 								<li class="tsd-kind-variable tsd-is-private tsd-is-not-exported"><a href="globals.html#jwt_bearer_grant" class="tsd-kind-icon">JWT_<wbr>BEARER_<wbr>GRANT</a></li>
 								<li class="tsd-kind-variable tsd-is-private tsd-is-not-exported"><a href="globals.html#jwt_grant_type" class="tsd-kind-icon">JWT_<wbr>GRANT_<wbr>TYPE</a></li>
 								<li class="tsd-kind-variable tsd-is-private tsd-is-not-exported"><a href="globals.html#rsa_256" class="tsd-kind-icon">RSA_<wbr>256</a></li>
-								<li class="tsd-kind-variable tsd-is-private tsd-is-not-exported"><a href="globals.html#token_validated_event" class="tsd-kind-icon">TOKEN_<wbr>VALIDATED_<wbr>EVENT</a></li>
 								<li class="tsd-kind-variable tsd-is-private tsd-is-not-exported"><a href="globals.html#cache" class="tsd-kind-icon">cache</a></li>
 							</ul>
 						</section>
@@ -139,7 +140,7 @@
 					</div>
 				</section>
 			</section>
-			<section class="tsd-panel-group tsd-member-group tsd-is-not-exported">
+			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Variables</h2>
 				<section class="tsd-panel tsd-member tsd-kind-variable tsd-is-not-exported">
 					<a name="assertion_type" class="tsd-anchor"></a>
@@ -164,29 +165,35 @@
 					<div class="tsd-comment tsd-typography">
 					</div>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-variable tsd-is-private tsd-is-not-exported">
-					<a name="denied_event" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagPrivate">Private</span> <span class="tsd-flag ts-flagConst">Const</span> DENIED_<wbr>EVENT</h3>
-					<div class="tsd-signature tsd-kind-icon">DENIED_<wbr>EVENT<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"denied"</span><span class="tsd-signature-symbol"> =&nbsp;&quot;denied&quot;</span></div>
+				<section class="tsd-panel tsd-member tsd-kind-variable">
+					<a name="event_denied" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> EVENT_<wbr>DENIED</h3>
+					<div class="tsd-signature tsd-kind-icon">EVENT_<wbr>DENIED<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"denied"</span><span class="tsd-signature-symbol"> =&nbsp;&quot;denied&quot;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/openid/middleware.ts#L52">openid/middleware.ts:52</a></li>
+							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/openid/middleware.ts#L54">openid/middleware.ts:54</a></li>
 						</ul>
 					</aside>
-					<div class="tsd-comment tsd-typography">
-					</div>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-variable tsd-is-private tsd-is-not-exported">
-					<a name="grant_checked_event" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagPrivate">Private</span> <span class="tsd-flag ts-flagConst">Const</span> GRANT_<wbr>CHECKED_<wbr>EVENT</h3>
-					<div class="tsd-signature tsd-kind-icon">GRANT_<wbr>CHECKED_<wbr>EVENT<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"grant_checked"</span><span class="tsd-signature-symbol"> =&nbsp;&quot;grant_checked&quot;</span></div>
+				<section class="tsd-panel tsd-member tsd-kind-variable">
+					<a name="event_grant_checked" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> EVENT_<wbr>GRANT_<wbr>CHECKED</h3>
+					<div class="tsd-signature tsd-kind-icon">EVENT_<wbr>GRANT_<wbr>CHECKED<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"grant_checked"</span><span class="tsd-signature-symbol"> =&nbsp;&quot;grant_checked&quot;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/openid/middleware.ts#L57">openid/middleware.ts:57</a></li>
+							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/openid/middleware.ts#L56">openid/middleware.ts:56</a></li>
 						</ul>
 					</aside>
-					<div class="tsd-comment tsd-typography">
-					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-variable">
+					<a name="event_token_validated" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> EVENT_<wbr>TOKEN_<wbr>VALIDATED</h3>
+					<div class="tsd-signature tsd-kind-icon">EVENT_<wbr>TOKEN_<wbr>VALIDATED<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"token_validated"</span><span class="tsd-signature-symbol"> =&nbsp;&quot;token_validated&quot;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/openid/middleware.ts#L58">openid/middleware.ts:58</a></li>
+						</ul>
+					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-variable tsd-is-private tsd-is-not-exported">
 					<a name="http_authorization_header" class="tsd-anchor"></a>
@@ -194,7 +201,7 @@
 					<div class="tsd-signature tsd-kind-icon">HTTP_<wbr>AUTHORIZATION_<wbr>HEADER<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;&quot;Authorization&quot;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/openid/middleware.ts#L62">openid/middleware.ts:62</a></li>
+							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/openid/middleware.ts#L52">openid/middleware.ts:52</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -231,18 +238,6 @@
 					<aside class="tsd-sources">
 						<ul>
 							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/openid/shared/jwt.ts#L36">openid/shared/jwt.ts:36</a></li>
-						</ul>
-					</aside>
-					<div class="tsd-comment tsd-typography">
-					</div>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-variable tsd-is-private tsd-is-not-exported">
-					<a name="token_validated_event" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagPrivate">Private</span> <span class="tsd-flag ts-flagConst">Const</span> TOKEN_<wbr>VALIDATED_<wbr>EVENT</h3>
-					<div class="tsd-signature tsd-kind-icon">TOKEN_<wbr>VALIDATED_<wbr>EVENT<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"token_validated"</span><span class="tsd-signature-symbol"> =&nbsp;&quot;token_validated&quot;</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/openid/middleware.ts#L67">openid/middleware.ts:67</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -309,7 +304,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/openid/middleware.ts#L89">openid/middleware.ts:89</a></li>
+									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/openid/middleware.ts#L80">openid/middleware.ts:80</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -512,7 +507,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/openid/middleware.ts#L72">openid/middleware.ts:72</a></li>
+									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/openid/middleware.ts#L63">openid/middleware.ts:63</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -537,7 +532,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/openid/middleware.ts#L152">openid/middleware.ts:152</a></li>
+									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/openid/middleware.ts#L143">openid/middleware.ts:143</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -627,7 +622,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/openid/middleware.ts#L135">openid/middleware.ts:135</a></li>
+									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/openid/middleware.ts#L126">openid/middleware.ts:126</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -652,7 +647,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/openid/middleware.ts#L117">openid/middleware.ts:117</a></li>
+									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/openid/middleware.ts#L108">openid/middleware.ts:108</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -705,7 +700,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/openid/middleware.ts#L104">openid/middleware.ts:104</a></li>
+									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/openid/middleware.ts#L95">openid/middleware.ts:95</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -895,6 +890,9 @@
 					<li class=" tsd-kind-interface tsd-is-external">
 						<a href="interfaces/user.html" class="tsd-kind-icon">User</a>
 					</li>
+					<li class=" tsd-kind-interface tsd-is-external">
+						<a href="interfaces/userinfo.html" class="tsd-kind-icon">User<wbr>Info</a>
+					</li>
 					<li class=" tsd-kind-interface">
 						<a href="interfaces/userinformation.html" class="tsd-kind-icon">User<wbr>Information</a>
 					</li>
@@ -904,11 +902,14 @@
 					<li class=" tsd-kind-variable tsd-is-private tsd-is-not-exported">
 						<a href="globals.html#bearer_prefix" class="tsd-kind-icon">BEARER_<wbr>PREFIX</a>
 					</li>
-					<li class=" tsd-kind-variable tsd-is-private tsd-is-not-exported">
-						<a href="globals.html#denied_event" class="tsd-kind-icon">DENIED_<wbr>EVENT</a>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#event_denied" class="tsd-kind-icon">EVENT_<wbr>DENIED</a>
 					</li>
-					<li class=" tsd-kind-variable tsd-is-private tsd-is-not-exported">
-						<a href="globals.html#grant_checked_event" class="tsd-kind-icon">GRANT_<wbr>CHECKED_<wbr>EVENT</a>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#event_grant_checked" class="tsd-kind-icon">EVENT_<wbr>GRANT_<wbr>CHECKED</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#event_token_validated" class="tsd-kind-icon">EVENT_<wbr>TOKEN_<wbr>VALIDATED</a>
 					</li>
 					<li class=" tsd-kind-variable tsd-is-private tsd-is-not-exported">
 						<a href="globals.html#http_authorization_header" class="tsd-kind-icon">HTTP_<wbr>AUTHORIZATION_<wbr>HEADER</a>
@@ -921,9 +922,6 @@
 					</li>
 					<li class=" tsd-kind-variable tsd-is-private tsd-is-not-exported">
 						<a href="globals.html#rsa_256" class="tsd-kind-icon">RSA_<wbr>256</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-is-private tsd-is-not-exported">
-						<a href="globals.html#token_validated_event" class="tsd-kind-icon">TOKEN_<wbr>VALIDATED_<wbr>EVENT</a>
 					</li>
 					<li class=" tsd-kind-variable tsd-is-private tsd-is-not-exported">
 						<a href="globals.html#cache" class="tsd-kind-icon">cache</a>

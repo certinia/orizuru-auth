@@ -31,7 +31,7 @@
 
 import { OpenIdGrant } from 'openid-client';
 
-import { Environment, Grant as IGrant, User } from '..';
+import { Environment, Grant as IGrant, User, UserInfo } from '..';
 import { obtainAuthorizationGrant } from './shared/authorizationGrant';
 import { validate } from './shared/envValidator';
 import { constructIssuerClient } from './shared/issuer';
@@ -56,10 +56,29 @@ function validateUser(user: User) {
  * @private
  */
 function convertGrantToCredentials(authorizationGrant: OpenIdGrant): IGrant {
+
+	let userInfo: UserInfo | undefined;
+
+	if (authorizationGrant.id) {
+
+		const idUrls = authorizationGrant.id.split('/');
+		const id = idUrls.pop() as string;
+		const organizationId = idUrls.pop() as string;
+
+		userInfo = {
+			id,
+			organizationId,
+			url: authorizationGrant.id
+		};
+
+	}
+
 	return {
 		accessToken: authorizationGrant.access_token,
-		instanceUrl: authorizationGrant.instance_url
+		instanceUrl: authorizationGrant.instance_url,
+		userInfo
 	};
+
 }
 
 export namespace grant {

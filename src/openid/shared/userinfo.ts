@@ -36,18 +36,19 @@ export interface UserInformation {
  * Get the user info from an access token.
  * @param accessToken The access token.
  */
-export function getUserInfo(env: Environment, accessToken: string): Promise<UserInformation> {
+export async function getUserInfo(env: Environment, accessToken: string): Promise<UserInformation> {
 
-	return constructIssuerClient(env)
-		.then((issuerClient) => issuerClient.userinfo(accessToken))
-		.then((userInfo) => {
-			return {
-				organizationId: userInfo.organization_id,
-				preferredUsername: userInfo.preferred_username
-			};
-		})
-		.catch(() => {
-			throw new Error('Failed to get the user info.');
-		});
+	try {
+
+		const issuerClient = await constructIssuerClient(env);
+		const userInfo = await issuerClient.userinfo(accessToken);
+		return {
+			organizationId: userInfo.organization_id,
+			preferredUsername: userInfo.preferred_username
+		};
+
+	} catch {
+		throw new Error('Failed to get the user info.');
+	}
 
 }

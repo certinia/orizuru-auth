@@ -113,13 +113,16 @@ import * as jsforce from 'jsforce';
 const env = {
 	jwtSigningKey: '--SOME KEY MATERIAL--',
 	openidClientId: '12312312413-7236762374',
+	openidClientSecret: '12345678910',
 	openidHTTPTimeout: 4000,
 	openidIssuerURI: 'https://login.salesforce.com'
 };
+
 const user = {
 	organizationId: '00D80000000bSxXEAU',
 	username: 'someuser@someorg.something'
 };
+
 const getToken = grant.getToken(env);
 
 function getJsforceConnection(credentials: any) {

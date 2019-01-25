@@ -71,28 +71,76 @@ describe('openid/grant.ts', () => {
 
 	describe('getToken', () => {
 
-		it('should resolve if successful', async () => {
+		describe('should resolve', () => {
 
-			// Given
-			const issuerClientMock = sinon.stub();
+			it('if successful without the userinfo', async () => {
 
-			sinon.stub(envValidator, 'validate').resolves();
-			sinon.stub(issuer, 'constructIssuerClient').resolves(issuerClientMock as unknown as openidClient.Client);
-			sinon.stub(jwt, 'createJwtBearerGrantAssertion').resolves('assertion');
-			sinon.stub(authorizationGrant, 'obtainAuthorizationGrant').resolves({ access_token: 'accessToken', instance_url: 'instanceUrl' });
+				// Given
+				const issuerClientMock = sinon.stub();
 
-			// When
-			const token = await grant.getToken(env)({ username: 'user' });
+				sinon.stub(envValidator, 'validate').resolves();
+				sinon.stub(issuer, 'constructIssuerClient').resolves(issuerClientMock as unknown as openidClient.Client);
+				sinon.stub(jwt, 'createJwtBearerGrantAssertion').resolves('assertion');
+				sinon.stub(authorizationGrant, 'obtainAuthorizationGrant').resolves({
+					access_token: 'accessToken',
+					expires_in: 3600,
+					id_token: 'testId',
+					instance_url: 'instanceUrl',
+					token_type: 'Bearer'
+				});
 
-			// Then
-			expect(token).to.eql({
-				accessToken: 'accessToken',
-				instanceUrl: 'instanceUrl'
+				// When
+				const token = await grant.getToken(env)({ username: 'user' });
+
+				// Then
+				expect(token).to.eql({
+					accessToken: 'accessToken',
+					instanceUrl: 'instanceUrl',
+					userInfo: undefined
+				});
+				expect(envValidator.validate).to.have.been.calledOnce;
+				expect(issuer.constructIssuerClient).to.have.been.calledOnce;
+				expect(jwt.createJwtBearerGrantAssertion).to.have.been.calledOnce;
+				expect(authorizationGrant.obtainAuthorizationGrant).to.have.been.calledWith('assertion', issuerClientMock);
+
 			});
-			expect(envValidator.validate).to.have.been.calledOnce;
-			expect(issuer.constructIssuerClient).to.have.been.calledOnce;
-			expect(jwt.createJwtBearerGrantAssertion).to.have.been.calledOnce;
-			expect(authorizationGrant.obtainAuthorizationGrant).to.have.been.calledWith('assertion', issuerClientMock);
+
+			it('if successful with the userinfo', async () => {
+
+				// Given
+				const issuerClientMock = sinon.stub();
+
+				sinon.stub(envValidator, 'validate').resolves();
+				sinon.stub(issuer, 'constructIssuerClient').resolves(issuerClientMock as unknown as openidClient.Client);
+				sinon.stub(jwt, 'createJwtBearerGrantAssertion').resolves('assertion');
+				sinon.stub(authorizationGrant, 'obtainAuthorizationGrant').resolves({
+					access_token: 'accessToken',
+					expires_in: 3600,
+					id: 'https://login.salesforce.com/id/00Dx0000000BV7z/005x00000012Q9P',
+					id_token: 'testId',
+					instance_url: 'instanceUrl',
+					token_type: 'Bearer'
+				});
+
+				// When
+				const token = await grant.getToken(env)({ username: 'user' });
+
+				// Then
+				expect(token).to.eql({
+					accessToken: 'accessToken',
+					instanceUrl: 'instanceUrl',
+					userInfo: {
+						id: '005x00000012Q9P',
+						organizationId: '00Dx0000000BV7z',
+						url: 'https://login.salesforce.com/id/00Dx0000000BV7z/005x00000012Q9P'
+					}
+				});
+				expect(envValidator.validate).to.have.been.calledOnce;
+				expect(issuer.constructIssuerClient).to.have.been.calledOnce;
+				expect(jwt.createJwtBearerGrantAssertion).to.have.been.calledOnce;
+				expect(authorizationGrant.obtainAuthorizationGrant).to.have.been.calledWith('assertion', issuerClientMock);
+
+			});
 
 		});
 

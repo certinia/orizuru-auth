@@ -39,18 +39,23 @@ const JWT_BEARER_GRANT = 'urn:ietf:params:oauth:grant-type:jwt-bearer';
 /**
  * @private
  */
-export function obtainAuthorizationGrant(assertion: string, issuerClient: openidClient.Client) {
+export async function obtainAuthorizationGrant(assertion: string, issuerClient: openidClient.Client) {
 
-	return issuerClient.grant({
-		[JWT_GRANT_TYPE]: JWT_BEARER_GRANT,
-		assertion
-	}).then((grant) => {
+	try {
+
+		const grant = await issuerClient.grant({
+			[JWT_GRANT_TYPE]: JWT_BEARER_GRANT,
+			assertion
+		});
+
 		if (grant == null) {
 			throw new Error('No grant received.');
 		}
+
 		return grant;
-	}).catch((error) => {
+
+	} catch (error) {
 		throw new Error('Grant request failed: ' + error.message);
-	});
+	}
 
 }

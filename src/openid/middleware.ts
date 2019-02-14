@@ -168,7 +168,7 @@ export namespace middleware {
 
 		validate(env);
 
-		return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+		return async function checkUserGrant(req: Request, res: Response, next: NextFunction) {
 
 			try {
 
@@ -197,7 +197,7 @@ export namespace middleware {
 
 		validate(env);
 
-		return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+		return async function validateToken(req: Request, res: Response, next: NextFunction) {
 
 			try {
 

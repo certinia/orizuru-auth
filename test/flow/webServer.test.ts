@@ -26,11 +26,11 @@
 
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import sinon from 'sinon';
+import sinon, { SinonStub } from 'sinon';
 import sinonChai from 'sinon-chai';
 
 import { AxiosResponse, default as request } from 'axios';
-import crypto from 'crypto';
+import crypto, { Hmac } from 'crypto';
 import openidClient from 'openid-client';
 
 import { AccessTokenResponse, Environment, SalesforceJwt } from '../../src';
@@ -84,7 +84,11 @@ describe('flow/webServer.ts', () => {
 	describe('requestAccessTokenWithClientAssertion', () => {
 
 		let expectedAccessTokenResponse: AccessTokenResponse;
-		let hmacStub: any;
+
+		let hmacStub: {
+			digest: SinonStub;
+			update: SinonStub;
+		};
 
 		beforeEach(() => {
 
@@ -104,7 +108,8 @@ describe('flow/webServer.ts', () => {
 				update: sinon.stub()
 			};
 
-			sinon.stub(crypto, 'createHmac').returns(hmacStub);
+			const partialHmac: Partial<Hmac> = hmacStub;
+			sinon.stub(crypto, 'createHmac').returns(partialHmac as Hmac);
 
 			sinon.stub(issuer, 'constructIssuer').resolves({
 				authorization_endpoint: 'https://login.salesforce.com/services/oauth2/authorize',
@@ -122,14 +127,14 @@ describe('flow/webServer.ts', () => {
 			};
 
 			sinon.stub(request, 'post')
-				.withArgs('https://login.salesforce.com/services/oauth2/token?grant_type=authorization_code&code=c&client_id=test&client_assertion=signed&client_assertion_type=urn%3Aietf%3Aparams%3Aoauth%3Aclient-assertion-type%3Ajwt-bearer&redirect_uri=a&format=json')
+				.withArgs('https://login.salesforce.com/services/oauth2/token?grant_type=authorization_code&code=b&client_id=test&client_assertion=signed&client_assertion_type=urn%3Aietf%3Aparams%3Aoauth%3Aclient-assertion-type%3Ajwt-bearer&redirect_uri=a&format=json')
 				.resolves(expectedResponse as AxiosResponse);
 
 			sinon.stub(jwt, 'createJwtBearerClientAssertion').resolves('signed');
 
 			// When
 			// Then
-			await expect(webServer.requestAccessTokenWithClientAssertion(env, 'a', 'b', 'c')).to.eventually.eventually.be.rejectedWith('Invalid signature');
+			await expect(webServer.requestAccessTokenWithClientAssertion(env, 'a', 'b')).to.eventually.eventually.be.rejectedWith('Invalid signature');
 
 			expect(crypto.createHmac).to.have.been.calledOnce;
 			expect(hmacStub.update).to.have.been.calledOnce;
@@ -146,14 +151,14 @@ describe('flow/webServer.ts', () => {
 			};
 
 			sinon.stub(request, 'post')
-				.withArgs('https://login.salesforce.com/services/oauth2/token?grant_type=authorization_code&code=c&client_id=test&client_assertion=signed&client_assertion_type=urn%3Aietf%3Aparams%3Aoauth%3Aclient-assertion-type%3Ajwt-bearer&redirect_uri=a&format=json')
+				.withArgs('https://login.salesforce.com/services/oauth2/token?grant_type=authorization_code&code=b&client_id=test&client_assertion=signed&client_assertion_type=urn%3Aietf%3Aparams%3Aoauth%3Aclient-assertion-type%3Ajwt-bearer&redirect_uri=a&format=json')
 				.resolves(expectedResponse as AxiosResponse);
 
 			sinon.stub(jwt, 'createJwtBearerClientAssertion').resolves('signed');
 
 			// When
 			// Then
-			await expect(webServer.requestAccessTokenWithClientAssertion(env, 'a', 'b', 'c')).to.eventually.eventually.be.rejectedWith('Invalid signature');
+			await expect(webServer.requestAccessTokenWithClientAssertion(env, 'a', 'b')).to.eventually.eventually.be.rejectedWith('Invalid signature');
 
 			expect(crypto.createHmac).to.have.been.calledOnce;
 			expect(hmacStub.update).to.have.been.calledOnce;
@@ -171,13 +176,13 @@ describe('flow/webServer.ts', () => {
 			};
 
 			sinon.stub(request, 'post')
-				.withArgs('https://login.salesforce.com/services/oauth2/token?grant_type=authorization_code&code=c&client_id=test&client_assertion=signed&client_assertion_type=urn%3Aietf%3Aparams%3Aoauth%3Aclient-assertion-type%3Ajwt-bearer&redirect_uri=a&format=json')
+				.withArgs('https://login.salesforce.com/services/oauth2/token?grant_type=authorization_code&code=b&client_id=test&client_assertion=signed&client_assertion_type=urn%3Aietf%3Aparams%3Aoauth%3Aclient-assertion-type%3Ajwt-bearer&redirect_uri=a&format=json')
 				.resolves(expectedResponse as AxiosResponse);
 
 			sinon.stub(jwt, 'createJwtBearerClientAssertion').resolves('signed');
 
 			// When
-			const accessTokenResponse = await webServer.requestAccessTokenWithClientAssertion(env, 'a', 'b', 'c');
+			const accessTokenResponse = await webServer.requestAccessTokenWithClientAssertion(env, 'a', 'b');
 
 			// Then
 			expect(accessTokenResponse).to.eql(expectedAccessTokenResponse);
@@ -199,13 +204,13 @@ describe('flow/webServer.ts', () => {
 			};
 
 			sinon.stub(request, 'post')
-				.withArgs('https://login.salesforce.com/services/oauth2/token?grant_type=authorization_code&code=c&client_id=test&client_assertion=signed&client_assertion_type=urn%3Aietf%3Aparams%3Aoauth%3Aclient-assertion-type%3Ajwt-bearer&redirect_uri=a&format=json')
+				.withArgs('https://login.salesforce.com/services/oauth2/token?grant_type=authorization_code&code=b&client_id=test&client_assertion=signed&client_assertion_type=urn%3Aietf%3Aparams%3Aoauth%3Aclient-assertion-type%3Ajwt-bearer&redirect_uri=a&format=json')
 				.resolves(expectedResponse as AxiosResponse);
 
 			sinon.stub(jwt, 'createJwtBearerClientAssertion').resolves('signed');
 
 			// When
-			const accessTokenResponse = await webServer.requestAccessTokenWithClientAssertion(env, 'a', 'b', 'c', {
+			const accessTokenResponse = await webServer.requestAccessTokenWithClientAssertion(env, 'a', 'b', {
 				validateIdentityURL: false
 			});
 
@@ -231,13 +236,13 @@ describe('flow/webServer.ts', () => {
 			};
 
 			sinon.stub(request, 'post')
-				.withArgs('https://login.salesforce.com/services/oauth2/token?grant_type=authorization_code&code=c&client_id=test&client_assertion=signed&client_assertion_type=urn%3Aietf%3Aparams%3Aoauth%3Aclient-assertion-type%3Ajwt-bearer&redirect_uri=a&format=json')
+				.withArgs('https://login.salesforce.com/services/oauth2/token?grant_type=authorization_code&code=b&client_id=test&client_assertion=signed&client_assertion_type=urn%3Aietf%3Aparams%3Aoauth%3Aclient-assertion-type%3Ajwt-bearer&redirect_uri=a&format=json')
 				.resolves(expectedResponse as AxiosResponse);
 
 			sinon.stub(jwt, 'createJwtBearerClientAssertion').resolves('signed');
 
 			// When
-			const accessTokenResponse = await webServer.requestAccessTokenWithClientAssertion(env, 'a', 'b', 'c');
+			const accessTokenResponse = await webServer.requestAccessTokenWithClientAssertion(env, 'a', 'b');
 
 			// Then
 			expect(accessTokenResponse).to.eql(expectedAccessTokenResponse);

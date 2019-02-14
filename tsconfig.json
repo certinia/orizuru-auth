@@ -5,6 +5,10 @@
 		"esModuleInterop": true,
 		"inlineSourceMap": true,
 		"inlineSources": true,
+		"lib": [
+			"dom",
+			"es2017"
+		],
 		"module": "commonjs",
 		"moduleResolution": "node",
 		"noFallthroughCasesInSwitch": true,
@@ -14,7 +18,7 @@
 		"outDir": "./dist",
 		"strict": true,
 		"strictNullChecks": true,
-		"target": "es2017",
+		"target": "es5",
 		"typeRoots": [
 			"./node_modules/@types",
 			"./typings"

@@ -15,7 +15,6 @@
 - Fix unexported event types
 
 ### OTHER CHANGES
-- Target es5 (same as [Orizuru](https://github.com/financialforcedev/orizuru))
 - Convert all functions to async functions
 - Remove npmignore
 - Add separate nyc.opts file

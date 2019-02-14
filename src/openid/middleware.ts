@@ -51,12 +51,6 @@ const BEARER_PREFIX: string = 'Bearer ';
  */
 const HTTP_AUTHORIZATION_HEADER: string = 'Authorization';
 
-export const EVENT_DENIED = 'denied';
-
-export const EVENT_GRANT_CHECKED = 'grant_checked';
-
-export const EVENT_TOKEN_VALIDATED = 'token_validated';
-
 /**
  * @private
  */
@@ -116,7 +110,7 @@ function setUserOnRequest(req: Request, userInfo: UserInfo) {
 	orizuru.user = user;
 	req.orizuru = orizuru;
 
-	middleware.emitter.emit(EVENT_TOKEN_VALIDATED, `Token validated for: ${req.ip}`);
+	middleware.emitter.emit(middleware.EVENT_TOKEN_VALIDATED, `Token validated for: ${req.ip}`);
 
 }
 
@@ -127,9 +121,9 @@ function setGrant(req: Request) {
 
 	return () => {
 
-		(req.orizuru as Orizuru.Context).grantChecked = true;
+		req.orizuru!.grantChecked = true;
 
-		middleware.emitter.emit(EVENT_GRANT_CHECKED, `Grant checked for: ${req.ip}`);
+		middleware.emitter.emit(middleware.EVENT_GRANT_CHECKED, `Grant checked for: ${req.ip}`);
 
 		return undefined;
 
@@ -144,7 +138,7 @@ function fail(req: Request, res: Response) {
 
 	return (error: Error) => {
 
-		middleware.emitter.emit(EVENT_DENIED, `Access denied to: ${req ? req.ip ? req.ip : 'unknown' : 'unknown'}, error: ${error.message}.`);
+		middleware.emitter.emit(middleware.EVENT_DENIED, `Access denied to: ${req ? req.ip ? req.ip : 'unknown' : 'unknown'}, error: ${error.message}.`);
 
 		res.sendStatus(401);
 
@@ -155,6 +149,11 @@ function fail(req: Request, res: Response) {
 export namespace middleware {
 
 	export let emitter: EventEmitter = new EventEmitter();
+
+	// Events
+	export const EVENT_DENIED = 'denied';
+	export const EVENT_GRANT_CHECKED = 'grant_checked';
+	export const EVENT_TOKEN_VALIDATED = 'token_validated';
 
 	/**
 	 * Returns an express middleware that checks that an access token

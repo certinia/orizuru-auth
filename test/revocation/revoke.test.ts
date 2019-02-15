@@ -111,7 +111,7 @@ describe('revocation/revoke.ts', () => {
 
 			sinon.stub(axios, 'get').callsFake((uri: string, config?: AxiosRequestConfig) => {
 				config && config.validateStatus && config.validateStatus(200);
-				return { status: 200 } as any;
+				return Promise.resolve({ status: 200 } as AxiosResponse);
 			});
 
 			// When

@@ -26,13 +26,15 @@
 
 import chai from 'chai';
 
+import { Environment } from '../../../src';
+
 import { validate } from '../../../src/openid/shared/envValidator';
 
 const expect = chai.expect;
 
 describe('openid/shared/envValidator.ts', () => {
 
-	let env: any;
+	let env: Environment;
 
 	beforeEach(() => {
 		env = {
@@ -46,10 +48,10 @@ describe('openid/shared/envValidator.ts', () => {
 
 	describe('should reject', () => {
 
-		it('if jwtSigningKey is null', () => {
+		it('if jwtSigningKey is undefined', () => {
 
 			// Given
-			env.jwtSigningKey = null;
+			delete env.jwtSigningKey;
 
 			// When
 			// Then
@@ -68,10 +70,10 @@ describe('openid/shared/envValidator.ts', () => {
 
 		});
 
-		it('if openidClientId is null', () => {
+		it('if openidClientId is undefined', () => {
 
 			// Given
-			env.openidClientId = null;
+			delete env.openidClientId;
 
 			// When
 			// Then
@@ -90,10 +92,10 @@ describe('openid/shared/envValidator.ts', () => {
 
 		});
 
-		it('if openidClientSecret is null', () => {
+		it('if openidClientSecret is undefined', () => {
 
 			// Given
-			env.openidClientSecret = null;
+			delete env.openidClientSecret;
 
 			// When
 			// Then
@@ -112,21 +114,21 @@ describe('openid/shared/envValidator.ts', () => {
 
 		});
 
-		it('if openidHTTPTimeout is null', () => {
+		it('if openidHTTPTimeout is undefined', () => {
 
 			// Given
-			env.openidHTTPTimeout = null;
+			delete env.openidHTTPTimeout;
 
 			// When
 			// Then
-			expect(() => validate(env)).to.throw('Invalid parameter: openidHTTPTimeout is not an integer.');
+			expect(() => validate(env)).to.throw('Missing required parameter: openidHTTPTimeout.');
 
 		});
 
 		it('if openidHTTPTimeout is not an integer', () => {
 
 			// Given
-			env.openidHTTPTimeout = '';
+			env.openidHTTPTimeout = 'test' as unknown as number;
 
 			// When
 			// Then
@@ -134,10 +136,10 @@ describe('openid/shared/envValidator.ts', () => {
 
 		});
 
-		it('if openidIssuerURI is null', () => {
+		it('if openidIssuerURI is undefined', () => {
 
 			// Given
-			env.openidIssuerURI = null;
+			delete env.openidIssuerURI;
 
 			// When
 			// Then

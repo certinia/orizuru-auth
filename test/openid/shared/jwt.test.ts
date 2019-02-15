@@ -26,14 +26,14 @@
 
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import sinon, { SinonStub } from 'sinon';
+import sinon, { SinonFakeTimers, SinonStub } from 'sinon';
 import sinonChai from 'sinon-chai';
 
 import jsonwebtoken from 'jsonwebtoken';
 import openidClient from 'openid-client';
 import uuid from 'uuid';
 
-import { Environment } from '../../../src';
+import { Environment, User } from '../../../src';
 
 import { createJwtBearerClientAssertion, createJwtBearerGrantAssertion } from '../../../src/openid/shared/jwt';
 
@@ -52,7 +52,14 @@ describe('openid/shared/jwt.ts', () => {
 		openidIssuerURI: 'testOpenidIssuerUri'
 	};
 
+	let clock: SinonFakeTimers;
+
+	beforeEach(() => {
+		clock = sinon.useFakeTimers();
+	});
+
 	afterEach(() => {
+		clock.restore();
 		sinon.restore();
 	});
 
@@ -61,17 +68,6 @@ describe('openid/shared/jwt.ts', () => {
 		const issuer = {
 			token_endpoint: 'testTokenEndpoint'
 		};
-
-		let clock: any;
-
-		beforeEach(() => {
-			clock = sinon.useFakeTimers();
-		});
-
-		afterEach(() => {
-			clock.restore();
-			sinon.restore();
-		});
 
 		it('should reject if jsonwebtoken sign returns an error', async () => {
 
@@ -101,7 +97,7 @@ describe('openid/shared/jwt.ts', () => {
 			const testId = Buffer.from('testId');
 			sinon.stub(uuid, 'v4').returns(testId);
 
-			const stub: SinonStub<any> = sinon.stub(jsonwebtoken, 'sign');
+			const stub: SinonStub = sinon.stub(jsonwebtoken, 'sign');
 			stub.resolves('token');
 
 			// When
@@ -124,21 +120,12 @@ describe('openid/shared/jwt.ts', () => {
 
 	describe('createJwtBearerGrantAssertion', () => {
 
-		let user: any;
-		let clock: any;
+		let user: User;
 
 		beforeEach(() => {
-
 			user = {
 				username: 'testUsername'
 			};
-			clock = sinon.useFakeTimers();
-
-		});
-
-		afterEach(() => {
-			clock.restore();
-			sinon.restore();
 		});
 
 		it('should reject if jsonwebtoken sign returns an error', async () => {
@@ -163,7 +150,7 @@ describe('openid/shared/jwt.ts', () => {
 		it('should resolve if jsonwebtoken sign returns a token', async () => {
 
 			// Given
-			const stub: SinonStub<any> = sinon.stub(jsonwebtoken, 'sign');
+			const stub: SinonStub = sinon.stub(jsonwebtoken, 'sign');
 			stub.resolves('token');
 
 			// When

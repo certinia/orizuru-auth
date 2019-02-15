@@ -68,10 +68,7 @@ declare global {
 
 		interface Context {
 			grantChecked?: boolean;
-			user?: {
-				organizationId: string;
-				username: string;
-			};
+			user?: User;
 		}
 
 		namespace Options {
@@ -97,6 +94,7 @@ export interface Environment {
 }
 
 export interface User {
+	organizationId?: string;
 	username: string;
 }
 

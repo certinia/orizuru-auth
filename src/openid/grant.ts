@@ -84,13 +84,18 @@ function convertGrantToCredentials(authorizationGrant: OpenIdGrant): IGrant {
 export namespace grant {
 
 	/**
+	 * Obtains an access token for the given user.
+	 */
+	export type TokenGrantor = (user: User) => Promise<IGrant>;
+
+	/**
 	 * Returns a function that can obtain a token for the passed user.
 	 */
-	export function getToken(env: Environment) {
+	export function getToken(env: Environment): TokenGrantor {
 
 		validate(env);
 
-		return async (user: User) => {
+		return async function getUserCredentials(user: User) {
 
 			try {
 

@@ -36,7 +36,7 @@ import * as envValidator from '../../src/openid/shared/envValidator';
 import * as issuer from '../../src/openid/shared/issuer';
 import * as jwt from '../../src/openid/shared/jwt';
 
-import { Environment } from '../../src';
+import { Environment, User } from '../../src';
 
 import { grant } from '../../src/openid/grant';
 
@@ -54,16 +54,6 @@ describe('openid/grant.ts', () => {
 		openidHTTPTimeout: 4001,
 		openidIssuerURI: 'https://login.something.com/'
 	};
-
-	let baseError: string;
-	let usernameRequiredError: string;
-
-	beforeEach(() => {
-
-		baseError = 'Failed to grant token, error:';
-		usernameRequiredError = `${baseError} Missing required parameter: username.`;
-
-	});
 
 	afterEach(() => {
 		sinon.restore();
@@ -175,7 +165,7 @@ describe('openid/grant.ts', () => {
 
 				// When
 				// Then
-				await expect(grant.getToken(env)({} as any)).to.eventually.be.rejectedWith(usernameRequiredError);
+				await expect(grant.getToken(env)({} as User)).to.eventually.be.rejectedWith('Failed to grant token, error: Missing required parameter: username.');
 
 			});
 

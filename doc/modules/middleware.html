@@ -73,6 +73,9 @@
 						<section class="tsd-index-section ">
 							<h3>Variables</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-variable tsd-parent-kind-module"><a href="middleware.html#event_denied" class="tsd-kind-icon">EVENT_<wbr>DENIED</a></li>
+								<li class="tsd-kind-variable tsd-parent-kind-module"><a href="middleware.html#event_grant_checked" class="tsd-kind-icon">EVENT_<wbr>GRANT_<wbr>CHECKED</a></li>
+								<li class="tsd-kind-variable tsd-parent-kind-module"><a href="middleware.html#event_token_validated" class="tsd-kind-icon">EVENT_<wbr>TOKEN_<wbr>VALIDATED</a></li>
 								<li class="tsd-kind-variable tsd-parent-kind-module"><a href="middleware.html#emitter" class="tsd-kind-icon">emitter</a></li>
 							</ul>
 						</section>
@@ -89,12 +92,42 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Variables</h2>
 				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-module">
+					<a name="event_denied" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> EVENT_<wbr>DENIED</h3>
+					<div class="tsd-signature tsd-kind-icon">EVENT_<wbr>DENIED<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"denied"</span><span class="tsd-signature-symbol"> =&nbsp;&quot;denied&quot;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/openid/middleware.ts#L154">openid/middleware.ts:154</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-module">
+					<a name="event_grant_checked" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> EVENT_<wbr>GRANT_<wbr>CHECKED</h3>
+					<div class="tsd-signature tsd-kind-icon">EVENT_<wbr>GRANT_<wbr>CHECKED<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"grant_checked"</span><span class="tsd-signature-symbol"> =&nbsp;&quot;grant_checked&quot;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/openid/middleware.ts#L155">openid/middleware.ts:155</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-module">
+					<a name="event_token_validated" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> EVENT_<wbr>TOKEN_<wbr>VALIDATED</h3>
+					<div class="tsd-signature tsd-kind-icon">EVENT_<wbr>TOKEN_<wbr>VALIDATED<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"token_validated"</span><span class="tsd-signature-symbol"> =&nbsp;&quot;token_validated&quot;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/openid/middleware.ts#L156">openid/middleware.ts:156</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-module">
 					<a name="emitter" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagLet">Let</span> emitter</h3>
 					<div class="tsd-signature tsd-kind-icon">emitter<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">EventEmitter</span><span class="tsd-signature-symbol"> =&nbsp;new EventEmitter()</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/openid/middleware.ts#L157">openid/middleware.ts:157</a></li>
+							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/openid/middleware.ts#L151">openid/middleware.ts:151</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -105,13 +138,13 @@
 					<a name="grantchecker" class="tsd-anchor"></a>
 					<h3>grant<wbr>Checker</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
-						<li class="tsd-signature tsd-kind-icon">grant<wbr>Checker<span class="tsd-signature-symbol">(</span>env<span class="tsd-signature-symbol">: </span><a href="../interfaces/environment.html" class="tsd-signature-type">Environment</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">(Anonymous function)</span></li>
+						<li class="tsd-signature tsd-kind-icon">grant<wbr>Checker<span class="tsd-signature-symbol">(</span>env<span class="tsd-signature-symbol">: </span><a href="../interfaces/environment.html" class="tsd-signature-type">Environment</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">RequestHandler</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/openid/middleware.ts#L167">openid/middleware.ts:167</a></li>
+									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/openid/middleware.ts#L166">openid/middleware.ts:166</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -130,7 +163,7 @@
 									<h5>env: <a href="../interfaces/environment.html" class="tsd-signature-type">Environment</a></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">(Anonymous function)</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">RequestHandler</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -138,13 +171,13 @@
 					<a name="tokenvalidator" class="tsd-anchor"></a>
 					<h3>token<wbr>Validator</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
-						<li class="tsd-signature tsd-kind-icon">token<wbr>Validator<span class="tsd-signature-symbol">(</span>env<span class="tsd-signature-symbol">: </span><a href="../interfaces/environment.html" class="tsd-signature-type">Environment</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">(Anonymous function)</span></li>
+						<li class="tsd-signature tsd-kind-icon">token<wbr>Validator<span class="tsd-signature-symbol">(</span>env<span class="tsd-signature-symbol">: </span><a href="../interfaces/environment.html" class="tsd-signature-type">Environment</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">RequestHandler</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/openid/middleware.ts#L196">openid/middleware.ts:196</a></li>
+									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/openid/middleware.ts#L195">openid/middleware.ts:195</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -160,7 +193,7 @@
 									<h5>env: <a href="../interfaces/environment.html" class="tsd-signature-type">Environment</a></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">(Anonymous function)</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">RequestHandler</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -209,6 +242,15 @@
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
+					<li class=" tsd-kind-variable tsd-parent-kind-module">
+						<a href="middleware.html#event_denied" class="tsd-kind-icon">EVENT_<wbr>DENIED</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-parent-kind-module">
+						<a href="middleware.html#event_grant_checked" class="tsd-kind-icon">EVENT_<wbr>GRANT_<wbr>CHECKED</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-parent-kind-module">
+						<a href="middleware.html#event_token_validated" class="tsd-kind-icon">EVENT_<wbr>TOKEN_<wbr>VALIDATED</a>
+					</li>
 					<li class=" tsd-kind-variable tsd-parent-kind-module">
 						<a href="middleware.html#emitter" class="tsd-kind-icon">emitter</a>
 					</li>

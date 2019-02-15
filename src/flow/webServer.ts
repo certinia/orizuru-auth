@@ -90,7 +90,7 @@ export namespace webServer {
 	 *
 	 * @see https://help.salesforce.com/articleView?id=remoteaccess_oauth_web_server_flow.htm
 	 */
-	export async function requestAccessTokenWithClientAssertion(env: Environment, redirectUri: string, state: string, code: string, opts?: RequestAccessTokenOptions): Promise<AccessTokenResponse> {
+	export async function requestAccessTokenWithClientAssertion(env: Environment, redirectUri: string, code: string, opts?: RequestAccessTokenOptions): Promise<AccessTokenResponse> {
 
 		validate(env);
 

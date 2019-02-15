@@ -56,6 +56,10 @@ export function validate(env: Environment) {
 		throw new Error('Missing required parameter: openidClientSecret.');
 	}
 
+	if (!env.openidHTTPTimeout) {
+		throw new Error('Missing required parameter: openidHTTPTimeout.');
+	}
+
 	if (!isInteger(env.openidHTTPTimeout)) {
 		throw new Error('Invalid parameter: openidHTTPTimeout is not an integer.');
 	}

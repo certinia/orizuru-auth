@@ -9,17 +9,10 @@
 		"**/.hg": true,
 		"**/CVS": true,
 		"**/.DS_Store": true,
-		"**/coverage": true
+		"**/coverage*": true
 	},
 	"files.insertFinalNewline": true,
 	"lcov.path": "coverage/lcov.info",
-	"lcov.watch": [
-		{
-			"pattern": "**/*.js",
-			"command": "npm run test-coverage"
-		}
-	],
-	"runCurrentTest.run": "npm run single-test -- ${relativeTestPath}",
 	"terminal.integrated.scrollback": 10000,
 	"workbench.colorCustomizations": {
 		"activityBar.foreground": "#80FF71"

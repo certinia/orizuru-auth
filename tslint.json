@@ -12,7 +12,7 @@
 		],
 		"interface-name": false,
 		"max-line-length": false,
-		"no-any": false,
+		"no-any": true,
 		"no-namespace": [
 			false,
 			"allow-declarations"

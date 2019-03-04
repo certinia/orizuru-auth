@@ -26,22 +26,53 @@
 
 import chai from 'chai';
 
-import * as index from '../src/index';
+import * as index from '../src';
 
 const expect = chai.expect;
 
-describe('index.ts', () => {
+describe('index', () => {
 
 	it('should contain the correct parts', () => {
 
 		// Given
 		// When
 		// Then
-		expect(index).to.contain.keys(['grant', 'middleware', 'flow', 'revocation']);
-		expect(index.flow).to.contain.keys(['refreshToken', 'webServer']);
-		expect(index.grant).to.contain.keys(['getToken']);
-		expect(index.middleware).to.contain.keys(['emitter', 'grantChecker', 'tokenValidator']);
-		expect(index.revocation).to.contain.keys(['revokeAccessToken']);
+		expect(index).to.have.keys([
+			'EVENT_AUTHORIZATION_HEADER_SET',
+			'EVENT_DENIED',
+			'EVENT_GRANT_CHECKED',
+			'EVENT_TOKEN_VALIDATED',
+			'ResponseFormat',
+			'flow',
+			'grant',
+			'middleware',
+			'revocation',
+			'userInfo'
+		]);
+
+		expect(index.flow).to.have.keys([
+			'jwtBearerToken',
+			'refreshToken',
+			'webServer'
+		]);
+
+		expect(index.grant).to.have.keys([
+			'getToken'
+		]);
+
+		expect(index.middleware).to.have.keys([
+			'authCallback',
+			'grantChecker',
+			'tokenValidator'
+		]);
+
+		expect(index.revocation).to.have.keys([
+			'createTokenRevoker'
+		]);
+
+		expect(index.userInfo).to.have.keys([
+			'createUserInfoRequester'
+		]);
 
 	});
 

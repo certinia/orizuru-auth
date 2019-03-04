@@ -34,7 +34,7 @@
 	"dependencies": {
 		"@types/form-urlencoded": "^2.0.0",
 		"@types/jsonwebtoken": "^8.3.0",
-		"@types/node": "^10.12.26",
+		"@types/node": "^10.12.27",
 		"@types/uuid": "^3.4.4",
 		"axios": "^0.18.0",
 		"form-urlencoded": "^3.0.0",

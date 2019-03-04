@@ -1,0 +1,30 @@
+{
+	"all": true,
+	"branches": 75,
+	"cache": true,
+	"check-coverage": true,
+	"exclude": [
+		"**/*.d.ts"
+	],
+	"extension": [
+		".ts"
+	],
+	"functions": 75,
+	"include": [
+		"src",
+		"systemtests"
+	],
+	"instrument": true,
+	"lines": 75,
+	"per-file": false,
+	"report-dir": "coverage-systemtests",
+	"reporter": [
+		"lcov",
+		"text",
+		"text-summary"
+	],
+	"require": [
+		"ts-node/register"
+	],
+	"statements": 75
+}

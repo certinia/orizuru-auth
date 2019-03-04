@@ -69,6 +69,9 @@
 		"ts-node": "^8.0.2",
 		"tslint": "^5.13.1",
 		"typedoc": "^0.14.2",
-		"typescript": "^3.3.3"
+		"typescript": "^3.3.3333"
+	},
+	"peerDependencies": {
+		"@financialforcedev/orizuru": ">9.2.0 < 10"
 	}
 }

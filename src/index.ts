@@ -59,10 +59,17 @@ declare global {
 			user?: User;
 		}
 
+		interface IServer {
+			options: Options.IServer;
+		}
+
 		namespace Options {
 
 			interface IServer {
-				auth: Environment;
+				auth: {
+					jwtBearer?: Environment;
+					webServer?: Environment;
+				};
 			}
 
 		}
@@ -128,7 +135,7 @@ export interface AccessTokenResponse {
 	instance_url: string;
 
 	/**
-	 * Identity URL that can be used to both identify the user and query for more information about the user.See Identity URLs.
+	 * Identity URL that can be used to both identify the user and query for more information about the user.
 	 */
 	id: string;
 
@@ -164,6 +171,62 @@ export interface AccessTokenResponse {
 }
 
 /**
+ * Parameters required for the auth grant type.
+ */
+export interface AuthCodeGrantParameters {
+
+	/**
+	 * Authorization code that the consumer must use to obtain the access and refresh tokens.
+	 */
+	code: string;
+
+}
+
+/**
+ * Optional parameters used when generating authorization URLs.
+ */
+export interface AuthOptions {
+
+	/**
+	 * Changes the display type of the login and authorization pages.
+	 */
+	display?: 'page' | 'popup' | 'touch' | 'mobile';
+
+	/**
+	 * If true and the user is logged in and has previously approved the client_id,
+	 * Salesforce skips the approval step.
+	 *
+	 * If true and the user isn’t logged in or has not previously approved the client,
+	 * Salesforce immediately terminates with the immediate_unsuccessful error code.
+	 */
+	immediate?: boolean;
+
+	/**
+	 * Specifies how the authorization server prompts the user for reauthentication and
+	 * reapproval.
+	 */
+	prompt?: 'login' | 'consent' | 'select_account';
+
+}
+
+/**
+ * The error response parameters.
+ */
+export interface ErrorResponse {
+
+	/**
+	 * Returns the error code.
+	 */
+	error: string;
+
+	/**
+	 * Returns the description of the error with additional information.
+	 */
+	error_description?: string;
+
+}
+
+/**
  * The OpenID environment parameters.
  */
 export interface Environment {
@@ -172,6 +235,53 @@ export interface Environment {
 	openidClientSecret: string;
 	openidHTTPTimeout: number;
 	openidIssuerURI: string;
+	redirectUri?: string;
+}
+
+export interface Grant {
+	accessToken: string;
+	instanceUrl?: string;
+	userInfo?: UserInfo;
+}
+
+/**
+ * Optional parameters used when requesting grants.
+ */
+export interface GrantOptions {
+
+	/**
+	 * If true, the JWT present in the id_token field of the access token response is parsed.
+	 */
+	decodeIdToken?: boolean;
+
+	/**
+	 * If true, parses the user information from the id field in the access token response.
+	 *
+	 * This returns the user ID, organization ID and the ID url.
+	 */
+	parseUserInfo?: boolean;
+
+	/**
+	 * Returns the reponse format, either JSON, XML or URL_ENCODED.
+	 */
+	responseFormat?: ResponseFormat;
+
+	/**
+	 * If true, use a client assertion rather than the client secret when obtaining a grant.
+	 */
+	useJwt?: boolean;
+
+	/**
+	 * If true, the signature on the access token response is verified.
+	 */
+	verifySignature?: boolean;
+}
+
+/**
+ * Parameters required for the JWT grant type.
+ */
+export interface JwtGrantParameters {
+	user: User;
 }
 
 /**
@@ -485,21 +595,62 @@ export interface OpenIDTokenWithStandardClaims extends OpenIDToken {
 
 }
 
+/**
+ * Parameters required for the refresh grant type.
+ */
+export interface RefreshGrantParameters {
+	refreshToken: string;
+}
+
+export interface RevocationOptions {
+
+	/**
+	 * If true, uses a GET rather than POST request to revoke an access token.
+	 */
+	useGet?: boolean;
+
+}
+
+/**
+ * The User credentials required to initialise the JWT flow.
+ */
 export interface User {
 	organizationId?: string;
 	username: string;
 }
 
+/**
+ * The user information generated when parsing the [Identity URL](https://help.salesforce.com/articleView?id=remoteaccess_using_openid.htm).
+ */
 export interface UserInfo {
+
+	/**
+	 * Returns the user ID.
+	 */
 	id: string;
+
+	/**
+	 * Returns the organization ID.
+	 */
 	organizationId: string;
+
+	/**
+	 * Returns the full Identity URL.
+	 */
 	url: string;
+
 }
 
-export interface Grant {
-	accessToken: string;
-	instanceUrl?: string;
-	userInfo?: UserInfo;
+/**
+ * Optional parameters used when requesting user information.
+ */
+export interface UserInfoOptions {
+
+	/**
+	 * Returns the reponse format, either JSON, XML or URL_ENCODED.
+	 */
+	responseFormat?: ResponseFormat;
+
 }
 
 export type AuthUrlGenerator = (state: string, opts?: AuthOptions) => Promise<string>;

@@ -12,7 +12,7 @@
 		"build": "npm run build-clean && npm run build-compile",
 		"build-clean": "rm -rf dist",
 		"build-compile": "tsc",
-		"doc": "typedoc --gitRevision master --ignoreCompilerErrors --out doc src/**/* --mode file",
+		"create-local-certificate": "cd certificates && mkdir -p server && openssl req -nodes -new -x509 -keyout server/server.key -out server/server.cert -config serverCertificateGenerator.txt",
 		"init-project": "cp run.properties local.run.properties && cp test.properties local.test.properties",
 		"lint-fix": "tslint -p tsconfig.json --fix",
 		"prepare": "npm run build",

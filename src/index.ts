@@ -659,3 +659,27 @@ export type JwtBearerAccessTokenGrantor = (params: JwtGrantParameters, opts?: Gr
 export type RefreshAccessTokenGrantor = (params: RefreshGrantParameters, opts?: GrantOptions) => Promise<AccessTokenResponse>;
 export type UserTokenGrantor = (user: User) => Promise<Grant>;
 export type UserInfoRequester = (accessToken: string, opts?: UserInfoOptions) => Promise<string | OpenIDTokenWithStandardClaims>;
+
+/**
+ * The event fired when the authorization header is set.
+ * @event
+ */
+export const EVENT_AUTHORIZATION_HEADER_SET = Symbol();
+
+/**
+ * The event fired for an unauthorized request.
+ * @event
+ */
+export const EVENT_DENIED = Symbol();
+
+/**
+ * The event fired when the grant has been checked.
+ * @event
+ */
+export const EVENT_GRANT_CHECKED = Symbol();
+
+/**
+ * The event fired when an access token has been validated.
+ * @event
+ */
+export const EVENT_TOKEN_VALIDATED = Symbol();

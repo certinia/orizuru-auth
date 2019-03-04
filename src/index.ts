@@ -83,6 +83,15 @@ declare global {
 }
 
 /**
+ * The return formats when requesting a grant.
+ */
+export enum ResponseFormat {
+	JSON = 'application/json',
+	URL_ENCODED = 'application/x-www-form-urlencoded',
+	XML = 'application/xml'
+}
+
+/**
  * The access token response.
  *
  * @example

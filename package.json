@@ -42,7 +42,6 @@
 		"form-urlencoded": "^3.0.0",
 		"jsonwebtoken": "^8.5.0",
 		"lodash": "^4.17.11",
-		"openid-client": "^2.4.5",
 		"uuid": "^3.3.2"
 	},
 	"devDependencies": {

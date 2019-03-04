@@ -25,22 +25,23 @@
  */
 
 /**
- * Orizuru Auth module.
+ * Orizuru Auth module
+ * @module index
  */
 
-import { refreshToken } from './flow/refreshToken';
-import { webServer } from './flow/webServer';
+import { createTokenGrantor as createJwtBearerAccessTokenGrantor } from './index/flow/jwtBearerToken';
+import { createTokenGrantor as createRefreshAccessTokenGrantor } from './index/flow/refreshToken';
+import { authorizationUrlGenerator, createTokenGrantor as createWebServerTokenGrantor } from './index/flow/webServer';
 
-import { revocation } from './revocation/revoke';
+import { createTokenRevoker } from './index/revocation/revoke';
 
-import { grant } from './openid/grant';
-import { middleware } from './openid/middleware';
+import { getToken } from './index/grant/grant';
 
-export { AccessTokenResponse } from './flow/response/accessToken';
-export { SalesforceJwt } from './flow/response/salesforceJwt';
-export { SalesforceJwtStandardClaims } from './flow/response/salesforceJwtStandardClaims';
+import { createMiddleware as authCallback } from './index/middleware/authCallback';
+import { createMiddleware as grantChecker } from './index/middleware/grantChecker';
+import { createMiddleware as tokenValidator } from './index/middleware/tokenValidator';
 
-export { getUserInfo, UserInformation } from './openid/shared/userinfo';
+import { createUserInfoRequester } from './index/userInfo/userinfo';
 
 declare global {
 
@@ -683,3 +684,130 @@ export const EVENT_GRANT_CHECKED = Symbol();
  * @event
  */
 export const EVENT_TOKEN_VALIDATED = Symbol();
+
+const jwtBearerToken = {
+
+	/**
+	 * Creates an access token grantor that exchanges a JWT for an access token.
+	 */
+	createTokenGrantor: createJwtBearerAccessTokenGrantor
+
+};
+
+const refreshToken = {
+
+	/**
+	 * Creates an access token grantor that exchanges a refresh token for an access token.
+	 *
+	 * Rather than using the client secret of the Salesforce Connected Application, this
+	 * function creates a signed JWT bearer assertion to validate the user.
+	 */
+	createTokenGrantor: createRefreshAccessTokenGrantor
+
+};
+
+const webServer = {
+
+	/**
+	 * Generates URLs required to initialise the [OAuth 2.0 Web Server Authentication Flow](https://help.salesforce.com/articleView?id=remoteaccess_oauth_web_server_flow.htm).
+	 */
+	authorizationUrlGenerator,
+
+	/**
+	 * Creates an access token grantor that [exchanges a verification code for an access token](https://help.salesforce.com/articleView?id=remoteaccess_oauth_web_server_flow.htm#vc_for_at).
+	 *
+	 * Rather than using the client secret of the Salesforce Connected Application, this
+	 * function creates a signed JWT bearer assertion to validate the user.
+	 */
+	createTokenGrantor: createWebServerTokenGrantor
+
+};
+
+/**
+ * Returns the collection of OAuth 2.0 flow functions.
+ */
+export const flow = {
+
+	/**
+	 * Returns functions to handle the [OAuth 2.0 JWT Bearer Token Flow](https://help.salesforce.com/articleView?id=remoteaccess_oauth_jwt_flow.htm).
+	 */
+	jwtBearerToken,
+
+	/**
+	 * Returns functions to handle the [OAuth 2.0 Refresh Token Flow](https://help.salesforce.com/articleView?id=remoteaccess_oauth_refresh_token_flow.htm).
+	 */
+	refreshToken,
+
+	/**
+	 * Returns functions to handle the [OAuth 2.0 Web Server Authentication Flow](https://help.salesforce.com/articleView?id=remoteaccess_oauth_web_server_flow.htm).
+	 */
+	webServer
+
+};
+
+/**
+ * Returns the collection of grant functions.
+ */
+export const grant = {
+
+	/**
+	 * Returns a function that can obtain a token for the passed user.
+	 */
+	getToken
+
+};
+
+/**
+ * Returns the collection of middleware functions.
+ */
+export const middleware = {
+
+	/**
+	 * Returns an express middleware that [exchanges a verification code for an access token](https://help.salesforce.com/articleView?id=remoteaccess_oauth_web_server_flow.htm#vc_for_at).
+	 *
+	 * This can be used in tandem with the tokenValidator to set the user on the request.
+	 */
+	authCallback,
+
+	/**
+	 * Returns an express middleware that checks that an access token
+	 * can be retrieved for the user specified on the request.
+	 * Should be used in tandem with the tokenValidator middleware,
+	 * and must be executed after that. This requires that a ConnectedApp
+	 * is configured to pre authorise users and the user is
+	 * authorised.
+	 */
+	grantChecker,
+
+	/**
+	 * Returns an express middleware that validates the OpenID Connect
+	 * access token passed in an HTTP Authorization header and if successful
+	 * sets the user object onto the request object.
+	 */
+	tokenValidator
+
+};
+
+/**
+ * Returns the collection of revocation functions.
+ */
+export const revocation = {
+
+	/**
+	 * Returns a function that [revokes access tokens](https://help.salesforce.com/articleView?id=remoteaccess_revoke_token.htm).
+	 */
+	createTokenRevoker
+
+};
+
+/**
+ * Returns the collection of [user information](https://help.salesforce.com/articleView?id=remoteaccess_using_userinfo_endpoint.htm) functions.
+ */
+export const userInfo = {
+
+	/**
+	 * Returns a function that requests the user information for a given access token.
+	 */
+	createUserInfoRequester
+
+};

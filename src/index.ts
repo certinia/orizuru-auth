@@ -42,18 +42,6 @@ export { SalesforceJwtStandardClaims } from './flow/response/salesforceJwtStanda
 
 export { getUserInfo, UserInformation } from './openid/shared/userinfo';
 
-const flow = {
-	refreshToken,
-	webServer
-};
-
-export {
-	flow,
-	grant,
-	middleware,
-	revocation
-};
-
 declare global {
 
 	namespace Express {

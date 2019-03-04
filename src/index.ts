@@ -167,6 +167,17 @@ export interface AccessTokenResponse {
 }
 
 /**
+ * The OpenID environment parameters.
+ */
+export interface Environment {
+	jwtSigningKey: string;
+	openidClientId: string;
+	openidClientSecret: string;
+	openidHTTPTimeout: number;
+	openidIssuerURI: string;
+}
+
+/**
  * A token that conforms to the [OpenID specification](https://openid.net/specs/openid-connect-basic-1_0-28.html#id_token).
  *
  * It is returned in the `id_token` field of the `AccessTokenResponse`.
@@ -475,17 +486,6 @@ export interface OpenIDTokenWithStandardClaims extends OpenIDToken {
 	 */
 	updated_at: number;
 
-}
-
-/**
- * The OpenID environment parameters.
- */
-export interface Environment {
-	jwtSigningKey: string;
-	openidClientId: string;
-	openidClientSecret: string;
-	openidHTTPTimeout: number;
-	openidIssuerURI: string;
 }
 
 export interface User {

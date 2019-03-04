@@ -35,13 +35,11 @@
 		"@types/express": "^4.16.1",
 		"@types/form-urlencoded": "^2.0.0",
 		"@types/jsonwebtoken": "^8.3.0",
-		"@types/lodash": "^4.14.121",
 		"@types/node": "^10.12.26",
 		"@types/uuid": "^3.4.4",
 		"axios": "^0.18.0",
 		"form-urlencoded": "^3.0.0",
 		"jsonwebtoken": "^8.5.0",
-		"lodash": "^4.17.11",
 		"uuid": "^3.3.2"
 	},
 	"devDependencies": {

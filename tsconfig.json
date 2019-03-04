@@ -14,15 +14,10 @@
 		"outDir": "./dist",
 		"strict": true,
 		"strictNullChecks": true,
-		"target": "es2017",
-		"typeRoots": [
-			"./node_modules/@types",
-			"./typings"
-		]
+		"target": "es2017"
 	},
 	"include": [
 		"src",
-		"test",
-		"typings"
+		"test"
 	]
 }

@@ -501,3 +501,10 @@ export interface Grant {
 	instanceUrl?: string;
 	userInfo?: UserInfo;
 }
+
+export type AuthUrlGenerator = (state: string, opts?: AuthOptions) => Promise<string>;
+export type AuthCodeAccessTokenGrantor = (params: AuthCodeGrantParameters, opts?: GrantOptions) => Promise<AccessTokenResponse>;
+export type JwtBearerAccessTokenGrantor = (params: JwtGrantParameters, opts?: GrantOptions) => Promise<AccessTokenResponse>;
+export type RefreshAccessTokenGrantor = (params: RefreshGrantParameters, opts?: GrantOptions) => Promise<AccessTokenResponse>;
+export type UserTokenGrantor = (user: User) => Promise<Grant>;
+export type UserInfoRequester = (accessToken: string, opts?: UserInfoOptions) => Promise<string | OpenIDTokenWithStandardClaims>;

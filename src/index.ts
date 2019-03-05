@@ -57,6 +57,7 @@ declare global {
 
 		interface Context {
 			grantChecked?: boolean;
+			identity?: UserInfo;
 			user?: User;
 		}
 
@@ -167,6 +168,9 @@ export interface AccessTokenResponse {
 	 */
 	issued_at: string;
 
+	/**
+	 * The user information generated when parsing the [Identity URL](https://help.salesforce.com/articleView?id=remoteaccess_using_openid.htm).
+	 */
 	userInfo?: UserInfo;
 
 }
@@ -628,17 +632,22 @@ export interface UserInfo {
 	/**
 	 * Returns the user ID.
 	 */
-	id: string;
+	id?: string;
 
 	/**
 	 * Returns the organization ID.
 	 */
-	organizationId: string;
+	organizationId?: string;
 
 	/**
 	 * Returns the full Identity URL.
 	 */
 	url: string;
+
+	/**
+	 * If true, the Identity URL has been validated and is valid.
+	 */
+	validated: boolean;
 
 }
 

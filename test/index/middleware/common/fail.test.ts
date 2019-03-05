@@ -29,8 +29,6 @@ import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
 
-import { EventEmitter } from 'events';
-
 import { Request, Response } from '@financialforcedev/orizuru';
 
 import { EVENT_DENIED } from '../../../../src';
@@ -44,7 +42,7 @@ chai.use(sinonChai);
 
 describe('index/middleware/common/fail', () => {
 
-	let app: Orizuru.IServer & EventEmitter;
+	let app: Orizuru.IServer;
 	let req: Request;
 	let res: Response;
 
@@ -60,10 +58,10 @@ describe('index/middleware/common/fail', () => {
 		};
 		res = partialResponse as Response;
 
-		const partialApp: Partial<Orizuru.IServer & EventEmitter> = {
+		const partialApp: Partial<Orizuru.IServer> = {
 			emit: sinon.stub()
 		};
-		app = partialApp as Orizuru.IServer & EventEmitter;
+		app = partialApp as Orizuru.IServer;
 
 	});
 

@@ -28,8 +28,6 @@
  * @module index/middleware/authCallback
  */
 
-import { EventEmitter } from 'events';
-
 import { NextFunction, Request, RequestHandler, Response } from '@financialforcedev/orizuru';
 
 import { AccessTokenResponse, EVENT_AUTHORIZATION_HEADER_SET } from '../..';
@@ -44,7 +42,7 @@ import { fail } from './common/fail';
  *
  * @fires EVENT_AUTHORIZATION_HEADER_SET
  */
-export function createMiddleware(app: Orizuru.IServer & EventEmitter): RequestHandler {
+export function createMiddleware(app: Orizuru.IServer): RequestHandler {
 
 	const requestAccessToken = createTokenGrantor(app.options.auth.webServer);
 
@@ -86,7 +84,7 @@ function validateRequest(req: Request) {
 
 }
 
-function setAuthorizationHeader(app: Orizuru.IServer & EventEmitter, req: Request) {
+function setAuthorizationHeader(app: Orizuru.IServer, req: Request) {
 
 	return (token: AccessTokenResponse) => {
 

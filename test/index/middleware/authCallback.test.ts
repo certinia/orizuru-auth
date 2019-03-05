@@ -29,8 +29,6 @@ import chaiAsPromised from 'chai-as-promised';
 import sinon, { SinonStub } from 'sinon';
 import sinonChai from 'sinon-chai';
 
-import { EventEmitter } from 'events';
-
 import { Request, RequestHandler, Response } from '@financialforcedev/orizuru';
 
 import { Environment, EVENT_AUTHORIZATION_HEADER_SET } from '../../../src';
@@ -47,7 +45,7 @@ chai.use(sinonChai);
 
 describe('index/middleware/authCallback', () => {
 
-	let app: Orizuru.IServer & EventEmitter;
+	let app: Orizuru.IServer;
 	let env: Environment;
 	let requestAccessTokenStub: SinonStub;
 
@@ -61,7 +59,7 @@ describe('index/middleware/authCallback', () => {
 			openidIssuerURI: 'https://login.salesforce.com/'
 		};
 
-		const partialApp: Partial<Orizuru.IServer & EventEmitter> = {
+		const partialApp: Partial<Orizuru.IServer> = {
 			emit: sinon.stub(),
 			options: {
 				auth: {
@@ -70,7 +68,7 @@ describe('index/middleware/authCallback', () => {
 			}
 		};
 
-		app = partialApp as Orizuru.IServer & EventEmitter;
+		app = partialApp as Orizuru.IServer;
 
 		requestAccessTokenStub = sinon.stub();
 

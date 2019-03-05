@@ -28,8 +28,6 @@
  * @module index/middleware/common/fail
  */
 
-import { EventEmitter } from 'events';
-
 import { Request, Response } from '@financialforcedev/orizuru';
 
 import { EVENT_DENIED } from '../../..';
@@ -37,7 +35,7 @@ import { EVENT_DENIED } from '../../..';
 /**
  * @fires EVENT_DENIED
  */
-export function fail(app: Orizuru.IServer & EventEmitter, req: Request, res: Response, error: Error) {
+export function fail(app: Orizuru.IServer, req: Request, res: Response, error: Error) {
 
 	app.emit(EVENT_DENIED, `Access denied to: ${req.ip ? req.ip : 'unknown'}. Error: ${error.message}`);
 

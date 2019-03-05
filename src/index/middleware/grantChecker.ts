@@ -28,8 +28,6 @@
  * @module index/middleware/grantChecker
  */
 
-import { EventEmitter } from 'events';
-
 import { NextFunction, Request, RequestHandler, Response } from '@financialforcedev/orizuru';
 
 import { EVENT_GRANT_CHECKED } from '../..';
@@ -47,7 +45,7 @@ import { fail } from './common/fail';
  *
  * @fires EVENT_GRANT_CHECKED, EVENT_DENIED
  */
-export function createMiddleware(app: Orizuru.IServer & EventEmitter): RequestHandler {
+export function createMiddleware(app: Orizuru.IServer): RequestHandler {
 
 	const requestAccessToken = createTokenGrantor(app.options.auth.jwtBearer);
 
@@ -95,7 +93,7 @@ function checkUserIsOnTheRequest(req: Request) {
 
 }
 
-function setGrant(app: Orizuru.IServer & EventEmitter, req: Request) {
+function setGrant(app: Orizuru.IServer, req: Request) {
 
 	return () => {
 

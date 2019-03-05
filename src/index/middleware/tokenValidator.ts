@@ -28,8 +28,6 @@
  * @module index/middleware/tokenValidator
  */
 
-import { EventEmitter } from 'events';
-
 import { NextFunction, Request, RequestHandler, Response } from '@financialforcedev/orizuru';
 
 import { EVENT_TOKEN_VALIDATED, OpenIDTokenWithStandardClaims, User } from '../..';
@@ -44,7 +42,7 @@ import { fail } from './common/fail';
  *
  * @fires EVENT_TOKEN_VALIDATED, EVENT_DENIED
  */
-export function createMiddleware(app: Orizuru.IServer & EventEmitter): RequestHandler {
+export function createMiddleware(app: Orizuru.IServer): RequestHandler {
 
 	const validateAccessToken = createUserInfoRequester(app.options.auth.jwtBearer);
 
@@ -88,7 +86,7 @@ function extractAccessToken(req: Request) {
 
 }
 
-function setUserOnRequest(app: Orizuru.IServer & EventEmitter, req: Request, user: User) {
+function setUserOnRequest(app: Orizuru.IServer, req: Request, user: User) {
 
 	const orizuru = req.orizuru || {} as Orizuru.Context;
 	orizuru.user = user;

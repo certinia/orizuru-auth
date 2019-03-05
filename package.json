@@ -47,7 +47,7 @@
 		"uuid": "^3.3.2"
 	},
 	"devDependencies": {
-		"@financialforcedev/orizuru": "^9.2.0",
+		"@financialforcedev/orizuru": "^9.3.0",
 		"@financialforcedev/orizuru-transport-rabbitmq": "^5.0.1",
 		"@types/chai": "^4.1.7",
 		"@types/chai-as-promised": "^7.1.0",
@@ -63,8 +63,8 @@
 		"debug": "^4.1.1",
 		"mocha": "^6.0.2",
 		"nyc": "^13.3.0",
-		"puppeteer": "^1.12.2",
-		"sinon": "^7.2.6",
+		"puppeteer": "^1.13.0",
+		"sinon": "^7.2.7",
 		"sinon-chai": "^3.3.0",
 		"ts-node": "^8.0.2",
 		"tslint": "^5.13.1",
@@ -73,6 +73,6 @@
 		"typescript": "^3.3.3333"
 	},
 	"peerDependencies": {
-		"@financialforcedev/orizuru": ">9.2.0 < 10"
+		"@financialforcedev/orizuru": ">=9.3.0 < 10"
 	}
 }

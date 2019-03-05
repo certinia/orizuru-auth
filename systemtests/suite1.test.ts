@@ -199,7 +199,7 @@ describe('Suite 1', () => {
 
 		await page.goto('https://localhost:8080/api/v1.0/auth');
 
-		await page.waitForNavigation({ waitUntil: 'domcontentloaded' });
+		await page.waitForSelector('#username');
 
 		await page.type('#username', username);
 		await page.type('#password', password);
@@ -235,7 +235,7 @@ describe('Suite 1', () => {
 
 		await page.goto('https://localhost:8080/api/v1.0/auth');
 
-		await page.waitForNavigation({ waitUntil: 'domcontentloaded' });
+		await page.waitForSelector('#username');
 
 		await page.type('#username', username);
 		await page.type('#password', password);
@@ -280,7 +280,7 @@ describe('Suite 1', () => {
 
 		await page.goto('https://localhost:8080/api/v1.0/auth');
 
-		await page.waitForNavigation({ waitUntil: 'domcontentloaded' });
+		await page.waitForSelector('#username');
 
 		await page.type('#username', username);
 		await page.type('#password', password);

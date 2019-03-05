@@ -208,7 +208,39 @@ describe('index/openid/client/identity', () => {
 				userInfo: {
 					id: '005xx000001SwiUAAS',
 					organizationId: '00Dxx0000001gPLEAY',
-					url: 'https://login.salesforce.com/id/00Dxx0000001gPLEAY/005xx000001SwiUAAS'
+					url: 'https://login.salesforce.com/id/00Dxx0000001gPLEAY/005xx000001SwiUAAS',
+					validated: false
+				}
+			});
+
+		});
+
+		it('should respect an existing userinfo property', () => {
+
+			// Given
+			accessTokenResponse.userInfo = {
+				url: 'https://login.salesforce.com/id/00Dxx0000001gPLEAY/005xx000001SwiUAAS',
+				validated: true
+			};
+
+			// When
+			parseUserInfo(accessTokenResponse);
+
+			// Then
+			expect(accessTokenResponse).to.eql({
+				access_token: '00Dxx0000001gPL!AR8AQJXg5oj8jXSgxJfA0lBog.39AsX.LVpxezPwuX5VAIrrbbHMuol7GQxnMeYMN7cj8EoWr78nt1u44zU31IbYNNJguseu',
+				id: 'https://login.salesforce.com/id/00Dxx0000001gPLEAY/005xx000001SwiUAAS',
+				id_token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c',
+				instance_url: 'https:// yourInstance.salesforce.com',
+				issued_at: '1551531242643',
+				scope: 'web openid api id',
+				signature: 'HHjDwETDb5VyLcjcB6+c/brBnhAE7zNKu0bgYnVqn9o=',
+				token_type: 'Bearer',
+				userInfo: {
+					id: '005xx000001SwiUAAS',
+					organizationId: '00Dxx0000001gPLEAY',
+					url: 'https://login.salesforce.com/id/00Dxx0000001gPLEAY/005xx000001SwiUAAS',
+					validated: true
 				}
 			});
 
@@ -260,6 +292,21 @@ describe('index/openid/client/identity', () => {
 			// When
 			// Then
 			expect(() => verifySignature(env, accessTokenResponse)).to.not.throw();
+
+			expect(accessTokenResponse).to.eql({
+				access_token: '00Dxx0000001gPL!AR8AQJXg5oj8jXSgxJfA0lBog.39AsX.LVpxezPwuX5VAIrrbbHMuol7GQxnMeYMN7cj8EoWr78nt1u44zU31IbYNNJguseu',
+				id: 'https://login.salesforce.com/id/00Dxx0000001gPLEAY/005xx000001SwiUAAS',
+				id_token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c',
+				instance_url: 'https:// yourInstance.salesforce.com',
+				issued_at: '1551531242643',
+				scope: 'web openid api id',
+				signature: 'HHjDwETDb5VyLcjcB6+c/brBnhAE7zNKu0bgYnVqn9o=',
+				token_type: 'Bearer',
+				userInfo: {
+					url: 'https://login.salesforce.com/id/00Dxx0000001gPLEAY/005xx000001SwiUAAS',
+					validated: true
+				}
+			});
 
 		});
 

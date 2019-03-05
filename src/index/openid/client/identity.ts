@@ -84,11 +84,12 @@ export function parseUserInfo(accessTokenResponse: AccessTokenResponse) {
 			throw new Error('Organization ID not present');
 		}
 
-		accessTokenResponse.userInfo = {
+		accessTokenResponse.userInfo = Object.assign({
 			id,
 			organizationId,
-			url: accessTokenResponse.id
-		};
+			url: accessTokenResponse.id,
+			validated: false
+		}, accessTokenResponse.userInfo);
 
 	} else {
 		throw new Error('No id present');
@@ -121,6 +122,11 @@ export function verifySignature(env: Environment, accessTokenResponse: AccessTok
 		if (!crypto.timingSafeEqual(expectedSignature, actualSignature)) {
 			throw new Error('Invalid signature');
 		}
+
+		accessTokenResponse.userInfo = {
+			url: accessTokenResponse.id,
+			validated: true
+		};
 
 	} else {
 		throw new Error('No signature present');

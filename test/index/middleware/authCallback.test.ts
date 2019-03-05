@@ -144,7 +144,7 @@ describe('index/middleware/authCallback', () => {
 				await middleware(req, res, next);
 
 				// Then
-				expect(fail.fail).to.have.been.calledWithExactly(app, req, res, has('message', 'Missing required object parameter: query'));
+				expect(fail.fail).to.have.been.calledWithExactly(app, has('message', 'Missing required object parameter: query'), req, res, next);
 
 			});
 
@@ -157,7 +157,7 @@ describe('index/middleware/authCallback', () => {
 				await middleware(req, res, next);
 
 				// Then
-				expect(fail.fail).to.have.been.calledWithExactly(app, req, res, has('message', 'Missing required string parameter: query[code]'));
+				expect(fail.fail).to.have.been.calledWithExactly(app, has('message', 'Missing required string parameter: query[code]'), req, res, next);
 
 			});
 
@@ -170,7 +170,7 @@ describe('index/middleware/authCallback', () => {
 				await middleware(req, res, next);
 
 				// Then
-				expect(fail.fail).to.have.been.calledWithExactly(app, req, res, has('message', 'access-denied'));
+				expect(fail.fail).to.have.been.calledWithExactly(app, has('message', 'access-denied'), req, res, next);
 
 			});
 
@@ -183,7 +183,7 @@ describe('index/middleware/authCallback', () => {
 				await middleware(req, res, next);
 
 				// Then
-				expect(fail.fail).to.have.been.calledWithExactly(app, req, res, has('message', 'Invalid grant for user (test@test.com). Caused by: something or other'));
+				expect(fail.fail).to.have.been.calledWithExactly(app, has('message', 'Invalid grant for user (test@test.com). Caused by: something or other'), req, res, next);
 
 			});
 
@@ -222,6 +222,7 @@ describe('index/middleware/authCallback', () => {
 				expect(app.emit).to.have.been.calledOnce;
 				expect(app.emit).to.have.been.calledWithExactly(EVENT_AUTHORIZATION_HEADER_SET, 'Authorization headers set for 005xx000001SwiUAAS (1.1.1.1).');
 				expect(next).to.have.been.calledOnce;
+				expect(next).to.have.been.calledWithExactly();
 
 			});
 
@@ -251,6 +252,7 @@ describe('index/middleware/authCallback', () => {
 				expect(app.emit).to.have.been.calledOnce;
 				expect(app.emit).to.have.been.calledWithExactly(EVENT_AUTHORIZATION_HEADER_SET, 'Authorization headers set for unknown (1.1.1.1).');
 				expect(next).to.have.been.calledOnce;
+				expect(next).to.have.been.calledWithExactly();
 
 			});
 

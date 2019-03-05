@@ -131,6 +131,7 @@ describe('index/middleware/tokenValidator', () => {
 			next = sinon.stub();
 
 			middleware = createMiddleware(app);
+
 		});
 
 		describe('should emit a deny event', () => {
@@ -150,7 +151,7 @@ describe('index/middleware/tokenValidator', () => {
 				await middleware(req, res, next);
 
 				// Then
-				expect(fail.fail).to.have.been.calledWithExactly(app, req, res, has('message', 'Authorization header with \'Bearer ***...\' required'));
+				expect(fail.fail).to.have.been.calledWithExactly(app, has('message', 'Authorization header with \'Bearer ***...\' required'), req, res, next);
 
 			});
 
@@ -165,7 +166,7 @@ describe('index/middleware/tokenValidator', () => {
 				await middleware(req, res, next);
 
 				// Then
-				expect(fail.fail).to.have.been.calledWithExactly(app, req, res, has('message', 'Authorization header with \'Bearer ***...\' required'));
+				expect(fail.fail).to.have.been.calledWithExactly(app, has('message', 'Authorization header with \'Bearer ***...\' required'), req, res, next);
 
 			});
 
@@ -180,7 +181,7 @@ describe('index/middleware/tokenValidator', () => {
 				await middleware(req, res, next);
 
 				// Then
-				expect(fail.fail).to.have.been.calledWithExactly(app, req, res, has('message', 'Authorization header with \'Bearer ***...\' required'));
+				expect(fail.fail).to.have.been.calledWithExactly(app, has('message', 'Authorization header with \'Bearer ***...\' required'), req, res, next);
 
 			});
 
@@ -195,7 +196,7 @@ describe('index/middleware/tokenValidator', () => {
 				await middleware(req, res, next);
 
 				// Then
-				expect(fail.fail).to.have.been.calledWithExactly(app, req, res, has('message', 'Authorization header with \'Bearer ***...\' required'));
+				expect(fail.fail).to.have.been.calledWithExactly(app, has('message', 'Authorization header with \'Bearer ***...\' required'), req, res, next);
 
 			});
 
@@ -212,7 +213,7 @@ describe('index/middleware/tokenValidator', () => {
 				await middleware(req, res, next);
 
 				// Then
-				expect(fail.fail).to.have.been.calledWithExactly(app, req, res, has('message', 'Failed to retrieve user information.'));
+				expect(fail.fail).to.have.been.calledWithExactly(app, has('message', 'Failed to retrieve user information.'), req, res, next);
 
 				expect(validateAccessTokenStub).to.have.been.calledOnce;
 				expect(validateAccessTokenStub).to.have.been.calledWithExactly('12345');
@@ -249,6 +250,7 @@ describe('index/middleware/tokenValidator', () => {
 				expect(app.emit).to.have.been.calledOnce;
 				expect(app.emit).to.have.been.calledWithExactly(EVENT_TOKEN_VALIDATED, 'Token validated for test@test.com (1.1.1.1).');
 				expect(next).to.have.been.calledOnce;
+				expect(next).to.have.been.calledWithExactly();
 
 			});
 

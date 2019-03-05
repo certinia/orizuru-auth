@@ -63,7 +63,7 @@ export function createMiddleware(app: Orizuru.IServer): RequestHandler {
 			next();
 
 		} catch (error) {
-			fail(app, req, res, error);
+			fail(app, error, req, res, next);
 		}
 
 	};

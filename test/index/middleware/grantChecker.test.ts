@@ -158,7 +158,7 @@ describe('index/middleware/grantChecker', () => {
 				await middleware(req, res, next);
 
 				// Then
-				expect(fail.fail).to.have.been.calledWithExactly(app, req, res, has('message', 'Missing required object parameter: orizuru'));
+				expect(fail.fail).to.have.been.calledWithExactly(app, has('message', 'Missing required object parameter: orizuru'), req, res, next);
 
 			});
 
@@ -171,7 +171,7 @@ describe('index/middleware/grantChecker', () => {
 				await middleware(req, res, next);
 
 				// Then
-				expect(fail.fail).to.have.been.calledWithExactly(app, req, res, has('message', 'Missing required object parameter: orizuru[user]'));
+				expect(fail.fail).to.have.been.calledWithExactly(app, has('message', 'Missing required object parameter: orizuru[user]'), req, res, next);
 
 			});
 
@@ -184,7 +184,7 @@ describe('index/middleware/grantChecker', () => {
 				await middleware(req, res, next);
 
 				// Then
-				expect(fail.fail).to.have.been.calledWithExactly(app, req, res, has('message', 'Missing required string parameter: orizuru[user][username]'));
+				expect(fail.fail).to.have.been.calledWithExactly(app, has('message', 'Missing required string parameter: orizuru[user][username]'), req, res, next);
 
 			});
 
@@ -197,7 +197,7 @@ describe('index/middleware/grantChecker', () => {
 				await middleware(req, res, next);
 
 				// Then
-				expect(fail.fail).to.have.been.calledWithExactly(app, req, res, has('message', 'Invalid parameter: orizuru[user][username] cannot be empty'));
+				expect(fail.fail).to.have.been.calledWithExactly(app, has('message', 'Invalid parameter: orizuru[user][username] cannot be empty'), req, res, next);
 
 			});
 
@@ -210,7 +210,7 @@ describe('index/middleware/grantChecker', () => {
 				await middleware(req, res, next);
 
 				// Then
-				expect(fail.fail).to.have.been.calledWithExactly(app, req, res, has('message', 'Invalid grant for user (test@test.com). Caused by: something or other'));
+				expect(fail.fail).to.have.been.calledWithExactly(app, has('message', 'Invalid grant for user (test@test.com). Caused by: something or other'), req, res, next);
 
 			});
 
@@ -242,6 +242,7 @@ describe('index/middleware/grantChecker', () => {
 				expect(app.emit).to.have.been.calledOnce;
 				expect(app.emit).to.have.been.calledWithExactly(EVENT_GRANT_CHECKED, 'Grant checked for test@test.com (1.1.1.1).');
 				expect(next).to.have.been.calledOnce;
+				expect(next).to.have.been.calledWithExactly();
 
 			});
 

@@ -187,7 +187,8 @@ describe('index/grant/grant', () => {
 				userInfo: {
 					id: '005xx000001SwiUAAS',
 					organizationId: '00Dxx0000001gPLEAY',
-					url: 'https://login.salesforce.com/id/00Dxx0000001gPLEAY/005xx000001SwiUAAS'
+					url: 'https://login.salesforce.com/id/00Dxx0000001gPLEAY/005xx000001SwiUAAS',
+					validated: true
 				}
 			});
 
@@ -201,7 +202,8 @@ describe('index/grant/grant', () => {
 				userInfo: {
 					id: '005xx000001SwiUAAS',
 					organizationId: '00Dxx0000001gPLEAY',
-					url: 'https://login.salesforce.com/id/00Dxx0000001gPLEAY/005xx000001SwiUAAS'
+					url: 'https://login.salesforce.com/id/00Dxx0000001gPLEAY/005xx000001SwiUAAS',
+					validated: true
 				}
 			});
 

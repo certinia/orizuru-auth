@@ -28,17 +28,26 @@
  * @module index/middleware/common/fail
  */
 
-import { Request, Response } from '@financialforcedev/orizuru';
+import { NextFunction, Request, Response } from '@financialforcedev/orizuru';
 
 import { EVENT_DENIED } from '../../..';
 
 /**
+ * Helper function for a failed request.
+ *
+ * Emits a denied event and calls next with the access denied error.
+ *
  * @fires EVENT_DENIED
  */
-export function fail(app: Orizuru.IServer, req: Request, res: Response, error: Error) {
+export function fail(app: Orizuru.IServer, error: Error, req: Request, res: Response, next: NextFunction) {
 
-	app.emit(EVENT_DENIED, `Access denied to: ${req.ip ? req.ip : 'unknown'}. Error: ${error.message}`);
+	const message = `Access denied to: ${req.ip ? req.ip : 'unknown'}. Error: ${error.message}`;
+	const accessDeniedError = new Error(message);
 
-	res.sendStatus(401);
+	app.emit(EVENT_DENIED, message);
+
+	// Rather than returning a 401 directly, we need to call next with the error.
+	// This should then find the appropriate error handler.
+	next(accessDeniedError);
 
 }

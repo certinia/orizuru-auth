@@ -25,19 +25,18 @@
  */
 
 import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
 
-import { Request, Response } from '@financialforcedev/orizuru';
+import { NextFunction, Request, Response } from '@financialforcedev/orizuru';
 
 import { EVENT_DENIED } from '../../../../src';
 
 import { fail } from '../../../../src/index/middleware/common/fail';
 
 const expect = chai.expect;
+const has = sinon.match.has;
 
-chai.use(chaiAsPromised);
 chai.use(sinonChai);
 
 describe('index/middleware/common/fail', () => {
@@ -45,6 +44,7 @@ describe('index/middleware/common/fail', () => {
 	let app: Orizuru.IServer;
 	let req: Request;
 	let res: Response;
+	let next: NextFunction;
 
 	beforeEach(() => {
 
@@ -53,9 +53,7 @@ describe('index/middleware/common/fail', () => {
 		};
 		req = partialRequest as Request;
 
-		const partialResponse: Partial<Response> = {
-			sendStatus: sinon.stub()
-		};
+		const partialResponse: Partial<Response> = {};
 		res = partialResponse as Response;
 
 		const partialApp: Partial<Orizuru.IServer> = {
@@ -63,12 +61,13 @@ describe('index/middleware/common/fail', () => {
 		};
 		app = partialApp as Orizuru.IServer;
 
+		next = sinon.stub();
+
 	});
 
 	afterEach(() => {
 
-		expect(res.sendStatus).to.be.calledOnce;
-		expect(res.sendStatus).to.be.calledWithExactly(401);
+		expect(next).to.have.been.calledOnce;
 
 		sinon.restore();
 
@@ -80,11 +79,12 @@ describe('index/middleware/common/fail', () => {
 		delete req.ip;
 
 		// When
-		fail(app, req, res, new Error('test'));
+		fail(app, new Error('test'), req, res, next);
 
 		// Then
 		expect(app.emit).to.have.been.calledOnce;
-		expect(app.emit).to.have.been.calledWithExactly(EVENT_DENIED, `Access denied to: unknown. Error: test`);
+		expect(app.emit).to.have.been.calledWithExactly(EVENT_DENIED, 'Access denied to: unknown. Error: test');
+		expect(next).to.have.been.calledWithExactly(has('message', 'Access denied to: unknown. Error: test'));
 
 	});
 
@@ -92,11 +92,12 @@ describe('index/middleware/common/fail', () => {
 
 		// Given
 		// When
-		fail(app, req, res, new Error('test'));
+		fail(app, new Error('test'), req, res, next);
 
 		// Then
 		expect(app.emit).to.have.been.calledOnce;
-		expect(app.emit).to.have.been.calledWithExactly(EVENT_DENIED, `Access denied to: 1.1.1.1. Error: test`);
+		expect(app.emit).to.have.been.calledWithExactly(EVENT_DENIED, 'Access denied to: 1.1.1.1. Error: test');
+		expect(next).to.have.been.calledWithExactly(has('message', 'Access denied to: 1.1.1.1. Error: test'));
 
 	});
 

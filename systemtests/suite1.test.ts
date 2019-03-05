@@ -36,7 +36,7 @@ import fs from 'fs';
 import https from 'https';
 import path from 'path';
 
-import { json, Server, urlencoded } from '@financialforcedev/orizuru';
+import { json, NextFunction, Request, Response, Server, urlencoded } from '@financialforcedev/orizuru';
 import { Transport } from '@financialforcedev/orizuru-transport-rabbitmq';
 
 import { AuthOptions, Environment, EVENT_AUTHORIZATION_HEADER_SET, EVENT_DENIED, EVENT_GRANT_CHECKED, EVENT_TOKEN_VALIDATED, flow, grant, middleware, ResponseFormat, userInfo } from '../src/index';
@@ -125,8 +125,15 @@ describe('Suite 1', () => {
 				middleware.authCallback(server),
 				middleware.tokenValidator(server),
 				grantCheckerStub,
-				async (req, res, next) => {
+				async (req: Request, res: Response, next: NextFunction) => {
 					await grant.getToken(server.options.auth.jwtBearer)(req.orizuru!.user!);
+					next();
+				},
+				(error, req, res, next) => {
+					if (error) {
+						res.sendStatus(401);
+						return;
+					}
 					next();
 				}
 			],
@@ -240,11 +247,17 @@ describe('Suite 1', () => {
 
 		await Promise.all([
 			page.click('input#oadeny'),
-			page.waitForNavigation({ waitUntil: 'domcontentloaded' })
+			page.waitForResponse((res) => {
+				if (res.status() === 401) {
+					return true;
+				}
+				return false;
+			})
 		]);
 
 		// Then
-		expect(server.emit).to.not.have.been.called;
+		expect(server.emit).to.have.been.calledOnce;
+		expect(server.emit).to.have.been.calledWithExactly(EVENT_DENIED, 'Access denied to: ::1. Error: access_denied');
 
 	});
 

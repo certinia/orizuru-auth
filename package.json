@@ -12,7 +12,7 @@
 		"build": "npm run build-clean && npm run build-compile",
 		"build-clean": "rm -rf dist",
 		"build-compile": "tsc",
-		"coverage-system-test": "nyc --nycrc-path=systemtests/.nyc.json --report-dir=coverage mocha --config systemtests/.mocha.json",
+		"coverage-system-test": "DEBUG=app* nyc --nycrc-path=systemtests/.nyc.json --report-dir=coverage mocha --config systemtests/.mocha.json",
 		"coverage-unit-test": "nyc --nycrc-path=test/.nyc.json mocha --config test/.mocha.json",
 		"create-local-certificate": "cd certificates && mkdir -p server && openssl req -nodes -new -x509 -keyout server/server.key -out server/server.cert -config serverCertificateGenerator.txt",
 		"doc": "typedoc --gitRevision master --ignoreCompilerErrors --out doc src/**/* --readme readme.md",
@@ -21,7 +21,7 @@
 		"prepare": "npm run build",
 		"pretest": "tslint -p tsconfig.json",
 		"test": "npm run coverage-unit-test",
-		"test-system": "mocha --config systemtests/.mocha.json",
+		"test-system": "DEBUG=app* mocha --config systemtests/.mocha.json",
 		"test-unit": "mocha --config test/.mocha.json"
 	},
 	"repository": {

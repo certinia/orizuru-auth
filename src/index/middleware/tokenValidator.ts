@@ -25,7 +25,7 @@
  */
 
 /**
- * @module index/middleware/tokenValidator
+ * @module middleware/tokenValidator
  */
 
 import { NextFunction, Request, RequestHandler, Response } from '@financialforcedev/orizuru';

@@ -25,7 +25,7 @@
  */
 
 /**
- * @module index/openid/client/identity
+ * @module openid/client/identity
  */
 
 import crypto from 'crypto';

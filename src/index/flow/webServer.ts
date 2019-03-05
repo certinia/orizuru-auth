@@ -25,7 +25,7 @@
  */
 
 /**
- * @module index/flow/webServer
+ * @module flow/webServer
  */
 
 import { AuthCodeAccessTokenGrantor, AuthCodeGrantParameters, AuthOptions, AuthUrlGenerator, Environment, GrantOptions } from '..';

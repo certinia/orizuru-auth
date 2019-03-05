@@ -25,7 +25,7 @@
  */
 
 /**
- * @module index/middleware/authCallback
+ * @module middleware/authCallback
  */
 
 import { NextFunction, Request, RequestHandler, Response } from '@financialforcedev/orizuru';

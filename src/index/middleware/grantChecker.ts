@@ -25,7 +25,7 @@
  */
 
 /**
- * @module index/middleware/grantChecker
+ * @module middleware/grantChecker
  */
 
 import { NextFunction, Request, RequestHandler, Response } from '@financialforcedev/orizuru';

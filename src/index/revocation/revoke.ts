@@ -25,7 +25,7 @@
  */
 
 /**
- * @module index/revocation/revoke
+ * @module revocation/revoke
  */
 
 import { Environment } from '..';

@@ -25,7 +25,7 @@
  */
 
 /**
- * @module index/grant/grant
+ * @module grant/grant
  */
 
 import { AccessTokenResponse, Environment, Grant, User, UserTokenGrantor } from '../..';

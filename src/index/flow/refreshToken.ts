@@ -25,7 +25,7 @@
  */
 
 /**
- * @module index/flow/refreshToken
+ * @module flow/refreshToken
  */
 
 import { AccessTokenResponse, Environment, GrantOptions, RefreshAccessTokenGrantor, RefreshGrantParameters } from '..';

@@ -25,7 +25,7 @@
  */
 
 /**
- * @module index/flow/jwtBearerToken
+ * @module flow/jwtBearerToken
  */
 
 import { AccessTokenResponse, Environment, GrantOptions, JwtBearerAccessTokenGrantor, JwtGrantParameters } from '..';

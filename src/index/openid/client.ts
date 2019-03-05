@@ -25,7 +25,7 @@
  */
 
 /**
- * @module index/openid/client
+ * @module openid/client
  */
 
 import axios, { AxiosResponse } from 'axios';

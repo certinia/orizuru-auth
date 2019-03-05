@@ -26,7 +26,7 @@
 
 /**
  * Orizuru Auth module
- * @module index
+ * @module @financialforcedev/orizuru-auth
  */
 
 import { createTokenGrantor as createJwtBearerAccessTokenGrantor } from './index/flow/jwtBearerToken';

@@ -25,7 +25,7 @@
  */
 
 /**
- * @module index/middleware/common/fail
+ * @module middleware/common/fail
  */
 
 import { NextFunction, Request, Response } from '@financialforcedev/orizuru';

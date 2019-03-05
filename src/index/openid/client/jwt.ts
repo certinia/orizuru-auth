@@ -25,7 +25,7 @@
  */
 
 /**
- * @module index/openid/client/jwt
+ * @module openid/client/jwt
  */
 
 import { sign } from 'jsonwebtoken';

@@ -25,7 +25,7 @@
  */
 
 /**
- * @module index/userInfo/userinfo
+ * @module userInfo/userinfo
  */
 
 import { Environment, UserInfoOptions, UserInfoRequester } from '../..';

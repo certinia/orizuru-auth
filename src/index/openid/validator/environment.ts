@@ -25,7 +25,7 @@
  */
 
 /**
- * @module index/openid/validator/environment
+ * @module openid/validator/environment
  */
 
 import { Environment } from '../../..';

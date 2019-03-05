@@ -25,7 +25,7 @@
  */
 
 /**
- * @module index/openid/cache
+ * @module openid/cache
  */
 
 import { createHash } from 'crypto';

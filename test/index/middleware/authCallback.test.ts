@@ -191,7 +191,7 @@ describe('index/middleware/authCallback', () => {
 
 		describe('should call next if the code is exchanged for an access token', () => {
 
-			it('and update the request authorization header', async () => {
+			it('and update the request authorization header and orizuru identity property', async () => {
 
 				// Given
 				requestAccessTokenStub.resolves({
@@ -205,7 +205,8 @@ describe('index/middleware/authCallback', () => {
 					userInfo: {
 						id: '005xx000001SwiUAAS',
 						organizationId: '00Dxx0000001gPLEAY',
-						url: 'https://login.salesforce.com/id/00Dxx0000001gPLEAY/005xx000001SwiUAAS'
+						url: 'https://login.salesforce.com/id/00Dxx0000001gPLEAY/005xx000001SwiUAAS',
+						validated: true
 					}
 				});
 
@@ -214,6 +215,13 @@ describe('index/middleware/authCallback', () => {
 
 				// Then
 				expect(req.headers).to.have.property('authorization', 'Bearer 00Dx0000000BV7z!AR8AQP0jITN80ESEsj5EbaZTFG0RNBaT1cyWk7TrqoDjoNIWQ2ME_sTZzBjfmOE6zMHq6y8PIW4eWze9JksNEkWUl.Cju7m4');
+				expect(req).to.have.property('orizuru');
+				expect(req.orizuru).to.have.property('identity').that.eqls({
+					id: '005xx000001SwiUAAS',
+					organizationId: '00Dxx0000001gPLEAY',
+					url: 'https://login.salesforce.com/id/00Dxx0000001gPLEAY/005xx000001SwiUAAS',
+					validated: true
+				});
 
 				expect(requestAccessTokenStub).to.have.been.calledOnce;
 				expect(requestAccessTokenStub).to.have.been.calledWithExactly({
@@ -226,7 +234,7 @@ describe('index/middleware/authCallback', () => {
 
 			});
 
-			it('and emit an event with the use as unknown if the userinfo has not been parsed', async () => {
+			it('and emit an event with the user as unknown if the userinfo has not been parsed', async () => {
 
 				// Given
 				requestAccessTokenStub.resolves({
@@ -253,6 +261,8 @@ describe('index/middleware/authCallback', () => {
 				expect(app.emit).to.have.been.calledWithExactly(EVENT_AUTHORIZATION_HEADER_SET, 'Authorization headers set for unknown (1.1.1.1).');
 				expect(next).to.have.been.calledOnce;
 				expect(next).to.have.been.calledWithExactly();
+
+				expect(req).to.not.have.property('orizuru');
 
 			});
 

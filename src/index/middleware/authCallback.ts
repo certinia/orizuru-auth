@@ -56,7 +56,7 @@ export function createMiddleware(app: Orizuru.IServer): RequestHandler {
 				code: req.query.code
 			});
 
-			setAuthorizationHeader(app, req)(token);
+			setAuthorizationHeaderAndIdentity(app, req, token);
 
 			next();
 
@@ -84,14 +84,18 @@ function validateRequest(req: Request) {
 
 }
 
-function setAuthorizationHeader(app: Orizuru.IServer, req: Request) {
+function setAuthorizationHeaderAndIdentity(app: Orizuru.IServer, req: Request, token: AccessTokenResponse) {
 
-	return (token: AccessTokenResponse) => {
+	req.headers.authorization = `Bearer ${token.access_token}`;
 
-		req.headers.authorization = `Bearer ${token.access_token}`;
+	if (token.userInfo) {
 
-		app.emit(EVENT_AUTHORIZATION_HEADER_SET, `Authorization headers set for ${token.userInfo ? token.userInfo.id : 'unknown'} (${req.ip}).`);
+		req.orizuru = {
+			identity: token.userInfo
+		};
 
-	};
+	}
+
+	app.emit(EVENT_AUTHORIZATION_HEADER_SET, `Authorization headers set for ${token.userInfo ? token.userInfo.id : 'unknown'} (${req.ip}).`);
 
 }

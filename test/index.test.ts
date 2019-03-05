@@ -46,6 +46,7 @@ describe('index', () => {
 			'flow',
 			'grant',
 			'middleware',
+			'openIdClient',
 			'revocation',
 			'userInfo'
 		]);
@@ -64,6 +65,10 @@ describe('index', () => {
 			'authCallback',
 			'grantChecker',
 			'tokenValidator'
+		]);
+
+		expect(index.openIdClient).to.have.keys([
+			'clearCache'
 		]);
 
 		expect(index.revocation).to.have.keys([

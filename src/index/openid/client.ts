@@ -123,8 +123,8 @@ export class OpenIdClient {
 	}
 
 	/**
-	 * Initalize the OpenIdClient by requesting the OpenID configuration for the OpenId
-	 * Issuer provided in the environment.
+	 * Initalize the OpenIdClient by requesting the [OpenID provider configuration information](https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderConfig)
+	 * for the issuer provided in the environment.
 	 */
 	public async init() {
 

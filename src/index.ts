@@ -35,6 +35,8 @@ import { authorizationUrlGenerator, createTokenGrantor as createWebServerTokenGr
 
 import { createTokenRevoker } from './index/revocation/revoke';
 
+import { clear } from './index/openid/cache';
+
 import { getToken } from './index/grant/grant';
 
 import { createMiddleware as authCallback } from './index/middleware/authCallback';
@@ -290,7 +292,7 @@ export interface JwtGrantParameters {
 }
 
 /**
- * A token that conforms to the [OpenID specification](https://openid.net/specs/openid-connect-basic-1_0-28.html#id_token).
+ * A token that conforms to the [OpenID specification](https://openid.net/specs/openid-connect-core-1_0.html#IDToken).
  *
  * It is returned in the `id_token` field of the `AccessTokenResponse`.
  */
@@ -434,7 +436,7 @@ export interface OpenIDToken {
 /**
  * Standard set of claims returned in a userinfo request.
  *
- * The standard claims conform to the [OpenID specification](http://openid.net/specs/openid-connect-basic-1_0-28.html#StandardClaims).
+ * The standard claims conform to the [OpenID specification](https://openid.net/specs/openid-connect-core-1_0.html#StandardClaims).
  */
 export interface OpenIDTokenWithStandardClaims extends OpenIDToken {
 
@@ -794,6 +796,21 @@ export const middleware = {
 	 * sets the user object onto the request object.
 	 */
 	tokenValidator
+
+};
+
+/**
+ * Returns the collection of OpenID client functions.
+ */
+export const openIdClient = {
+
+	/**
+	 * Clears the OpenID client cache.
+	 *
+	 * This will cause new OpenID clients to be created and the [OpenID provider configuration information](https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderConfig)
+	 * to be queried again.
+	 */
+	clearCache: clear
 
 };
 

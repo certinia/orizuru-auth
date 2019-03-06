@@ -38,6 +38,13 @@ interface OpenIdClientCache {
 	[index: string]: OpenIdClient;
 }
 
+/**
+ * Finds the OpenID client for the given environment.
+ *
+ * If the OpenID client is not found, a new client is created and stored in the cache.
+ *
+ * @param env The OpenID environment parameters.
+ */
 export async function findOrCreateOpenIdClient(env: Environment) {
 
 	const key = createKey(env);
@@ -53,6 +60,11 @@ export async function findOrCreateOpenIdClient(env: Environment) {
 
 }
 
+/**
+ * Clears the OpenID client cache.
+ *
+ * This results in the recreation of OpenID clients.
+ */
 export function clear() {
 	Object.keys(cache).forEach((key) => {
 		delete cache[key];
@@ -61,6 +73,11 @@ export function clear() {
 
 const cache: OpenIdClientCache = {};
 
+/**
+ * Creates a hash key for the given environment to use in the cache.
+ *
+ * @param env The OpenID environment parameters.
+ */
 function createKey(env: Environment) {
 	const { openidClientId, openidHTTPTimeout, openidIssuerURI } = env;
 	return createHash('sha1').update(`${openidIssuerURI}|${openidClientId}|${openidHTTPTimeout}`).digest('hex');

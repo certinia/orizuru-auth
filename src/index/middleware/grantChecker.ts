@@ -44,6 +44,9 @@ import { fail } from './common/fail';
  * authorise users and the user is authorised.
  *
  * @fires EVENT_GRANT_CHECKED, EVENT_DENIED
+ * @param app The Orizuru server instance.
+ * @returns A express middleware that checks an access token can be retrieved for
+ * the user on the request.
  */
 export function createMiddleware(app: Orizuru.IServer): RequestHandler {
 
@@ -71,6 +74,11 @@ export function createMiddleware(app: Orizuru.IServer): RequestHandler {
 
 }
 
+/**
+ * Checks that the user is present on the request and is valid.
+ *
+ * @param req The HTTP request.
+ */
 function checkUserIsOnTheRequest(req: Request) {
 
 	if (!req.orizuru) {
@@ -93,6 +101,13 @@ function checkUserIsOnTheRequest(req: Request) {
 
 }
 
+/**
+ * Sets the grant checked boolean on the Orizuru context.
+ *
+ * @fires EVENT_GRANT_CHECKED
+ * @param app The Orizuru server instance.
+ * @param req The HTTP request.
+ */
 function setGrant(app: Orizuru.IServer, req: Request) {
 
 	return () => {

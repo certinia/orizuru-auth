@@ -33,6 +33,9 @@ import { v4 as uuid } from 'uuid';
 
 import { Environment, OpenIDToken, User } from '../../..';
 
+/**
+ * The assertion types that can be created.
+ */
 enum AssertionType {
 	CLIENT = 'client',
 	GRANT = 'grant'

@@ -38,6 +38,11 @@ import { EVENT_DENIED } from '../../..';
  * Emits a denied event and calls next with the access denied error.
  *
  * @fires EVENT_DENIED
+ * @param app The Orizuru server instance.
+ * @param error The error that caused the failed request.
+ * @param req The HTTP request.
+ * @param res The HTTP response.
+ * @param next Callback argument to the middleware function.
  */
 export function fail(app: Orizuru.IServer, error: Error, req: Request, res: Response, next: NextFunction) {
 

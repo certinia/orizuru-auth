@@ -36,6 +36,7 @@ import { validate } from '../openid/validator/environment';
  * Uses the [OAuth 2.0 JWT Bearer Token Flow](https://help.salesforce.com/articleView?id=remoteaccess_oauth_jwt_flow.htm) to request an access token.
  *
  * @param [env] The OpenID environment parameters.
+ * @returns A function that requests an access token for a given user.
  */
 export function createTokenGrantor(env?: Environment): JwtBearerAccessTokenGrantor {
 

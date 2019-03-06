@@ -41,6 +41,8 @@ import { fail } from './common/fail';
  * the request object.
  *
  * @fires EVENT_TOKEN_VALIDATED, EVENT_DENIED
+ * @param app The Orizuru server instance.
+ * @returns An express middleware that validates an access token.
  */
 export function createMiddleware(app: Orizuru.IServer): RequestHandler {
 
@@ -69,7 +71,12 @@ export function createMiddleware(app: Orizuru.IServer): RequestHandler {
 	};
 
 }
-
+/**
+ * Extracts the access token from the incoming request.
+ *
+ * @param req The HTTP request.
+ * @returns The access token from the request authorization header.
+ */
 function extractAccessToken(req: Request) {
 
 	const authorizationHeader = req.headers && req.headers.authorization;
@@ -86,6 +93,14 @@ function extractAccessToken(req: Request) {
 
 }
 
+/**
+ * Sets the user on the Orizuru context.
+ *
+ * @fires EVENT_TOKEN_VALIDATED
+ * @param app The Orizuru server instance.
+ * @param req The HTTP request.
+ * @param user The user to set on the request.
+ */
 function setUserOnRequest(app: Orizuru.IServer, req: Request, user: User) {
 
 	const orizuru = req.orizuru || {} as Orizuru.Context;

@@ -41,6 +41,9 @@ import { fail } from './common/fail';
  * This can be used in tandem with the tokenValidator to set the user on the request.
  *
  * @fires EVENT_AUTHORIZATION_HEADER_SET
+ * @param app The Orizuru server instance.
+ * @returns An express middleware that exchanges a verification code for an access
+ * token.
  */
 export function createMiddleware(app: Orizuru.IServer): RequestHandler {
 
@@ -68,6 +71,11 @@ export function createMiddleware(app: Orizuru.IServer): RequestHandler {
 
 }
 
+/**
+ * Validates the request contains the verification code.
+ *
+ * @param req The HTTP request.
+ */
 function validateRequest(req: Request) {
 
 	if (!req.query) {
@@ -84,6 +92,17 @@ function validateRequest(req: Request) {
 
 }
 
+/**
+ * Sets the authorization header with the access_token from the response and emits
+ * an authorization header set event.
+ *
+ * If present, it also sets the user information in the Orizuru context identity property.
+ *
+ * @fires EVENT_AUTHORIZATION_HEADER_SET
+ * @param app The Orizuru server instance.
+ * @param req The HTTP request.
+ * @param token The access token response.
+ */
 function setAuthorizationHeaderAndIdentity(app: Orizuru.IServer, req: Request, token: AccessTokenResponse) {
 
 	req.headers.authorization = `Bearer ${token.access_token}`;

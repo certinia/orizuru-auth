@@ -36,6 +36,7 @@ import { validate } from '../openid/validator/environment';
  * Creates the authorization endpoint to initialise the [OAuth 2.0 Web Server Authentication Flow](https://help.salesforce.com/articleView?id=remoteaccess_oauth_web_server_flow.htm).
  *
  * @param [env] The OpenID environment parameters.
+ * @returns A function that generates the authorization URL with the given state and options.
  */
 export function authorizationUrlGenerator(env?: Environment): AuthUrlGenerator {
 
@@ -60,6 +61,7 @@ export function authorizationUrlGenerator(env?: Environment): AuthUrlGenerator {
  * using the client secret. However, this is configurable via the GrantOptions.
  *
  * @param [env] The OpenID environment parameters.
+ * @returns A function that exchanges a verification code for an access token.
  */
 export function createTokenGrantor(env?: Environment): AuthCodeAccessTokenGrantor {
 

@@ -25,7 +25,6 @@
  */
 
 import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import sinon, { SinonStub } from 'sinon';
 import sinonChai from 'sinon-chai';
 
@@ -40,7 +39,6 @@ import { createMiddleware } from '../../../src/index/middleware/grantChecker';
 const expect = chai.expect;
 const has = sinon.match.has;
 
-chai.use(chaiAsPromised);
 chai.use(sinonChai);
 
 interface ExtendedOrizuru extends Orizuru.Context {
@@ -139,7 +137,7 @@ describe('index/middleware/grantChecker', () => {
 			middleware = createMiddleware(app);
 		});
 
-		describe('should emit a deny event', () => {
+		describe('should fail the request', () => {
 
 			afterEach(() => {
 
@@ -240,7 +238,7 @@ describe('index/middleware/grantChecker', () => {
 					}
 				}, { verifySignature: false });
 				expect(app.emit).to.have.been.calledOnce;
-				expect(app.emit).to.have.been.calledWithExactly(EVENT_GRANT_CHECKED, 'Grant checked for test@test.com (1.1.1.1).');
+				expect(app.emit).to.have.been.calledWithExactly(EVENT_GRANT_CHECKED, 'Grant checked for user (test@test.com) [1.1.1.1].');
 				expect(next).to.have.been.calledOnce;
 				expect(next).to.have.been.calledWithExactly();
 

@@ -25,7 +25,6 @@
  */
 
 import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import sinon, { SinonStub } from 'sinon';
 import sinonChai from 'sinon-chai';
 
@@ -40,7 +39,6 @@ import { createMiddleware } from '../../../src/index/middleware/authCallback';
 const expect = chai.expect;
 const has = sinon.match.has;
 
-chai.use(chaiAsPromised);
 chai.use(sinonChai);
 
 describe('index/middleware/authCallback', () => {
@@ -125,7 +123,7 @@ describe('index/middleware/authCallback', () => {
 
 		});
 
-		describe('should emit a deny event', () => {
+		describe('should fail the request', () => {
 
 			afterEach(() => {
 
@@ -228,7 +226,7 @@ describe('index/middleware/authCallback', () => {
 					code: 'testCode'
 				});
 				expect(app.emit).to.have.been.calledOnce;
-				expect(app.emit).to.have.been.calledWithExactly(EVENT_AUTHORIZATION_HEADER_SET, 'Authorization headers set for 005xx000001SwiUAAS (1.1.1.1).');
+				expect(app.emit).to.have.been.calledWithExactly(EVENT_AUTHORIZATION_HEADER_SET, 'Authorization headers set for user (005xx000001SwiUAAS) [1.1.1.1].');
 				expect(next).to.have.been.calledOnce;
 				expect(next).to.have.been.calledWithExactly();
 
@@ -258,7 +256,7 @@ describe('index/middleware/authCallback', () => {
 					code: 'testCode'
 				});
 				expect(app.emit).to.have.been.calledOnce;
-				expect(app.emit).to.have.been.calledWithExactly(EVENT_AUTHORIZATION_HEADER_SET, 'Authorization headers set for unknown (1.1.1.1).');
+				expect(app.emit).to.have.been.calledWithExactly(EVENT_AUTHORIZATION_HEADER_SET, 'Authorization headers set for user (unknown) [1.1.1.1].');
 				expect(next).to.have.been.calledOnce;
 				expect(next).to.have.been.calledWithExactly();
 

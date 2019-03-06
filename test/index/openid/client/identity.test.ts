@@ -25,7 +25,6 @@
  */
 
 import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
 
@@ -35,7 +34,6 @@ import { decodeIdToken, parseUserInfo, verifySignature } from '../../../../src/i
 
 const expect = chai.expect;
 
-chai.use(chaiAsPromised);
 chai.use(sinonChai);
 
 describe('index/openid/client/identity', () => {

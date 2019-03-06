@@ -25,7 +25,6 @@
  */
 
 import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import sinon, { SinonStub, SinonStubbedInstance } from 'sinon';
 import sinonChai from 'sinon-chai';
 
@@ -38,7 +37,6 @@ import * as cache from '../../../src/index/openid/cache';
 
 const expect = chai.expect;
 
-chai.use(chaiAsPromised);
 chai.use(sinonChai);
 
 describe('index/openid/cache', () => {

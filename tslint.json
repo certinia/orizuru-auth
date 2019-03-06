@@ -5,6 +5,12 @@
 	],
 	"jsRules": {},
 	"rules": {
+		"completed-docs": [
+			true,
+			"enums",
+			"functions",
+			"methods"
+		],
 		"indent": [
 			true,
 			"tabs",

@@ -62,7 +62,7 @@ export function createMiddleware(app: Orizuru.IServer): RequestHandler {
 				verifySignature: false
 			});
 
-			setGrant(app, req)();
+			setGrant(app, req);
 
 			next();
 
@@ -110,13 +110,9 @@ function checkUserIsOnTheRequest(req: Request) {
  */
 function setGrant(app: Orizuru.IServer, req: Request) {
 
-	return () => {
+	const orizuru = req.orizuru!;
+	orizuru.grantChecked = true;
 
-		const orizuru = req.orizuru!;
-		orizuru.grantChecked = true;
-
-		app.emit(EVENT_GRANT_CHECKED, `Grant checked for ${orizuru.user!.username} (${req.ip}).`);
-
-	};
+	app.emit(EVENT_GRANT_CHECKED, `Grant checked for user (${orizuru.user!.username}) [${req.ip}].`);
 
 }

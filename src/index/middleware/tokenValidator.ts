@@ -107,6 +107,6 @@ function setUserOnRequest(app: Orizuru.IServer, req: Request, user: User) {
 	orizuru.user = user;
 	req.orizuru = orizuru;
 
-	app.emit(EVENT_TOKEN_VALIDATED, `Token validated for ${user.username} (${req.ip}).`);
+	app.emit(EVENT_TOKEN_VALIDATED, `Token validated for user (${user.username}) [${req.ip}].`);
 
 }

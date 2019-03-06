@@ -115,6 +115,6 @@ function setAuthorizationHeaderAndIdentity(app: Orizuru.IServer, req: Request, t
 
 	}
 
-	app.emit(EVENT_AUTHORIZATION_HEADER_SET, `Authorization headers set for ${token.userInfo ? token.userInfo.id : 'unknown'} (${req.ip}).`);
+	app.emit(EVENT_AUTHORIZATION_HEADER_SET, `Authorization headers set for user (${token.userInfo ? token.userInfo.id : 'unknown'}) [${req.ip}].`);
 
 }

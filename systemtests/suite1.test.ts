@@ -25,7 +25,6 @@
  */
 
 import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import { Browser, launch } from 'puppeteer';
 import sinon, { SinonStub } from 'sinon';
 import sinonChai from 'sinon-chai';
@@ -39,11 +38,10 @@ import path from 'path';
 import { json, NextFunction, Request, Response, Server, urlencoded } from '@financialforcedev/orizuru';
 import { Transport } from '@financialforcedev/orizuru-transport-rabbitmq';
 
-import { AuthOptions, Environment, EVENT_AUTHORIZATION_HEADER_SET, EVENT_DENIED, EVENT_GRANT_CHECKED, EVENT_TOKEN_VALIDATED, flow, grant, middleware, ResponseFormat, userInfo } from '../src/index';
+import { AuthOptions, Environment, EVENT_AUTHORIZATION_HEADER_SET, EVENT_DENIED, EVENT_GRANT_CHECKED, EVENT_TOKEN_VALIDATED, flow, grant, middleware } from '../src/index';
 
 const expect = chai.expect;
 
-chai.use(chaiAsPromised);
 chai.use(sinonChai);
 
 describe('Suite 1', () => {
@@ -61,7 +59,6 @@ describe('Suite 1', () => {
 		const identityEnv = config.get<Environment>('openid.identity');
 
 		const generateAuthorizationUrl = flow.webServer.authorizationUrlGenerator(identityEnv);
-		const requestUserInfo = userInfo.createUserInfoRequester(identityEnv);
 
 		grantCheckerStub = sinon.stub();
 
@@ -78,20 +75,11 @@ describe('Suite 1', () => {
 		});
 
 		// Add the listeners
-		server.on(EVENT_AUTHORIZATION_HEADER_SET, (args) => {
-			debugInstance(args);
-		});
-
-		server.on(EVENT_DENIED, (args) => {
-			debugInstance(args);
-		});
-
-		server.on(EVENT_GRANT_CHECKED, (args) => {
-			debugInstance(args);
-		});
-
-		server.on(EVENT_TOKEN_VALIDATED, (args) => {
-			debugInstance(args);
+		const events = [EVENT_AUTHORIZATION_HEADER_SET, EVENT_DENIED, EVENT_GRANT_CHECKED, EVENT_TOKEN_VALIDATED];
+		events.map((event) => {
+			server.on(event, (args) => {
+				debugInstance(args);
+			});
 		});
 
 		server.addRoute({
@@ -138,12 +126,7 @@ describe('Suite 1', () => {
 				}
 			],
 			responseWriter: (app) => async (error, req, res) => {
-
-				const token = req.headers.authorization!.replace('Bearer ', '');
-
-				const result = await requestUserInfo(token, { responseFormat: ResponseFormat.JSON });
-				res.send(`<html><body><div class="auth-finished"><pre>${JSON.stringify(result, undefined, '\t')}</pre></div></body></html>`);
-
+				res.send(`<html><body><div class="auth-finished"><pre>${JSON.stringify(req.orizuru)}</pre></div></body></html>`);
 			},
 			schema: {
 				fields: [],
@@ -214,11 +197,23 @@ describe('Suite 1', () => {
 			page.waitForSelector('.auth-finished')
 		]);
 
+		const contents = await page.content();
+		const regex = new RegExp('<pre>(.*)</pre>');
+		const matches = regex.exec(contents) as RegExpExecArray;
+
 		// Then
+		expect(matches).not.to.be.null;
+		expect(matches).to.have.length(2);
+
+		const orizuru = JSON.parse(matches.pop() as string);
+		expect(orizuru).to.have.property('grantChecked', true);
+		expect(orizuru).to.have.property('user').that.has.property('username', username);
+		expect(orizuru).to.have.property('user').that.has.property('organizationId');
+
 		expect(server.emit).to.have.been.calledThrice;
-		expect(server.emit).to.have.been.calledWithExactly(EVENT_AUTHORIZATION_HEADER_SET, `Authorization headers set for ${userId} (::1).`);
-		expect(server.emit).to.have.been.calledWithExactly(EVENT_TOKEN_VALIDATED, `Token validated for ${username} (::1).`);
-		expect(server.emit).to.have.been.calledWithExactly(EVENT_GRANT_CHECKED, `Grant checked for ${username} (::1).`);
+		expect(server.emit).to.have.been.calledWithExactly(EVENT_AUTHORIZATION_HEADER_SET, `Authorization headers set for user (${userId}) [::1].`);
+		expect(server.emit).to.have.been.calledWithExactly(EVENT_TOKEN_VALIDATED, `Token validated for user (${username}) [::1].`);
+		expect(server.emit).to.have.been.calledWithExactly(EVENT_GRANT_CHECKED, `Grant checked for user (${username}) [::1].`);
 
 	});
 
@@ -302,8 +297,8 @@ describe('Suite 1', () => {
 
 		// Then
 		expect(server.emit).to.have.been.calledThrice;
-		expect(server.emit).to.have.been.calledWithExactly(EVENT_AUTHORIZATION_HEADER_SET, `Authorization headers set for ${userId} (::1).`);
-		expect(server.emit).to.have.been.calledWithExactly(EVENT_TOKEN_VALIDATED, `Token validated for ${username} (::1).`);
+		expect(server.emit).to.have.been.calledWithExactly(EVENT_AUTHORIZATION_HEADER_SET, `Authorization headers set for user (${userId}) [::1].`);
+		expect(server.emit).to.have.been.calledWithExactly(EVENT_TOKEN_VALIDATED, `Token validated for user (${username}) [::1].`);
 		expect(server.emit).to.have.been.calledWithExactly(EVENT_DENIED, `Access denied to: ::1. Error: Invalid grant for user (${username}). Caused by: Failed to obtain grant: invalid_grant (user hasn't approved this consumer).`);
 
 	});

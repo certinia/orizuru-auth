@@ -108,11 +108,9 @@ function setAuthorizationHeaderAndIdentity(app: Orizuru.IServer, req: Request, t
 	req.headers.authorization = `Bearer ${token.access_token}`;
 
 	if (token.userInfo) {
-
-		req.orizuru = {
-			identity: token.userInfo
-		};
-
+		const orizuru = req.orizuru || {};
+		req.orizuru = orizuru;
+		orizuru.identity = token.userInfo;
 	}
 
 	app.emit(EVENT_AUTHORIZATION_HEADER_SET, `Authorization headers set for user (${token.userInfo ? token.userInfo.id : 'unknown'}) [${req.ip}].`);

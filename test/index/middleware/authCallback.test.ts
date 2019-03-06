@@ -30,7 +30,7 @@ import sinonChai from 'sinon-chai';
 
 import { Request, RequestHandler, Response } from '@financialforcedev/orizuru';
 
-import { Environment, EVENT_AUTHORIZATION_HEADER_SET } from '../../../src';
+import { AccessTokenResponse, Environment, EVENT_AUTHORIZATION_HEADER_SET } from '../../../src';
 import * as webServer from '../../../src/index/flow/webServer';
 import * as fail from '../../../src/index/middleware/common/fail';
 
@@ -187,12 +187,13 @@ describe('index/middleware/authCallback', () => {
 
 		});
 
-		describe('should call next if the code is exchanged for an access token', () => {
+		describe('should call next if the code is exchanged for an access token and update the authorization header', () => {
 
-			it('and update the request authorization header and orizuru identity property', async () => {
+			let accessTokenResponse: AccessTokenResponse;
 
-				// Given
-				requestAccessTokenStub.resolves({
+			beforeEach(() => {
+
+				accessTokenResponse = {
 					access_token: '00Dx0000000BV7z!AR8AQP0jITN80ESEsj5EbaZTFG0RNBaT1cyWk7TrqoDjoNIWQ2ME_sTZzBjfmOE6zMHq6y8PIW4eWze9JksNEkWUl.Cju7m4',
 					id: 'https://login.salesforce.com/id/00Dxx0000001gPLEAY/005xx000001SwiUAAS',
 					instance_url: 'https://yourInstance.salesforce.com/',
@@ -206,8 +207,15 @@ describe('index/middleware/authCallback', () => {
 						url: 'https://login.salesforce.com/id/00Dxx0000001gPLEAY/005xx000001SwiUAAS',
 						validated: true
 					}
-				});
+				};
 
+				requestAccessTokenStub.resolves(accessTokenResponse);
+
+			});
+
+			it('adding the orizuru identity property', async () => {
+
+				// Given
 				// When
 				await middleware(req, res, next);
 
@@ -230,20 +238,46 @@ describe('index/middleware/authCallback', () => {
 				expect(next).to.have.been.calledOnce;
 				expect(next).to.have.been.calledWithExactly();
 
+				expect(req.orizuru).to.not.have.property('grantChecked');
+
+			});
+
+			it('adding the orizuru identity property respecting an existing orizuru property', async () => {
+
+				// Given
+				req.orizuru = {
+					grantChecked: true
+				};
+
+				// When
+				await middleware(req, res, next);
+
+				// Then
+				expect(req.headers).to.have.property('authorization', 'Bearer 00Dx0000000BV7z!AR8AQP0jITN80ESEsj5EbaZTFG0RNBaT1cyWk7TrqoDjoNIWQ2ME_sTZzBjfmOE6zMHq6y8PIW4eWze9JksNEkWUl.Cju7m4');
+				expect(req).to.have.property('orizuru');
+				expect(req.orizuru).to.have.property('identity').that.eqls({
+					id: '005xx000001SwiUAAS',
+					organizationId: '00Dxx0000001gPLEAY',
+					url: 'https://login.salesforce.com/id/00Dxx0000001gPLEAY/005xx000001SwiUAAS',
+					validated: true
+				});
+				expect(req.orizuru).to.have.property('grantChecked', true);
+
+				expect(requestAccessTokenStub).to.have.been.calledOnce;
+				expect(requestAccessTokenStub).to.have.been.calledWithExactly({
+					code: 'testCode'
+				});
+				expect(app.emit).to.have.been.calledOnce;
+				expect(app.emit).to.have.been.calledWithExactly(EVENT_AUTHORIZATION_HEADER_SET, 'Authorization headers set for user (005xx000001SwiUAAS) [1.1.1.1].');
+				expect(next).to.have.been.calledOnce;
+				expect(next).to.have.been.calledWithExactly();
+
 			});
 
 			it('and emit an event with the user as unknown if the userinfo has not been parsed', async () => {
 
 				// Given
-				requestAccessTokenStub.resolves({
-					access_token: '00Dx0000000BV7z!AR8AQP0jITN80ESEsj5EbaZTFG0RNBaT1cyWk7TrqoDjoNIWQ2ME_sTZzBjfmOE6zMHq6y8PIW4eWze9JksNEkWUl.Cju7m4',
-					id: 'https://login.salesforce.com/id/00Dxx0000001gPLEAY/005xx000001SwiUAAS',
-					instance_url: 'https://yourInstance.salesforce.com/',
-					issued_at: '1278448384422',
-					scope: 'id api refresh_token',
-					signature: 'R9e8hftsV8AqMd5M3ddTXsXNr6NwHoye4VeNY8Tqs44=',
-					token_type: 'Bearer'
-				});
+				delete accessTokenResponse.userInfo;
 
 				// When
 				await middleware(req, res, next);

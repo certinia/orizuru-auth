@@ -103,7 +103,7 @@ function extractAccessToken(req: Request) {
  */
 function setUserOnRequest(app: Orizuru.IServer, req: Request, user: User) {
 
-	const orizuru = req.orizuru || {} as Orizuru.Context;
+	const orizuru = req.orizuru || {};
 	orizuru.user = user;
 	req.orizuru = orizuru;
 

@@ -45,7 +45,7 @@ chai.use(sinonChai);
 describe('index/grant/grant', () => {
 
 	let env: Environment;
-	let cacheStub: SinonStub;
+	let cacheStub: SinonStub<[Environment], Promise<OpenIdClient>>;
 	let openIdClientStubInstance: SinonStubbedInstance<OpenIdClient>;
 
 	beforeEach(() => {

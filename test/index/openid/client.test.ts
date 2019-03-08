@@ -29,7 +29,7 @@ import chaiAsPromised from 'chai-as-promised';
 import sinon, { SinonStub } from 'sinon';
 import sinonChai from 'sinon-chai';
 
-import { AxiosResponse, default as axios } from 'axios';
+import { AxiosRequestConfig, AxiosResponse, default as axios } from 'axios';
 
 import { Environment, GrantOptions } from '../../../src';
 import * as identity from '../../../src/index/openid/client/identity';
@@ -47,7 +47,7 @@ describe('index/openid/client', () => {
 	let env: Environment;
 	let openidClient: OpenIdClient;
 
-	let axiosGetStub: SinonStub;
+	let axiosGetStub: SinonStub<[string, (AxiosRequestConfig | undefined)?]>;
 
 	beforeEach(() => {
 

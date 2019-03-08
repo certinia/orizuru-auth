@@ -29,6 +29,7 @@ import sinon, { SinonStub, SinonStubbedInstance } from 'sinon';
 import sinonChai from 'sinon-chai';
 
 import crypto, { Hash } from 'crypto';
+import { TransformOptions } from 'stream';
 
 import { Environment } from '../../../src';
 import * as client from '../../../src/index/openid/client';
@@ -43,7 +44,7 @@ describe('index/openid/cache', () => {
 
 	let productionEnv: Environment;
 	let sandboxEnvironment: Environment;
-	let createHashStub: SinonStub;
+	let createHashStub: SinonStub<[string, (TransformOptions | undefined)?], crypto.Hash>;
 	let digestStub: SinonStub;
 	let updateStub: SinonStub;
 	let openIdClientStubInstance: SinonStubbedInstance<client.OpenIdClient>;

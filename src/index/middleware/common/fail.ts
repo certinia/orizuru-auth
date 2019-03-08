@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2017-2019, FinancialForce.com, inc
+/*
+ * Copyright (c) 2019, FinancialForce.com, inc
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -24,61 +24,35 @@
  *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import chai from 'chai';
+/**
+ * @module middleware/common/fail
+ */
 
-import * as index from '../src';
+import { NextFunction, Request, Response } from '@financialforcedev/orizuru';
 
-const expect = chai.expect;
+import { EVENT_DENIED } from '../../..';
 
-describe('index', () => {
+/**
+ * Helper function for a failed request.
+ *
+ * Emits a denied event and calls next with the access denied error.
+ *
+ * @fires EVENT_DENIED
+ * @param app The Orizuru server instance.
+ * @param error The error that caused the failed request.
+ * @param req The HTTP request.
+ * @param res The HTTP response.
+ * @param next Callback argument to the middleware function.
+ */
+export function fail(app: Orizuru.IServer, error: Error, req: Request, res: Response, next: NextFunction) {
 
-	it('should contain the correct parts', () => {
+	const message = `Access denied to: ${req.ip ? req.ip : 'unknown'}. Error: ${error.message}`;
+	const accessDeniedError = new Error(message);
 
-		// Given
-		// When
-		// Then
-		expect(index).to.have.keys([
-			'EVENT_AUTHORIZATION_HEADER_SET',
-			'EVENT_DENIED',
-			'EVENT_GRANT_CHECKED',
-			'EVENT_TOKEN_VALIDATED',
-			'ResponseFormat',
-			'flow',
-			'grant',
-			'middleware',
-			'openIdClient',
-			'revocation',
-			'userInfo'
-		]);
+	app.emit(EVENT_DENIED, message);
 
-		expect(index.flow).to.have.keys([
-			'jwtBearerToken',
-			'refreshToken',
-			'webServer'
-		]);
+	// Rather than returning a 401 directly, we need to call next with the error.
+	// This should then find the appropriate error handler.
+	next(accessDeniedError);
 
-		expect(index.grant).to.have.keys([
-			'getToken'
-		]);
-
-		expect(index.middleware).to.have.keys([
-			'authCallback',
-			'grantChecker',
-			'tokenValidator'
-		]);
-
-		expect(index.openIdClient).to.have.keys([
-			'clearCache'
-		]);
-
-		expect(index.revocation).to.have.keys([
-			'createTokenRevoker'
-		]);
-
-		expect(index.userInfo).to.have.keys([
-			'createUserInfoRequester'
-		]);
-
-	});
-
-});
+}

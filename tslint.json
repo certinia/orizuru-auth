@@ -5,6 +5,12 @@
 	],
 	"jsRules": {},
 	"rules": {
+		"completed-docs": [
+			true,
+			"enums",
+			"functions",
+			"methods"
+		],
 		"indent": [
 			true,
 			"tabs",
@@ -12,7 +18,7 @@
 		],
 		"interface-name": false,
 		"max-line-length": false,
-		"no-any": false,
+		"no-any": true,
 		"no-namespace": [
 			false,
 			"allow-declarations"

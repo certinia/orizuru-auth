@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2017-2019, FinancialForce.com, inc
+/*
+ * Copyright (c) 2019, FinancialForce.com, inc
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -24,61 +24,61 @@
  *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import chai from 'chai';
+/**
+ * @module openid/cache
+ */
 
-import * as index from '../src';
+import { createHash } from 'crypto';
 
-const expect = chai.expect;
+import { Environment } from '..';
 
-describe('index', () => {
+import { OpenIdClient } from './client';
 
-	it('should contain the correct parts', () => {
+interface OpenIdClientCache {
+	[index: string]: OpenIdClient;
+}
 
-		// Given
-		// When
-		// Then
-		expect(index).to.have.keys([
-			'EVENT_AUTHORIZATION_HEADER_SET',
-			'EVENT_DENIED',
-			'EVENT_GRANT_CHECKED',
-			'EVENT_TOKEN_VALIDATED',
-			'ResponseFormat',
-			'flow',
-			'grant',
-			'middleware',
-			'openIdClient',
-			'revocation',
-			'userInfo'
-		]);
+/**
+ * Finds the OpenID client for the given environment.
+ *
+ * If the OpenID client is not found, a new client is created and stored in the cache.
+ *
+ * @param env The OpenID environment parameters.
+ */
+export async function findOrCreateOpenIdClient(env: Environment) {
 
-		expect(index.flow).to.have.keys([
-			'jwtBearerToken',
-			'refreshToken',
-			'webServer'
-		]);
+	const key = createKey(env);
 
-		expect(index.grant).to.have.keys([
-			'getToken'
-		]);
+	let client = cache[key];
+	if (!client) {
+		client = new OpenIdClient(env);
+		await client.init();
+		cache[key] = client;
+	}
 
-		expect(index.middleware).to.have.keys([
-			'authCallback',
-			'grantChecker',
-			'tokenValidator'
-		]);
+	return client;
 
-		expect(index.openIdClient).to.have.keys([
-			'clearCache'
-		]);
+}
 
-		expect(index.revocation).to.have.keys([
-			'createTokenRevoker'
-		]);
-
-		expect(index.userInfo).to.have.keys([
-			'createUserInfoRequester'
-		]);
-
+/**
+ * Clears the OpenID client cache.
+ *
+ * This results in the recreation of OpenID clients.
+ */
+export function clear() {
+	Object.keys(cache).forEach((key) => {
+		delete cache[key];
 	});
+}
 
-});
+const cache: OpenIdClientCache = {};
+
+/**
+ * Creates a hash key for the given environment to use in the cache.
+ *
+ * @param env The OpenID environment parameters.
+ */
+function createKey(env: Environment) {
+	const { openidClientId, openidHTTPTimeout, openidIssuerURI } = env;
+	return createHash('sha1').update(`${openidIssuerURI}|${openidClientId}|${openidHTTPTimeout}`).digest('hex');
+}

@@ -4,9 +4,8 @@
 		"ts"
 	],
 	"require": [
-		"source-map-support/register",
 		"ts-node/register"
 	],
-	"spec": "test/**/*.test.ts",
-	"timeout": 5000
+	"spec": "systemtests/**/*.test.ts",
+	"timeout": 10000
 }

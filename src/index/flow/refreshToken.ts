@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2017-2019, FinancialForce.com, inc
+/*
+ * Copyright (c) 2019, FinancialForce.com, inc
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -24,61 +24,37 @@
  *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import chai from 'chai';
+/**
+ * @module flow/refreshToken
+ */
 
-import * as index from '../src';
+import { AccessTokenResponse, Environment, GrantOptions, RefreshAccessTokenGrantor, RefreshGrantParameters } from '..';
+import { findOrCreateOpenIdClient } from '../openid/cache';
+import { validate } from '../openid/validator/environment';
 
-const expect = chai.expect;
+/**
+ * Uses the [OAuth 2.0 Refresh Token Flow](https://help.salesforce.com/articleView?id=remoteaccess_oauth_refresh_token_flow.htm) to renew tokens issued by the web server or
+ * user-agent flows.
+ *
+ * @param [env] The OpenID environment parameters.
+ * @returns A function that requests an access token from the given refresh token.
+ */
+export function createTokenGrantor(env: Environment): RefreshAccessTokenGrantor {
 
-describe('index', () => {
+	const validatedEnvironment = validate(env);
 
-	it('should contain the correct parts', () => {
+	return async function requestAccessToken(params: RefreshGrantParameters, opts?: GrantOptions): Promise<AccessTokenResponse> {
 
-		// Given
-		// When
-		// Then
-		expect(index).to.have.keys([
-			'EVENT_AUTHORIZATION_HEADER_SET',
-			'EVENT_DENIED',
-			'EVENT_GRANT_CHECKED',
-			'EVENT_TOKEN_VALIDATED',
-			'ResponseFormat',
-			'flow',
-			'grant',
-			'middleware',
-			'openIdClient',
-			'revocation',
-			'userInfo'
-		]);
+		const client = await findOrCreateOpenIdClient(validatedEnvironment);
 
-		expect(index.flow).to.have.keys([
-			'jwtBearerToken',
-			'refreshToken',
-			'webServer'
-		]);
+		const accessTokenResponse = await client.grant({
+			grantType: 'refresh',
+			refreshToken: params.refreshToken
+		}, opts);
 
-		expect(index.grant).to.have.keys([
-			'getToken'
-		]);
+		accessTokenResponse.refresh_token = params.refreshToken;
+		return accessTokenResponse;
 
-		expect(index.middleware).to.have.keys([
-			'authCallback',
-			'grantChecker',
-			'tokenValidator'
-		]);
+	};
 
-		expect(index.openIdClient).to.have.keys([
-			'clearCache'
-		]);
-
-		expect(index.revocation).to.have.keys([
-			'createTokenRevoker'
-		]);
-
-		expect(index.userInfo).to.have.keys([
-			'createUserInfoRequester'
-		]);
-
-	});
-
-});
+}

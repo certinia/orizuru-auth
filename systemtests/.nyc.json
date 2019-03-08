@@ -1,21 +1,23 @@
 {
 	"all": true,
-	"branches": 100,
+	"branches": 75,
+	"cache": true,
 	"check-coverage": true,
 	"exclude": [
-		"coverage*",
-		"dist",
-		"doc",
-		"systemtests",
 		"**/*.d.ts"
 	],
 	"extension": [
 		".ts"
 	],
-	"functions": 100,
+	"functions": 75,
+	"include": [
+		"src",
+		"systemtests"
+	],
 	"instrument": true,
-	"lines": 100,
-	"per-file": true,
+	"lines": 75,
+	"per-file": false,
+	"report-dir": "coverage-systemtests",
 	"reporter": [
 		"lcov",
 		"text",
@@ -24,6 +26,5 @@
 	"require": [
 		"ts-node/register"
 	],
-	"sourceMap": true,
-	"statements": 100
+	"statements": 75
 }

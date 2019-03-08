@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2017-2019, FinancialForce.com, inc
+/*
+ * Copyright (c) 2019, FinancialForce.com, inc
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -24,61 +24,41 @@
  *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import chai from 'chai';
+/**
+ * @module flow/jwtBearerToken
+ */
 
-import * as index from '../src';
+import { AccessTokenResponse, Environment, GrantOptions, JwtBearerAccessTokenGrantor, JwtGrantParameters } from '..';
+import { findOrCreateOpenIdClient } from '../openid/cache';
+import { validate } from '../openid/validator/environment';
 
-const expect = chai.expect;
+/**
+ * Uses the [OAuth 2.0 JWT Bearer Token Flow](https://help.salesforce.com/articleView?id=remoteaccess_oauth_jwt_flow.htm) to request an access token.
+ *
+ * @param [env] The OpenID environment parameters.
+ * @returns A function that requests an access token for a given user.
+ */
+export function createTokenGrantor(env?: Environment): JwtBearerAccessTokenGrantor {
 
-describe('index', () => {
+	const validatedEnvironment = validate(env);
 
-	it('should contain the correct parts', () => {
+	return async function requestAccessToken(params: JwtGrantParameters, opts?: GrantOptions): Promise<AccessTokenResponse> {
 
-		// Given
-		// When
-		// Then
-		expect(index).to.have.keys([
-			'EVENT_AUTHORIZATION_HEADER_SET',
-			'EVENT_DENIED',
-			'EVENT_GRANT_CHECKED',
-			'EVENT_TOKEN_VALIDATED',
-			'ResponseFormat',
-			'flow',
-			'grant',
-			'middleware',
-			'openIdClient',
-			'revocation',
-			'userInfo'
-		]);
+		try {
 
-		expect(index.flow).to.have.keys([
-			'jwtBearerToken',
-			'refreshToken',
-			'webServer'
-		]);
+			const client = await findOrCreateOpenIdClient(validatedEnvironment);
 
-		expect(index.grant).to.have.keys([
-			'getToken'
-		]);
+			const accessTokenResponse = await client.grant({
+				grantType: 'jwt',
+				user: params.user
+			}, opts);
 
-		expect(index.middleware).to.have.keys([
-			'authCallback',
-			'grantChecker',
-			'tokenValidator'
-		]);
+			return accessTokenResponse;
 
-		expect(index.openIdClient).to.have.keys([
-			'clearCache'
-		]);
+		} catch (error) {
+			throw new Error(`Invalid grant for user (${params.user.username}). Caused by: ${error.message}`);
+		}
 
-		expect(index.revocation).to.have.keys([
-			'createTokenRevoker'
-		]);
+	};
 
-		expect(index.userInfo).to.have.keys([
-			'createUserInfoRequester'
-		]);
-
-	});
-
-});
+}

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2017-2019, FinancialForce.com, inc
  * All rights reserved.
  *
@@ -24,61 +24,63 @@
  *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import chai from 'chai';
+/**
+ * @module openid/validator/environment
+ */
 
-import * as index from '../src';
+import { Environment } from '../../..';
 
-const expect = chai.expect;
+/**
+ * Validates the environment and throws an error if it is invalid.
+ *
+ * @param [env] The OpenID environment parameters.
+ */
+export function validate(env?: Environment) {
 
-describe('index', () => {
+	if (!env) {
+		throw new Error('Missing required object parameter.');
+	}
 
-	it('should contain the correct parts', () => {
+	if (env.jwtSigningKey === '') {
+		throw new Error('Invalid parameter: jwtSigningKey cannot be empty.');
+	}
 
-		// Given
-		// When
-		// Then
-		expect(index).to.have.keys([
-			'EVENT_AUTHORIZATION_HEADER_SET',
-			'EVENT_DENIED',
-			'EVENT_GRANT_CHECKED',
-			'EVENT_TOKEN_VALIDATED',
-			'ResponseFormat',
-			'flow',
-			'grant',
-			'middleware',
-			'openIdClient',
-			'revocation',
-			'userInfo'
-		]);
+	if (!env.jwtSigningKey) {
+		throw new Error('Missing required string parameter: jwtSigningKey.');
+	}
 
-		expect(index.flow).to.have.keys([
-			'jwtBearerToken',
-			'refreshToken',
-			'webServer'
-		]);
+	if (env.openidClientId === '') {
+		throw new Error('Invalid parameter: openidClientId cannot be empty.');
+	}
 
-		expect(index.grant).to.have.keys([
-			'getToken'
-		]);
+	if (!env.openidClientId) {
+		throw new Error('Missing required string parameter: openidClientId.');
+	}
 
-		expect(index.middleware).to.have.keys([
-			'authCallback',
-			'grantChecker',
-			'tokenValidator'
-		]);
+	if (env.openidClientSecret === '') {
+		throw new Error('Invalid parameter: openidClientSecret cannot be empty.');
+	}
 
-		expect(index.openIdClient).to.have.keys([
-			'clearCache'
-		]);
+	if (!env.openidClientSecret) {
+		throw new Error('Missing required string parameter: openidClientSecret.');
+	}
 
-		expect(index.revocation).to.have.keys([
-			'createTokenRevoker'
-		]);
+	if (!env.openidHTTPTimeout) {
+		throw new Error('Missing required number parameter: openidHTTPTimeout.');
+	}
 
-		expect(index.userInfo).to.have.keys([
-			'createUserInfoRequester'
-		]);
+	if (typeof env.openidHTTPTimeout !== 'number') {
+		throw new Error('Invalid parameter: openidHTTPTimeout is not a number.');
+	}
 
-	});
+	if (env.openidIssuerURI === '') {
+		throw new Error('Invalid parameter: openidIssuerURI cannot be empty.');
+	}
 
-});
+	if (!env.openidIssuerURI) {
+		throw new Error('Missing required string parameter: openidIssuerURI.');
+	}
+
+	return env;
+
+}

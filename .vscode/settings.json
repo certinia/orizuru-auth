@@ -1,26 +1,23 @@
 {
+	"editor.codeActionsOnSave": {
+		"source.fixAll.tslint": true
+	},
 	"editor.detectIndentation": false,
 	"editor.formatOnSave": true,
 	"editor.insertSpaces": false,
 	"files.exclude": {
-		"**/.nyc_output": true,
-		"**/.git": true,
-		"**/.svn": true,
-		"**/.hg": true,
-		"**/CVS": true,
 		"**/.DS_Store": true,
-		"**/coverage": true
+		"**/.git": true,
+		"**/.hg": true,
+		"**/.nyc_output": true,
+		"**/.svn": true,
+		"**/coverage*": true,
+		"**/CVS": true
 	},
 	"files.insertFinalNewline": true,
 	"lcov.path": "coverage/lcov.info",
-	"lcov.watch": [
-		{
-			"pattern": "**/*.js",
-			"command": "npm run test-coverage"
-		}
-	],
-	"runCurrentTest.run": "npm run single-test -- ${relativeTestPath}",
 	"terminal.integrated.scrollback": 10000,
+	"typescript.tsdk": "node_modules/typescript/lib",
 	"workbench.colorCustomizations": {
 		"activityBar.foreground": "#80FF71"
 	}

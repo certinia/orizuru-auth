@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2017-2019, FinancialForce.com, inc
+/*
+ * Copyright (c) 2019, FinancialForce.com, inc
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -24,61 +24,30 @@
  *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import chai from 'chai';
+/**
+ * @module revocation/revoke
+ */
 
-import * as index from '../src';
+import { Environment } from '..';
 
-const expect = chai.expect;
+import { findOrCreateOpenIdClient } from '../openid/cache';
+import { validate } from '../openid/validator/environment';
 
-describe('index', () => {
+/**
+ * [Revokes access tokens](https://help.salesforce.com/articleView?id=remoteaccess_revoke_token.htm)
+ * so that users can no longer access Salesforce.
+ *
+ * @param [env] The OpenID environment parameters.
+ */
+export function createTokenRevoker(env: Environment) {
 
-	it('should contain the correct parts', () => {
+	const validatedEnvironment = validate(env);
 
-		// Given
-		// When
-		// Then
-		expect(index).to.have.keys([
-			'EVENT_AUTHORIZATION_HEADER_SET',
-			'EVENT_DENIED',
-			'EVENT_GRANT_CHECKED',
-			'EVENT_TOKEN_VALIDATED',
-			'ResponseFormat',
-			'flow',
-			'grant',
-			'middleware',
-			'openIdClient',
-			'revocation',
-			'userInfo'
-		]);
+	return async function revokeToken(token: string) {
 
-		expect(index.flow).to.have.keys([
-			'jwtBearerToken',
-			'refreshToken',
-			'webServer'
-		]);
+		const client = await findOrCreateOpenIdClient(validatedEnvironment);
+		return client.revoke(token);
 
-		expect(index.grant).to.have.keys([
-			'getToken'
-		]);
+	};
 
-		expect(index.middleware).to.have.keys([
-			'authCallback',
-			'grantChecker',
-			'tokenValidator'
-		]);
-
-		expect(index.openIdClient).to.have.keys([
-			'clearCache'
-		]);
-
-		expect(index.revocation).to.have.keys([
-			'createTokenRevoker'
-		]);
-
-		expect(index.userInfo).to.have.keys([
-			'createUserInfoRequester'
-		]);
-
-	});
-
-});
+}

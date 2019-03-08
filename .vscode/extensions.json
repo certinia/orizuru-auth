@@ -1,0 +1,6 @@
+{
+	"recommendations": [
+		"alexdima.vscode-lcov",
+		"ms-vscode.vscode-typescript-tslint-plugin"
+	]
+}

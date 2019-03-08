@@ -37,7 +37,7 @@ import { validate } from '../openid/validator/environment';
  * user-agent flows.
  *
  * @param [env] The OpenID environment parameters.
- * @param A function that requests an access token from the given refresh token.
+ * @returns A function that requests an access token from the given refresh token.
  */
 export function createTokenGrantor(env: Environment): RefreshAccessTokenGrantor {
 

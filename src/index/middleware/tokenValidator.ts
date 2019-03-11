@@ -30,7 +30,7 @@
 
 import { NextFunction, Request, RequestHandler, Response } from '@financialforcedev/orizuru';
 
-import { EVENT_TOKEN_VALIDATED, OpenIDTokenWithStandardClaims, User } from '../..';
+import { EVENT_TOKEN_VALIDATED, OpenIDTokenWithStandardClaims, User, UserInfoOptions } from '../..';
 import { createUserInfoRequester } from '../userInfo/userinfo';
 
 import { fail } from './common/fail';
@@ -42,21 +42,23 @@ import { fail } from './common/fail';
  *
  * @fires EVENT_TOKEN_VALIDATED, EVENT_DENIED
  * @param app The Orizuru server instance.
+ * @param provider The name of the auth provider.
+ * @param [opts] The optional parameters used when requesting user information.
  * @returns An express middleware that validates an access token.
  */
-export function createMiddleware(app: Orizuru.IServer): RequestHandler {
+export function createMiddleware(app: Orizuru.IServer, provider: string, opts?: UserInfoOptions): RequestHandler {
 
-	const validateAccessToken = createUserInfoRequester(app.options.auth.jwtBearer);
+	const validateAccessToken = createUserInfoRequester(app.options.authProvider[provider]);
+	const tokenRegex = new RegExp('^Bearer (.+)$');
 
 	return async function validateToken(req: Request, res: Response, next: NextFunction) {
 
 		try {
 
-			const accessToken = extractAccessToken(req);
-			const userInfo = await validateAccessToken(accessToken) as OpenIDTokenWithStandardClaims;
+			const accessToken = extractAccessToken(req, tokenRegex);
+			const userInfo = await validateAccessToken(accessToken, opts) as OpenIDTokenWithStandardClaims;
 
 			const user = {
-				organizationId: userInfo.organization_id,
 				username: userInfo.preferred_username
 			};
 
@@ -71,25 +73,30 @@ export function createMiddleware(app: Orizuru.IServer): RequestHandler {
 	};
 
 }
+
 /**
  * Extracts the access token from the incoming request.
  *
  * @param req The HTTP request.
+ * @param tokenRegex The regular expression used for parsing the token.
  * @returns The access token from the request authorization header.
  */
-function extractAccessToken(req: Request) {
+function extractAccessToken(req: Request, tokenRegex: RegExp) {
 
-	const authorizationHeader = req.headers && req.headers.authorization;
-	if (!authorizationHeader || !authorizationHeader.length || !authorizationHeader.startsWith('Bearer ')) {
-		throw new Error('Authorization header with \'Bearer ***...\' required');
+	if (!req.headers) {
+		throw new Error('Missing required object parameter: headers.');
 	}
 
-	const accessToken = authorizationHeader.replace('Bearer ', '');
-	if (!accessToken.length) {
-		throw new Error('Authorization header with \'Bearer ***...\' required');
+	if (!req.headers.authorization) {
+		throw new Error('Missing required string parameter: headers[authorization].');
 	}
 
-	return accessToken;
+	const matches = tokenRegex.exec(req.headers.authorization);
+	if (matches === null) {
+		throw new Error('Authorization header with \'Bearer ***...\' required.');
+	}
+
+	return matches[1];
 
 }
 

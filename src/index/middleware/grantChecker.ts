@@ -30,7 +30,7 @@
 
 import { NextFunction, Request, RequestHandler, Response } from '@financialforcedev/orizuru';
 
-import { EVENT_GRANT_CHECKED } from '../..';
+import { EVENT_GRANT_CHECKED, GrantOptions, JwtGrantParams, JwtTokenGrantorParams } from '../..';
 import { createTokenGrantor } from '../flow/jwtBearerToken';
 
 import { fail } from './common/fail';
@@ -45,12 +45,20 @@ import { fail } from './common/fail';
  *
  * @fires EVENT_GRANT_CHECKED, EVENT_DENIED
  * @param app The Orizuru server instance.
+ * @param provider The name of the auth provider.
+ * @param params The grant checker middleware parameters.
+ * @param [opts] The optional parameters used when requesting grants.
  * @returns A express middleware that checks an access token can be retrieved for
  * the user on the request.
  */
-export function createMiddleware(app: Orizuru.IServer): RequestHandler {
+export function createMiddleware(app: Orizuru.IServer, provider: string, params: JwtTokenGrantorParams, opts?: GrantOptions): RequestHandler {
 
-	const requestAccessToken = createTokenGrantor(app.options.auth.jwtBearer);
+	const requestAccessToken = createTokenGrantor(app.options.authProvider[provider]);
+
+	// The GrantCheckerMiddlewareParameters type excludes the grant_type
+	// so that it doesn't have to be set by the caller. Make sure it is set here.
+	const internalParams: Partial<JwtGrantParams> = Object.assign({}, params);
+	internalParams.grantType = 'urn:ietf:params:oauth:grant-type:jwt-bearer';
 
 	return async function checkUserGrant(req: Request, res: Response, next: NextFunction) {
 
@@ -58,9 +66,7 @@ export function createMiddleware(app: Orizuru.IServer): RequestHandler {
 
 			const user = checkUserIsOnTheRequest(req);
 
-			await requestAccessToken({ user }, {
-				verifySignature: false
-			});
+			await requestAccessToken(Object.assign(internalParams, { user }) as JwtGrantParams, opts);
 
 			setGrant(app, req);
 

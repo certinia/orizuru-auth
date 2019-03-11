@@ -30,9 +30,11 @@
 
 import { NextFunction, Request, RequestHandler, Response } from '@financialforcedev/orizuru';
 
-import { AccessTokenResponse, EVENT_AUTHORIZATION_HEADER_SET } from '../..';
+import { AccessTokenResponse, AuthCodeGrantParams, EVENT_AUTHORIZATION_HEADER_SET, GrantOptions, TokenGrantorParams } from '../..';
 import { createTokenGrantor } from '../flow/webServer';
 
+import { isOpenIdAccessTokenResponse, isOpenIdTokenWithStandardClaims } from '../client/openid/identity';
+import { isSalesforceAccessTokenResponse } from '../client/salesforce/identity';
 import { fail } from './common/fail';
 
 /**
@@ -42,12 +44,20 @@ import { fail } from './common/fail';
  *
  * @fires EVENT_AUTHORIZATION_HEADER_SET
  * @param app The Orizuru server instance.
+ * @param provider The name of the auth provider.
+ * @param params The auth callback middleware parameters.
+ * @param [opts] The optional parameters used when requesting grants.
  * @returns An express middleware that exchanges a verification code for an access
  * token.
  */
-export function createMiddleware(app: Orizuru.IServer): RequestHandler {
+export function createMiddleware(app: Orizuru.IServer, provider: string, params: TokenGrantorParams, opts?: GrantOptions): RequestHandler {
 
-	const requestAccessToken = createTokenGrantor(app.options.auth.webServer);
+	const requestAccessToken = createTokenGrantor(app.options.authProvider[provider]);
+
+	// The AuthCallbackMiddlewareParameters interface excludes the grant_type
+	// so that it doesn't have to be set by the caller. Make sure it is set here.
+	const internalParams: Partial<AuthCodeGrantParams> = Object.assign({}, params);
+	internalParams.grantType = 'authorization_code';
 
 	return async function checkUserGrant(req: Request, res: Response, next: NextFunction) {
 
@@ -55,9 +65,9 @@ export function createMiddleware(app: Orizuru.IServer): RequestHandler {
 
 			validateRequest(req);
 
-			const token = await requestAccessToken({
+			const token = await requestAccessToken(Object.assign(internalParams, {
 				code: req.query.code
-			});
+			}) as AuthCodeGrantParams, opts);
 
 			setAuthorizationHeaderAndIdentity(app, req, token);
 
@@ -105,14 +115,31 @@ function validateRequest(req: Request) {
  */
 function setAuthorizationHeaderAndIdentity(app: Orizuru.IServer, req: Request, token: AccessTokenResponse) {
 
-	req.headers.authorization = `Bearer ${token.access_token}`;
+	req.headers.authorization = `${token.token_type} ${token.access_token}`;
 
-	if (token.userInfo) {
-		const orizuru = req.orizuru || {};
-		req.orizuru = orizuru;
-		orizuru.identity = token.userInfo;
+	let user = 'unknown';
+	if (isSalesforceAccessTokenResponse(token)) {
+
+		if (token.userInfo) {
+
+			const orizuru = req.orizuru || {};
+			orizuru.salesforce = orizuru.salesforce || {};
+			orizuru.salesforce.userInfo = token.userInfo;
+			req.orizuru = orizuru;
+
+			user = token.userInfo.id || user;
+		}
+
 	}
 
-	app.emit(EVENT_AUTHORIZATION_HEADER_SET, `Authorization headers set for user (${token.userInfo ? token.userInfo.id : 'unknown'}) [${req.ip}].`);
+	if (isOpenIdAccessTokenResponse(token)) {
+
+		if (isOpenIdTokenWithStandardClaims(token.id_token)) {
+			user = token.id_token.email;
+		}
+
+	}
+
+	app.emit(EVENT_AUTHORIZATION_HEADER_SET, `Authorization headers set for user (${user}) [${req.ip}].`);
 
 }

@@ -30,7 +30,7 @@ import sinonChai from 'sinon-chai';
 
 import { Request, RequestHandler, Response } from '@financialforcedev/orizuru';
 
-import { Environment, EVENT_GRANT_CHECKED } from '../../../src';
+import { Environment, EVENT_GRANT_CHECKED, GrantOptions, OpenIdOptions } from '../../../src';
 import * as jwtBearerToken from '../../../src/index/flow/jwtBearerToken';
 import * as fail from '../../../src/index/middleware/common/fail';
 
@@ -41,19 +41,6 @@ const has = sinon.match.has;
 
 chai.use(sinonChai);
 
-interface ExtendedOrizuru extends Orizuru.Context {
-	grantChecked?: boolean;
-	other?: boolean;
-	user?: {
-		organizationId: string;
-		username: string;
-	};
-}
-
-interface ExtendedRequest extends Request {
-	orizuru: ExtendedOrizuru;
-}
-
 describe('index/middleware/grantChecker', () => {
 
 	let app: Orizuru.IServer;
@@ -63,18 +50,26 @@ describe('index/middleware/grantChecker', () => {
 	beforeEach(() => {
 
 		env = {
-			jwtSigningKey: 'testJwtSigningKey',
-			openidClientId: 'test',
-			openidClientSecret: 'test',
-			openidHTTPTimeout: 4001,
-			openidIssuerURI: 'https://login.salesforce.com/'
+			httpTimeout: 4001,
+			issuerURI: 'https://login.salesforce.com/',
+			type: 'OpenID'
+		};
+
+		const openIdOptions: Partial<OpenIdOptions> = {
+			clientId: 'testClientId',
+			clientSecret: 'testClientSecret',
+			redirectUri: 'https://localhost:8080/api/auth/v1.0/callback',
+			signingSecret: 'testSigningSecret'
 		};
 
 		const partialApp: Partial<Orizuru.IServer> = {
 			emit: sinon.stub(),
 			options: {
-				auth: {
-					jwtBearer: env
+				authProvider: {
+					salesforce: env
+				},
+				openid: {
+					salesforce: openIdOptions as OpenIdOptions
 				}
 			}
 		};
@@ -92,7 +87,7 @@ describe('index/middleware/grantChecker', () => {
 
 		// Then
 		expect(jwtBearerToken.createTokenGrantor).to.have.been.calledOnce;
-		expect(jwtBearerToken.createTokenGrantor).to.have.been.calledWithExactly(app.options.auth.jwtBearer);
+		expect(jwtBearerToken.createTokenGrantor).to.have.been.calledWithExactly(app.options.authProvider.salesforce);
 
 		sinon.restore();
 
@@ -102,7 +97,7 @@ describe('index/middleware/grantChecker', () => {
 
 		// Given
 		// When
-		const middleware = createMiddleware(app);
+		const middleware = createMiddleware(app, 'salesforce', app.options.openid.salesforce);
 
 		// Then
 		expect(middleware).to.be.a('function');
@@ -112,13 +107,13 @@ describe('index/middleware/grantChecker', () => {
 	describe('checkUserGrant', () => {
 
 		let middleware: RequestHandler;
-		let req: ExtendedRequest;
+		let req: Request;
 		let res: Response;
 		let next: SinonStub;
 
 		beforeEach(() => {
 
-			const partialRequest: Partial<ExtendedRequest> = {
+			const partialRequest: Partial<Request> = {
 				ip: '1.1.1.1',
 				orizuru: {
 					user: {
@@ -127,14 +122,19 @@ describe('index/middleware/grantChecker', () => {
 					}
 				}
 			};
-			req = partialRequest as ExtendedRequest;
+			req = partialRequest as Request;
 
 			const partialResponse: Partial<Response> = {};
 			res = partialResponse as Response;
 
 			next = sinon.stub();
 
-			middleware = createMiddleware(app);
+			const opts: GrantOptions = {
+				verifySignature: false
+			};
+
+			middleware = createMiddleware(app, 'salesforce', app.options.openid.salesforce, opts);
+
 		});
 
 		describe('should fail the request', () => {
@@ -163,7 +163,7 @@ describe('index/middleware/grantChecker', () => {
 			it('if the user is not on the request', async () => {
 
 				// Given
-				delete req.orizuru.user;
+				delete req.orizuru!.user;
 
 				// When
 				await middleware(req, res, next);
@@ -176,7 +176,7 @@ describe('index/middleware/grantChecker', () => {
 			it('if the username is not on the request', async () => {
 
 				// Given
-				delete req.orizuru.user!.username;
+				delete req.orizuru!.user!.username;
 
 				// When
 				await middleware(req, res, next);
@@ -189,7 +189,7 @@ describe('index/middleware/grantChecker', () => {
 			it('if the username is empty on the request', async () => {
 
 				// Given
-				req.orizuru.user!.username = '';
+				req.orizuru!.user!.username = '';
 
 				// When
 				await middleware(req, res, next);
@@ -232,6 +232,11 @@ describe('index/middleware/grantChecker', () => {
 
 				expect(requestAccessTokenStub).to.have.been.calledOnce;
 				expect(requestAccessTokenStub).to.have.been.calledWithExactly({
+					clientId: 'testClientId',
+					clientSecret: 'testClientSecret',
+					grantType: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+					redirectUri: 'https://localhost:8080/api/auth/v1.0/callback',
+					signingSecret: 'testSigningSecret',
 					user: {
 						organizationId: 'testOrganizationId',
 						username: 'test@test.com'

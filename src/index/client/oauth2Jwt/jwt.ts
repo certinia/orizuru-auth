@@ -80,16 +80,13 @@ export async function createJwtBearerGrantAssertion(env: Environment, params: Jw
  */
 function createPayload(aud: string, iss: string, sub: string): JWT {
 
-	const now = Date.now() / 1000;
-
-	const nowPlusFourMinutes = () => {
-		return Math.floor(Date.now() / 1000) + (60 * 4);
-	};
+	const iat = Math.floor(Date.now() / 1000);
+	const exp = iat + (60 * 4);
 
 	return {
 		aud,
-		exp: nowPlusFourMinutes(),
-		iat: now,
+		exp,
+		iat,
 		iss,
 		jti: uuid().toString(),
 		sub

@@ -29,9 +29,11 @@ import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
 
 import { Environment, OpenIDTokenWithStandardClaims, UserInfoRequester } from '../../../src';
-import * as cache from '../../../src/index/openid/cache';
-import { OpenIdClient } from '../../../src/index/openid/client';
-import * as validator from '../../../src/index/openid/validator/environment';
+import * as cache from '../../../src/index/client/cache';
+import { OAuth2Client } from '../../../src/index/client/oauth2';
+import { OpenIdClient } from '../../../src/index/client/openid';
+import { SalesforceClient } from '../../../src/index/client/salesforce';
+import * as validator from '../../../src/index/client/validator/environment';
 
 import { createUserInfoRequester } from '../../../src/index/userInfo/userinfo';
 
@@ -39,18 +41,16 @@ const expect = chai.expect;
 
 chai.use(sinonChai);
 
-describe('openid/shared/userinfo', () => {
+describe('index/userInfo/userinfo', () => {
 
 	let env: Environment;
 
-	before(() => {
+	beforeEach(() => {
 
 		env = {
-			jwtSigningKey: 'testJwtSigningKey',
-			openidClientId: 'test',
-			openidClientSecret: 'test',
-			openidHTTPTimeout: 4001,
-			openidIssuerURI: 'https://login.salesforce.com/'
+			httpTimeout: 4001,
+			issuerURI: 'https://login.salesforce.com/',
+			type: 'OpenID'
 		};
 
 		sinon.stub(validator, 'validate').returns(env);
@@ -88,7 +88,7 @@ describe('openid/shared/userinfo', () => {
 			it('if the client cannot be created', async () => {
 
 				// Given
-				sinon.stub(cache, 'findOrCreateOpenIdClient').rejects(new Error('Failed to create client.'));
+				sinon.stub(cache, 'findOrCreateClient').rejects(new Error('Failed to create client.'));
 
 				// When
 				// Then
@@ -96,13 +96,24 @@ describe('openid/shared/userinfo', () => {
 
 			});
 
+			it('if the client is not a OpenID client', async () => {
+
+				// Given
+				sinon.stub(cache, 'findOrCreateClient').resolves(new OAuth2Client(env));
+
+				// When
+				// Then
+				await expect(requestUserInfo('ABCDE123')).to.be.rejectedWith('Failed to retrieve user information. Caused by: This function must be used with a OpenID client.');
+
+			});
+
 			it('if the userinfo request fails', async () => {
 
 				// Given
-				const openIdClientStubInstance = sinon.createStubInstance(OpenIdClient);
-				sinon.stub(cache, 'findOrCreateOpenIdClient').resolves(openIdClientStubInstance as unknown as OpenIdClient);
+				const clientStubInstance = sinon.createStubInstance(OpenIdClient);
+				sinon.stub(cache, 'findOrCreateClient').resolves(clientStubInstance);
 
-				openIdClientStubInstance.userinfo.throws(new Error('Bad_OAuth_Token.'));
+				clientStubInstance.userinfo.throws(new Error('Bad_OAuth_Token.'));
 
 				// When
 				// Then
@@ -112,26 +123,50 @@ describe('openid/shared/userinfo', () => {
 
 		});
 
-		it('should return the user info on success', async () => {
+		describe('should return the user info on success', () => {
 
-			// Given
-			const openIdClientStubInstance = sinon.createStubInstance(OpenIdClient);
-			sinon.stub(cache, 'findOrCreateOpenIdClient').resolves(openIdClientStubInstance as unknown as OpenIdClient);
+			it('for an OpenID client', async () => {
 
-			const partialUserInfo: Partial<OpenIDTokenWithStandardClaims> = {
-				organization_id: '123',
-				preferred_username: 'user1@1135222488950007.com'
-			};
+				// Given
+				const clientStubInstance = sinon.createStubInstance(OpenIdClient);
+				sinon.stub(cache, 'findOrCreateClient').resolves(clientStubInstance);
 
-			openIdClientStubInstance.userinfo.resolves(partialUserInfo as OpenIDTokenWithStandardClaims);
+				const partialUserInfo: Partial<OpenIDTokenWithStandardClaims> = {
+					preferred_username: 'user1@1135222488950007.com'
+				};
 
-			// When
-			const result = await requestUserInfo('ABCDE123');
+				clientStubInstance.userinfo.resolves(partialUserInfo as OpenIDTokenWithStandardClaims);
 
-			// Then
-			expect(result).to.eql({
-				organization_id: '123',
-				preferred_username: 'user1@1135222488950007.com'
+				// When
+				const result = await requestUserInfo('ABCDE123');
+
+				// Then
+				expect(result).to.eql({
+					preferred_username: 'user1@1135222488950007.com'
+				});
+
+			});
+
+			it('for a Salesforce client', async () => {
+
+				// Given
+				const clientStubInstance = sinon.createStubInstance(SalesforceClient);
+				sinon.stub(cache, 'findOrCreateClient').resolves(clientStubInstance);
+
+				const partialUserInfo: Partial<OpenIDTokenWithStandardClaims> = {
+					preferred_username: 'user1@1135222488950007.com'
+				};
+
+				clientStubInstance.userinfo.resolves(partialUserInfo as OpenIDTokenWithStandardClaims);
+
+				// When
+				const result = await requestUserInfo('ABCDE123');
+
+				// Then
+				expect(result).to.eql({
+					preferred_username: 'user1@1135222488950007.com'
+				});
+
 			});
 
 		});

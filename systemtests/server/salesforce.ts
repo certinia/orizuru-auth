@@ -26,9 +26,8 @@
 
 import { json, Request, Response, Server, urlencoded } from '@financialforcedev/orizuru';
 
-import { flow, middleware } from '../../src';
+import { flow, middleware, revocation } from '../../src';
 
-import { createTokenRevoker } from '../../src/index/revocation/revoke';
 import { TestServer } from './common';
 
 export async function createServer() {
@@ -148,7 +147,7 @@ function addGrantCheckRoute(server: Server) {
 
 function addRevokeTokenRoute(server: Server) {
 
-	const tokenRevoker = createTokenRevoker(server.options.authProvider.salesforceConnection);
+	const tokenRevoker = revocation.createTokenRevoker(server.options.authProvider.salesforceConnection);
 
 	server.addRoute({
 		method: 'get',

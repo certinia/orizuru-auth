@@ -28,30 +28,31 @@
  * @module flow/refreshToken
  */
 
-import { AccessTokenResponse, Environment, GrantOptions, RefreshAccessTokenGrantor, RefreshGrantParameters } from '..';
-import { findOrCreateOpenIdClient } from '../openid/cache';
-import { validate } from '../openid/validator/environment';
+import { AccessTokenResponse, Environment, GrantOptions, RefreshAccessTokenGrantor, RefreshGrantParams, RefreshTokenGrantorParams } from '..';
+import { findOrCreateClient } from '../client/cache';
+import { validate } from '../client/validator/environment';
 
 /**
  * Uses the [OAuth 2.0 Refresh Token Flow](https://help.salesforce.com/articleView?id=remoteaccess_oauth_refresh_token_flow.htm) to renew tokens issued by the web server or
  * user-agent flows.
  *
- * @param [env] The OpenID environment parameters.
+ * @param [env] The auth environment parameters.
  * @returns A function that requests an access token from the given refresh token.
  */
 export function createTokenGrantor(env: Environment): RefreshAccessTokenGrantor {
 
 	const validatedEnvironment = validate(env);
 
-	return async function requestAccessToken(params: RefreshGrantParameters, opts?: GrantOptions): Promise<AccessTokenResponse> {
+	return async function requestAccessToken(params: RefreshTokenGrantorParams, opts?: GrantOptions): Promise<AccessTokenResponse> {
 
-		const client = await findOrCreateOpenIdClient(validatedEnvironment);
+		const client = await findOrCreateClient(validatedEnvironment);
 
-		const accessTokenResponse = await client.grant({
-			grantType: 'refresh',
-			refreshToken: params.refreshToken
-		}, opts);
+		// The RefreshTokenGrantorParams interface excludes the grant_type so that it
+		// doesn't have to be set by the caller. Make sure it is set here.
+		const internalParams: Partial<RefreshGrantParams> = Object.assign({}, params);
+		internalParams.grantType = 'refresh_token';
 
+		const accessTokenResponse = await client.grant(internalParams as RefreshGrantParams, opts);
 		accessTokenResponse.refresh_token = params.refreshToken;
 		return accessTokenResponse;
 

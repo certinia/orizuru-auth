@@ -29,9 +29,9 @@ import sinon, { SinonStubbedInstance } from 'sinon';
 import sinonChai from 'sinon-chai';
 
 import { Environment, RefreshAccessTokenGrantor } from '../../../src';
-import * as cache from '../../../src/index//openid/cache';
-import { OpenIdClient } from '../../../src/index//openid/client';
-import * as validator from '../../../src/index/openid/validator/environment';
+import * as cache from '../../../src/index/client/cache';
+import { OpenIdClient } from '../../../src/index/client/openid';
+import * as validator from '../../../src/index/client/validator/environment';
 
 import { createTokenGrantor } from '../../../src/index//flow/refreshToken';
 
@@ -46,11 +46,9 @@ describe('index/flow/refreshToken', () => {
 	beforeEach(() => {
 
 		env = {
-			jwtSigningKey: 'testJwtSigningKey',
-			openidClientId: 'test',
-			openidClientSecret: 'test',
-			openidHTTPTimeout: 4001,
-			openidIssuerURI: 'https://login.salesforce.com/'
+			httpTimeout: 4001,
+			issuerURI: 'https://login.salesforce.com/',
+			type: 'OpenID'
 		};
 
 		sinon.stub(validator, 'validate').returns(env);
@@ -83,7 +81,7 @@ describe('index/flow/refreshToken', () => {
 		beforeEach(() => {
 
 			openIdClientStubInstance = sinon.createStubInstance(OpenIdClient);
-			sinon.stub(cache, 'findOrCreateOpenIdClient').resolves(openIdClientStubInstance as unknown as OpenIdClient);
+			sinon.stub(cache, 'findOrCreateClient').resolves(openIdClientStubInstance);
 
 			tokenGrantor = createTokenGrantor(env);
 
@@ -107,19 +105,23 @@ describe('index/flow/refreshToken', () => {
 
 			// When
 			const accessTokenResponse = await tokenGrantor({
+				clientId: 'test',
+				clientSecret: 'test',
 				refreshToken: 'token'
-			}, { useJwt: true });
+			}, { signingSecret: 'testSigningSecret' });
 
 			// Then
 			expect(accessTokenResponse).to.eql(expectedAccessTokenResponse);
 
-			expect(cache.findOrCreateOpenIdClient).to.have.been.calledOnce;
-			expect(cache.findOrCreateOpenIdClient).to.have.been.calledWithExactly(env);
+			expect(cache.findOrCreateClient).to.have.been.calledOnce;
+			expect(cache.findOrCreateClient).to.have.been.calledWithExactly(env);
 			expect(openIdClientStubInstance.grant).to.have.been.calledOnce;
 			expect(openIdClientStubInstance.grant).to.have.been.calledWithExactly({
-				grantType: 'refresh',
+				clientId: 'test',
+				clientSecret: 'test',
+				grantType: 'refresh_token',
 				refreshToken: 'token'
-			}, { useJwt: true });
+			}, { signingSecret: 'testSigningSecret' });
 
 		});
 

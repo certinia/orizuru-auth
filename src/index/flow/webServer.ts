@@ -28,27 +28,24 @@
  * @module flow/webServer
  */
 
-import { AuthCodeAccessTokenGrantor, AuthCodeGrantParameters, AuthOptions, AuthUrlGenerator, Environment, GrantOptions } from '..';
-import { findOrCreateOpenIdClient } from '../openid/cache';
-import { validate } from '../openid/validator/environment';
+import { AuthCodeAccessTokenGrantor, AuthCodeGrantParams, AuthOptions, AuthUrlGenerator, AuthUrlParams, Environment, GrantOptions, TokenGrantorParams } from '..';
+import { findOrCreateClient } from '../client/cache';
+import { validate } from '../client/validator/environment';
 
 /**
  * Creates the authorization endpoint to initialise the [OAuth 2.0 Web Server Authentication Flow](https://help.salesforce.com/articleView?id=remoteaccess_oauth_web_server_flow.htm).
  *
- * @param [env] The OpenID environment parameters.
+ * @param [env] The auth environment parameters.
  * @returns A function that generates the authorization URL with the given state and options.
  */
 export function authorizationUrlGenerator(env?: Environment): AuthUrlGenerator {
 
 	const validatedEnvironment = validate(env);
 
-	return async function generateAuthorizationUrl(state: string, opts?: AuthOptions) {
+	return async function generateAuthorizationUrl(params: AuthUrlParams, opts?: AuthOptions) {
 
-		const openidClient = await findOrCreateOpenIdClient(validatedEnvironment);
-		return openidClient.createAuthorizationUrl({
-			redirect_uri: validatedEnvironment.redirectUri!,
-			state
-		}, opts);
+		const openidClient = await findOrCreateClient(validatedEnvironment);
+		return openidClient.createAuthorizationUrl(params, opts);
 
 	};
 
@@ -60,20 +57,22 @@ export function authorizationUrlGenerator(env?: Environment): AuthUrlGenerator {
  * Defaults to using a signed JWT bearer assertion to validate the user rather than the
  * using the client secret. However, this is configurable via the GrantOptions.
  *
- * @param [env] The OpenID environment parameters.
+ * @param [env] The auth environment parameters.
  * @returns A function that exchanges a verification code for an access token.
  */
 export function createTokenGrantor(env?: Environment): AuthCodeAccessTokenGrantor {
 
 	const validatedEnvironment = validate(env);
 
-	return async function requestAccessToken(params: AuthCodeGrantParameters, opts?: GrantOptions) {
+	return async function requestAccessToken(params: TokenGrantorParams, opts?: GrantOptions) {
 
-		const client = await findOrCreateOpenIdClient(validatedEnvironment);
-		return client.grant({
-			code: params.code,
-			grantType: 'auth'
-		}, opts);
+		// The GrantCheckerMiddlewareParameters type excludes the grant_type
+		// so that it doesn't have to be set by the caller. Make sure it is set here.
+		const internalParams: Partial<AuthCodeGrantParams> = Object.assign({}, params);
+		internalParams.grantType = 'authorization_code';
+
+		const client = await findOrCreateClient(validatedEnvironment);
+		return client.grant(internalParams as AuthCodeGrantParams, opts);
 
 	};
 

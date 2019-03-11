@@ -1,0 +1,19 @@
+{
+	"authProvider": {
+		"google": {
+			"httpTimeout": 4000,
+			"issuerURI": "https://accounts.google.com",
+			"type": "OpenID"
+		},
+		"salesforceConnection": {
+			"httpTimeout": 4000,
+			"issuerURI": "https://test.salesforce.com",
+			"type": "Salesforce"
+		},
+		"salesforceIdentity": {
+			"httpTimeout": 4000,
+			"issuerURI": "https://test.salesforce.com",
+			"type": "Salesforce"
+		}
+	}
+}

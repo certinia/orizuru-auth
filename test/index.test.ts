@@ -42,6 +42,7 @@ describe('index', () => {
 			'EVENT_DENIED',
 			'EVENT_GRANT_CHECKED',
 			'EVENT_TOKEN_VALIDATED',
+			'EVENT_USER_IDENTITY_RETRIEVED',
 			'ResponseFormat',
 			'flow',
 			'grant',
@@ -64,6 +65,7 @@ describe('index', () => {
 		expect(index.middleware).to.have.keys([
 			'authCallback',
 			'grantChecker',
+			'retrieveIdentityInformation',
 			'tokenValidator'
 		]);
 

@@ -29,9 +29,9 @@ import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
 
 import { Environment } from '../../../src';
-import * as cache from '../../../src/index/openid/cache';
-import { OpenIdClient } from '../../../src/index/openid/client';
-import * as validator from '../../../src/index/openid/validator/environment';
+import * as cache from '../../../src/index/client/cache';
+import { OpenIdClient } from '../../../src/index/client/openid';
+import * as validator from '../../../src/index/client/validator/environment';
 
 import { createTokenRevoker } from '../../../src/index/revocation/revoke';
 
@@ -46,11 +46,9 @@ describe('index/revocation/revoke', () => {
 	before(() => {
 
 		env = {
-			jwtSigningKey: 'testJwtSigningKey',
-			openidClientId: 'test',
-			openidClientSecret: 'test',
-			openidHTTPTimeout: 4001,
-			openidIssuerURI: 'https://login.salesforce.com/'
+			httpTimeout: 4001,
+			issuerURI: 'https://login.salesforce.com/',
+			type: 'OpenID'
 		};
 
 		sinon.stub(validator, 'validate').returns(env);
@@ -87,7 +85,7 @@ describe('index/revocation/revoke', () => {
 
 			// Given
 			const openIdClientStubInstance = sinon.createStubInstance(OpenIdClient);
-			sinon.stub(cache, 'findOrCreateOpenIdClient').resolves(openIdClientStubInstance as unknown as OpenIdClient);
+			sinon.stub(cache, 'findOrCreateClient').resolves(openIdClientStubInstance);
 
 			openIdClientStubInstance.revoke.resolves(true);
 

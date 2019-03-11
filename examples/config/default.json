@@ -3,7 +3,8 @@
 		"authProvider": {
 			"salesforce": {
 				"httpTimeout": 4000,
-				"issuerURI": "https://test.salesforce.com"
+				"issuerURI": "https://test.salesforce.com",
+				"type": "Salesforce"
 			}
 		},
 		"openid": {

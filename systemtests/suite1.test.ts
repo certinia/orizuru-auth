@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2019, FinancialForce.com, inc
  * All rights reserved.
  *
@@ -25,162 +25,72 @@
  */
 
 import chai from 'chai';
-import { Browser, launch } from 'puppeteer';
-import sinon, { SinonStub } from 'sinon';
+import { Browser, BrowserContext, launch, Page } from 'puppeteer';
+import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
+import request from 'supertest';
 
 import config from 'config';
-import debug from 'debug';
-import fs from 'fs';
-import https from 'https';
-import path from 'path';
 
-import { json, NextFunction, Request, Response, Server, urlencoded } from '@financialforcedev/orizuru';
-import { Transport } from '@financialforcedev/orizuru-transport-rabbitmq';
+import { EVENT_AUTHORIZATION_HEADER_SET, EVENT_DENIED, EVENT_GRANT_CHECKED, EVENT_TOKEN_VALIDATED } from '../src/index';
 
-import { AuthOptions, Environment, EVENT_AUTHORIZATION_HEADER_SET, EVENT_DENIED, EVENT_GRANT_CHECKED, EVENT_TOKEN_VALIDATED, flow, grant, middleware } from '../src/index';
+import { TestServer } from './server/common';
+import { createServer } from './server/salesforce';
 
 const expect = chai.expect;
+const fail = chai.assert.fail;
 
 chai.use(sinonChai);
 
-describe('Suite 1', () => {
+describe('Suite 1 - Puppeteer script for Salesforce authentication', () => {
 
+	let accessToken: string;
 	let browser: Browser;
-	let httpsServer: https.Server;
-	let server: Server;
-	let grantCheckerStub: SinonStub;
+	let context: BrowserContext;
+	let page: Page;
+	let server: TestServer;
 
-	before(() => {
+	before(async () => {
 
-		const debugInstance = debug('app');
+		process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
-		const connectionEnv = config.get<Environment>('openid.connection');
-		const identityEnv = config.get<Environment>('openid.identity');
+		server = await createServer();
 
-		const generateAuthorizationUrl = flow.webServer.authorizationUrlGenerator(identityEnv);
-
-		grantCheckerStub = sinon.stub();
-
-		server = new Server({
-			auth: {
-				jwtBearer: connectionEnv,
-				webServer: identityEnv
-			},
-			port: 8080,
-			transport: new Transport({
-				prefetch: 1,
-				url: 'amqp://localhost'
-			})
-		});
-
-		// Add the listeners
-		const events = [EVENT_AUTHORIZATION_HEADER_SET, EVENT_DENIED, EVENT_GRANT_CHECKED, EVENT_TOKEN_VALIDATED];
-		events.map((event) => {
-			server.on(event, (args) => {
-				debugInstance(args);
-			});
-		});
-
-		server.addRoute({
-			method: 'get',
-			middleware: [
-				json()
-			],
-			responseWriter: () => async (err, req, res) => {
-				const opts: AuthOptions = {
-					immediate: false,
-					prompt: 'consent'
-				};
-				const url = await generateAuthorizationUrl('test', opts);
-				res.redirect(url);
-			},
-			schema: {
-				fields: [],
-				name: 'auth',
-				namespace: 'api.v1_0',
-				type: 'record'
-			},
-			synchronous: true
-		});
-
-		server.addRoute({
-			method: 'get',
-			middleware: [
-				urlencoded({
-					extended: true
-				}),
-				middleware.authCallback(server),
-				middleware.tokenValidator(server),
-				grantCheckerStub,
-				async (req: Request, res: Response, next: NextFunction) => {
-					await grant.getToken(server.options.auth.jwtBearer)(req.orizuru!.user!);
-					next();
-				},
-				(error, req, res, next) => {
-					if (error) {
-						res.sendStatus(401);
-						return;
-					}
-					next();
-				}
-			],
-			responseWriter: (app) => async (error, req, res) => {
-				res.send(`<html><body><div class="auth-finished"><pre>${JSON.stringify(req.orizuru)}</pre></div></body></html>`);
-			},
-			schema: {
-				fields: [],
-				name: 'callback',
-				namespace: 'api.auth.v1_0',
-				type: 'record'
-			},
-			synchronous: true
-		});
-
-		// Run the `npm run create-local-certificate` command to generate the certificate.
-		const serverOptions: https.ServerOptions = {
-			cert: fs.readFileSync(path.resolve(__dirname, '../certificates/server/server.cert')),
-			key: fs.readFileSync(path.resolve(__dirname, '../certificates/server/server.key'))
-		};
-
-		httpsServer = https.createServer(serverOptions, server.serverImpl);
-		httpsServer.listen(server.options.port);
-
-	});
-
-	beforeEach(async () => {
 		browser = await launch({
 			headless: true,
 			ignoreHTTPSErrors: true
 		});
-	});
-
-	afterEach(() => {
-		sinon.restore();
-		browser.close();
-	});
-
-	after(() => {
-		httpsServer.close();
-	});
-
-	it('should go through the login flow (app approved)', async () => {
-
-		// Given
-		const username = config.get<string>('test.username');
-		const userId = config.get<string>('test.userId');
-		const password = config.get<string>('test.password');
 
 		sinon.spy(server, 'emit');
 
-		grantCheckerStub.callsFake(async (req, res, next) => {
-			await middleware.grantChecker(server)(req, res, next);
-		});
+		await server.listen();
 
-		// When
-		const page = await browser.newPage();
+	});
 
-		await page.goto('https://localhost:8080/api/v1.0/auth');
+	beforeEach(async () => {
+		context = await browser.createIncognitoBrowserContext();
+		page = await context.newPage();
+	});
+
+	afterEach(async () => {
+		await context.close();
+		sinon.reset();
+	});
+
+	after(async () => {
+		await browser.close();
+		await server.close();
+		sinon.restore();
+	});
+
+	it('should approve the app to obtain an access token', async () => {
+
+		// Given
+		const userId = config.get<string>('test.salesforce.userId');
+		const username = config.get<string>('test.salesforce.username');
+		const password = config.get<string>('test.salesforce.password');
+
+		await page.goto('https://localhost:8080/api/auth/v1.0/login');
 
 		await page.waitForSelector('#username');
 
@@ -192,43 +102,116 @@ describe('Suite 1', () => {
 			page.waitForSelector('[value=" Allow "]')
 		]);
 
+		// When
 		await Promise.all([
 			page.click('input#oaapprove'),
-			page.waitForSelector('.auth-finished')
+			page.waitForNavigation()
 		]);
 
 		const contents = await page.content();
-		const regex = new RegExp('<pre>(.*)</pre>');
+		const regex = new RegExp('<pre .*>(.*)</pre>');
 		const matches = regex.exec(contents) as RegExpExecArray;
 
 		// Then
 		expect(matches).not.to.be.null;
 		expect(matches).to.have.length(2);
 
-		const orizuru = JSON.parse(matches.pop() as string);
-		expect(orizuru).to.have.property('grantChecked', true);
-		expect(orizuru).to.have.property('user').that.has.property('username', username);
-		expect(orizuru).to.have.property('user').that.has.property('organizationId');
+		const headers = JSON.parse(matches.pop() as string);
+		expect(headers).to.have.property('authorization').that.matches(/^Bearer .+$/);
 
-		expect(server.emit).to.have.been.calledThrice;
+		expect(server.emit).to.have.been.calledOnce;
 		expect(server.emit).to.have.been.calledWithExactly(EVENT_AUTHORIZATION_HEADER_SET, `Authorization headers set for user (${userId}) [::1].`);
-		expect(server.emit).to.have.been.calledWithExactly(EVENT_TOKEN_VALIDATED, `Token validated for user (${username}) [::1].`);
-		expect(server.emit).to.have.been.calledWithExactly(EVENT_GRANT_CHECKED, `Grant checked for user (${username}) [::1].`);
+
+		accessToken = headers.authorization;
 
 	});
 
-	it('should go through the login flow (app denied)', async () => {
+	it('should validate the access token', async () => {
 
 		// Given
-		sinon.spy(server, 'emit');
+		if (!accessToken) {
+			fail('No access token');
+		}
 
-		const username = config.get<string>('test.username');
-		const password = config.get<string>('test.password');
+		const username = config.get<string>('test.salesforce.username');
 
 		// When
-		const page = await browser.newPage();
+		const response = await request(server.httpsServer)
+			.get('/api/auth/v1.0/validateToken')
+			.set('Authorization', accessToken)
+			.send({});
 
-		await page.goto('https://localhost:8080/api/v1.0/auth');
+		// Then
+		expect(response).to.have.property('status', 200);
+		expect(response).to.have.property('body').that.eqls({
+			user: {
+				username
+			}
+		});
+
+		expect(server.emit).to.have.been.calledOnce;
+		expect(server.emit).to.have.been.calledWithExactly(EVENT_TOKEN_VALIDATED, `Token validated for user (${username}) [::ffff:127.0.0.1].`);
+
+	});
+
+	it('should check the grant', async () => {
+
+		// Given
+		if (!accessToken) {
+			fail('No access token');
+		}
+
+		const username = config.get<string>('test.salesforce.username');
+
+		// When
+		const response = await request(server.httpsServer)
+			.get('/api/auth/v1.0/checkGrant')
+			.set('Authorization', accessToken)
+			.send({});
+
+		// Then
+		expect(response).to.have.property('status', 200);
+		expect(response).to.have.property('body').that.eqls({
+			grantChecked: true,
+			user: {
+				username
+			}
+		});
+
+		expect(server.emit).to.have.been.calledTwice;
+		expect(server.emit).to.have.been.calledWithExactly(EVENT_TOKEN_VALIDATED, `Token validated for user (${username}) [::ffff:127.0.0.1].`);
+		expect(server.emit).to.have.been.calledWithExactly(EVENT_GRANT_CHECKED, `Grant checked for user (${username}) [::ffff:127.0.0.1].`);
+
+	});
+
+	it('should revoke the token', async () => {
+
+		// Given
+		if (!accessToken) {
+			fail('No access token');
+		}
+
+		// When
+		const response = await request(server.httpsServer)
+			.get('/api/auth/v1.0/revokeToken')
+			.set('Authorization', accessToken)
+			.send({});
+
+		// Then
+		expect(response).to.have.property('status', 200);
+		expect(response).to.have.property('body').that.eqls({
+			tokenRevoked: true
+		});
+
+	});
+
+	it('should deny the app and obtain a 401 response', async () => {
+
+		// Given
+		const username = config.get<string>('test.salesforce.username');
+		const password = config.get<string>('test.salesforce.password');
+
+		await page.goto('https://localhost:8080/api/auth/v1.0/login');
 
 		await page.waitForSelector('#username');
 
@@ -237,9 +220,10 @@ describe('Suite 1', () => {
 
 		await Promise.all([
 			page.click('#Login'),
-			page.waitForSelector('[value=" Deny "]')
+			page.waitForSelector('[value=" Allow "]')
 		]);
 
+		// When
 		await Promise.all([
 			page.click('input#oadeny'),
 			page.waitForResponse((res) => {
@@ -253,53 +237,6 @@ describe('Suite 1', () => {
 		// Then
 		expect(server.emit).to.have.been.calledOnce;
 		expect(server.emit).to.have.been.calledWithExactly(EVENT_DENIED, 'Access denied to: ::1. Error: access_denied');
-
-	});
-
-	it('should go through the login flow (invalid grant)', async () => {
-
-		// Given
-		sinon.spy(server, 'emit');
-
-		const username = config.get<string>('test.username');
-		const userId = config.get<string>('test.userId');
-		const password = config.get<string>('test.password');
-
-		grantCheckerStub.callsFake(async (req, res, next) => {
-			server.options.auth.jwtBearer = config.get<Environment>('openid.identity');
-			await middleware.grantChecker(server)(req, res, next);
-		});
-
-		// When
-		const page = await browser.newPage();
-
-		await page.goto('https://localhost:8080/api/v1.0/auth');
-
-		await page.waitForSelector('#username');
-
-		await page.type('#username', username);
-		await page.type('#password', password);
-
-		await Promise.all([
-			page.click('#Login'),
-			page.waitForSelector('[value=" Allow "]')
-		]);
-
-		await Promise.all([
-			page.click('input#oaapprove'),
-			page.waitForResponse((res) => {
-				if (res.status() === 401) {
-					return true;
-				}
-				return false;
-			})
-		]);
-
-		// Then
-		expect(server.emit).to.have.been.calledThrice;
-		expect(server.emit).to.have.been.calledWithExactly(EVENT_AUTHORIZATION_HEADER_SET, `Authorization headers set for user (${userId}) [::1].`);
-		expect(server.emit).to.have.been.calledWithExactly(EVENT_TOKEN_VALIDATED, `Token validated for user (${username}) [::1].`);
-		expect(server.emit).to.have.been.calledWithExactly(EVENT_DENIED, `Access denied to: ::1. Error: Invalid grant for user (${username}). Caused by: Failed to obtain grant: invalid_grant (user hasn't approved this consumer).`);
 
 	});
 

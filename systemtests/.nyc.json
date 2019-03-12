@@ -1,6 +1,6 @@
 {
 	"all": true,
-	"branches": 75,
+	"branches": 80,
 	"cache": true,
 	"check-coverage": true,
 	"exclude": [
@@ -9,13 +9,13 @@
 	"extension": [
 		".ts"
 	],
-	"functions": 75,
+	"functions": 80,
 	"include": [
 		"src",
 		"systemtests"
 	],
 	"instrument": true,
-	"lines": 75,
+	"lines": 80,
 	"per-file": false,
 	"report-dir": "coverage-systemtests",
 	"reporter": [
@@ -26,5 +26,5 @@
 	"require": [
 		"ts-node/register"
 	],
-	"statements": 75
+	"statements": 80
 }

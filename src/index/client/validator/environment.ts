@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019, FinancialForce.com, inc
+ * Copyright (c) 2017-2019, FinancialForce.com, inc
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -25,60 +25,54 @@
  */
 
 /**
- * @module openid/cache
+ * @module client/validator/environment
  */
 
-import { createHash } from 'crypto';
-
-import { Environment } from '..';
-
-import { OpenIdClient } from './client';
-
-interface OpenIdClientCache {
-	[index: string]: OpenIdClient;
-}
+import { Environment } from '../../..';
 
 /**
- * Finds the OpenID client for the given environment.
+ * Validates the environment and throws an error if it is invalid.
  *
- * If the OpenID client is not found, a new client is created and stored in the cache.
- *
- * @param env The OpenID environment parameters.
+ * @param [env] The auth environment parameters.
  */
-export async function findOrCreateOpenIdClient(env: Environment) {
+export function validate(env?: Environment): Environment {
 
-	const key = createKey(env);
-
-	let client = cache[key];
-	if (!client) {
-		client = new OpenIdClient(env);
-		await client.init();
-		cache[key] = client;
+	if (!env) {
+		throw new Error('Missing required object parameter.');
 	}
 
-	return client;
+	if (!env.httpTimeout) {
+		throw new Error('Missing required number parameter: httpTimeout.');
+	}
 
-}
+	if (typeof env.httpTimeout !== 'number') {
+		throw new Error('Invalid parameter: httpTimeout is not a number.');
+	}
 
-/**
- * Clears the OpenID client cache.
- *
- * This results in the recreation of OpenID clients.
- */
-export function clear() {
-	Object.keys(cache).forEach((key) => {
-		delete cache[key];
-	});
-}
+	if (env.issuerURI === '') {
+		throw new Error('Invalid parameter: issuerURI cannot be empty.');
+	}
 
-const cache: OpenIdClientCache = {};
+	if (!env.issuerURI) {
+		throw new Error('Missing required string parameter: issuerURI.');
+	}
 
-/**
- * Creates a hash key for the given environment to use in the cache.
- *
- * @param env The OpenID environment parameters.
- */
-function createKey(env: Environment) {
-	const { openidClientId, openidHTTPTimeout, openidIssuerURI } = env;
-	return createHash('sha1').update(`${openidIssuerURI}|${openidClientId}|${openidHTTPTimeout}`).digest('hex');
+	if (typeof env.issuerURI !== 'string') {
+		throw new Error('Invalid parameter: issuerURI is not a string.');
+	}
+
+	if (!env.type) {
+		throw new Error('Missing required string parameter: type.');
+	}
+
+	if (typeof env.type !== 'string') {
+		throw new Error('Invalid parameter: type is not a string.');
+	}
+
+	return {
+		httpTimeout: env.httpTimeout,
+		issuerURI: env.issuerURI,
+		type: env.type
+	};
+
 }

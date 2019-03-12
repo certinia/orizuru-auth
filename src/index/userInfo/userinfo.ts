@@ -29,13 +29,14 @@
  */
 
 import { Environment, UserInfoOptions, UserInfoRequester } from '../..';
-import { findOrCreateOpenIdClient } from '../openid/cache';
-import { validate } from '../openid/validator/environment';
+import { findOrCreateClient } from '../client/cache';
+import { OpenIdClient } from '../client/openid';
+import { validate } from '../client/validator/environment';
 
 /**
  * Returns a function that requests the user information for a given access token.
  *
- * @param [env] The OpenID environment parameters.
+ * @param [env] The auth environment parameters.
  */
 export function createUserInfoRequester(env?: Environment): UserInfoRequester {
 
@@ -45,7 +46,11 @@ export function createUserInfoRequester(env?: Environment): UserInfoRequester {
 
 		try {
 
-			const client = await findOrCreateOpenIdClient(validatedEnvironment);
+			const client = await findOrCreateClient(validatedEnvironment);
+			if (!(client instanceof OpenIdClient)) {
+				throw new Error('This function must be used with a OpenID client.');
+			}
+
 			return await client.userinfo(accessToken, opts);
 
 		} catch (error) {

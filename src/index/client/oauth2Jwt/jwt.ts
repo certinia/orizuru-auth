@@ -25,13 +25,15 @@
  */
 
 /**
- * @module openid/client/jwt
+ * @module client/oauth2Jwt/jwt
  */
 
 import { sign } from 'jsonwebtoken';
 import { v4 as uuid } from 'uuid';
 
-import { Environment, OpenIDToken, User } from '../../..';
+import { Environment } from '../cache';
+import { GrantParams } from '../oauth2';
+import { JWT, JwtGrantParams } from '../oauth2Jwt';
 
 /**
  * The assertion types that can be created.
@@ -44,27 +46,29 @@ enum AssertionType {
 /**
  * Creates a [private_key_jwt](https://openid.net/specs/openid-connect-core-1_0.html#ClientAuthentication) assertion for use in the authentication process.
  *
- * @param env The OpenID environment parameters.
+ * @param params The parameters required for either the [auth](https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest) or [refresh](https://openid.net/specs/openid-connect-core-1_0.html#RefreshingAccessToken) grant requests.
+ * @param signingSecret The secret used to sign the payload.
  * @param tokenEndpoint The [OpenID token endpoint](https://openid.net/specs/openid-connect-core-1_0.html#TokenEndpoint).
  */
-export async function createJwtBearerClientAssertion(env: Environment, tokenEndpoint: string) {
-	const payload = createPayload(tokenEndpoint, env.openidClientId, env.openidClientId);
-	return signClientAssertion(payload, env.jwtSigningKey, AssertionType.CLIENT);
+export async function createJwtBearerClientAssertion(params: GrantParams, signingSecret: string, tokenEndpoint: string) {
+	const payload = createPayload(tokenEndpoint, params.clientId, params.clientId);
+	return signClientAssertion(payload, signingSecret, AssertionType.CLIENT);
+
 }
 
 /**
  * Creates a [private_key_jwt](https://openid.net/specs/openid-connect-core-1_0.html#ClientAuthentication) assertion for use in the authentication process.
  *
  * Unlike the standard client assertion, this assertion provides the username as the
- * subject as defined by [Salesforce](https://help.salesforce.com/articleView?id=remoteaccess_oauth_jwt_flow.htm&type=0#create_token).
+ * subject as defined by [Salesforce](https://help.salesforce.com/articleView?id=remoteaccess_oauth_jwt_flow.htm#create_token).
  *
- * @param env The OpenID environment parameters.
+ * @param env The auth environment parameters.
+ * @param params The parameters required for the [JWT Bearer](https://help.salesforce.com/articleView?id=remoteaccess_oauth_jwt_flow.htm) grant request.
  * @param user The user to generate the assertion for.
  */
-export async function createJwtBearerGrantAssertion(env: Environment, user: User) {
-	const payload = createPayload(env.openidIssuerURI, env.openidClientId, user.username);
-	return signClientAssertion(payload, env.jwtSigningKey, AssertionType.GRANT);
-
+export async function createJwtBearerGrantAssertion(env: Environment, params: JwtGrantParams) {
+	const payload = createPayload(env.issuerURI, params.clientId, params.user.username);
+	return signClientAssertion(payload, params.signingSecret, AssertionType.GRANT);
 }
 
 /**
@@ -74,18 +78,15 @@ export async function createJwtBearerGrantAssertion(env: Environment, user: User
  * @param iss Issuer.
  * @param sub Subject identifier.
  */
-function createPayload(aud: string, iss: string, sub: string) {
+function createPayload(aud: string, iss: string, sub: string): JWT {
 
-	const now = Date.now() / 1000;
-
-	const nowPlusFourMinutes = () => {
-		return Math.floor(Date.now() / 1000) + (60 * 4);
-	};
+	const iat = Math.floor(Date.now() / 1000);
+	const exp = iat + (60 * 4);
 
 	return {
 		aud,
-		exp: nowPlusFourMinutes(),
-		iat: now,
+		exp,
+		iat,
 		iss,
 		jti: uuid().toString(),
 		sub
@@ -97,14 +98,14 @@ function createPayload(aud: string, iss: string, sub: string) {
  * Sign the payload using the given private key.
  *
  * @param payload The payload to sign.
- * @param privateKey The private key to sign the payload with.
+ * @param signingSecret The private key to sign the payload with.
  * @param type The assertion type (either client or grant).
  */
-function signClientAssertion(payload: OpenIDToken, privateKey: string, type: AssertionType) {
+function signClientAssertion(payload: JWT, signingSecret: string, type: AssertionType) {
 
 	return new Promise<string>((resolve, reject) => {
 
-		sign(payload, privateKey, { algorithm: 'RS256' }, (err, encoded) => {
+		sign(payload, signingSecret, { algorithm: 'RS256' }, (err, encoded) => {
 			if (err) {
 				reject(new Error(`Failed to sign ${type} assertion.`));
 			} else {

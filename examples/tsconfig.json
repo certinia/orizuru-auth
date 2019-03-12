@@ -1,0 +1,22 @@
+{
+	"compilerOptions": {
+		"declaration": true,
+		"declarationDir": "dist/types",
+		"esModuleInterop": true,
+		"inlineSourceMap": true,
+		"inlineSources": true,
+		"module": "commonjs",
+		"moduleResolution": "node",
+		"noFallthroughCasesInSwitch": true,
+		"noImplicitAny": true,
+		"noImplicitReturns": true,
+		"noUnusedLocals": true,
+		"outDir": "./dist",
+		"strict": true,
+		"strictNullChecks": true,
+		"target": "es2017"
+	},
+	"include": [
+		"src"
+	]
+}

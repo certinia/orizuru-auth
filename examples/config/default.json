@@ -1,0 +1,23 @@
+{
+	"app": {
+		"authProvider": {
+			"salesforce": {
+				"httpTimeout": 4000,
+				"issuerURI": "https://test.salesforce.com",
+				"type": "Salesforce"
+			}
+		},
+		"openid": {
+			"salesforce": {
+				"immediate": false,
+				"prompt": "consent",
+				"redirectUri": "https://localhost:8080/api/auth/v1.0/callback",
+				"scope": "openid",
+				"verifySignature": false
+			},
+			"salesforceConnection": {
+				"scope": "api"
+			}
+		}
+	}
+}

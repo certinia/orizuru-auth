@@ -3,7 +3,7 @@ coverage
 dist
 node_modules
 
-config/local*
+**/config/local*
 
 *.cert
 *.key

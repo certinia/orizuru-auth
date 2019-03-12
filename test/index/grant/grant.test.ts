@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2017-2019, FinancialForce.com, inc
  * All rights reserved.
  *
@@ -29,11 +29,12 @@ import chaiAsPromised from 'chai-as-promised';
 import sinon, { SinonStub, SinonStubbedInstance } from 'sinon';
 import sinonChai from 'sinon-chai';
 
-import * as cache from '../../../src/index/openid/cache';
-import { OpenIdClient } from '../../../src/index/openid/client';
-import * as validator from '../../../src/index/openid/validator/environment';
+import * as cache from '../../../src/index/client/cache';
+import { AuthClient } from '../../../src/index/client/oauth2';
+import { OpenIdClient } from '../../../src/index/client/openid';
+import * as validator from '../../../src/index/client/validator/environment';
 
-import { Environment, User, UserTokenGrantor } from '../../../src';
+import { AccessTokenResponse, Environment, GrantOptions, JwtGrantParams, SalesforceAccessTokenResponse, UserTokenGrantor } from '../../../src';
 
 import { getToken } from '../../../src/index/grant/grant';
 
@@ -45,21 +46,19 @@ chai.use(sinonChai);
 describe('index/grant/grant', () => {
 
 	let env: Environment;
-	let cacheStub: SinonStub<[Environment], Promise<OpenIdClient>>;
+	let cacheStub: SinonStub<[Environment], Promise<AuthClient>>;
 	let openIdClientStubInstance: SinonStubbedInstance<OpenIdClient>;
 
 	beforeEach(() => {
 
 		env = {
-			jwtSigningKey: 'testJwtSigningKey',
-			openidClientId: 'test',
-			openidClientSecret: 'test',
-			openidHTTPTimeout: 4001,
-			openidIssuerURI: 'https://login.salesforce.com/'
+			httpTimeout: 4001,
+			issuerURI: 'https://login.salesforce.com/',
+			type: 'OpenID'
 		};
 
 		openIdClientStubInstance = sinon.createStubInstance(OpenIdClient);
-		cacheStub = sinon.stub(cache, 'findOrCreateOpenIdClient').resolves(openIdClientStubInstance as unknown as OpenIdClient);
+		cacheStub = sinon.stub(cache, 'findOrCreateClient').resolves(openIdClientStubInstance);
 
 		sinon.stub(validator, 'validate').returns(env);
 
@@ -86,16 +85,23 @@ describe('index/grant/grant', () => {
 	describe('getUserCredentials', () => {
 
 		let getUserCredentials: UserTokenGrantor;
-		let req: {
-			user: User;
-		};
+		let params: JwtGrantParams;
+		let opts: GrantOptions;
 
 		beforeEach(() => {
 
-			req = {
+			params = {
+				clientId: 'testClientId',
+				grantType: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+				signingSecret: 'testSigningSecret',
 				user: {
 					username: 'test@test.com'
 				}
+			};
+
+			opts = {
+				decodeIdToken: false,
+				verifySignature: false
 			};
 
 			getUserCredentials = getToken(env);
@@ -107,47 +113,47 @@ describe('index/grant/grant', () => {
 			it('if user is missing', async () => {
 
 				// Given
-				delete req.user;
+				delete params.user;
 
 				// When
 				// Then
-				await expect(getUserCredentials(req.user)).to.eventually.be.rejectedWith('Failed to obtain grant for user. Caused by: Missing required object parameter: user');
+				await expect(getUserCredentials(params)).to.eventually.be.rejectedWith('Failed to obtain grant for user. Caused by: Missing required object parameter: user');
 
 			});
 
 			it('if username is missing', async () => {
 
 				// Given
-				delete req.user.username;
+				delete params.user.username;
 
 				// When
 				// Then
-				await expect(getUserCredentials(req.user)).to.eventually.be.rejectedWith('Failed to obtain grant for user. Caused by: Missing required string parameter: user[username]');
+				await expect(getUserCredentials(params)).to.eventually.be.rejectedWith('Failed to obtain grant for user. Caused by: Missing required string parameter: user[username]');
 
 			});
 
 			it('if username is empty', async () => {
 
 				// Given
-				req.user.username = '';
+				params.user.username = '';
 
 				// When
 				// Then
-				await expect(getUserCredentials(req.user)).to.eventually.be.rejectedWith('Failed to obtain grant for user. Caused by: Invalid parameter: user[username] cannot be empty');
+				await expect(getUserCredentials(params)).to.eventually.be.rejectedWith('Failed to obtain grant for user. Caused by: Invalid parameter: user[username] cannot be empty');
 
 			});
 
-			it('if findOrCreateOpenIdClient rejects', async () => {
+			it('if findOrCreateClient rejects', async () => {
 
 				// Given
 				cacheStub.rejects(new Error('something or other'));
 
 				// When
-				await expect(getUserCredentials(req.user)).to.eventually.be.rejectedWith('Failed to obtain grant for user (test@test.com). Caused by: something or other');
+				await expect(getUserCredentials(params)).to.eventually.be.rejectedWith('Failed to obtain grant for user (test@test.com). Caused by: something or other');
 
 				// Then
-				expect(cache.findOrCreateOpenIdClient).to.have.been.calledOnce;
-				expect(cache.findOrCreateOpenIdClient).to.have.been.calledWith(env);
+				expect(cache.findOrCreateClient).to.have.been.calledOnce;
+				expect(cache.findOrCreateClient).to.have.been.calledWith(env);
 
 			});
 
@@ -157,13 +163,15 @@ describe('index/grant/grant', () => {
 				openIdClientStubInstance.grant.throws(new Error('something or other'));
 
 				// When
-				await expect(getUserCredentials(req.user)).to.eventually.be.rejectedWith('Failed to obtain grant for user (test@test.com). Caused by: something or other');
+				await expect(getUserCredentials(params, opts)).to.eventually.be.rejectedWith('Failed to obtain grant for user (test@test.com). Caused by: something or other');
 
 				// Then
-				expect(cache.findOrCreateOpenIdClient).to.have.been.calledOnce;
-				expect(cache.findOrCreateOpenIdClient).to.have.been.calledWith(env);
+				expect(cache.findOrCreateClient).to.have.been.calledOnce;
+				expect(cache.findOrCreateClient).to.have.been.calledWith(env);
 				expect(openIdClientStubInstance.grant).to.have.been.calledWith({
-					grantType: 'jwt',
+					clientId: 'testClientId',
+					grantType: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+					signingSecret: 'testSigningSecret',
 					user: {
 						username: 'test@test.com'
 					}
@@ -173,48 +181,88 @@ describe('index/grant/grant', () => {
 
 		});
 
-		it('should obtain the grant', async () => {
+		describe('should obtain the grant', () => {
 
-			// Given
-			openIdClientStubInstance.grant.resolves({
-				access_token: '00Dxx0000001gPL!AR8AQJXg5oj8jXSgxJfA0lBog.39AsX.LVpxezPwuX5VAIrrbbHMuol7GQxnMeYMN7cj8EoWr78nt1u44zU31IbYNNJguseu',
-				id: 'https://login.salesforce.com/id/00Dxx0000001gPLEAY/005xx000001SwiUAAS',
-				instance_url: 'https:// yourInstance.salesforce.com',
-				issued_at: '1551531242643',
-				scope: 'web openid api id',
-				signature: 'd4A6A67xJuzK4iYucL/EsnC/caaWl0aUfs1a8aSFAMw=',
-				token_type: 'Bearer',
-				userInfo: {
-					id: '005xx000001SwiUAAS',
-					organizationId: '00Dxx0000001gPLEAY',
-					url: 'https://login.salesforce.com/id/00Dxx0000001gPLEAY/005xx000001SwiUAAS',
-					validated: true
-				}
+			it('for a salesforce access token response', async () => {
+
+				// Given
+				const token: SalesforceAccessTokenResponse = {
+					access_token: '00Dxx0000001gPL!AR8AQJXg5oj8jXSgxJfA0lBog.39AsX.LVpxezPwuX5VAIrrbbHMuol7GQxnMeYMN7cj8EoWr78nt1u44zU31IbYNNJguseu',
+					id: 'https://login.salesforce.com/id/00Dxx0000001gPLEAY/005xx000001SwiUAAS',
+					instance_url: 'https:// yourInstance.salesforce.com',
+					issued_at: '1551531242643',
+					scope: 'web openid api id',
+					signature: 'd4A6A67xJuzK4iYucL/EsnC/caaWl0aUfs1a8aSFAMw=',
+					token_type: 'Bearer',
+					userInfo: {
+						id: '005xx000001SwiUAAS',
+						organizationId: '00Dxx0000001gPLEAY',
+						url: 'https://login.salesforce.com/id/00Dxx0000001gPLEAY/005xx000001SwiUAAS',
+						validated: true
+					}
+				};
+
+				openIdClientStubInstance.grant.resolves(token);
+
+				// When
+				const userCredentials = await getUserCredentials(params, opts);
+
+				// Then
+				expect(userCredentials).to.eql({
+					accessToken: '00Dxx0000001gPL!AR8AQJXg5oj8jXSgxJfA0lBog.39AsX.LVpxezPwuX5VAIrrbbHMuol7GQxnMeYMN7cj8EoWr78nt1u44zU31IbYNNJguseu',
+					instanceUrl: 'https:// yourInstance.salesforce.com',
+					userInfo: {
+						id: '005xx000001SwiUAAS',
+						organizationId: '00Dxx0000001gPLEAY',
+						url: 'https://login.salesforce.com/id/00Dxx0000001gPLEAY/005xx000001SwiUAAS',
+						validated: true
+					}
+				});
+
+				expect(cache.findOrCreateClient).to.have.been.calledOnce;
+				expect(cache.findOrCreateClient).to.have.been.calledWith(env);
+				expect(openIdClientStubInstance.grant).to.have.been.calledWith({
+					clientId: 'testClientId',
+					grantType: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+					signingSecret: 'testSigningSecret',
+					user: {
+						username: 'test@test.com'
+					}
+				}, { decodeIdToken: false, verifySignature: false });
+
 			});
 
-			// When
-			const userCredentials = await getUserCredentials(req.user);
+			it('for an access token response', async () => {
 
-			// Then
-			expect(userCredentials).to.eql({
-				accessToken: '00Dxx0000001gPL!AR8AQJXg5oj8jXSgxJfA0lBog.39AsX.LVpxezPwuX5VAIrrbbHMuol7GQxnMeYMN7cj8EoWr78nt1u44zU31IbYNNJguseu',
-				instanceUrl: 'https:// yourInstance.salesforce.com',
-				userInfo: {
-					id: '005xx000001SwiUAAS',
-					organizationId: '00Dxx0000001gPLEAY',
-					url: 'https://login.salesforce.com/id/00Dxx0000001gPLEAY/005xx000001SwiUAAS',
-					validated: true
-				}
+				// Given
+				const token: AccessTokenResponse = {
+					access_token: '00Dxx0000001gPL!AR8AQJXg5oj8jXSgxJfA0lBog.39AsX.LVpxezPwuX5VAIrrbbHMuol7GQxnMeYMN7cj8EoWr78nt1u44zU31IbYNNJguseu',
+					scope: 'web openid api id',
+					token_type: 'Bearer'
+				};
+
+				openIdClientStubInstance.grant.resolves(token);
+
+				// When
+				const userCredentials = await getUserCredentials(params, opts);
+
+				// Then
+				expect(userCredentials).to.eql({
+					accessToken: '00Dxx0000001gPL!AR8AQJXg5oj8jXSgxJfA0lBog.39AsX.LVpxezPwuX5VAIrrbbHMuol7GQxnMeYMN7cj8EoWr78nt1u44zU31IbYNNJguseu'
+				});
+
+				expect(cache.findOrCreateClient).to.have.been.calledOnce;
+				expect(cache.findOrCreateClient).to.have.been.calledWith(env);
+				expect(openIdClientStubInstance.grant).to.have.been.calledWith({
+					clientId: 'testClientId',
+					grantType: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+					signingSecret: 'testSigningSecret',
+					user: {
+						username: 'test@test.com'
+					}
+				}, { decodeIdToken: false, verifySignature: false });
+
 			});
-
-			expect(cache.findOrCreateOpenIdClient).to.have.been.calledOnce;
-			expect(cache.findOrCreateOpenIdClient).to.have.been.calledWith(env);
-			expect(openIdClientStubInstance.grant).to.have.been.calledWith({
-				grantType: 'jwt',
-				user: {
-					username: 'test@test.com'
-				}
-			}, { decodeIdToken: false, verifySignature: false });
 
 		});
 

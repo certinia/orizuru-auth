@@ -28,32 +28,31 @@
  * @module flow/jwtBearerToken
  */
 
-import { AccessTokenResponse, Environment, GrantOptions, JwtBearerAccessTokenGrantor, JwtGrantParameters } from '..';
-import { findOrCreateOpenIdClient } from '../openid/cache';
-import { validate } from '../openid/validator/environment';
+import { AccessTokenResponse, Environment, GrantOptions, JwtBearerAccessTokenGrantor, JwtGrantParams, UserTokenGrantorParams } from '..';
+import { findOrCreateClient } from '../client/cache';
+import { validate } from '../client/validator/environment';
 
 /**
  * Uses the [OAuth 2.0 JWT Bearer Token Flow](https://help.salesforce.com/articleView?id=remoteaccess_oauth_jwt_flow.htm) to request an access token.
  *
- * @param [env] The OpenID environment parameters.
+ * @param [env] The auth environment parameters.
  * @returns A function that requests an access token for a given user.
  */
 export function createTokenGrantor(env?: Environment): JwtBearerAccessTokenGrantor {
 
 	const validatedEnvironment = validate(env);
 
-	return async function requestAccessToken(params: JwtGrantParameters, opts?: GrantOptions): Promise<AccessTokenResponse> {
+	return async function requestAccessToken(params: UserTokenGrantorParams, opts?: GrantOptions): Promise<AccessTokenResponse> {
 
 		try {
 
-			const client = await findOrCreateOpenIdClient(validatedEnvironment);
+			// The TokenGrantorParams interface excludes the grant_type so that it
+			// doesn't have to be set by the caller. Make sure it is set here.
+			const internalParams: Partial<JwtGrantParams> = Object.assign({}, params);
+			internalParams.grantType = 'urn:ietf:params:oauth:grant-type:jwt-bearer';
 
-			const accessTokenResponse = await client.grant({
-				grantType: 'jwt',
-				user: params.user
-			}, opts);
-
-			return accessTokenResponse;
+			const client = await findOrCreateClient(validatedEnvironment);
+			return client.grant(internalParams as JwtGrantParams, opts);
 
 		} catch (error) {
 			throw new Error(`Invalid grant for user (${params.user.username}). Caused by: ${error.message}`);

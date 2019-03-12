@@ -30,14 +30,14 @@
 
 import { Environment } from '..';
 
-import { findOrCreateOpenIdClient } from '../openid/cache';
-import { validate } from '../openid/validator/environment';
+import { findOrCreateClient } from '../client/cache';
+import { validate } from '../client/validator/environment';
 
 /**
  * [Revokes access tokens](https://help.salesforce.com/articleView?id=remoteaccess_revoke_token.htm)
  * so that users can no longer access Salesforce.
  *
- * @param [env] The OpenID environment parameters.
+ * @param [env] The auth environment parameters.
  */
 export function createTokenRevoker(env: Environment) {
 
@@ -45,7 +45,7 @@ export function createTokenRevoker(env: Environment) {
 
 	return async function revokeToken(token: string) {
 
-		const client = await findOrCreateOpenIdClient(validatedEnvironment);
+		const client = await findOrCreateClient(validatedEnvironment);
 		return client.revoke(token);
 
 	};

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2017-2019, FinancialForce.com, inc
  * All rights reserved.
  *
@@ -28,21 +28,19 @@ import chai from 'chai';
 
 import { Environment } from '../../../../src';
 
-import { validate } from '../../../../src/index/openid/validator/environment';
+import { validate } from '../../../../src/index/client/validator/environment';
 
 const expect = chai.expect;
 
-describe('validator/environment', () => {
+describe('index/client/validator/environment', () => {
 
 	let env: Environment;
 
 	beforeEach(() => {
 		env = {
-			jwtSigningKey: 'test',
-			openidClientId: 'test',
-			openidClientSecret: 'test',
-			openidHTTPTimeout: 4001,
-			openidIssuerURI: 'test'
+			httpTimeout: 4001,
+			issuerURI: 'test',
+			type: 'OpenID'
 		};
 	});
 
@@ -51,132 +49,105 @@ describe('validator/environment', () => {
 		it('if the environment is undefined', () => {
 
 			// Given
-			delete env.jwtSigningKey;
-
 			// When
 			// Then
 			expect(() => validate(undefined)).to.throw('Missing required object parameter.');
 
 		});
 
-		it('if jwtSigningKey is undefined', () => {
+		it('if httpTimeout is undefined', () => {
 
 			// Given
-			delete env.jwtSigningKey;
+			delete env.httpTimeout;
 
 			// When
 			// Then
-			expect(() => validate(env)).to.throw('Missing required string parameter: jwtSigningKey.');
+			expect(() => validate(env)).to.throw('Missing required number parameter: httpTimeout.');
 
 		});
 
-		it('if jwtSigningKey is empty', () => {
+		it('if httpTimeout is not an integer', () => {
 
 			// Given
-			env.jwtSigningKey = '';
+			env.httpTimeout = 'test' as unknown as number;
 
 			// When
 			// Then
-			expect(() => validate(env)).to.throw('Invalid parameter: jwtSigningKey cannot be empty.');
+			expect(() => validate(env)).to.throw('Invalid parameter: httpTimeout is not a number.');
 
 		});
 
-		it('if openidClientId is undefined', () => {
+		it('if issuerURI is undefined', () => {
 
 			// Given
-			delete env.openidClientId;
+			delete env.issuerURI;
 
 			// When
 			// Then
-			expect(() => validate(env)).to.throw('Missing required string parameter: openidClientId.');
+			expect(() => validate(env)).to.throw('Missing required string parameter: issuerURI.');
 
 		});
 
-		it('if openidClientId is empty', () => {
+		it('if issuerURI is empty', () => {
 
 			// Given
-			env.openidClientId = '';
+			env.issuerURI = '';
 
 			// When
 			// Then
-			expect(() => validate(env)).to.throw('Invalid parameter: openidClientId cannot be empty.');
+			expect(() => validate(env)).to.throw('Invalid parameter: issuerURI cannot be empty.');
 
 		});
 
-		it('if openidClientSecret is undefined', () => {
+		it('if issuerURI is not a string', () => {
 
 			// Given
-			delete env.openidClientSecret;
+			Object.assign(env, {
+				issuerURI: 2
+			});
 
 			// When
 			// Then
-			expect(() => validate(env)).to.throw('Missing required string parameter: openidClientSecret.');
+			expect(() => validate(env)).to.throw('Invalid parameter: issuerURI is not a string.');
 
 		});
 
-		it('if openidClientSecret is empty', () => {
+		it('if the type is undefined', () => {
 
 			// Given
-			env.openidClientSecret = '';
+			delete env.type;
 
 			// When
 			// Then
-			expect(() => validate(env)).to.throw('Invalid parameter: openidClientSecret cannot be empty.');
+			expect(() => validate(env)).to.throw('Missing required string parameter: type.');
 
 		});
 
-		it('if openidHTTPTimeout is undefined', () => {
+		it('if the type is not a string', () => {
 
 			// Given
-			delete env.openidHTTPTimeout;
+			Object.assign(env, {
+				type: 2
+			});
 
 			// When
 			// Then
-			expect(() => validate(env)).to.throw('Missing required number parameter: openidHTTPTimeout.');
-
-		});
-
-		it('if openidHTTPTimeout is not an integer', () => {
-
-			// Given
-			env.openidHTTPTimeout = 'test' as unknown as number;
-
-			// When
-			// Then
-			expect(() => validate(env)).to.throw('Invalid parameter: openidHTTPTimeout is not a number.');
-
-		});
-
-		it('if openidIssuerURI is undefined', () => {
-
-			// Given
-			delete env.openidIssuerURI;
-
-			// When
-			// Then
-			expect(() => validate(env)).to.throw('Missing required string parameter: openidIssuerURI.');
-
-		});
-
-		it('if openidIssuerURI is empty', () => {
-
-			// Given
-			env.openidIssuerURI = '';
-
-			// When
-			// Then
-			expect(() => validate(env)).to.throw('Invalid parameter: openidIssuerURI cannot be empty.');
+			expect(() => validate(env)).to.throw('Invalid parameter: type is not a string.');
 
 		});
 
 	});
 
-	it('should resolve with env if env is ok', () => {
+	describe('should resolve', () => {
 
-		// Given
-		// When
-		// Then
-		expect(validate(env)).to.deep.equal(env);
+		it('if the environment is correct', () => {
+
+			// Given
+			// When
+			// Then
+			expect(validate(env)).to.eql(env);
+
+		});
 
 	});
 

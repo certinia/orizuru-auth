@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2017-2019, FinancialForce.com, inc
  * All rights reserved.
  *
@@ -30,7 +30,7 @@ import sinonChai from 'sinon-chai';
 
 import { Request, RequestHandler, Response } from '@financialforcedev/orizuru';
 
-import { Environment, EVENT_TOKEN_VALIDATED } from '../../../src';
+import { Environment, EVENT_TOKEN_VALIDATED, OpenIdOptions, ResponseFormat, UserInfoOptions } from '../../../src';
 import * as fail from '../../../src/index/middleware/common/fail';
 import * as userInfo from '../../../src/index/userInfo/userinfo';
 
@@ -41,19 +41,6 @@ const has = sinon.match.has;
 
 chai.use(sinonChai);
 
-interface ExtendedOrizuru extends Orizuru.Context {
-	grantChecked?: boolean;
-	other: boolean;
-	user?: {
-		organizationId: string;
-		username: string;
-	};
-}
-
-interface ExtendedRequest extends Request {
-	orizuru: ExtendedOrizuru;
-}
-
 describe('index/middleware/tokenValidator', () => {
 
 	let app: Orizuru.IServer;
@@ -63,18 +50,25 @@ describe('index/middleware/tokenValidator', () => {
 	beforeEach(() => {
 
 		env = {
-			jwtSigningKey: 'testJwtSigningKey',
-			openidClientId: 'test',
-			openidClientSecret: 'test',
-			openidHTTPTimeout: 4001,
-			openidIssuerURI: 'https://login.salesforce.com/'
+			httpTimeout: 4001,
+			issuerURI: 'https://login.salesforce.com/',
+			type: 'OpenID'
+		};
+
+		const openIdOptions: Partial<OpenIdOptions> = {
+			clientId: 'testClientId',
+			clientSecret: 'testClientSecret',
+			signingSecret: 'testSigningSecret'
 		};
 
 		const partialApp: Partial<Orizuru.IServer> = {
 			emit: sinon.stub(),
 			options: {
-				auth: {
-					jwtBearer: env
+				authProvider: {
+					salesforce: env
+				},
+				openid: {
+					salesforce: openIdOptions as OpenIdOptions
 				}
 			}
 		};
@@ -92,7 +86,7 @@ describe('index/middleware/tokenValidator', () => {
 
 		// Then
 		expect(userInfo.createUserInfoRequester).to.have.been.calledOnce;
-		expect(userInfo.createUserInfoRequester).to.have.been.calledWithExactly(app.options.auth.jwtBearer);
+		expect(userInfo.createUserInfoRequester).to.have.been.calledWithExactly(app.options.authProvider.salesforce);
 
 		sinon.restore();
 
@@ -102,7 +96,7 @@ describe('index/middleware/tokenValidator', () => {
 
 		// Given
 		// When
-		const middleware = createMiddleware(app);
+		const middleware = createMiddleware(app, 'salesforce');
 
 		// Then
 		expect(middleware).to.be.a('function');
@@ -112,23 +106,27 @@ describe('index/middleware/tokenValidator', () => {
 	describe('validateToken', () => {
 
 		let middleware: RequestHandler;
-		let req: ExtendedRequest;
+		let req: Request;
 		let res: Response;
 		let next: SinonStub;
 
 		beforeEach(() => {
 
-			const partialRequest: Partial<ExtendedRequest> = {
+			const partialRequest: Partial<Request> = {
 				ip: '1.1.1.1'
 			};
-			req = partialRequest as ExtendedRequest;
+			req = partialRequest as Request;
 
 			const partialResponse: Partial<Response> = {};
 			res = partialResponse as Response;
 
 			next = sinon.stub();
 
-			middleware = createMiddleware(app);
+			const opts: UserInfoOptions = {
+				responseFormat: ResponseFormat.JSON
+			};
+
+			middleware = createMiddleware(app, 'salesforce', opts);
 
 		});
 
@@ -142,14 +140,27 @@ describe('index/middleware/tokenValidator', () => {
 
 			});
 
-			it('if the header is undefined', async () => {
+			it('if the headers are not provided', async () => {
 
 				// Given
 				// When
 				await middleware(req, res, next);
 
 				// Then
-				expect(fail.fail).to.have.been.calledWithExactly(app, has('message', 'Authorization header with \'Bearer ***...\' required'), req, res, next);
+				expect(fail.fail).to.have.been.calledWithExactly(app, has('message', 'Missing required object parameter: headers.'), req, res, next);
+
+			});
+
+			it('if the authorization header is not provided', async () => {
+
+				// Given
+				req.headers = {};
+
+				// When
+				await middleware(req, res, next);
+
+				// Then
+				expect(fail.fail).to.have.been.calledWithExactly(app, has('message', 'Missing required string parameter: headers[authorization].'), req, res, next);
 
 			});
 
@@ -164,7 +175,7 @@ describe('index/middleware/tokenValidator', () => {
 				await middleware(req, res, next);
 
 				// Then
-				expect(fail.fail).to.have.been.calledWithExactly(app, has('message', 'Authorization header with \'Bearer ***...\' required'), req, res, next);
+				expect(fail.fail).to.have.been.calledWithExactly(app, has('message', 'Missing required string parameter: headers[authorization].'), req, res, next);
 
 			});
 
@@ -179,7 +190,7 @@ describe('index/middleware/tokenValidator', () => {
 				await middleware(req, res, next);
 
 				// Then
-				expect(fail.fail).to.have.been.calledWithExactly(app, has('message', 'Authorization header with \'Bearer ***...\' required'), req, res, next);
+				expect(fail.fail).to.have.been.calledWithExactly(app, has('message', 'Authorization header with \'Bearer ***...\' required.'), req, res, next);
 
 			});
 
@@ -194,7 +205,7 @@ describe('index/middleware/tokenValidator', () => {
 				await middleware(req, res, next);
 
 				// Then
-				expect(fail.fail).to.have.been.calledWithExactly(app, has('message', 'Authorization header with \'Bearer ***...\' required'), req, res, next);
+				expect(fail.fail).to.have.been.calledWithExactly(app, has('message', 'Authorization header with \'Bearer ***...\' required.'), req, res, next);
 
 			});
 
@@ -214,7 +225,9 @@ describe('index/middleware/tokenValidator', () => {
 				expect(fail.fail).to.have.been.calledWithExactly(app, has('message', 'Failed to retrieve user information.'), req, res, next);
 
 				expect(validateAccessTokenStub).to.have.been.calledOnce;
-				expect(validateAccessTokenStub).to.have.been.calledWithExactly('12345');
+				expect(validateAccessTokenStub).to.have.been.calledWithExactly('12345', {
+					responseFormat: ResponseFormat.JSON
+				});
 
 			});
 
@@ -229,7 +242,6 @@ describe('index/middleware/tokenValidator', () => {
 				};
 
 				validateAccessTokenStub.resolves({
-					organization_id: 'testOrganizationId',
 					preferred_username: 'test@test.com'
 				});
 
@@ -239,12 +251,13 @@ describe('index/middleware/tokenValidator', () => {
 
 				// Then
 				expect(req.orizuru).to.have.property('user').that.eqls({
-					organizationId: 'testOrganizationId',
 					username: 'test@test.com'
 				});
 
 				expect(validateAccessTokenStub).to.have.been.calledOnce;
-				expect(validateAccessTokenStub).to.have.been.calledWithExactly('12345');
+				expect(validateAccessTokenStub).to.have.been.calledWithExactly('12345', {
+					responseFormat: ResponseFormat.JSON
+				});
 				expect(app.emit).to.have.been.calledOnce;
 				expect(app.emit).to.have.been.calledWithExactly(EVENT_TOKEN_VALIDATED, 'Token validated for user (test@test.com) [1.1.1.1].');
 				expect(next).to.have.been.calledOnce;
@@ -265,14 +278,14 @@ describe('index/middleware/tokenValidator', () => {
 
 				// Given
 				req.orizuru = {
-					other: true
+					grantChecked: true
 				};
 
 				// When
 				await middleware(req, res, next);
 
 				// Then
-				expect(req.orizuru).to.have.property('other', true);
+				expect(req.orizuru).to.have.property('grantChecked', true);
 
 			});
 

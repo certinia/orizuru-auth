@@ -7,5 +7,5 @@
 		"ts-node/register"
 	],
 	"spec": "systemtests/**/*.test.ts",
-	"timeout": 10000
+	"timeout": 15000
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2018-2019, FinancialForce.com, inc
  * All rights reserved.
  *
@@ -28,10 +28,10 @@ import chai from 'chai';
 import sinon, { SinonStubbedInstance } from 'sinon';
 import sinonChai from 'sinon-chai';
 
-import { AuthCodeAccessTokenGrantor, AuthUrlGenerator, Environment } from '../../../src';
-import * as cache from '../../../src/index/openid/cache';
-import { OpenIdClient } from '../../../src/index/openid/client';
-import * as validator from '../../../src/index/openid/validator/environment';
+import { AuthCodeAccessTokenGrantor, AuthCodeGrantParams, AuthOptions, AuthUrlGenerator, AuthUrlParams, Environment, GrantOptions } from '../../../src';
+import * as cache from '../../../src/index/client/cache';
+import { OpenIdClient } from '../../../src/index/client/openid';
+import * as validator from '../../../src/index/client/validator/environment';
 
 import { authorizationUrlGenerator, createTokenGrantor } from '../../../src/index/flow/webServer';
 
@@ -46,12 +46,9 @@ describe('index/flow/webServer', () => {
 	beforeEach(() => {
 
 		env = {
-			jwtSigningKey: 'testJwtSigningKey',
-			openidClientId: 'test',
-			openidClientSecret: 'test',
-			openidHTTPTimeout: 4001,
-			openidIssuerURI: 'https://login.salesforce.com/',
-			redirectUri: 'https://test.app.com/auth/callback'
+			httpTimeout: 4001,
+			issuerURI: 'https://login.salesforce.com/',
+			type: 'OpenID'
 		};
 
 		sinon.stub(validator, 'validate').returns(env);
@@ -86,7 +83,7 @@ describe('index/flow/webServer', () => {
 			beforeEach(() => {
 
 				openIdClientStubInstance = sinon.createStubInstance(OpenIdClient);
-				sinon.stub(cache, 'findOrCreateOpenIdClient').resolves(openIdClientStubInstance as unknown as OpenIdClient);
+				sinon.stub(cache, 'findOrCreateClient').resolves(openIdClientStubInstance);
 
 				generateAuthorizationUrl = authorizationUrlGenerator(env);
 
@@ -97,19 +94,31 @@ describe('index/flow/webServer', () => {
 				// Given
 				openIdClientStubInstance.createAuthorizationUrl.returns('authorizationUrl');
 
+				const params: AuthUrlParams = {
+					clientId: 'testClientId',
+					redirectUri: 'testRedirectUri',
+					scope: 'openid api'
+				};
+
+				const opts: AuthOptions = {
+					prompt: 'login',
+					state: 'testState'
+				};
+
 				// When
-				const authorizeUrl = await generateAuthorizationUrl('testState', { prompt: 'login' });
+				const authorizeUrl = await generateAuthorizationUrl(params, opts);
 
 				// Then
 				expect(authorizeUrl).to.eql('authorizationUrl');
 
-				expect(cache.findOrCreateOpenIdClient).to.have.been.calledOnce;
-				expect(cache.findOrCreateOpenIdClient).to.have.been.calledWithExactly(env);
+				expect(cache.findOrCreateClient).to.have.been.calledOnce;
+				expect(cache.findOrCreateClient).to.have.been.calledWithExactly(env);
 				expect(openIdClientStubInstance.createAuthorizationUrl).to.have.been.calledOnce;
 				expect(openIdClientStubInstance.createAuthorizationUrl).to.have.been.calledWithExactly({
-					redirect_uri: 'https://test.app.com/auth/callback',
-					state: 'testState'
-				}, { prompt: 'login' });
+					clientId: 'testClientId',
+					redirectUri: 'testRedirectUri',
+					scope: 'openid api'
+				}, { prompt: 'login', state: 'testState' });
 
 			});
 
@@ -141,7 +150,7 @@ describe('index/flow/webServer', () => {
 			beforeEach(() => {
 
 				openIdClientStubInstance = sinon.createStubInstance(OpenIdClient);
-				sinon.stub(cache, 'findOrCreateOpenIdClient').resolves(openIdClientStubInstance as unknown as OpenIdClient);
+				sinon.stub(cache, 'findOrCreateClient').resolves(openIdClientStubInstance);
 
 				tokenGrantor = createTokenGrantor(env);
 
@@ -163,19 +172,31 @@ describe('index/flow/webServer', () => {
 
 				openIdClientStubInstance.grant.resolves(expectedAccessTokenResponse);
 
+				const params: AuthCodeGrantParams = {
+					clientId: 'testClientId',
+					code: 'testCode',
+					grantType: 'authorization_code'
+				};
+
+				const opts: GrantOptions = {
+					redirectUri: 'testRedirectUri',
+					signingSecret: 'testSigningSecret'
+				};
+
 				// When
-				const accessTokenResponse = await tokenGrantor({ code: 'b' }, { useJwt: false });
+				const accessTokenResponse = await tokenGrantor(params, opts);
 
 				// Then
 				expect(accessTokenResponse).to.eql(expectedAccessTokenResponse);
 
-				expect(cache.findOrCreateOpenIdClient).to.have.been.calledOnce;
-				expect(cache.findOrCreateOpenIdClient).to.have.been.calledWithExactly(env);
+				expect(cache.findOrCreateClient).to.have.been.calledOnce;
+				expect(cache.findOrCreateClient).to.have.been.calledWithExactly(env);
 				expect(openIdClientStubInstance.grant).to.have.been.calledOnce;
 				expect(openIdClientStubInstance.grant).to.have.been.calledWithExactly({
-					code: 'b',
-					grantType: 'auth'
-				}, { useJwt: false });
+					clientId: 'testClientId',
+					code: 'testCode',
+					grantType: 'authorization_code'
+				}, { signingSecret: 'testSigningSecret', redirectUri: 'testRedirectUri' });
 
 			});
 

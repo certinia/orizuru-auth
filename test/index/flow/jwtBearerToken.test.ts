@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2019, FinancialForce.com, inc
  * All rights reserved.
  *
@@ -28,10 +28,10 @@ import chai from 'chai';
 import sinon, { SinonStubbedInstance } from 'sinon';
 import sinonChai from 'sinon-chai';
 
-import { AccessTokenResponse, Environment, JwtBearerAccessTokenGrantor } from '../../../src';
-import * as cache from '../../../src/index//openid/cache';
-import { OpenIdClient } from '../../../src/index//openid/client';
-import * as validator from '../../../src/index/openid/validator/environment';
+import { Environment, JwtBearerAccessTokenGrantor, JwtGrantParams, SalesforceAccessTokenResponse } from '../../../src';
+import * as cache from '../../../src/index/client/cache';
+import { OpenIdClient } from '../../../src/index/client/openid';
+import * as validator from '../../../src/index/client/validator/environment';
 
 import { createTokenGrantor } from '../../../src/index//flow/jwtBearerToken';
 
@@ -46,11 +46,9 @@ describe('index/flow/jwtBearerToken', () => {
 	beforeEach(() => {
 
 		env = {
-			jwtSigningKey: 'testJwtSigningKey',
-			openidClientId: 'test',
-			openidClientSecret: 'test',
-			openidHTTPTimeout: 4001,
-			openidIssuerURI: 'https://login.salesforce.com/'
+			httpTimeout: 4001,
+			issuerURI: 'https://login.salesforce.com/',
+			type: 'OpenID'
 		};
 
 		sinon.stub(validator, 'validate').returns(env);
@@ -77,7 +75,7 @@ describe('index/flow/jwtBearerToken', () => {
 
 	describe('requestAccessToken', () => {
 
-		let expectedAccessTokenResponse: AccessTokenResponse;
+		let expectedAccessTokenResponse: SalesforceAccessTokenResponse;
 		let tokenGrantor: JwtBearerAccessTokenGrantor;
 		let openIdClientStubInstance: SinonStubbedInstance<OpenIdClient>;
 
@@ -95,7 +93,7 @@ describe('index/flow/jwtBearerToken', () => {
 			};
 
 			openIdClientStubInstance = sinon.createStubInstance(OpenIdClient);
-			sinon.stub(cache, 'findOrCreateOpenIdClient').resolves(openIdClientStubInstance as unknown as OpenIdClient);
+			sinon.stub(cache, 'findOrCreateClient').resolves(openIdClientStubInstance);
 
 			tokenGrantor = createTokenGrantor(env);
 
@@ -104,14 +102,19 @@ describe('index/flow/jwtBearerToken', () => {
 		it('should throw an error if the openIdClient grant method fails', async () => {
 
 			// Given
-			openIdClientStubInstance.grant.rejects(new Error('Failed to obtain grant.'));
+			openIdClientStubInstance.grant.throws(new Error('Failed to obtain grant.'));
 
-			// When
-			await expect(tokenGrantor({
+			const params: JwtGrantParams = {
+				clientId: 'testClientId',
+				grantType: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+				signingSecret: 'testSigningSecret',
 				user: {
 					username: 'test@test.com'
 				}
-			}, { decodeIdToken: true })).to.be.rejectedWith('Invalid grant for user (test@test.com). Caused by: Failed to obtain grant.');
+			};
+
+			// When
+			await expect(tokenGrantor(params, { decodeIdToken: true })).to.be.rejectedWith('Invalid grant for user (test@test.com). Caused by: Failed to obtain grant.');
 
 		});
 
@@ -122,6 +125,8 @@ describe('index/flow/jwtBearerToken', () => {
 
 			// When
 			const accessTokenResponse = await tokenGrantor({
+				clientId: 'testClientId',
+				signingSecret: 'testSigningSecret',
 				user: {
 					username: 'test@test.com'
 				}
@@ -130,11 +135,13 @@ describe('index/flow/jwtBearerToken', () => {
 			// Then
 			expect(accessTokenResponse).to.eql(expectedAccessTokenResponse);
 
-			expect(cache.findOrCreateOpenIdClient).to.have.been.calledOnce;
-			expect(cache.findOrCreateOpenIdClient).to.have.been.calledWithExactly(env);
+			expect(cache.findOrCreateClient).to.have.been.calledOnce;
+			expect(cache.findOrCreateClient).to.have.been.calledWithExactly(env);
 			expect(openIdClientStubInstance.grant).to.have.been.calledOnce;
 			expect(openIdClientStubInstance.grant).to.have.been.calledWithExactly({
-				grantType: 'jwt',
+				clientId: 'testClientId',
+				grantType: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+				signingSecret: 'testSigningSecret',
 				user: {
 					username: 'test@test.com'
 				}

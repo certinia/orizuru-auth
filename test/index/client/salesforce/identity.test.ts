@@ -28,18 +28,17 @@ import chai from 'chai';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
 
-import { AccessTokenResponse, Environment } from '../../../../src';
+import { SalesforceAccessTokenResponse } from '../../../../src';
 
-import { decodeIdToken, parseUserInfo, verifySignature } from '../../../../src/index/openid/client/identity';
+import { parseUserInfo, verifySignature } from '../../../../src/index/client/salesforce/identity';
 
 const expect = chai.expect;
 
 chai.use(sinonChai);
 
-describe('index/openid/client/identity', () => {
+describe('index/client/salesforce/identity', () => {
 
-	let accessTokenResponse: AccessTokenResponse;
-	let env: Environment;
+	let accessTokenResponse: SalesforceAccessTokenResponse;
 
 	beforeEach(() => {
 
@@ -54,98 +53,12 @@ describe('index/openid/client/identity', () => {
 			token_type: 'Bearer'
 		};
 
-		env = {
-			jwtSigningKey: 'testJwtSigningKey',
-			openidClientId: 'testOpenidClientId',
-			openidClientSecret: 'testOpenidClientSecret',
-			openidHTTPTimeout: 4001,
-			openidIssuerURI: 'https://login.salesforce.com/'
-		};
-
 		sinon.stub(Date, 'now').returns(1551521526000);
 
 	});
 
 	afterEach(() => {
 		sinon.restore();
-	});
-
-	describe('decodeIdToken', () => {
-
-		describe('should throw an error', () => {
-
-			it('if the id_token is not present when validated and openid is present in the scopes', () => {
-
-				// Given
-				delete accessTokenResponse.id_token;
-
-				// When
-				// Then
-				expect(() => decodeIdToken(accessTokenResponse)).to.throw('No id_token present');
-
-			});
-
-			it('if the id_token and scope are not present when validated', () => {
-
-				// Given
-				delete accessTokenResponse.id_token;
-				delete accessTokenResponse.scope;
-
-				// When
-				// Then
-				expect(() => decodeIdToken(accessTokenResponse)).to.throw('No id_token present');
-
-			});
-
-		});
-
-		it('should not throw an error if the id_token is not present and openid is not present in the scopes', () => {
-
-			// Given
-			delete accessTokenResponse.id_token;
-
-			accessTokenResponse.scope = 'api';
-
-			// When
-			decodeIdToken(accessTokenResponse);
-
-			// Then
-			expect(accessTokenResponse).to.eql({
-				access_token: '00Dxx0000001gPL!AR8AQJXg5oj8jXSgxJfA0lBog.39AsX.LVpxezPwuX5VAIrrbbHMuol7GQxnMeYMN7cj8EoWr78nt1u44zU31IbYNNJguseu',
-				id: 'https://login.salesforce.com/id/00Dxx0000001gPLEAY/005xx000001SwiUAAS',
-				instance_url: 'https:// yourInstance.salesforce.com',
-				issued_at: '1551531242643',
-				scope: 'api',
-				signature: 'HHjDwETDb5VyLcjcB6+c/brBnhAE7zNKu0bgYnVqn9o=',
-				token_type: 'Bearer'
-			});
-
-		});
-
-		it('should decode the JWT from the id_token field', () => {
-
-			// Given
-			// When
-			decodeIdToken(accessTokenResponse);
-
-			// Then
-			expect(accessTokenResponse).to.eql({
-				access_token: '00Dxx0000001gPL!AR8AQJXg5oj8jXSgxJfA0lBog.39AsX.LVpxezPwuX5VAIrrbbHMuol7GQxnMeYMN7cj8EoWr78nt1u44zU31IbYNNJguseu',
-				id: 'https://login.salesforce.com/id/00Dxx0000001gPLEAY/005xx000001SwiUAAS',
-				id_token: {
-					iat: 1516239022,
-					name: 'John Doe',
-					sub: '1234567890'
-				},
-				instance_url: 'https:// yourInstance.salesforce.com',
-				issued_at: '1551531242643',
-				scope: 'web openid api id',
-				signature: 'HHjDwETDb5VyLcjcB6+c/brBnhAE7zNKu0bgYnVqn9o=',
-				token_type: 'Bearer'
-			});
-
-		});
-
 	});
 
 	describe('parseUserInfo', () => {
@@ -257,7 +170,7 @@ describe('index/openid/client/identity', () => {
 
 				// When
 				// Then
-				expect(() => verifySignature(env, accessTokenResponse)).to.throw('No signature present');
+				expect(() => verifySignature('testOpenidClientSecret', accessTokenResponse)).to.throw('No signature present');
 
 			});
 
@@ -267,7 +180,7 @@ describe('index/openid/client/identity', () => {
 				accessTokenResponse.signature = 'invalid';
 
 				// When
-				expect(() => verifySignature(env, accessTokenResponse)).to.throw('Invalid signature');
+				expect(() => verifySignature('testOpenidClientSecret', accessTokenResponse)).to.throw('Invalid signature');
 
 			});
 
@@ -278,32 +191,36 @@ describe('index/openid/client/identity', () => {
 
 				// When
 				// Then
-				expect(() => verifySignature(env, accessTokenResponse)).to.throw('Invalid signature');
+				expect(() => verifySignature('testOpenidClientSecret', accessTokenResponse)).to.throw('Invalid signature');
 
 			});
 
 		});
 
-		it('should not throw an error if the signature is valid', () => {
+		describe('should not throw an error', () => {
 
-			// Given
-			// When
-			// Then
-			expect(() => verifySignature(env, accessTokenResponse)).to.not.throw();
+			it('if the signature is valid', () => {
 
-			expect(accessTokenResponse).to.eql({
-				access_token: '00Dxx0000001gPL!AR8AQJXg5oj8jXSgxJfA0lBog.39AsX.LVpxezPwuX5VAIrrbbHMuol7GQxnMeYMN7cj8EoWr78nt1u44zU31IbYNNJguseu',
-				id: 'https://login.salesforce.com/id/00Dxx0000001gPLEAY/005xx000001SwiUAAS',
-				id_token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c',
-				instance_url: 'https:// yourInstance.salesforce.com',
-				issued_at: '1551531242643',
-				scope: 'web openid api id',
-				signature: 'HHjDwETDb5VyLcjcB6+c/brBnhAE7zNKu0bgYnVqn9o=',
-				token_type: 'Bearer',
-				userInfo: {
-					url: 'https://login.salesforce.com/id/00Dxx0000001gPLEAY/005xx000001SwiUAAS',
-					validated: true
-				}
+				// Given
+				// When
+				expect(() => verifySignature('testOpenidClientSecret', accessTokenResponse)).to.not.throw();
+
+				// Then
+				expect(accessTokenResponse).to.eql({
+					access_token: '00Dxx0000001gPL!AR8AQJXg5oj8jXSgxJfA0lBog.39AsX.LVpxezPwuX5VAIrrbbHMuol7GQxnMeYMN7cj8EoWr78nt1u44zU31IbYNNJguseu',
+					id: 'https://login.salesforce.com/id/00Dxx0000001gPLEAY/005xx000001SwiUAAS',
+					id_token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c',
+					instance_url: 'https:// yourInstance.salesforce.com',
+					issued_at: '1551531242643',
+					scope: 'web openid api id',
+					signature: 'HHjDwETDb5VyLcjcB6+c/brBnhAE7zNKu0bgYnVqn9o=',
+					token_type: 'Bearer',
+					userInfo: {
+						url: 'https://login.salesforce.com/id/00Dxx0000001gPLEAY/005xx000001SwiUAAS',
+						validated: true
+					}
+				});
+
 			});
 
 		});

@@ -28,27 +28,53 @@
  * @module grant/grant
  */
 
-import { AccessTokenResponse, Environment, Grant, User, UserTokenGrantor } from '../..';
-import { findOrCreateOpenIdClient } from '../openid/cache';
-import { validate } from '../openid/validator/environment';
+import { AccessTokenResponse, Environment, GrantOptions, JwtGrantParams, User, UserTokenGrantor, UserTokenGrantorParams } from '../..';
+import { findOrCreateClient } from '../client/cache';
+import { UserInfo } from '../client/salesforce';
+import { isSalesforceAccessTokenResponse } from '../client/salesforce/identity';
+import { validate } from '../client/validator/environment';
+
+export interface Grant {
+
+	/**
+	 * The access token issued by the authorization server.
+	 */
+	accessToken: string;
+
+	/**
+	 * A URL indicating the instance of the user’s org. For example: https://yourInstance.salesforce.com/.
+	 */
+	instanceUrl?: string;
+
+	/**
+	 * The user information generated when parsing the [Identity URL](https://help.salesforce.com/articleView?id=remoteaccess_using_openid.htm).
+	 */
+	userInfo?: UserInfo;
+
+}
 
 /**
  * Returns a function that can obtain a token for the passed user.
  *
- * @param [env] The OpenID environment parameters.
+ * @param [env] The auth environment parameters.
  * @returns A function that retrieves the user credentials.
  */
 export function getToken(env?: Environment): UserTokenGrantor {
 
 	const validatedEnvironment = validate(env);
 
-	return async function getUserCredentials(user: User) {
+	return async function getUserCredentials(params: UserTokenGrantorParams, opts?: GrantOptions) {
 
 		try {
 
-			validateUser(user);
+			validateUser(params.user);
 
-			const authorizationGrant = await obtainGrant(validatedEnvironment, user);
+			// The TokenGrantorParams interface excludes the grant_type so that it
+			// doesn't have to be set by the caller. Make sure it is set here.
+			const internalParams: Partial<JwtGrantParams> = Object.assign({}, params);
+			internalParams.grantType = 'urn:ietf:params:oauth:grant-type:jwt-bearer';
+
+			const authorizationGrant = await obtainGrant(validatedEnvironment, internalParams as JwtGrantParams, opts);
 			return convertGrantToCredentials(authorizationGrant);
 
 		} catch (error) {
@@ -81,22 +107,20 @@ function validateUser(user: User) {
 
 /**
  * Obtains a grant for the given user using the OpenID client.
- * @param env The OpenID environment parameters.
- * @param user The user to obtain the grant for.
+ * @param env The auth environment parameters.
+ * @param params The parameters required for the JWT grant type.
+ * @param [opts] The grant options to be used.
  * @returns The access token response.
  */
-async function obtainGrant(env: Environment, user: User) {
+async function obtainGrant(env: Environment, params: JwtGrantParams, opts?: GrantOptions) {
 
 	try {
 
-		const client = await findOrCreateOpenIdClient(env);
-		return client.grant({
-			grantType: 'jwt',
-			user
-		}, { decodeIdToken: false, verifySignature: false });
+		const client = await findOrCreateClient(env);
+		return client.grant(params, opts);
 
 	} catch (error) {
-		throw new Error(` (${user.username}). Caused by: ${error.message}`);
+		throw new Error(` (${params.user.username}). Caused by: ${error.message}`);
 	}
 
 }
@@ -109,10 +133,16 @@ async function obtainGrant(env: Environment, user: User) {
  */
 function convertGrantToCredentials(token: AccessTokenResponse): Grant {
 
-	return {
-		accessToken: token.access_token,
-		instanceUrl: token.instance_url,
-		userInfo: token.userInfo
-	};
+	if (isSalesforceAccessTokenResponse(token)) {
+
+		return {
+			accessToken: token.access_token,
+			instanceUrl: token.instance_url,
+			userInfo: token.userInfo
+		};
+
+	}
+
+	return { accessToken: token.access_token };
 
 }

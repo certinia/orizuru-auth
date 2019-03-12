@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2019, FinancialForce.com, inc
  * All rights reserved.
  *
@@ -30,7 +30,7 @@ import sinonChai from 'sinon-chai';
 
 import { Request, RequestHandler, Response } from '@financialforcedev/orizuru';
 
-import { AccessTokenResponse, Environment, EVENT_AUTHORIZATION_HEADER_SET } from '../../../src';
+import { Environment, EVENT_AUTHORIZATION_HEADER_SET, OpenIdOptions, OpenIDTokenWithStandardClaims, SalesforceAccessTokenResponse } from '../../../src';
 import * as webServer from '../../../src/index/flow/webServer';
 import * as fail from '../../../src/index/middleware/common/fail';
 
@@ -50,18 +50,27 @@ describe('index/middleware/authCallback', () => {
 	beforeEach(() => {
 
 		env = {
-			jwtSigningKey: 'testJwtSigningKey',
-			openidClientId: 'test',
-			openidClientSecret: 'test',
-			openidHTTPTimeout: 4001,
-			openidIssuerURI: 'https://login.salesforce.com/'
+			httpTimeout: 4001,
+			issuerURI: 'https://login.salesforce.com/',
+			type: 'OpenID'
+		};
+
+		const openIdOptions: Partial<OpenIdOptions> = {
+			clientId: 'testClientId',
+			clientSecret: 'testClientSecret',
+			redirectUri: 'https://localhost:8080/api/auth/v1.0/callback',
+			scope: 'api openid',
+			signingSecret: 'testSigningSecret'
 		};
 
 		const partialApp: Partial<Orizuru.IServer> = {
 			emit: sinon.stub(),
 			options: {
-				auth: {
-					webServer: env
+				authProvider: {
+					salesforce: env
+				},
+				openid: {
+					salesforce: openIdOptions as OpenIdOptions
 				}
 			}
 		};
@@ -79,7 +88,7 @@ describe('index/middleware/authCallback', () => {
 
 		// Then
 		expect(webServer.createTokenGrantor).to.have.been.calledOnce;
-		expect(webServer.createTokenGrantor).to.have.been.calledWithExactly(app.options.auth.webServer);
+		expect(webServer.createTokenGrantor).to.have.been.calledWithExactly(app.options.authProvider.salesforce);
 
 		sinon.restore();
 
@@ -89,7 +98,7 @@ describe('index/middleware/authCallback', () => {
 
 		// Given
 		// When
-		const middleware = createMiddleware(app);
+		const middleware = createMiddleware(app, 'salesforce', app.options.openid.salesforce);
 
 		// Then
 		expect(middleware).to.be.a('function');
@@ -119,7 +128,10 @@ describe('index/middleware/authCallback', () => {
 
 			next = sinon.stub();
 
-			middleware = createMiddleware(app);
+			middleware = createMiddleware(app, 'salesforce', app.options.openid.salesforce, {
+				decodeIdToken: true,
+				signingSecret: 'testSigningSecret'
+			});
 
 		});
 
@@ -189,13 +201,18 @@ describe('index/middleware/authCallback', () => {
 
 		describe('should call next if the code is exchanged for an access token and update the authorization header', () => {
 
-			let accessTokenResponse: AccessTokenResponse;
+			let accessTokenResponse: SalesforceAccessTokenResponse;
 
 			beforeEach(() => {
+
+				const partialIdToken: Partial<OpenIDTokenWithStandardClaims> = {
+					email: 'test@test.com'
+				};
 
 				accessTokenResponse = {
 					access_token: '00Dx0000000BV7z!AR8AQP0jITN80ESEsj5EbaZTFG0RNBaT1cyWk7TrqoDjoNIWQ2ME_sTZzBjfmOE6zMHq6y8PIW4eWze9JksNEkWUl.Cju7m4',
 					id: 'https://login.salesforce.com/id/00Dxx0000001gPLEAY/005xx000001SwiUAAS',
+					id_token: partialIdToken as OpenIDTokenWithStandardClaims,
 					instance_url: 'https://yourInstance.salesforce.com/',
 					issued_at: '1278448384422',
 					scope: 'id api refresh_token',
@@ -213,6 +230,22 @@ describe('index/middleware/authCallback', () => {
 
 			});
 
+			afterEach(() => {
+
+				// Then
+				expect(requestAccessTokenStub).to.have.been.calledOnce;
+				expect(requestAccessTokenStub).to.have.been.calledWithExactly({
+					clientId: 'testClientId',
+					clientSecret: 'testClientSecret',
+					code: 'testCode',
+					grantType: 'authorization_code',
+					redirectUri: 'https://localhost:8080/api/auth/v1.0/callback',
+					scope: 'api openid',
+					signingSecret: 'testSigningSecret'
+				}, { decodeIdToken: true, signingSecret: 'testSigningSecret' });
+
+			});
+
 			it('adding the orizuru identity property', async () => {
 
 				// Given
@@ -222,19 +255,16 @@ describe('index/middleware/authCallback', () => {
 				// Then
 				expect(req.headers).to.have.property('authorization', 'Bearer 00Dx0000000BV7z!AR8AQP0jITN80ESEsj5EbaZTFG0RNBaT1cyWk7TrqoDjoNIWQ2ME_sTZzBjfmOE6zMHq6y8PIW4eWze9JksNEkWUl.Cju7m4');
 				expect(req).to.have.property('orizuru');
-				expect(req.orizuru).to.have.property('identity').that.eqls({
+				expect(req.orizuru).to.have.property('salesforce');
+				expect(req.orizuru!.salesforce).to.have.property('userInfo').that.eqls({
 					id: '005xx000001SwiUAAS',
 					organizationId: '00Dxx0000001gPLEAY',
 					url: 'https://login.salesforce.com/id/00Dxx0000001gPLEAY/005xx000001SwiUAAS',
 					validated: true
 				});
 
-				expect(requestAccessTokenStub).to.have.been.calledOnce;
-				expect(requestAccessTokenStub).to.have.been.calledWithExactly({
-					code: 'testCode'
-				});
 				expect(app.emit).to.have.been.calledOnce;
-				expect(app.emit).to.have.been.calledWithExactly(EVENT_AUTHORIZATION_HEADER_SET, 'Authorization headers set for user (005xx000001SwiUAAS) [1.1.1.1].');
+				expect(app.emit).to.have.been.calledWithExactly(EVENT_AUTHORIZATION_HEADER_SET, 'Authorization headers set for user (test@test.com) [1.1.1.1].');
 				expect(next).to.have.been.calledOnce;
 				expect(next).to.have.been.calledWithExactly();
 
@@ -255,7 +285,8 @@ describe('index/middleware/authCallback', () => {
 				// Then
 				expect(req.headers).to.have.property('authorization', 'Bearer 00Dx0000000BV7z!AR8AQP0jITN80ESEsj5EbaZTFG0RNBaT1cyWk7TrqoDjoNIWQ2ME_sTZzBjfmOE6zMHq6y8PIW4eWze9JksNEkWUl.Cju7m4');
 				expect(req).to.have.property('orizuru');
-				expect(req.orizuru).to.have.property('identity').that.eqls({
+				expect(req.orizuru).to.have.property('salesforce');
+				expect(req.orizuru!.salesforce).to.have.property('userInfo').that.eqls({
 					id: '005xx000001SwiUAAS',
 					organizationId: '00Dxx0000001gPLEAY',
 					url: 'https://login.salesforce.com/id/00Dxx0000001gPLEAY/005xx000001SwiUAAS',
@@ -263,10 +294,24 @@ describe('index/middleware/authCallback', () => {
 				});
 				expect(req.orizuru).to.have.property('grantChecked', true);
 
-				expect(requestAccessTokenStub).to.have.been.calledOnce;
-				expect(requestAccessTokenStub).to.have.been.calledWithExactly({
-					code: 'testCode'
-				});
+				expect(app.emit).to.have.been.calledOnce;
+				expect(app.emit).to.have.been.calledWithExactly(EVENT_AUTHORIZATION_HEADER_SET, 'Authorization headers set for user (test@test.com) [1.1.1.1].');
+				expect(next).to.have.been.calledOnce;
+				expect(next).to.have.been.calledWithExactly();
+
+			});
+
+			it('and emit an event with the user id if the id_token has not been decoded but the userinfo is present', async () => {
+
+				// Given
+				delete accessTokenResponse.id_token;
+
+				// When
+				await middleware(req, res, next);
+
+				// Then
+				expect(req.headers).to.have.property('authorization', 'Bearer 00Dx0000000BV7z!AR8AQP0jITN80ESEsj5EbaZTFG0RNBaT1cyWk7TrqoDjoNIWQ2ME_sTZzBjfmOE6zMHq6y8PIW4eWze9JksNEkWUl.Cju7m4');
+
 				expect(app.emit).to.have.been.calledOnce;
 				expect(app.emit).to.have.been.calledWithExactly(EVENT_AUTHORIZATION_HEADER_SET, 'Authorization headers set for user (005xx000001SwiUAAS) [1.1.1.1].');
 				expect(next).to.have.been.calledOnce;
@@ -274,7 +319,45 @@ describe('index/middleware/authCallback', () => {
 
 			});
 
-			it('and emit an event with the user as unknown if the userinfo has not been parsed', async () => {
+			it('and emit an event with the user as unknown if the id_token has been decoded but the user id is not present', async () => {
+
+				// Given
+				delete accessTokenResponse.userInfo!.id;
+				delete (accessTokenResponse.id_token as OpenIDTokenWithStandardClaims).email;
+
+				// When
+				await middleware(req, res, next);
+
+				// Then
+				expect(req.headers).to.have.property('authorization', 'Bearer 00Dx0000000BV7z!AR8AQP0jITN80ESEsj5EbaZTFG0RNBaT1cyWk7TrqoDjoNIWQ2ME_sTZzBjfmOE6zMHq6y8PIW4eWze9JksNEkWUl.Cju7m4');
+
+				expect(app.emit).to.have.been.calledOnce;
+				expect(app.emit).to.have.been.calledWithExactly(EVENT_AUTHORIZATION_HEADER_SET, 'Authorization headers set for user (unknown) [1.1.1.1].');
+				expect(next).to.have.been.calledOnce;
+				expect(next).to.have.been.calledWithExactly();
+
+			});
+
+			it('and emit an event with the user as unknown if the id_token has not been decoded', async () => {
+
+				// Given
+				delete accessTokenResponse.id_token;
+				delete accessTokenResponse.userInfo;
+
+				// When
+				await middleware(req, res, next);
+
+				// Then
+				expect(req.headers).to.have.property('authorization', 'Bearer 00Dx0000000BV7z!AR8AQP0jITN80ESEsj5EbaZTFG0RNBaT1cyWk7TrqoDjoNIWQ2ME_sTZzBjfmOE6zMHq6y8PIW4eWze9JksNEkWUl.Cju7m4');
+
+				expect(app.emit).to.have.been.calledOnce;
+				expect(app.emit).to.have.been.calledWithExactly(EVENT_AUTHORIZATION_HEADER_SET, 'Authorization headers set for user (unknown) [1.1.1.1].');
+				expect(next).to.have.been.calledOnce;
+				expect(next).to.have.been.calledWithExactly();
+
+			});
+
+			it('and not have an orizuru property if the userinfo has not been parsed', async () => {
 
 				// Given
 				delete accessTokenResponse.userInfo;
@@ -285,12 +368,8 @@ describe('index/middleware/authCallback', () => {
 				// Then
 				expect(req.headers).to.have.property('authorization', 'Bearer 00Dx0000000BV7z!AR8AQP0jITN80ESEsj5EbaZTFG0RNBaT1cyWk7TrqoDjoNIWQ2ME_sTZzBjfmOE6zMHq6y8PIW4eWze9JksNEkWUl.Cju7m4');
 
-				expect(requestAccessTokenStub).to.have.been.calledOnce;
-				expect(requestAccessTokenStub).to.have.been.calledWithExactly({
-					code: 'testCode'
-				});
 				expect(app.emit).to.have.been.calledOnce;
-				expect(app.emit).to.have.been.calledWithExactly(EVENT_AUTHORIZATION_HEADER_SET, 'Authorization headers set for user (unknown) [1.1.1.1].');
+				expect(app.emit).to.have.been.calledWithExactly(EVENT_AUTHORIZATION_HEADER_SET, 'Authorization headers set for user (test@test.com) [1.1.1.1].');
 				expect(next).to.have.been.calledOnce;
 				expect(next).to.have.been.calledWithExactly();
 

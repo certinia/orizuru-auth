@@ -1,0 +1,25 @@
+{
+	"defaultSeverity": "error",
+	"extends": [
+		"tslint:recommended"
+	],
+	"rules": {
+		"indent": [
+			true,
+			"tabs",
+			4
+		],
+		"max-line-length": false,
+		"quotemark": [
+			true,
+			"single"
+		],
+		"trailing-comma": [
+			true,
+			{
+				"multiline": "never",
+				"singleline": "never"
+			}
+		]
+	}
+}

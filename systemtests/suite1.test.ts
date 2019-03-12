@@ -112,7 +112,7 @@ describe('Suite 1 - Puppeteer script for Salesforce authentication', () => {
 		const regex = new RegExp('<pre .*>(.*)</pre>');
 		const matches = regex.exec(contents) as RegExpExecArray;
 
-		// // Then
+		// Then
 		expect(matches).not.to.be.null;
 		expect(matches).to.have.length(2);
 

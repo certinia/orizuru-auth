@@ -118,7 +118,7 @@ declare global {
 				 *
 				 * A map of provider name to Environment.
 				 *
-				 * This is referenced by each of the middlewares, allowing instances to be created for
+				 * This is referenced by each of the middleware, allowing instances to be created for
 				 * different OpenID providers.
 				 */
 				authProvider: {
@@ -126,7 +126,7 @@ declare global {
 				};
 
 				/**
-				 * OpenID connected app information required for the authentication middlewares.
+				 * OpenID connected app information required for the authentication middleware.
 				 */
 				openid: {
 					[index: string]: OpenIdOptions;

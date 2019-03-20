@@ -9,10 +9,9 @@
 		"**/.DS_Store": true,
 		"**/.git": true,
 		"**/.hg": true,
-		"**/.nyc_output": true,
 		"**/.svn": true,
-		"**/coverage*": true,
-		"**/CVS": true
+		"**/CVS": true,
+		"**/coverage*": true
 	},
 	"files.insertFinalNewline": true,
 	"lcov.path": "coverage/lcov.info",

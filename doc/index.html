@@ -66,121 +66,252 @@
 			<div class="tsd-panel tsd-typography">
 				<h1 id="orizuru-authentication">Orizuru Authentication</h1>
 				<p><a href="https://travis-ci.org/financialforcedev/orizuru-auth"><img src="https://travis-ci.org/financialforcedev/orizuru-auth.svg?branch=master" alt="Build Status"></a></p>
-				<p>Orizuru authentication is <a href="http://expressjs.com/">Express</a>-compatible authentication
-				middleware for <a href="http://nodejs.org/">Node.js</a>. It is aimed at users of the <a href="https://www.npmjs.com/package/@financialforcedev/orizuru">Orizuru</a> framework, but can also be used standalone. It is aimed at users of the Salesforce Identity Provider.</p>
-				<p>In a Salesforce context, using both of these middlewares in combination will establish the following.</p>
+				<p>Orizuru authentication is an <a href="http://expressjs.com/">Express</a>-compatible authentication middleware for <a href="http://nodejs.org/">Node.js</a>. </p>
+				<p>It is aimed at users of the <a href="https://www.npmjs.com/package/@financialforcedev/orizuru">Orizuru</a> framework, but can also be used standalone. The authentication process has been tested with Salesforce and Google as Identity Providers, although it should be possible to use it with others.</p>
+				<p>In a Salesforce context, using the <code>Token Validator</code> and <code>Grant Checker</code> middleware in combination will establish the following.</p>
 				<ol>
-					<li>The caller has a current valid Salesforce access token.</li>
-					<li>The Salesforce user for the token presented is linked by PermissionSet to the ConnectedApp corresponding to the OpenID Connect ClientID (Consumer Key).</li>
+					<li>The caller has a valid Salesforce access token.</li>
+					<li>The Salesforce user for the token is linked by a permission set to the ConnectedApp corresponding to the OpenID Connect Client ID (Consumer Key).</li>
 				</ol>
-				<p><em>It is extremely important to treat your signing key as sensitive material, please ensure that this is stored in a secure location.</em></p>
+				<p><em>It is extremely important to treat your signing secret as sensitive material, please ensure that this is stored in a secure location.</em></p>
 				<h2 id="install">Install</h2>
 				<pre><code>$ <span class="hljs-built_in">npm</span> install @financialforcedev/orizuru-auth</code></pre><h2 id="usage">Usage</h2>
+				<h3 id="oauth-2-0-web-server-authentication-flow">OAuth 2.0 Web Server Authentication Flow</h3>
+				<p>Orizuru Auth provides a function to initialise the <a href="https://help.salesforce.com/articleView?id=remoteaccess_oauth_web_server_flow.htm">OAuth 2.0 Web Server Authentication Flow</a>. It uses the <a href="https://help.salesforce.com/articleView?id=remoteaccess_using_openid_discovery_endpoint.htm">Salesforce OpenID Connect discovery endpoint</a> supplied in the <code>Environment</code>, with the <a href="https://help.salesforce.com/articleView?id=connected_app_create.htm">Connected app</a> details supplied in the <code>AuthUrlParameters</code>, to create the URL. Optional configuration options for the URL are supplied in the <code>AuthOptions</code>.</p>
+				<p>For the examples, the initial configuration has been provided in the <code>examples</code> directory of this repository. This can be copied to another directory to be worked with.</p>
+				<p>Two configuration files should be provided: the <code>default.json</code> file which contains any insensitive data (this is included with the source); and the <code>local.json</code> configuration file which contains sensitive data. Create a <code>local.json</code> file, within the <code>config</code> directory with the following contents, where each of the values has been substituted for your Salesforce connected app details. </p>
+				<pre><code class="language-json">{
+    <span class="hljs-attr">"app"</span>: {
+        <span class="hljs-attr">"openid"</span>: {
+            <span class="hljs-attr">"salesforce"</span>: {
+                <span class="hljs-attr">"clientId"</span>: <span class="hljs-string">"&lt;&lt;&lt;YOUR CONNECTED APP CLIENT ID - CONNECTED APP MUST HAVE THE OPENID SCOPE&gt;&gt;&gt;"</span>,
+                <span class="hljs-attr">"clientSecret"</span>: <span class="hljs-string">"&lt;&lt;&lt;YOUR CONNECTED APP CLIENT SECRET - CONNECTED APP MUST HAVE THE OPENID SCOPE&gt;&gt;&gt;"</span>,
+                <span class="hljs-attr">"signingSecret"</span>: <span class="hljs-string">"&lt;&lt;&lt;YOUR CONNECTED APP CERTIFICATE PRIVATE KEY - CONNECTED APP MUST HAVE THE OPENID SCOPE&gt;&gt;&gt;"</span>
+            },
+            <span class="hljs-attr">"salesforceConnection"</span>: {
+                <span class="hljs-attr">"clientId"</span>: <span class="hljs-string">"&lt;&lt;&lt;YOUR CONNECTED APP CLIENT ID - CONNECTED APP MUST HAVE THE API SCOPE&gt;&gt;&gt;"</span>,
+                <span class="hljs-attr">"clientSecret"</span>: <span class="hljs-string">"&lt;&lt;&lt;YOUR CONNECTED APP CLIENT SECRET - CONNECTED APP MUST HAVE THE API SCOPE&gt;&gt;&gt;"</span>,
+                <span class="hljs-attr">"signingSecret"</span>: <span class="hljs-string">"&lt;&lt;&lt;YOUR CONNECTED APP CERTIFICATE PRIVATE KEY - CONNECTED APP MUST HAVE THE API SCOPE&gt;&gt;&gt;"</span>
+            }
+        }
+    }
+}</code></pre>
+				<p>Once completed, the server can be started via <code>npm start</code> or in VS Code via the launch configuration. </p>
+				<p>Changes to the imports are omitted from further examples; assuming VS Code is being used, the examples directory contains the default configuration for automatically optimising imports.</p>
+				<p>The first example illustrates how the authentication URL generator can be used with <a href="https://github.com/financialforcedev/orizuru">Orizuru</a> and <a href="https://github.com/financialforcedev/orizuru-transport-rabbitmq">Orizuru Transport RabbitMQ</a>. A HTTPS server is used with a generated self-signed certificate. </p>
+				<p>The route <code>https://localhost:8080/api/v1.0/auth</code> is added to the server. This route redirects the user to the Salesforce login page; it initialises the <a href="https://help.salesforce.com/articleView?id=remoteaccess_oauth_web_server_flow.htm">OAuth 2.0 Web Server Authentication Flow</a>.</p>
+				<pre><code class="language-typescript"><span class="hljs-keyword">import</span> config <span class="hljs-keyword">from</span> <span class="hljs-string">'config'</span>;
+<span class="hljs-keyword">import</span> https <span class="hljs-keyword">from</span> <span class="hljs-string">'https'</span>;
+<span class="hljs-keyword">import</span> pem, { CertificateCreationResult } <span class="hljs-keyword">from</span> <span class="hljs-string">'pem'</span>;
+
+<span class="hljs-keyword">import</span> { json, Request, Response, Server } <span class="hljs-keyword">from</span> <span class="hljs-string">'@financialforcedev/orizuru'</span>;
+<span class="hljs-keyword">import</span> { flow } <span class="hljs-keyword">from</span> <span class="hljs-string">'@financialforcedev/orizuru-auth'</span>;
+<span class="hljs-keyword">import</span> { Transport } <span class="hljs-keyword">from</span> <span class="hljs-string">'@financialforcedev/orizuru-transport-rabbitmq'</span>;
+
+<span class="hljs-comment">// Define a function that creates a self-signed certificate</span>
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">createCertificate</span>(<span class="hljs-params"></span>): <span class="hljs-title">Promise</span>&lt;<span class="hljs-title">CertificateCreationResult</span>&gt; </span>{
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Promise</span>(<span class="hljs-function">(<span class="hljs-params">resolve, reject</span>) =&gt;</span> {
+        pem.createCertificate({ days: <span class="hljs-number">1</span>, selfSigned: <span class="hljs-literal">true</span> }, <span class="hljs-function">(<span class="hljs-params">err, result</span>) =&gt;</span> {
+            <span class="hljs-keyword">if</span> (err) {
+                <span class="hljs-keyword">return</span> reject(err);
+            }
+            process.stdout.write(<span class="hljs-string">'Created certificate\n'</span>);
+            <span class="hljs-keyword">return</span> resolve(result);
+        });
+    });
+}
+
+<span class="hljs-comment">// Create the server</span>
+<span class="hljs-keyword">const</span> server = <span class="hljs-keyword">new</span> Server({
+    authProvider: {
+        salesforce: config.get(<span class="hljs-string">'app.authProvider.salesforce'</span>)
+    },
+    openid: {
+        salesforce: config.get(<span class="hljs-string">'app.openid.salesforce'</span>),
+        salesforceConnection: config.get(<span class="hljs-string">'app.openid.salesforceConnection'</span>)
+    },
+    port: <span class="hljs-number">8080</span>,
+    transport: <span class="hljs-keyword">new</span> Transport({
+        prefetch: <span class="hljs-number">1</span>,
+        url: <span class="hljs-string">'amqp://localhost'</span>
+    })
+});
+
+<span class="hljs-comment">// Add the route to generate the authorization URL (in this case we use 'test' as the state parameter)</span>
+server.addRoute({
+    method: <span class="hljs-string">'get'</span>,
+    middleware: [
+        json()
+    ],
+    responseWriter: <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> <span class="hljs-keyword">async</span> (err: <span class="hljs-built_in">Error</span> | <span class="hljs-literal">undefined</span>, req: Request, res: Response) =&gt; {
+        <span class="hljs-keyword">const</span> url = <span class="hljs-keyword">await</span> flow.webServer.authorizationUrlGenerator(server.options.authProvider.salesforce)(server.options.openid.salesforce, server.options.openid.salesforce);
+        res.redirect(url);
+    },
+    schema: {
+        fields: [],
+        name: <span class="hljs-string">'auth'</span>,
+        <span class="hljs-keyword">namespace</span>: <span class="hljs-string">'api.v1_0'</span>,
+        <span class="hljs-keyword">type</span>: <span class="hljs-string">'record'</span>
+    },
+    synchronous: <span class="hljs-literal">true</span>
+});
+
+<span class="hljs-comment">/** 
+ * All the code specified in the rest of the readme should be added here.
+ */</span>
+
+<span class="hljs-comment">// Create a self-signed certificate and then start the server listening to connections using HTTPS</span>
+createCertificate().then(<span class="hljs-function">(<span class="hljs-params">certificate</span>) =&gt;</span> {
+
+    <span class="hljs-keyword">const</span> serverOptions: https.ServerOptions = {
+        cert: certificate.certificate,
+        key: certificate.clientKey
+    };
+
+    <span class="hljs-keyword">const</span> httpsServer = https.createServer(serverOptions, server.serverImpl);
+    httpsServer.listen(server.options.port);
+    process.stdout.write(<span class="hljs-string">'Started server\n'</span>);
+
+});</code></pre>
 				<h3 id="middleware">Middleware</h3>
 				<p>Multiple middleware functions are available.</p>
+				<h4 id="auth-callback">Auth Callback</h4>
+				<p>The auth callback middleware exchanges a verification code for an access token as part of the <a href="https://help.salesforce.com/articleView?id=remoteaccess_oauth_web_server_flow.htm">OAuth 2.0 Web Server Authentication Flow</a>.</p>
+				<p>If a verification token is successfully exchanged for an access token then the <code>Authorization</code> HTTP header is set on the request.</p>
+				<p>The following example illustrates how the auth callback middleware can be used with <a href="https://github.com/financialforcedev/orizuru">Orizuru</a> and <a href="https://github.com/financialforcedev/orizuru-transport-rabbitmq">Orizuru Transport RabbitMQ</a>. It follows on from the example given in the <a href="#oauth-20-web-server-authentication-flow">OAuth 2.0 Web Server Authentication Flow</a> section. </p>
+				<p>The route <code>https://localhost:8080/api/auth/v1.0/callback</code> is added to the server and is called once the user has authorized the connected app. If the request is successful, a <strong>Authorization Header Set</strong> message is printed to the console and the token is returned. This token can be used to test the subsequent routes.</p>
+				<pre><code class="language-typescript"><span class="hljs-comment">// Add the listener</span>
+server.on(EVENT_AUTHORIZATION_HEADER_SET, <span class="hljs-function">(<span class="hljs-params">message</span>) =&gt;</span> {
+    process.stdout.write(<span class="hljs-string">`<span class="hljs-subst">${message}</span>\n`</span>);
+});
+
+<span class="hljs-comment">// Add the route to the server</span>
+server.addRoute({
+    method: <span class="hljs-string">'get'</span>,
+    middleware: [
+        middleware.authCallback(server, <span class="hljs-string">'salesforce'</span>, server.options.openid.salesforce, server.options.openid.salesforce)
+    ],
+    responseWriter: <span class="hljs-function">(<span class="hljs-params">app</span>) =&gt;</span> <span class="hljs-keyword">async</span> (error, req, res) =&gt; {
+        res.json(req.headers.authorization);
+    },
+    schema: {
+        fields: [],
+        name: <span class="hljs-string">'callback'</span>,
+        <span class="hljs-keyword">namespace</span>: <span class="hljs-string">'api.auth.v1_0'</span>,
+        <span class="hljs-keyword">type</span>: <span class="hljs-string">'record'</span>
+    },
+    synchronous: <span class="hljs-literal">true</span>
+});</code></pre>
 				<h4 id="token-validator">Token Validator</h4>
 				<p>The token validator middleware checks that a valid OpenID Connect Bearer token exists in an <strong>Authorization</strong> HTTP header. It does this by calling the specified Identity Provider&#39;s UserInfo endpoint with the Bearer token.</p>
 				<p>If the token is successfully validated then a <em>user</em> object is set on the request&#39;s <em>orizuru</em> object.</p>
-				<p>Failure messages are emitted on the <em>emitter</em>.</p>
-				<pre><code class="language-typescript">
-<span class="hljs-keyword">import</span> { middleware } <span class="hljs-keyword">from</span> <span class="hljs-string">'@financialforcedev/orizuru-auth'</span>;
-
-<span class="hljs-keyword">const</span> env = {
-    jwtSigningKey: <span class="hljs-string">'--SOME KEY MATERIAL--'</span>,
-    openidClientId: <span class="hljs-string">'12312312413-7236762374'</span>,
-    openidHTTPTimeout: <span class="hljs-number">4000</span>,
-    openidIssuerURI: <span class="hljs-string">'https://login.salesforce.com'</span>
-};
-
-app.use(middleware.tokenValidator(env));
-
-middleware.emitter.on(<span class="hljs-string">'denied'</span>, <span class="hljs-function">(<span class="hljs-params">message</span>) =&gt;</span> {
-    <span class="hljs-built_in">console</span>.log(message);
-});
-middleware.emitter.on(<span class="hljs-string">'token_validated'</span>, <span class="hljs-function">(<span class="hljs-params">message</span>) =&gt;</span> {
-    <span class="hljs-built_in">console</span>.log(message);
+				<p>The following example illustrates how the token validator middleware can be used with <a href="https://github.com/financialforcedev/orizuru">Orizuru</a> and <a href="https://github.com/financialforcedev/orizuru-transport-rabbitmq">Orizuru Transport RabbitMQ</a> to validate tokens contained in the authorization request header. It follows on from the example given in the <a href="#auth-callback">Auth Callback</a> section. </p>
+				<p>The route <code>https://localhost:8080/api/auth/v1.0/validateToken</code> is added to the server as a GET request. If the request is successful, a <strong>token validated</strong> message is printed to the console and the <em>orizuru</em> object is returned. Otherwise, a denied message is printed to the console.</p>
+				<pre><code class="language-typescript"><span class="hljs-comment">// Add the listeners</span>
+server.on(EVENT_DENIED, <span class="hljs-function">(<span class="hljs-params">message</span>) =&gt;</span> {
+    process.stdout.write(<span class="hljs-string">`<span class="hljs-subst">${message}</span>\n`</span>);
 });
 
-</code></pre>
-				<p>The <em>user</em> object contains the following fields.</p>
-				<pre><code class="language-json">
-{
-    <span class="hljs-attr">"username"</span>: <span class="hljs-string">"someuser@someorg.something"</span>,
-    <span class="hljs-attr">"organizationId"</span>: <span class="hljs-string">"00D80000000bSxXEAU"</span>
-}
-</code></pre>
+server.on(EVENT_TOKEN_VALIDATED, <span class="hljs-function">(<span class="hljs-params">message</span>) =&gt;</span> {
+    process.stdout.write(<span class="hljs-string">`<span class="hljs-subst">${message}</span>\n`</span>);
+});
+
+<span class="hljs-comment">// Add a route to the server</span>
+server.addRoute({
+    method: <span class="hljs-string">'get'</span>,
+    middleware: [
+        middleware.tokenValidator(server, <span class="hljs-string">'salesforce'</span>)
+    ],
+    responseWriter: <span class="hljs-function">(<span class="hljs-params">app</span>) =&gt;</span> <span class="hljs-keyword">async</span> (error, req, res) =&gt; {
+        res.json(req.orizuru);
+    },
+    schema: {
+        fields: [],
+        name: <span class="hljs-string">'validateToken'</span>,
+        <span class="hljs-keyword">namespace</span>: <span class="hljs-string">'api.auth.v1_0'</span>,
+        <span class="hljs-keyword">type</span>: <span class="hljs-string">'record'</span>
+    },
+    synchronous: <span class="hljs-literal">true</span>
+});</code></pre>
 				<h4 id="grant-checker">Grant Checker</h4>
-				<p>The grant checker is designed to be used in tandem with the token Validator. It uses the <em>user</em> object on the request&#39;s <em>orizuru</em> object and attempts to obtain an OpenID Connect access token using a JWT Bearer grant request. In order for this to work the Identity Provider must have a previously established authorisation for the user requested. With the Salesforce identity provider this is achieved using a Connected App with a Certificate for the JWT signing key uploaded into it.</p>
-				<p>If this completes successfully it sets the <em>orizuru.grantChecked</em> property to be true, otherwise the user will be refused access.</p>
-				<p>Failure messages are emitted on the <em>emitter</em>.</p>
-				<pre><code class="language-typescript">
-<span class="hljs-keyword">import</span> { middleware } <span class="hljs-keyword">from</span> <span class="hljs-string">'@financialforcedev/orizuru-auth'</span>;
-
-<span class="hljs-keyword">const</span> env = {
-    jwtSigningKey: <span class="hljs-string">'--SOME KEY MATERIAL--'</span>,
-    openidClientId: <span class="hljs-string">'12312312413-7236762374'</span>,
-    openidHTTPTimeout: <span class="hljs-number">4000</span>,
-    openidIssuerURI: <span class="hljs-string">'https://login.salesforce.com'</span>
-};
-
-app.use(middleware.tokenValidator(env));
-app.use(middleware.grantChecker(env));
-
-middleware.emitter.on(<span class="hljs-string">'denied'</span>, <span class="hljs-function">(<span class="hljs-params">message</span>) =&gt;</span> {
-    <span class="hljs-built_in">console</span>.log(message);
-});
-middleware.emitter.on(<span class="hljs-string">'grant_checked'</span>, <span class="hljs-function">(<span class="hljs-params">message</span>) =&gt;</span> {
-    <span class="hljs-built_in">console</span>.log(message);
+				<p>The grant checker is designed to be used in tandem with the token Validator. It uses the <code>user</code> object on the request&#39;s <code>orizuru</code> object and attempts to obtain an OpenID Connect access token using a JWT Bearer grant request. In order for this to work the Identity Provider must have a previously established authorisation for the user requested. With the Salesforce identity provider this is achieved by using a Connected App with an uploaded certificate.</p>
+				<p>If this completes successfully it sets the <code>orizuru</code> object <code>grantChecked</code> property to be true, otherwise the user will be refused access.</p>
+				<p>The following example illustrates how the grant checker can be used, with <a href="https://github.com/financialforcedev/orizuru">Orizuru</a> and <a href="https://github.com/financialforcedev/orizuru-transport-rabbitmq">Orizuru Transport RabbitMQ</a>, to validate tokens contained in the authorization request header. It follows on from the example given in the <a href="#token-validator">Token Validator</a> section. </p>
+				<p>The route <code>https://localhost:8080/api/auth/v1.0/checkGrant</code> is added to the server as a GET request. If the request is successful, a <strong>grant checked</strong> message is printed to the console and the <em>orizuru</em> object is returned. Otherwise, a denied message is printed to the console.</p>
+				<pre><code class="language-typescript"><span class="hljs-comment">// Add the listeners</span>
+server.on(EVENT_GRANT_CHECKED, <span class="hljs-function">(<span class="hljs-params">message</span>) =&gt;</span> {
+    process.stdout.write(<span class="hljs-string">`<span class="hljs-subst">${message}</span>\n`</span>);
 });
 
-</code></pre>
+<span class="hljs-comment">// Add a route to the server</span>
+server.addRoute({
+    method: <span class="hljs-string">'get'</span>,
+    middleware: [
+        middleware.tokenValidator(server, <span class="hljs-string">'salesforce'</span>),
+        middleware.grantChecker(server, <span class="hljs-string">'salesforce'</span>, server.options.openid.salesforceConnection, {
+            verifySignature: <span class="hljs-literal">false</span>
+        })
+    ],
+    responseWriter: <span class="hljs-function">(<span class="hljs-params">app</span>) =&gt;</span> <span class="hljs-keyword">async</span> (error, req, res) =&gt; {
+        res.json(req.orizuru);
+    },
+    schema: {
+        fields: [],
+        name: <span class="hljs-string">'checkGrant'</span>,
+        <span class="hljs-keyword">namespace</span>: <span class="hljs-string">'api.auth.v1_0'</span>,
+        <span class="hljs-keyword">type</span>: <span class="hljs-string">'record'</span>
+    }
+});</code></pre>
 				<h3 id="token-granter">Token Granter</h3>
-				<p>This can be called at any time to obtain credentials to connect to Salesforce. This depends on the configuration of a Connected App in your Salesforce org, with pre-authorized users connected via a Permission Set to it and a certificate uploaded that corresponds to the <em>jwtSigningKey</em>.</p>
-				<p>The credentials returned are in a form suitable to be used with <a href="https://jsforce.github.io/">JSforce</a>. See the example below.</p>
-				<pre><code class="language-typescript">
-<span class="hljs-keyword">import</span> { grant } <span class="hljs-keyword">from</span> <span class="hljs-string">'@financialforcedev/orizuru-auth'</span>;
-<span class="hljs-keyword">import</span> * <span class="hljs-keyword">as</span> jsforce <span class="hljs-keyword">from</span> <span class="hljs-string">'jsforce'</span>;
+				<p>This can be called at any time to obtain credentials to connect to Salesforce. It depends on the configuration of the Connected App in your Salesforce org, with pre-authorized users connected via a Permission Set to it and a certificate uploaded that corresponds to the <code>signingSecret</code>.</p>
+				<p>The credentials returned are in a form suitable to be used with <a href="https://jsforce.github.io/">JSforce</a>.</p>
+				<p>The following example illustrates how the token granter can be used, with <a href="https://github.com/financialforcedev/orizuru">Orizuru</a> and <a href="https://github.com/financialforcedev/orizuru-transport-rabbitmq">Orizuru Transport RabbitMQ</a>, to retrieve the limits for a Salesforce organization. It follows on from the example given in the <a href="#grant-checker">Grant Checker</a> section. </p>
+				<p>The route <code>https://localhost:8080/api/v1.0/limits</code> is added to the server as a GET request. If the request is successful, a JSON response containing the limits is returned. Otherwise, a denied message is printed to the console. It makes use of an Orizuru response writer function, rather than a middleware, to retrieve the limits and send them to the user.</p>
+				<pre><code class="language-typescript"><span class="hljs-comment">// Create a function to retrieve the organization limits</span>
+<span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">retrieveOrgLimits</span>(<span class="hljs-params">err: <span class="hljs-built_in">Error</span> | <span class="hljs-literal">undefined</span>, req: Request, res: Response</span>) </span>{
 
-<span class="hljs-keyword">const</span> env = {
-    jwtSigningKey: <span class="hljs-string">'--SOME KEY MATERIAL--'</span>,
-    openidClientId: <span class="hljs-string">'12312312413-7236762374'</span>,
-    openidClientSecret: <span class="hljs-string">'12345678910'</span>,
-    openidHTTPTimeout: <span class="hljs-number">4000</span>,
-    openidIssuerURI: <span class="hljs-string">'https://login.salesforce.com'</span>
-};
+    <span class="hljs-keyword">if</span> (!req.orizuru || !req.orizuru.user) {
+        res.sendStatus(<span class="hljs-number">401</span>);
+        <span class="hljs-keyword">return</span>;
+    }
 
-<span class="hljs-keyword">const</span> user = {
-    organizationId: <span class="hljs-string">'00D80000000bSxXEAU'</span>,
-    username: <span class="hljs-string">'someuser@someorg.something'</span>
-};
+    <span class="hljs-comment">// Configure the token grantor parameters and options</span>
+    <span class="hljs-keyword">const</span> grantParams = <span class="hljs-built_in">Object</span>.assign({}, server.options.openid.salesforceConnection, {
+        user: req.orizuru.user
+    });
 
-<span class="hljs-keyword">const</span> getToken = grant.getToken(env);
+    <span class="hljs-keyword">const</span> grantOpts: GrantOptions = {
+        verifySignature: <span class="hljs-literal">false</span>
+    };
 
-<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">getJsforceConnection</span>(<span class="hljs-params">credentials: <span class="hljs-built_in">any</span></span>) </span>{
-    <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> jsforce.Connection(credentials);
+    <span class="hljs-comment">// Obtain the credentials using the token grantor</span>
+    <span class="hljs-keyword">const</span> credentials = <span class="hljs-keyword">await</span> grant.getToken(server.options.authProvider.salesforce)(grantParams, grantOpts);
+
+    <span class="hljs-comment">// Create a new connection and query the limits</span>
+    <span class="hljs-keyword">const</span> conn = <span class="hljs-keyword">await</span> <span class="hljs-keyword">new</span> Connection(credentials);
+    <span class="hljs-keyword">const</span> limits = <span class="hljs-keyword">await</span> conn.limits();
+
+    res.json(limits);
+
 }
 
-<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">getLimits</span>(<span class="hljs-params">conn: jsforce.Connection</span>) </span>{
-    <span class="hljs-keyword">return</span> <span class="hljs-built_in">Promise</span>.all([conn, conn.limits()]);
-}
-
-<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">displayLimits</span>(<span class="hljs-params">[conn, limits]: [<span class="hljs-built_in">any</span>, <span class="hljs-built_in">any</span>]</span>) </span>{
-    <span class="hljs-built_in">console</span>.log(limits);
-    <span class="hljs-keyword">return</span> conn;
-}
-
-<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">logout</span>(<span class="hljs-params">conn</span>) </span>{
-    <span class="hljs-keyword">return</span> conn.logout();
-}
-
-getToken(user)
-    .then(getJsforceConnection)
-    .then(getLimits)
-    .then(displayLimits)
-    .then(logout);
-</code></pre>
+<span class="hljs-comment">// Add a route to the server</span>
+server.addRoute({
+    method: <span class="hljs-string">'get'</span>,
+    middleware: [
+        middleware.tokenValidator(server, <span class="hljs-string">'salesforce'</span>)
+    ],
+    responseWriter: <span class="hljs-function">(<span class="hljs-params">app</span>) =&gt;</span> retrieveOrgLimits,
+    schema: {
+        fields: [],
+        name: <span class="hljs-string">'limits'</span>,
+        <span class="hljs-keyword">namespace</span>: <span class="hljs-string">'api.v1_0'</span>,
+        <span class="hljs-keyword">type</span>: <span class="hljs-string">'record'</span>
+    },
+    synchronous: <span class="hljs-literal">true</span>
+});</code></pre>
 				<h2 id="api-docs">API Docs</h2>
-				<p>Click to view <a href="http://htmlpreview.github.io/?https://github.com/financialforcedev/orizuru-auth/blob/master/doc/index.html">JSDoc API documentation</a>.</p>
+				<p>Click to view <a href="http://htmlpreview.github.io/?https://github.com/financialforcedev/orizuru-auth/blob/master/doc/index.html">API documentation</a>.</p>
 			</div>
 		</div>
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
@@ -192,148 +323,76 @@ getToken(user)
 					<li class="label tsd-is-external">
 						<span>Internals</span>
 					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/grant.html">grant</a>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/client_cache.html">client/cache</a>
 					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/middleware.html">middleware</a>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/client_oauth2.html">client/oauth2</a>
 					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/refreshtoken.html">refresh<wbr>Token</a>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/client_oauth2jwt.html">client/oauth2<wbr>Jwt</a>
 					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/revocation.html">revocation</a>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/client_oauth2jwt_jwt.html">client/oauth2<wbr>Jwt/jwt</a>
 					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/webserver.html">web<wbr>Server</a>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/client_openid.html">client/openid</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/client_openid_identity.html">client/openid/identity</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/client_salesforce.html">client/salesforce</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/client_salesforce_identity.html">client/salesforce/identity</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/client_validator_environment.html">client/validator/environment</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/flow_jwtbearertoken.html">flow/jwt<wbr>Bearer<wbr>Token</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/flow_refreshtoken.html">flow/refresh<wbr>Token</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/flow_webserver.html">flow/web<wbr>Server</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/grant_grant.html">grant/grant</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/middleware_authcallback.html">middleware/auth<wbr>Callback</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/middleware_common_fail.html">middleware/common/fail</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/middleware_grantchecker.html">middleware/grant<wbr>Checker</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/middleware_identity.html">middleware/identity</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/middleware_tokenvalidator.html">middleware/token<wbr>Validator</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/revocation_revoke.html">revocation/revoke</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/userinfo_userinfo.html">user<wbr>Info/userinfo</a>
 					</li>
 					<li class="label tsd-is-external">
 						<span>Externals</span>
 					</li>
-					<li class=" tsd-kind-module tsd-is-external tsd-is-not-exported">
-						<a href="modules/__global.html">__global</a>
-					</li>
-					<li class=" tsd-kind-module tsd-parent-kind-module tsd-is-external tsd-is-not-exported">
-						<a href="modules/__global.express.html">__global.<wbr>Express</a>
-					</li>
-					<li class=" tsd-kind-module tsd-parent-kind-module tsd-is-external tsd-is-not-exported">
-						<a href="modules/__global.orizuru.html">__global.<wbr>Orizuru</a>
-					</li>
-					<li class=" tsd-kind-module tsd-parent-kind-module tsd-is-external tsd-is-not-exported">
-						<a href="modules/__global.orizuru.options.html">__global.<wbr>Orizuru.<wbr>Options</a>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_financialforcedev_orizuru_auth.html">@financialforcedev/orizuru-<wbr>auth</a>
 					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
-					<li class=" tsd-kind-interface">
-						<a href="interfaces/accesstokenresponse.html" class="tsd-kind-icon">Access<wbr>Token<wbr>Response</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-is-external">
-						<a href="interfaces/environment.html" class="tsd-kind-icon">Environment</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-is-external">
-						<a href="interfaces/grant.html" class="tsd-kind-icon">Grant</a>
-					</li>
-					<li class=" tsd-kind-interface">
-						<a href="interfaces/salesforcejwt.html" class="tsd-kind-icon">Salesforce<wbr>Jwt</a>
-					</li>
-					<li class=" tsd-kind-interface">
-						<a href="interfaces/salesforcejwtstandardclaims.html" class="tsd-kind-icon">Salesforce<wbr>Jwt<wbr>Standard<wbr>Claims</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-is-external">
-						<a href="interfaces/user.html" class="tsd-kind-icon">User</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-is-external">
-						<a href="interfaces/userinfo.html" class="tsd-kind-icon">User<wbr>Info</a>
-					</li>
-					<li class=" tsd-kind-interface">
-						<a href="interfaces/userinformation.html" class="tsd-kind-icon">User<wbr>Information</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-is-not-exported">
-						<a href="globals.html#assertion_type" class="tsd-kind-icon">ASSERTION_<wbr>TYPE</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-is-private tsd-is-not-exported">
-						<a href="globals.html#bearer_prefix" class="tsd-kind-icon">BEARER_<wbr>PREFIX</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-is-private tsd-is-not-exported">
-						<a href="globals.html#http_authorization_header" class="tsd-kind-icon">HTTP_<wbr>AUTHORIZATION_<wbr>HEADER</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-is-private tsd-is-not-exported">
-						<a href="globals.html#jwt_bearer_grant" class="tsd-kind-icon">JWT_<wbr>BEARER_<wbr>GRANT</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-is-private tsd-is-not-exported">
-						<a href="globals.html#jwt_grant_type" class="tsd-kind-icon">JWT_<wbr>GRANT_<wbr>TYPE</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-is-private tsd-is-not-exported">
-						<a href="globals.html#rsa_256" class="tsd-kind-icon">RSA_<wbr>256</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-is-private tsd-is-not-exported">
-						<a href="globals.html#cache" class="tsd-kind-icon">cache</a>
-					</li>
-					<li class=" tsd-kind-function tsd-is-private tsd-is-not-exported">
-						<a href="globals.html#buildissuer" class="tsd-kind-icon">build<wbr>Issuer</a>
-					</li>
-					<li class=" tsd-kind-function tsd-is-private tsd-is-not-exported">
-						<a href="globals.html#checkuserisontherequest" class="tsd-kind-icon">check<wbr>User<wbr>IsOn<wbr>The<wbr>Request</a>
-					</li>
-					<li class=" tsd-kind-function tsd-is-private">
-						<a href="globals.html#clearcache" class="tsd-kind-icon">clear<wbr>Cache</a>
-					</li>
-					<li class=" tsd-kind-function tsd-is-private">
-						<a href="globals.html#constructissuer" class="tsd-kind-icon">construct<wbr>Issuer</a>
-					</li>
-					<li class=" tsd-kind-function tsd-is-private">
-						<a href="globals.html#constructissuerclient" class="tsd-kind-icon">construct<wbr>Issuer<wbr>Client</a>
-					</li>
-					<li class=" tsd-kind-function tsd-is-private tsd-is-not-exported">
-						<a href="globals.html#convertgranttocredentials" class="tsd-kind-icon">convert<wbr>Grant<wbr>ToCredentials</a>
-					</li>
-					<li class=" tsd-kind-function tsd-is-private">
-						<a href="globals.html#createjwtbearerclientassertion" class="tsd-kind-icon">create<wbr>Jwt<wbr>Bearer<wbr>Client<wbr>Assertion</a>
-					</li>
-					<li class=" tsd-kind-function tsd-is-private">
-						<a href="globals.html#createjwtbearergrantassertion" class="tsd-kind-icon">create<wbr>Jwt<wbr>Bearer<wbr>Grant<wbr>Assertion</a>
-					</li>
-					<li class=" tsd-kind-function tsd-is-private tsd-is-not-exported">
-						<a href="globals.html#createkey" class="tsd-kind-icon">create<wbr>Key</a>
-					</li>
-					<li class=" tsd-kind-function tsd-is-private tsd-is-not-exported">
-						<a href="globals.html#extractaccesstoken" class="tsd-kind-icon">extract<wbr>Access<wbr>Token</a>
-					</li>
-					<li class=" tsd-kind-function tsd-is-private tsd-is-not-exported">
-						<a href="globals.html#fail" class="tsd-kind-icon">fail</a>
-					</li>
-					<li class=" tsd-kind-function">
-						<a href="globals.html#getuserinfo" class="tsd-kind-icon">get<wbr>User<wbr>Info</a>
-					</li>
-					<li class=" tsd-kind-function tsd-is-private">
-						<a href="globals.html#obtainauthorizationgrant" class="tsd-kind-icon">obtain<wbr>Authorization<wbr>Grant</a>
-					</li>
-					<li class=" tsd-kind-function tsd-is-private tsd-is-not-exported">
-						<a href="globals.html#setgrant" class="tsd-kind-icon">set<wbr>Grant</a>
-					</li>
-					<li class=" tsd-kind-function tsd-is-private tsd-is-not-exported">
-						<a href="globals.html#setuseronrequest" class="tsd-kind-icon">set<wbr>User<wbr>OnRequest</a>
-					</li>
-					<li class=" tsd-kind-function tsd-is-private">
-						<a href="globals.html#validate" class="tsd-kind-icon">validate</a>
-					</li>
-					<li class=" tsd-kind-function tsd-is-private tsd-is-not-exported">
-						<a href="globals.html#validateaccesstoken" class="tsd-kind-icon">validate<wbr>Access<wbr>Token</a>
-					</li>
-					<li class=" tsd-kind-function tsd-is-not-exported">
-						<a href="globals.html#validateidentityurl" class="tsd-kind-icon">validate<wbr>Identity<wbr>Url</a>
-					</li>
-					<li class=" tsd-kind-function tsd-is-private tsd-is-not-exported">
-						<a href="globals.html#validateuser" class="tsd-kind-icon">validate<wbr>User</a>
-					</li>
-					<li class=" tsd-kind-object-literal tsd-is-private tsd-is-not-exported">
-						<a href="globals.html#rsa_256_algorithm" class="tsd-kind-icon">RSA_<wbr>256_<wbr>ALGORITHM</a>
-					</li>
-					<li class=" tsd-kind-object-literal tsd-is-external tsd-is-not-exported">
-						<a href="globals.html#flow" class="tsd-kind-icon">flow</a>
-					</li>
 				</ul>
 			</nav>
 		</div>

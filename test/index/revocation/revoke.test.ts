@@ -43,7 +43,7 @@ describe('index/revocation/revoke', () => {
 
 	let env: Environment;
 
-	before(() => {
+	beforeAll(() => {
 
 		env = {
 			httpTimeout: 4001,

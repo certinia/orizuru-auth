@@ -13,7 +13,7 @@
 		"build-clean": "rm -rf dist",
 		"build-compile": "tsc",
 		"clean": "rm -rf coverage* && rm -rf dist && rm -rf node_modules && rm -f *.tgz",
-		"coverage-system": "NODE_APP_INSTANCE=system jest --config systemtests/.jest.json --runInBand --detectOpenHandles",
+		"coverage-system": "DEBUG=app* NODE_APP_INSTANCE=system jest --config systemtests/.jest.json --runInBand --detectOpenHandles",
 		"coverage-unit": "jest --config test/.jest.json",
 		"doc": "typedoc --gitRevision master --ignoreCompilerErrors --out doc src/**/* --readme readme.md",
 		"init-project": "cp run.properties local.run.properties && cp test.properties local.test.properties",
@@ -21,7 +21,7 @@
 		"prepare": "npm run build",
 		"pretest": "tslint -p tsconfig.json",
 		"test": "npm run coverage-unit",
-		"test-system": "NODE_APP_INSTANCE=system jest --config systemtests/.jest.json --coverage=false --runInBand --detectOpenHandles",
+		"test-system": "DEBUG=app* NODE_APP_INSTANCE=system jest --config systemtests/.jest.json --coverage=false --runInBand --detectOpenHandles",
 		"test-unit": "jest --config test/.jest.json --coverage=false"
 	},
 	"repository": {

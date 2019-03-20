@@ -12,16 +12,17 @@
 		"build": "npm run build-clean && npm run build-compile",
 		"build-clean": "rm -rf dist",
 		"build-compile": "tsc",
-		"coverage-system": "DEBUG=app* nyc --nycrc-path=systemtests/.nyc.json --report-dir=coverage mocha --config systemtests/.mocha.json",
-		"coverage-unit": "nyc --nycrc-path=test/.nyc.json mocha --config test/.mocha.json",
+		"clean": "rm -rf coverage* && rm -rf dist && rm -rf node_modules && rm -f *.tgz",
+		"coverage-system": "NODE_APP_INSTANCE=system jest --config systemtests/.jest.json --runInBand --detectOpenHandles",
+		"coverage-unit": "jest --config test/.jest.json",
 		"doc": "typedoc --gitRevision master --ignoreCompilerErrors --out doc src/**/* --readme readme.md",
 		"init-project": "cp run.properties local.run.properties && cp test.properties local.test.properties",
 		"lint-fix": "tslint -p tsconfig.json --fix",
 		"prepare": "npm run build",
 		"pretest": "tslint -p tsconfig.json",
 		"test": "npm run coverage-unit",
-		"test-system": "DEBUG=app* mocha --config systemtests/.mocha.json",
-		"test-unit": "mocha --config test/.mocha.json"
+		"test-system": "NODE_APP_INSTANCE=system jest --config systemtests/.jest.json --coverage=false --runInBand --detectOpenHandles",
+		"test-unit": "jest --config test/.jest.json --coverage=false"
 	},
 	"repository": {
 		"type": "git",

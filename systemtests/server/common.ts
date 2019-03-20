@@ -29,10 +29,15 @@ import debug, { Debugger } from 'debug';
 import http from 'http';
 import https from 'https';
 import pem, { CertificateCreationResult } from 'pem';
+import { SuperAgentRequest } from 'superagent';
 
 import { ITransport, Server } from '@financialforcedev/orizuru';
 
 import { Environment, EVENT_AUTHORIZATION_HEADER_SET, EVENT_DENIED, EVENT_GRANT_CHECKED, EVENT_TOKEN_VALIDATED, OpenIdOptions } from '../../src';
+
+export interface TrustedSuperAgentRequest extends SuperAgentRequest {
+	trustLocalhost: (toggle: boolean) => TrustedSuperAgentRequest;
+}
 
 export class TestServer extends Server {
 

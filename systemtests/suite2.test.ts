@@ -28,13 +28,13 @@ import chai from 'chai';
 import { Browser, BrowserContext, launch, Page } from 'puppeteer';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
-import request from 'supertest';
+import superagent from 'superagent';
 
 import config from 'config';
 
 import { EVENT_AUTHORIZATION_HEADER_SET, EVENT_DENIED } from '../src/index';
 
-import { TestServer } from './server/common';
+import { TestServer, TrustedSuperAgentRequest } from './server/common';
 import { createServer } from './server/google';
 
 const expect = chai.expect;
@@ -50,9 +50,9 @@ describe('Suite 2 - Puppeteer script for Google authentication', () => {
 	let page: Page;
 	let server: TestServer;
 
-	before(async () => {
+	beforeAll(async () => {
 
-		process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+		jest.setTimeout(30000);
 
 		server = await createServer();
 
@@ -77,7 +77,7 @@ describe('Suite 2 - Puppeteer script for Google authentication', () => {
 		sinon.reset();
 	});
 
-	after(async () => {
+	afterAll(async () => {
 		await browser.close();
 		await server.close();
 		sinon.restore();
@@ -140,9 +140,10 @@ describe('Suite 2 - Puppeteer script for Google authentication', () => {
 			fail('No access token');
 		}
 
+		const request = superagent.get('https://localhost:8080/api/auth/v1.0/revokeToken') as TrustedSuperAgentRequest;
+
 		// When
-		const response = await request(server.httpsServer)
-			.get('/api/auth/v1.0/revokeToken')
+		const response = await request.trustLocalhost(true)
 			.set('Authorization', accessToken)
 			.send({});
 

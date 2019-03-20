@@ -28,13 +28,13 @@ import chai from 'chai';
 import { Browser, BrowserContext, launch, Page } from 'puppeteer';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
-import request from 'supertest';
+import superagent from 'superagent';
 
 import config from 'config';
 
 import { EVENT_AUTHORIZATION_HEADER_SET, EVENT_DENIED, EVENT_GRANT_CHECKED, EVENT_TOKEN_VALIDATED } from '../src/index';
 
-import { TestServer } from './server/common';
+import { TestServer, TrustedSuperAgentRequest } from './server/common';
 import { createServer } from './server/salesforce';
 
 const expect = chai.expect;
@@ -50,9 +50,9 @@ describe('Suite 1 - Puppeteer script for Salesforce authentication', () => {
 	let page: Page;
 	let server: TestServer;
 
-	before(async () => {
+	beforeAll(async () => {
 
-		process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+		jest.setTimeout(30000);
 
 		server = await createServer();
 
@@ -77,7 +77,7 @@ describe('Suite 1 - Puppeteer script for Salesforce authentication', () => {
 		sinon.reset();
 	});
 
-	after(async () => {
+	afterAll(async () => {
 		await browser.close();
 		await server.close();
 		sinon.restore();
@@ -135,9 +135,10 @@ describe('Suite 1 - Puppeteer script for Salesforce authentication', () => {
 
 		const username = config.get<string>('test.salesforce.username');
 
+		const request = superagent.get('https://localhost:8080/api/auth/v1.0/validateToken') as TrustedSuperAgentRequest;
+
 		// When
-		const response = await request(server.httpsServer)
-			.get('/api/auth/v1.0/validateToken')
+		const response = await request.trustLocalhost(true)
 			.set('Authorization', accessToken)
 			.send({});
 
@@ -163,9 +164,10 @@ describe('Suite 1 - Puppeteer script for Salesforce authentication', () => {
 
 		const username = config.get<string>('test.salesforce.username');
 
+		const request = superagent.get('https://localhost:8080/api/auth/v1.0/checkGrant') as TrustedSuperAgentRequest;
+
 		// When
-		const response = await request(server.httpsServer)
-			.get('/api/auth/v1.0/checkGrant')
+		const response = await request.trustLocalhost(true)
 			.set('Authorization', accessToken)
 			.send({});
 
@@ -191,9 +193,10 @@ describe('Suite 1 - Puppeteer script for Salesforce authentication', () => {
 			fail('No access token');
 		}
 
+		const request = superagent.get('https://localhost:8080/api/auth/v1.0/revokeToken') as TrustedSuperAgentRequest;
+
 		// When
-		const response = await request(server.httpsServer)
-			.get('/api/auth/v1.0/revokeToken')
+		const response = await request.trustLocalhost(true)
 			.set('Authorization', accessToken)
 			.send({});
 

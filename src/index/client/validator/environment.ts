@@ -69,9 +69,24 @@ export function validate(env?: Environment): Environment {
 		throw new Error('Invalid parameter: type is not a string.');
 	}
 
+	if (env.authorizationEndpoint && typeof env.authorizationEndpoint !== 'string') {
+		throw new Error('Invalid parameter: authorizationEndpoint is not a string.');
+	}
+
+	if (env.revocationEndpoint && typeof env.revocationEndpoint !== 'string') {
+		throw new Error('Invalid parameter: revocationEndpoint is not a string.');
+	}
+
+	if (env.tokenEndpoint && typeof env.tokenEndpoint !== 'string') {
+		throw new Error('Invalid parameter: tokenEndpoint is not a string.');
+	}
+
 	return {
+		authorizationEndpoint: env.authorizationEndpoint,
 		httpTimeout: env.httpTimeout,
 		issuerURI: env.issuerURI,
+		revocationEndpoint: env.revocationEndpoint,
+		tokenEndpoint: env.tokenEndpoint,
 		type: env.type
 	};
 

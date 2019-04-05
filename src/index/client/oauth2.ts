@@ -494,10 +494,6 @@ export class OAuth2Client implements AuthClient {
 			throw new Error('Missing required string parameter: redirectUri');
 		}
 
-		if (!data.scope) {
-			throw new Error('Missing required string parameter: scope');
-		}
-
 		// Encode the parameters and then replace any encoded spaces (+)
 		// with the url version (%20)
 		const query = formUrlencoded(data, { sorted: true }).replace('+', '%20');

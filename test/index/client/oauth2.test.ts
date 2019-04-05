@@ -123,6 +123,21 @@ describe('index/client/oauth2', () => {
 
 		});
 
+		it('should return an authorization url excluding the scope', async () => {
+
+			// Given
+			await client.init();
+
+			delete params.scope;
+
+			// When
+			const authorizationUrl = client.createAuthorizationUrl(params);
+
+			// Then
+			expect(authorizationUrl).to.eql('https://accounts.google.com/o/oauth2/v2/auth?client_id=testClientId&redirect_uri=https%3A%2F%2Ftest.app.com%2Fauth%2Fcallback&response_type=code');
+
+		});
+
 		it('should return an authorization url excluding the state', async () => {
 
 			// Given

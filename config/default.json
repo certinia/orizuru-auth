@@ -8,6 +8,14 @@
 			"tokenEndpoint": "https://oauth2.googleapis.com/token",
 			"type": "OAuth2"
 		},
+		"googleOAuth2Jwt": {
+			"authorizationEndpoint": "https://accounts.google.com/o/oauth2/v2/auth",
+			"httpTimeout": 4000,
+			"issuerURI": "https://accounts.google.com",
+			"revocationEndpoint": "https://oauth2.googleapis.com/revoke",
+			"tokenEndpoint": "https://oauth2.googleapis.com/token",
+			"type": "OAuth2"
+		},
 		"googleOpenId": {
 			"httpTimeout": 4000,
 			"issuerURI": "https://accounts.google.com",
@@ -26,6 +34,11 @@
 	},
 	"openid": {
 		"googleOAuth2": {
+			"prompt": "consent",
+			"redirectUri": "https://localhost:8080/api/auth/v1.0/callback",
+			"scope": "openid email https://www.googleapis.com/auth/spreadsheets"
+		},
+		"googleOAuth2Jwt": {
 			"prompt": "consent",
 			"redirectUri": "https://localhost:8080/api/auth/v1.0/callback",
 			"scope": "openid email https://www.googleapis.com/auth/spreadsheets"

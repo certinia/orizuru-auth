@@ -49,14 +49,12 @@
 			"scope": "openid email https://www.googleapis.com/auth/spreadsheets"
 		},
 		"salesforceConnection": {
-			"redirectUri": "https://localhost:8080/api/auth/v1.0/callback",
-			"scope": "api"
+			"redirectUri": "https://localhost:8080/api/auth/v1.0/callback"
 		},
 		"salesforceIdentity": {
 			"immediate": false,
 			"prompt": "consent",
-			"redirectUri": "https://localhost:8080/api/auth/v1.0/callback",
-			"scope": "openid"
+			"redirectUri": "https://localhost:8080/api/auth/v1.0/callback"
 		}
 	}
 }

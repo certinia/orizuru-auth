@@ -1,6 +1,6 @@
 {
 	"authProvider": {
-		"google": {
+		"googleOpenId": {
 			"httpTimeout": 4000,
 			"issuerURI": "https://accounts.google.com",
 			"type": "OpenID"

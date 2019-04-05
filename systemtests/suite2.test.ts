@@ -42,7 +42,7 @@ const fail = chai.assert.fail;
 
 chai.use(sinonChai);
 
-describe('Suite 2 - Puppeteer script for Google authentication', () => {
+describe('Suite 2 - Puppeteer script for Google authentication using OpenID client', () => {
 
 	let accessToken: string;
 	let browser: Browser;
@@ -54,7 +54,7 @@ describe('Suite 2 - Puppeteer script for Google authentication', () => {
 
 		jest.setTimeout(30000);
 
-		server = await createServer();
+		server = await createServer('googleOpenId');
 
 		browser = await launch({
 			headless: true,

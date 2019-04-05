@@ -28,6 +28,8 @@
  * @module client/oauth2Jwt
  */
 
+import { Secret } from 'jsonwebtoken';
+
 import { Environment } from './cache';
 import { AccessTokenResponse, AuthClientGrantParams, GrantOptions, GrantParams, OAuth2Client, TokenGrantorParams } from './oauth2';
 import { createJwtBearerClientAssertion, createJwtBearerGrantAssertion } from './oauth2Jwt/jwt';
@@ -115,7 +117,7 @@ export interface JwtTokenGrantorParams extends TokenGrantorParams {
 	/**
 	 * The private key used for signing grant assertions as part of the [OAuth 2.0 JWT Bearer Token Flow](https://help.salesforce.com/articleView?id=remoteaccess_oauth_jwt_flow.htm).
 	 */
-	signingSecret: string;
+	signingSecret: Secret;
 
 }
 

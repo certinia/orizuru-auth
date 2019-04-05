@@ -121,20 +121,6 @@ describe('index/client/oauth2', () => {
 
 			});
 
-			it('if the scopes have not been provided', async () => {
-
-				// Given
-				delete params.scope;
-
-				client = new OAuth2Client(env);
-				await client.init();
-
-				// When
-				// Then
-				expect(() => client.createAuthorizationUrl(params)).to.throw('Missing required string parameter: scope');
-
-			});
-
 		});
 
 		it('should return an authorization url excluding the state', async () => {

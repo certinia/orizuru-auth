@@ -132,20 +132,6 @@ describe('index/client/openid', () => {
 
 			});
 
-			it('if the scopes have not been provided', async () => {
-
-				// Given
-				delete params.scope;
-
-				client = new OpenIdClient(env);
-				await client.init();
-
-				// When
-				// Then
-				expect(() => client.createAuthorizationUrl(params)).to.throw('Missing required string parameter: scope');
-
-			});
-
 		});
 
 		it('should return an authorization url excluding the state', async () => {

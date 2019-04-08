@@ -10,3 +10,4 @@
 ### OTHER CHANGES
 
 - Add system tests using a `OAuth2` and `OAuth2JWT` client
+- Amalgamate the change log files

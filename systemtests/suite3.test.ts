@@ -42,7 +42,7 @@ const fail = chai.assert.fail;
 
 chai.use(sinonChai);
 
-describe('Suite 2 - Puppeteer script for Google authentication using OpenID client', () => {
+describe('Suite 3 - Puppeteer script for Google authentication using OAuth2 client', () => {
 
 	let accessToken: string;
 	let browser: Browser;
@@ -54,7 +54,7 @@ describe('Suite 2 - Puppeteer script for Google authentication using OpenID clie
 
 		jest.setTimeout(30000);
 
-		server = await createServer('googleOpenId');
+		server = await createServer('googleOAuth2');
 
 		browser = await launch({
 			headless: true,
@@ -127,7 +127,7 @@ describe('Suite 2 - Puppeteer script for Google authentication using OpenID clie
 		expect(headers).to.have.property('authorization').that.matches(/^Bearer .+$/);
 
 		expect(server.emit).to.have.been.calledOnce;
-		expect(server.emit).to.have.been.calledWithExactly(EVENT_AUTHORIZATION_HEADER_SET, `Authorization headers set for user (${username}) [::1].`);
+		expect(server.emit).to.have.been.calledWithExactly(EVENT_AUTHORIZATION_HEADER_SET, 'Authorization headers set for user (unknown) [::1].');
 
 		accessToken = headers.authorization;
 

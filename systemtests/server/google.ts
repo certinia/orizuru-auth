@@ -31,21 +31,21 @@ import { flow, middleware } from '../../src';
 import { createTokenRevoker } from '../../src/index/revocation/revoke';
 import { TestServer } from './common';
 
-export async function createServer() {
+export async function createServer(authProvider: string) {
 
-	const server = new TestServer(['google']);
+	const server = new TestServer([authProvider]);
 
-	addAuthRoute(server);
-	addAuthCallbackRoute(server);
-	addRevokeTokenRoute(server);
+	addAuthRoute(server, authProvider);
+	addAuthCallbackRoute(server, authProvider);
+	addRevokeTokenRoute(server, authProvider);
 
 	return server;
 
 }
 
-function addAuthRoute(server: Server) {
+function addAuthRoute(server: Server, authProvider: string) {
 
-	const generateAuthorizationUrl = flow.webServer.authorizationUrlGenerator(server.options.authProvider.google);
+	const generateAuthorizationUrl = flow.webServer.authorizationUrlGenerator(server.options.authProvider[authProvider]);
 
 	server.addRoute({
 		method: 'get',
@@ -53,8 +53,8 @@ function addAuthRoute(server: Server) {
 			json()
 		],
 		responseWriter: () => async (err, req, res) => {
-			const opts = Object.assign({}, server.options.openid.google, { state: 'test' });
-			const url = await generateAuthorizationUrl(server.options.openid.google, opts);
+			const opts = Object.assign({}, server.options.openid[authProvider], { state: 'test' });
+			const url = await generateAuthorizationUrl(server.options.openid[authProvider], opts);
 			res.redirect(url);
 		},
 		schema: {
@@ -68,7 +68,7 @@ function addAuthRoute(server: Server) {
 
 }
 
-function addAuthCallbackRoute(server: Server) {
+function addAuthCallbackRoute(server: Server, authProvider: string) {
 
 	server.addRoute({
 		method: 'get',
@@ -76,7 +76,7 @@ function addAuthCallbackRoute(server: Server) {
 			urlencoded({
 				extended: true
 			}),
-			middleware.authCallback(server, 'google', server.options.openid.google, server.options.openid.google),
+			middleware.authCallback(server, authProvider, server.options.openid[authProvider], server.options.openid[authProvider]),
 			(error, req, res, next) => {
 				if (error) {
 					res.sendStatus(401);
@@ -99,9 +99,9 @@ function addAuthCallbackRoute(server: Server) {
 
 }
 
-function addRevokeTokenRoute(server: Server) {
+function addRevokeTokenRoute(server: Server, authProvider: string) {
 
-	const tokenRevoker = createTokenRevoker(server.options.authProvider.google);
+	const tokenRevoker = createTokenRevoker(server.options.authProvider[authProvider]);
 
 	server.addRoute({
 		method: 'get',

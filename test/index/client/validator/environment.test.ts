@@ -38,8 +38,11 @@ describe('index/client/validator/environment', () => {
 
 	beforeEach(() => {
 		env = {
+			authorizationEndpoint: 'https://login.salesforce.com/services/oauth2/authorize',
 			httpTimeout: 4001,
-			issuerURI: 'test',
+			issuerURI: 'https://login.salesforce.com',
+			revocationEndpoint: 'https://login.salesforce.com/services/oauth2/revoke',
+			tokenEndpoint: 'https://login.salesforce.com/services/oauth2/token',
 			type: 'OpenID'
 		};
 	});
@@ -136,16 +139,86 @@ describe('index/client/validator/environment', () => {
 
 		});
 
+		it('if the authorizationEndpoint is not a string', () => {
+
+			// Given
+			Object.assign(env, {
+				authorizationEndpoint: 2
+			});
+
+			// When
+			// Then
+			expect(() => validate(env)).to.throw('Invalid parameter: authorizationEndpoint is not a string.');
+
+		});
+
+		it('if the revocationEndpoint is not a string', () => {
+
+			// Given
+			Object.assign(env, {
+				revocationEndpoint: 2
+			});
+
+			// When
+			// Then
+			expect(() => validate(env)).to.throw('Invalid parameter: revocationEndpoint is not a string.');
+
+		});
+
+		it('if the tokenEndpoint is not a string', () => {
+
+			// Given
+			Object.assign(env, {
+				tokenEndpoint: 2
+			});
+
+			// When
+			// Then
+			expect(() => validate(env)).to.throw('Invalid parameter: tokenEndpoint is not a string.');
+
+		});
+
 	});
 
 	describe('should resolve', () => {
 
-		it('if the environment is correct', () => {
+		it('if the environment is correct using only the required properties', () => {
 
 			// Given
+			delete env.authorizationEndpoint;
+			delete env.revocationEndpoint;
+			delete env.tokenEndpoint;
+
 			// When
 			// Then
-			expect(validate(env)).to.eql(env);
+			expect(validate(env)).to.eql({
+				authorizationEndpoint: undefined,
+				httpTimeout: 4001,
+				issuerURI: 'https://login.salesforce.com',
+				revocationEndpoint: undefined,
+				tokenEndpoint: undefined,
+				type: 'OpenID'
+			});
+
+		});
+
+		it('if the environment is correct, limiting to only the expected properties', () => {
+
+			// Given
+			Object.assign(env, {
+				invalid: true
+			});
+
+			// When
+			// Then
+			expect(validate(env)).to.eql({
+				authorizationEndpoint: 'https://login.salesforce.com/services/oauth2/authorize',
+				httpTimeout: 4001,
+				issuerURI: 'https://login.salesforce.com',
+				revocationEndpoint: 'https://login.salesforce.com/services/oauth2/revoke',
+				tokenEndpoint: 'https://login.salesforce.com/services/oauth2/token',
+				type: 'OpenID'
+			});
 
 		});
 

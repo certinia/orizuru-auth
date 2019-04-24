@@ -33,6 +33,7 @@ import { NextFunction, Request, RequestHandler, Response } from '@financialforce
 import { EVENT_TOKEN_VALIDATED, OpenIDTokenWithStandardClaims, User, UserInfoOptions } from '../..';
 import { createUserInfoRequester } from '../userInfo/userinfo';
 
+import { SalesforceUser } from '../client/salesforce';
 import { fail } from './common/fail';
 
 /**
@@ -58,9 +59,18 @@ export function createMiddleware(app: Orizuru.IServer, provider: string, opts?: 
 			const accessToken = extractAccessToken(req, tokenRegex);
 			const userInfo = await validateAccessToken(accessToken, opts) as OpenIDTokenWithStandardClaims;
 
-			const user = {
-				username: userInfo.preferred_username
-			};
+			let user: User | SalesforceUser;
+
+			if (userInfo.organization_id) {
+				user = {
+					organizationId: userInfo.organization_id,
+					username: userInfo.preferred_username
+				};
+			} else {
+				user = {
+					username: userInfo.preferred_username
+				};
+			}
 
 			setUserOnRequest(app, req, user);
 

@@ -250,10 +250,6 @@ describe('index/middleware/tokenValidator', () => {
 			afterEach(() => {
 
 				// Then
-				expect(req.orizuru).to.have.property('user').that.eqls({
-					username: 'test@test.com'
-				});
-
 				expect(validateAccessTokenStub).to.have.been.calledOnce;
 				expect(validateAccessTokenStub).to.have.been.calledWithExactly('12345', {
 					responseFormat: ResponseFormat.JSON
@@ -269,8 +265,12 @@ describe('index/middleware/tokenValidator', () => {
 
 				// Given
 				// When
-				// Then
 				await middleware(req, res, next);
+
+				// Then
+				expect(req.orizuru).to.have.property('user').that.eqls({
+					username: 'test@test.com'
+				});
 
 			});
 
@@ -286,6 +286,25 @@ describe('index/middleware/tokenValidator', () => {
 
 				// Then
 				expect(req.orizuru).to.have.property('grantChecked', true);
+
+			});
+
+			it('and set organization id on the request if available', async () => {
+
+				// Given
+				validateAccessTokenStub.resolves({
+					organization_id: 'orgid',
+					preferred_username: 'test@test.com'
+				});
+
+				// When
+				await middleware(req, res, next);
+
+				// Then
+				expect(req.orizuru).to.have.property('user').that.eqls({
+					organizationId: 'orgid',
+					username: 'test@test.com'
+				});
 
 			});
 

@@ -28,7 +28,7 @@ import chai from 'chai';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
 
-import { OpenIDAccessTokenResponse } from '../../../../src';
+import { OpenIDAccessTokenResponse, OpenIDToken } from '../../../../src';
 
 import { decodeIdToken } from '../../../../src/index/client/openid/identity';
 
@@ -99,6 +99,40 @@ describe('index/client/openid/identity', () => {
 			// Then
 			expect(accessTokenResponse).to.eql({
 				access_token: '00Dxx0000001gPL!AR8AQJXg5oj8jXSgxJfA0lBog.39AsX.LVpxezPwuX5VAIrrbbHMuol7GQxnMeYMN7cj8EoWr78nt1u44zU31IbYNNJguseu',
+				scope: 'api',
+				token_type: 'Bearer'
+			});
+
+		});
+
+		it('should not throw an error if the id_token has already been decoded', () => {
+
+			// Given
+			accessTokenResponse.id_token = {
+				aud: 'audience',
+				exp: 1516239122,
+				iat: 1516239022,
+				iss: 'issuer',
+				name: 'John Doe',
+				sub: '1234567890'
+			} as OpenIDToken;
+
+			accessTokenResponse.scope = 'api';
+
+			// When
+			decodeIdToken(accessTokenResponse);
+
+			// Then
+			expect(accessTokenResponse).to.eql({
+				access_token: '00Dxx0000001gPL!AR8AQJXg5oj8jXSgxJfA0lBog.39AsX.LVpxezPwuX5VAIrrbbHMuol7GQxnMeYMN7cj8EoWr78nt1u44zU31IbYNNJguseu',
+				id_token: {
+					aud: 'audience',
+					exp: 1516239122,
+					iat: 1516239022,
+					iss: 'issuer',
+					name: 'John Doe',
+					sub: '1234567890'
+				},
 				scope: 'api',
 				token_type: 'Bearer'
 			});

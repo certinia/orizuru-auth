@@ -246,7 +246,7 @@ describe('index/middleware/authCallback', () => {
 
 			});
 
-			it('adding the orizuru identity property', async () => {
+			it('adding the orizuru userInfo property for a salesforce access token', async () => {
 
 				// Given
 				// When
@@ -272,7 +272,7 @@ describe('index/middleware/authCallback', () => {
 
 			});
 
-			it('adding the orizuru identity property respecting an existing orizuru property', async () => {
+			it('adding the orizuru userInfo property respecting an existing orizuru property', async () => {
 
 				// Given
 				req.orizuru = {
@@ -298,6 +298,29 @@ describe('index/middleware/authCallback', () => {
 				expect(app.emit).to.have.been.calledWithExactly(EVENT_AUTHORIZATION_HEADER_SET, 'Authorization headers set for user (test@test.com) [1.1.1.1].');
 				expect(next).to.have.been.calledOnce;
 				expect(next).to.have.been.calledWithExactly();
+
+			});
+
+			it('adding the orizuru user property for an openid access token', async () => {
+
+				// Given
+				delete accessTokenResponse.id;
+				delete accessTokenResponse.instance_url;
+				delete accessTokenResponse.issued_at;
+				delete accessTokenResponse.signature;
+
+				// When
+				await middleware(req, res, next);
+
+				// Then
+				expect(req.headers).to.have.property('authorization', 'Bearer 00Dx0000000BV7z!AR8AQP0jITN80ESEsj5EbaZTFG0RNBaT1cyWk7TrqoDjoNIWQ2ME_sTZzBjfmOE6zMHq6y8PIW4eWze9JksNEkWUl.Cju7m4');
+
+				expect(app.emit).to.have.been.calledOnce;
+				expect(app.emit).to.have.been.calledWithExactly(EVENT_AUTHORIZATION_HEADER_SET, 'Authorization headers set for user (test@test.com) [1.1.1.1].');
+				expect(next).to.have.been.calledOnce;
+				expect(next).to.have.been.calledWithExactly();
+
+				expect(req).to.not.have.property('orizuru');
 
 			});
 

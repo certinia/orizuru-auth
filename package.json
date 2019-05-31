@@ -15,7 +15,7 @@
 		"clean": "rm -rf coverage* && rm -rf dist && rm -rf node_modules && rm -f *.tgz",
 		"coverage-system": "DEBUG=app* NODE_APP_INSTANCE=system jest --config systemtests/.jest.json --runInBand --detectOpenHandles",
 		"coverage-unit": "jest --config test/.jest.json",
-		"doc": "typedoc --gitRevision master --ignoreCompilerErrors --out doc src/**/* --readme readme.md",
+		"doc": "typedoc --gitRevision master --ignoreCompilerErrors --out doc src/**/* --readme readme.md --plugin typedoc-plugin-external-module-name",
 		"init-project": "cp run.properties local.run.properties && cp test.properties local.test.properties",
 		"lint-fix": "tslint -p tsconfig.json --fix",
 		"prepare": "npm run build",

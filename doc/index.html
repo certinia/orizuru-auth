@@ -75,7 +75,8 @@
 				</ol>
 				<p><em>It is extremely important to treat your signing secret as sensitive material, please ensure that this is stored in a secure location.</em></p>
 				<h2 id="install">Install</h2>
-				<pre><code>$ <span class="hljs-built_in">npm</span> install @financialforcedev/orizuru-auth</code></pre><h2 id="usage">Usage</h2>
+				<pre><code class="language-sh">npm install @financialforcedev/orizuru-auth</code></pre>
+				<h2 id="usage">Usage</h2>
 				<h3 id="oauth-2-0-web-server-authentication-flow">OAuth 2.0 Web Server Authentication Flow</h3>
 				<p>Orizuru Auth provides a function to initialise the <a href="https://help.salesforce.com/articleView?id=remoteaccess_oauth_web_server_flow.htm">OAuth 2.0 Web Server Authentication Flow</a>. It uses the <a href="https://help.salesforce.com/articleView?id=remoteaccess_using_openid_discovery_endpoint.htm">Salesforce OpenID Connect discovery endpoint</a> supplied in the <code>Environment</code>, with the <a href="https://help.salesforce.com/articleView?id=connected_app_create.htm">Connected app</a> details supplied in the <code>AuthUrlParameters</code>, to create the URL. Optional configuration options for the URL are supplied in the <code>AuthOptions</code>.</p>
 				<p>For the examples, the initial configuration has been provided in the <code>examples</code> directory of this repository. This can be copied to another directory to be worked with.</p>

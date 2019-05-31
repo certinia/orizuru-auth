@@ -1,5 +1,16 @@
 # @financialforcedev/orizuru-auth
 
+## 7.1.0
+
+### NEW FEATURES
+
+- In token validator middleware:
+  - Add salesforce organisation ID to user context if available
+
+### OTHER CHANGES
+
+- Update axios version to fix vulnerability
+
 ## 7.0.1
 
 ### FIXES

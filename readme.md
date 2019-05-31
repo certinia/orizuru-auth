@@ -1,6 +1,5 @@
 # Orizuru Authentication
 
-
 [![Build Status](https://travis-ci.org/financialforcedev/orizuru-auth.svg?branch=master)](https://travis-ci.org/financialforcedev/orizuru-auth)
 
 Orizuru authentication is an [Express](http://expressjs.com/)-compatible authentication middleware for [Node.js](http://nodejs.org/). 
@@ -16,8 +15,8 @@ In a Salesforce context, using the `Token Validator` and `Grant Checker` middlew
 
 ## Install
 
-```
-$ npm install @financialforcedev/orizuru-auth
+```sh
+npm install @financialforcedev/orizuru-auth
 ```
 
 ## Usage
@@ -303,6 +302,7 @@ server.addRoute({
     synchronous: true
 });
 ```
+
 ## API Docs
 
 Click to view [API documentation](http://htmlpreview.github.io/?https://github.com/financialforcedev/orizuru-auth/blob/master/doc/index.html).

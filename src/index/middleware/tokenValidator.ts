@@ -63,7 +63,7 @@ export function createMiddleware(app: Orizuru.IServer, provider: string, opts?: 
 
 			if (userInfo.organization_id) {
 				user = {
-					organizationId: userInfo.organization_id,
+					organizationId: userInfo.organization_id as string,
 					username: userInfo.preferred_username
 				};
 			} else {

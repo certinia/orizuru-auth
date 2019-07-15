@@ -59,7 +59,7 @@ describe('index/client/openid', () => {
 
 		client = new OpenIdClient(env);
 
-		axiosGetStub = sinon.stub(axios, 'get').withArgs('https://login.salesforce.com/.well-known/openid-configuration', { timeout: 4001 }).resolves({
+		axiosGetStub = sinon.stub(axios, 'get').withArgs('https://login.salesforce.com/.well-known/openid-configuration', sinon.match.object).resolves({
 			config: {},
 			data: {
 				authorization_endpoint: 'https://login.salesforce.com/services/oauth2/authorize',
@@ -77,6 +77,27 @@ describe('index/client/openid', () => {
 
 	afterEach(() => {
 		sinon.restore();
+	});
+
+	describe('init', () => {
+
+		it('should throw an error if the configuration request fails', async () => {
+
+			// Given
+			axiosGetStub.withArgs('https://login.salesforce.com/.well-known/openid-configuration', sinon.match.object).resolves({
+				config: {},
+				data: {},
+				headers: {},
+				status: 400,
+				statusText: 'Bad Request'
+			});
+
+			// When
+			// Then
+			await expect(client.init()).to.be.rejectedWith('Failed to initialise OpenID client. OpenID configuration request failed.');
+
+		});
+
 	});
 
 	describe('createAuthorizationUrl', () => {
@@ -656,8 +677,10 @@ describe('index/client/openid', () => {
 			expect(result).to.be.true;
 
 			expect(axios.get).to.have.been.calledOnce;
-			expect(axios.get).to.have.been.calledWithExactly('https://login.salesforce.com/.well-known/openid-configuration', { timeout: 4001 });
-
+			expect(axios.get).to.have.been.calledWithExactly('https://login.salesforce.com/.well-known/openid-configuration', {
+				timeout: 4001,
+				validateStatus: sinon.match.func
+			});
 			expect(axios.post).to.have.been.calledOnce;
 			expect(axios.post).to.have.been.calledWithExactly('https://login.salesforce.com/services/oauth2/revoke', 'token=testToken', {
 				headers: {
@@ -688,7 +711,10 @@ describe('index/client/openid', () => {
 			expect(result).to.be.true;
 
 			expect(axios.get).to.have.been.calledTwice;
-			expect(axios.get).to.have.been.calledWithExactly('https://login.salesforce.com/.well-known/openid-configuration', { timeout: 4001 });
+			expect(axios.get).to.have.been.calledWithExactly('https://login.salesforce.com/.well-known/openid-configuration', {
+				timeout: 4001,
+				validateStatus: sinon.match.func
+			});
 			expect(axios.get).to.have.been.calledWithExactly('https://login.salesforce.com/services/oauth2/revoke?token=testToken', {
 				validateStatus: sinon.match.func
 			});
@@ -753,7 +779,10 @@ describe('index/client/openid', () => {
 			});
 
 			expect(axios.get).to.have.been.calledTwice;
-			expect(axios.get).to.have.been.calledWithExactly('https://login.salesforce.com/.well-known/openid-configuration', { timeout: 4001 });
+			expect(axios.get).to.have.been.calledWithExactly('https://login.salesforce.com/.well-known/openid-configuration', {
+				timeout: 4001,
+				validateStatus: sinon.match.func
+			});
 			expect(axios.get).to.have.been.calledWithExactly('https://login.salesforce.com/services/oauth2/userinfo', {
 				headers: {
 					Accept: 'application/json',

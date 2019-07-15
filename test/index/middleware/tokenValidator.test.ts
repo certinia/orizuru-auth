@@ -31,6 +31,7 @@ import sinonChai from 'sinon-chai';
 import { Request, RequestHandler, Response } from '@financialforcedev/orizuru';
 
 import { Environment, EVENT_TOKEN_VALIDATED, OpenIdOptions, ResponseFormat, UserInfoOptions } from '../../../src';
+import * as accessToken from '../../../src/index/middleware/common/accessToken';
 import * as fail from '../../../src/index/middleware/common/fail';
 import * as userInfo from '../../../src/index/userInfo/userinfo';
 
@@ -78,6 +79,7 @@ describe('index/middleware/tokenValidator', () => {
 		validateAccessTokenStub = sinon.stub();
 
 		sinon.stub(userInfo, 'createUserInfoRequester').returns(validateAccessTokenStub);
+		sinon.stub(accessToken, 'extractAccessToken').returns('12345');
 		sinon.stub(fail, 'fail');
 
 	});
@@ -137,75 +139,6 @@ describe('index/middleware/tokenValidator', () => {
 				// Then
 				expect(fail.fail).to.have.been.calledOnce;
 				expect(next).to.not.have.been.called;
-
-			});
-
-			it('if the headers are not provided', async () => {
-
-				// Given
-				// When
-				await middleware(req, res, next);
-
-				// Then
-				expect(fail.fail).to.have.been.calledWithExactly(app, has('message', 'Missing required object parameter: headers.'), req, res, next);
-
-			});
-
-			it('if the authorization header is not provided', async () => {
-
-				// Given
-				req.headers = {};
-
-				// When
-				await middleware(req, res, next);
-
-				// Then
-				expect(fail.fail).to.have.been.calledWithExactly(app, has('message', 'Missing required string parameter: headers[authorization].'), req, res, next);
-
-			});
-
-			it('if the header is empty', async () => {
-
-				// Given
-				req.headers = {
-					authorization: ''
-				};
-
-				// When
-				await middleware(req, res, next);
-
-				// Then
-				expect(fail.fail).to.have.been.calledWithExactly(app, has('message', 'Missing required string parameter: headers[authorization].'), req, res, next);
-
-			});
-
-			it('with no bearer', async () => {
-
-				// Given
-				req.headers = {
-					authorization: '12345'
-				};
-
-				// When
-				await middleware(req, res, next);
-
-				// Then
-				expect(fail.fail).to.have.been.calledWithExactly(app, has('message', 'Authorization header with \'Bearer ***...\' required.'), req, res, next);
-
-			});
-
-			it('for \'Bearer \'', async () => {
-
-				// Given
-				req.headers = {
-					authorization: 'Bearer '
-				};
-
-				// When
-				await middleware(req, res, next);
-
-				// Then
-				expect(fail.fail).to.have.been.calledWithExactly(app, has('message', 'Authorization header with \'Bearer ***...\' required.'), req, res, next);
 
 			});
 

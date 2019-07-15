@@ -30,11 +30,10 @@ import sinon, { SinonStubbedInstance } from 'sinon';
 import sinonChai from 'sinon-chai';
 
 import { Environment, JwtBearerAccessTokenGrantor, JwtGrantParams, SalesforceAccessTokenResponse } from '../../../src';
+import { createTokenGrantor } from '../../../src/index//flow/jwtBearerToken';
 import * as cache from '../../../src/index/client/cache';
 import { OpenIdClient } from '../../../src/index/client/openid';
 import * as validator from '../../../src/index/client/validator/environment';
-
-import { createTokenGrantor } from '../../../src/index//flow/jwtBearerToken';
 
 const expect = chai.expect;
 

@@ -33,7 +33,6 @@ import { AxiosResponse, default as axios } from 'axios';
 import { NextFunction, Request, RequestHandler, Response } from '@financialforcedev/orizuru';
 
 import { EVENT_USER_IDENTITY_RETRIEVED, SalesforceIdentity } from '../..';
-
 import { fail } from './common/fail';
 
 /**

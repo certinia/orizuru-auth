@@ -29,11 +29,10 @@ import sinon, { SinonStubbedInstance } from 'sinon';
 import sinonChai from 'sinon-chai';
 
 import { Environment, RefreshAccessTokenGrantor } from '../../../src';
+import { createTokenGrantor } from '../../../src/index//flow/refreshToken';
 import * as cache from '../../../src/index/client/cache';
 import { OpenIdClient } from '../../../src/index/client/openid';
 import * as validator from '../../../src/index/client/validator/environment';
-
-import { createTokenGrantor } from '../../../src/index//flow/refreshToken';
 
 const expect = chai.expect;
 

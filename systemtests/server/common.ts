@@ -26,10 +26,11 @@
 
 import config from 'config';
 import debug, { Debugger } from 'debug';
-import http from 'http';
-import https from 'https';
 import pem, { CertificateCreationResult } from 'pem';
 import { SuperAgentRequest } from 'superagent';
+
+import http from 'http';
+import https from 'https';
 
 import { ITransport, Server } from '@financialforcedev/orizuru';
 

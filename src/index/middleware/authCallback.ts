@@ -31,10 +31,9 @@
 import { NextFunction, Request, RequestHandler, Response } from '@financialforcedev/orizuru';
 
 import { AccessTokenResponse, AuthCodeGrantParams, EVENT_AUTHORIZATION_HEADER_SET, GrantOptions, TokenGrantorParams } from '../..';
-import { createTokenGrantor } from '../flow/webServer';
-
 import { isOpenIdAccessTokenResponse, isOpenIdTokenWithStandardClaims } from '../client/openid/identity';
 import { isSalesforceAccessTokenResponse } from '../client/salesforce/identity';
+import { createTokenGrantor } from '../flow/webServer';
 import { fail } from './common/fail';
 
 /**

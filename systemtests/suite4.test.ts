@@ -25,15 +25,13 @@
  */
 
 import chai from 'chai';
+import config from 'config';
 import { Browser, BrowserContext, launch, Page } from 'puppeteer';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
 import superagent from 'superagent';
 
-import config from 'config';
-
 import { EVENT_AUTHORIZATION_HEADER_SET, EVENT_DENIED } from '../src/index';
-
 import { TestServer, TrustedSuperAgentRequest } from './server/common';
 import { createServer } from './server/google';
 

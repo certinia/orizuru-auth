@@ -29,27 +29,22 @@
  * @module @financialforcedev/orizuru-auth
  */
 
-import { createTokenGrantor as createJwtBearerAccessTokenGrantor } from './index/flow/jwtBearerToken';
-import { createTokenGrantor as createRefreshAccessTokenGrantor } from './index/flow/refreshToken';
-import { authorizationUrlGenerator, createTokenGrantor as createWebServerTokenGrantor } from './index/flow/webServer';
-
-import { createTokenRevoker } from './index/revocation/revoke';
-
-import { createUserInfoRequester } from './index/userInfo/userinfo';
-
 import { clear, Environment } from './index/client/cache';
 import { AccessTokenResponse, AuthOptions, AuthUrlParams, GrantOptions, RefreshTokenGrantorParams, TokenGrantorParams } from './index/client/oauth2';
 import { JwtTokenGrantorParams, UserTokenGrantorParams } from './index/client/oauth2Jwt';
 import { OpenIDTokenWithStandardClaims, UserInfoOptions } from './index/client/openid';
 import { SalesforceUser, UserInfo } from './index/client/salesforce';
-
-import { getToken, Grant } from './index/grant/grant';
-
 import { SalesforceIdentity } from './index/client/salesforce/identity';
+import { createTokenGrantor as createJwtBearerAccessTokenGrantor } from './index/flow/jwtBearerToken';
+import { createTokenGrantor as createRefreshAccessTokenGrantor } from './index/flow/refreshToken';
+import { authorizationUrlGenerator, createTokenGrantor as createWebServerTokenGrantor } from './index/flow/webServer';
+import { getToken, Grant } from './index/grant/grant';
 import { createMiddleware as authCallback } from './index/middleware/authCallback';
 import { createMiddleware as grantChecker } from './index/middleware/grantChecker';
 import { createMiddleware as retrieveIdentityInformation } from './index/middleware/identity';
 import { createMiddleware as tokenValidator } from './index/middleware/tokenValidator';
+import { createTokenRevoker } from './index/revocation/revoke';
+import { createUserInfoRequester } from './index/userInfo/userinfo';
 
 declare global {
 

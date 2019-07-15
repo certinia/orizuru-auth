@@ -27,7 +27,6 @@
 import { json, Request, Response, Server, urlencoded } from '@financialforcedev/orizuru';
 
 import { flow, middleware, revocation } from '../../src';
-
 import { TestServer } from './common';
 
 export async function createServer() {

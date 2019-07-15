@@ -29,7 +29,6 @@
  */
 
 import { Environment } from '..';
-
 import { findOrCreateClient } from '../client/cache';
 import { validate } from '../client/validator/environment';
 

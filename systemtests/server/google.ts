@@ -27,7 +27,6 @@
 import { json, Request, Response, Server, urlencoded } from '@financialforcedev/orizuru';
 
 import { flow, middleware } from '../../src';
-
 import { createTokenRevoker } from '../../src/index/revocation/revoke';
 import { TestServer } from './common';
 

@@ -29,10 +29,10 @@
  */
 
 import { Environment } from './cache';
-import { GrantOptions, GrantParams } from './oauth2';
+import { GrantOptions, GrantParams, IntrospectionOptions, IntrospectionResponse } from './oauth2';
 import { User } from './oauth2Jwt';
 import { OpenIDAccessTokenResponse, OpenIdClient } from './openid';
-import { parseUserInfo, verifySignature } from './salesforce/identity';
+import { parseUserInfo, UserInfoResponse, verifySignature } from './salesforce/identity';
 
 /**
  * The Salesforce Access Token Response.
@@ -52,17 +52,12 @@ import { parseUserInfo, verifySignature } from './salesforce/identity';
  *
  * ```
  */
-export interface SalesforceAccessTokenResponse extends OpenIDAccessTokenResponse {
+export interface SalesforceAccessTokenResponse extends OpenIDAccessTokenResponse, UserInfoResponse {
 
 	/**
 	 * A URL indicating the instance of the user’s org. For example: https://yourInstance.salesforce.com/.
 	 */
 	instance_url?: string;
-
-	/**
-	 * Identity URL that can be used to both identify the user and query for more information about the user.
-	 */
-	id: string;
 
 	/**
 	 * If the user is a member of a Salesforce community, the community URL is provided.
@@ -86,11 +81,12 @@ export interface SalesforceAccessTokenResponse extends OpenIDAccessTokenResponse
 	 */
 	issued_at: string;
 
-	/**
-	 * The user information generated when parsing the [Identity URL](https://help.salesforce.com/articleView?id=remoteaccess_using_openid.htm).
-	 */
-	userInfo?: UserInfo;
+}
 
+/**
+ * The Salesforce Introspection Response.
+ */
+export interface SalesforceIntrospectionResponse extends IntrospectionResponse, UserInfoResponse {
 }
 
 /**
@@ -157,6 +153,18 @@ export class SalesforceClient extends OpenIdClient {
 
 		return accessTokenResponse;
 
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	protected handleIntrospectionResponse(introspectionResponse: SalesforceIntrospectionResponse, internalOpts: IntrospectionOptions) {
+
+		if (internalOpts.parseUserInfo) {
+			parseUserInfo(introspectionResponse);
+		}
+
+		return introspectionResponse;
 	}
 
 }

@@ -31,7 +31,7 @@ import sinonChai from 'sinon-chai';
 
 import { AxiosRequestConfig, AxiosResponse, default as axios } from 'axios';
 
-import { AuthCodeGrantParams, AuthOptions, AuthUrlParams, Environment, GrantOptions, JwtGrantParams, RefreshGrantParams } from '../../../src';
+import { AuthCodeGrantParams, AuthOptions, AuthUrlParams, Environment, GrantOptions, IntrospectionOptions, JwtGrantParams, RefreshGrantParams } from '../../../src';
 import * as jwt from '../../../src/index/client/oauth2Jwt/jwt';
 import * as openidIdentity from '../../../src/index/client/openid/identity';
 import * as salesforceIdentity from '../../../src/index/client/salesforce/identity';
@@ -64,6 +64,7 @@ describe('index/client/salesforce', () => {
 			config: {},
 			data: {
 				authorization_endpoint: 'https://login.salesforce.com/services/oauth2/authorize',
+				introspection_endpoint: 'https://login.salesforce.com/services/oauth2/introspect',
 				issuer: 'https://login.salesforce.com',
 				revocation_endpoint: 'https://login.salesforce.com/services/oauth2/revoke',
 				token_endpoint: 'https://login.salesforce.com/services/oauth2/token',
@@ -763,6 +764,111 @@ describe('index/client/salesforce', () => {
 
 				});
 
+			});
+
+		});
+
+	});
+
+	describe('introspect', () => {
+
+		let opts: IntrospectionOptions;
+
+		beforeEach(async () => {
+
+			opts = {
+				clientId: 'testClientId',
+				clientSecret: 'testClientSecret',
+				ip: '1.1.1.1',
+				parseUserInfo: true
+			};
+
+			await client.init();
+
+			sinon.stub(axios, 'post').resolves({
+				config: {},
+				data: {
+					active: true,
+					client_id: 'testClientId',
+					exp: 1563209026,
+					iat: 1563201826,
+					nbf: 1563201826,
+					scope: 'id api web full refresh_token openid',
+					sub: 'https://login.salesforce.com/id/00Dxx0000001gPLEAY/005xx000001SwiUAAS',
+					token_type: 'access_token',
+					username: 'test@test.com'
+				},
+				headers: {},
+				status: 200,
+				statusText: 'OK'
+			});
+
+		});
+
+		it('should introspect the given token parsing the user info if parseUserInfo is true', async () => {
+
+			// Given
+			// When
+			const result = await client.introspect('testToken', opts);
+
+			// Then
+			expect(result).to.eql({
+				active: true,
+				client_id: 'testClientId',
+				exp: 1563209026,
+				iat: 1563201826,
+				nbf: 1563201826,
+				scope: 'id api web full refresh_token openid',
+				sub: 'https://login.salesforce.com/id/00Dxx0000001gPLEAY/005xx000001SwiUAAS',
+				token_type: 'access_token',
+				userInfo: {
+					id: '005xx000001SwiUAAS',
+					organizationId: '00Dxx0000001gPLEAY',
+					url: 'https://login.salesforce.com/id/00Dxx0000001gPLEAY/005xx000001SwiUAAS',
+					validated: false
+				},
+				username: 'test@test.com'
+			});
+
+			expect(axios.post).to.have.been.calledOnce;
+			expect(axios.post).to.have.been.calledWithExactly('https://login.salesforce.com/services/oauth2/introspect', 'client_id=testClientId&client_secret=testClientSecret&token=testToken', {
+				headers: {
+					'Accept': 'application/json',
+					'Content-Type': 'application/x-www-form-urlencoded'
+				},
+				validateStatus: sinon.match.func
+			});
+
+		});
+
+		it('should introspect the given token not parsing the user info if parseUserInfo is false', async () => {
+
+			// Given
+			opts.parseUserInfo = false;
+
+			// When
+			const result = await client.introspect('testToken', opts);
+
+			// Then
+			expect(result).to.eql({
+				active: true,
+				client_id: 'testClientId',
+				exp: 1563209026,
+				iat: 1563201826,
+				nbf: 1563201826,
+				scope: 'id api web full refresh_token openid',
+				sub: 'https://login.salesforce.com/id/00Dxx0000001gPLEAY/005xx000001SwiUAAS',
+				token_type: 'access_token',
+				username: 'test@test.com'
+			});
+
+			expect(axios.post).to.have.been.calledOnce;
+			expect(axios.post).to.have.been.calledWithExactly('https://login.salesforce.com/services/oauth2/introspect', 'client_id=testClientId&client_secret=testClientSecret&token=testToken', {
+				headers: {
+					'Accept': 'application/json',
+					'Content-Type': 'application/x-www-form-urlencoded'
+				},
+				validateStatus: sinon.match.func
 			});
 
 		});

@@ -30,7 +30,7 @@ import sinonChai from 'sinon-chai';
 
 import { SalesforceAccessTokenResponse } from '../../../../src';
 
-import { parseUserInfo, verifySignature } from '../../../../src/index/client/salesforce/identity';
+import { parseUserInfo, UserInfoResponse, verifySignature } from '../../../../src/index/client/salesforce/identity';
 
 const expect = chai.expect;
 
@@ -38,23 +38,8 @@ chai.use(sinonChai);
 
 describe('index/client/salesforce/identity', () => {
 
-	let accessTokenResponse: SalesforceAccessTokenResponse;
-
 	beforeEach(() => {
-
-		accessTokenResponse = {
-			access_token: '00Dxx0000001gPL!AR8AQJXg5oj8jXSgxJfA0lBog.39AsX.LVpxezPwuX5VAIrrbbHMuol7GQxnMeYMN7cj8EoWr78nt1u44zU31IbYNNJguseu',
-			id: 'https://login.salesforce.com/id/00Dxx0000001gPLEAY/005xx000001SwiUAAS',
-			id_token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c',
-			instance_url: 'https:// yourInstance.salesforce.com',
-			issued_at: '1551531242643',
-			scope: 'web openid api id',
-			signature: 'HHjDwETDb5VyLcjcB6+c/brBnhAE7zNKu0bgYnVqn9o=',
-			token_type: 'Bearer'
-		};
-
 		sinon.stub(Date, 'now').returns(1551521526000);
-
 	});
 
 	afterEach(() => {
@@ -63,38 +48,48 @@ describe('index/client/salesforce/identity', () => {
 
 	describe('parseUserInfo', () => {
 
+		let userInfoResponse: UserInfoResponse;
+
+		beforeEach(() => {
+
+			userInfoResponse = {
+				id: 'https://login.salesforce.com/id/00Dxx0000001gPLEAY/005xx000001SwiUAAS'
+			};
+
+		});
+
 		describe('should throw an error', () => {
 
 			it('if the id is not present when validated', () => {
 
 				// Given
-				delete accessTokenResponse.id;
+				delete userInfoResponse.id;
 
 				// When
 				// Then
-				expect(() => parseUserInfo(accessTokenResponse)).to.throw('No id present');
+				expect(() => parseUserInfo(userInfoResponse)).to.throw('Missing required string parameter: identityUrl');
 
 			});
 
 			it('if the user ID is not present', () => {
 
 				// Given
-				accessTokenResponse.id = 'https://login.salesforce.com/id';
+				userInfoResponse.id = 'https://login.salesforce.com/id';
 
 				// When
 				// Then
-				expect(() => parseUserInfo(accessTokenResponse)).to.throw('User ID not present');
+				expect(() => parseUserInfo(userInfoResponse)).to.throw('Missing required string parameter: id');
 
 			});
 
 			it('if the organization ID is not present', () => {
 
 				// Given
-				accessTokenResponse.id = 'https://login.salesforce.com/id/00Dxx0000001gPLEAY';
+				userInfoResponse.id = 'https://login.salesforce.com/id/00Dxx0000001gPLEAY';
 
 				// When
 				// Then
-				expect(() => parseUserInfo(accessTokenResponse)).to.throw('Organization ID not present');
+				expect(() => parseUserInfo(userInfoResponse)).to.throw('Missing required string parameter: organizationId');
 
 			});
 
@@ -104,18 +99,33 @@ describe('index/client/salesforce/identity', () => {
 
 			// Given
 			// When
-			parseUserInfo(accessTokenResponse);
+			parseUserInfo(userInfoResponse);
 
 			// Then
-			expect(accessTokenResponse).to.eql({
-				access_token: '00Dxx0000001gPL!AR8AQJXg5oj8jXSgxJfA0lBog.39AsX.LVpxezPwuX5VAIrrbbHMuol7GQxnMeYMN7cj8EoWr78nt1u44zU31IbYNNJguseu',
+			expect(userInfoResponse).to.eql({
 				id: 'https://login.salesforce.com/id/00Dxx0000001gPLEAY/005xx000001SwiUAAS',
-				id_token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c',
-				instance_url: 'https:// yourInstance.salesforce.com',
-				issued_at: '1551531242643',
-				scope: 'web openid api id',
-				signature: 'HHjDwETDb5VyLcjcB6+c/brBnhAE7zNKu0bgYnVqn9o=',
-				token_type: 'Bearer',
+				userInfo: {
+					id: '005xx000001SwiUAAS',
+					organizationId: '00Dxx0000001gPLEAY',
+					url: 'https://login.salesforce.com/id/00Dxx0000001gPLEAY/005xx000001SwiUAAS',
+					validated: false
+				}
+			});
+
+		});
+
+		it('should parse the user information from the sub property', () => {
+
+			// Given
+			userInfoResponse.sub = userInfoResponse.id;
+			delete userInfoResponse.id;
+
+			// When
+			parseUserInfo(userInfoResponse);
+
+			// Then
+			expect(userInfoResponse).to.eql({
+				sub: 'https://login.salesforce.com/id/00Dxx0000001gPLEAY/005xx000001SwiUAAS',
 				userInfo: {
 					id: '005xx000001SwiUAAS',
 					organizationId: '00Dxx0000001gPLEAY',
@@ -129,24 +139,17 @@ describe('index/client/salesforce/identity', () => {
 		it('should respect an existing userinfo property', () => {
 
 			// Given
-			accessTokenResponse.userInfo = {
+			userInfoResponse.userInfo = {
 				url: 'https://login.salesforce.com/id/00Dxx0000001gPLEAY/005xx000001SwiUAAS',
 				validated: true
 			};
 
 			// When
-			parseUserInfo(accessTokenResponse);
+			parseUserInfo(userInfoResponse);
 
 			// Then
-			expect(accessTokenResponse).to.eql({
-				access_token: '00Dxx0000001gPL!AR8AQJXg5oj8jXSgxJfA0lBog.39AsX.LVpxezPwuX5VAIrrbbHMuol7GQxnMeYMN7cj8EoWr78nt1u44zU31IbYNNJguseu',
+			expect(userInfoResponse).to.eql({
 				id: 'https://login.salesforce.com/id/00Dxx0000001gPLEAY/005xx000001SwiUAAS',
-				id_token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c',
-				instance_url: 'https:// yourInstance.salesforce.com',
-				issued_at: '1551531242643',
-				scope: 'web openid api id',
-				signature: 'HHjDwETDb5VyLcjcB6+c/brBnhAE7zNKu0bgYnVqn9o=',
-				token_type: 'Bearer',
 				userInfo: {
 					id: '005xx000001SwiUAAS',
 					organizationId: '00Dxx0000001gPLEAY',
@@ -160,6 +163,23 @@ describe('index/client/salesforce/identity', () => {
 	});
 
 	describe('verifySignature', () => {
+
+		let accessTokenResponse: SalesforceAccessTokenResponse;
+
+		beforeEach(() => {
+
+			accessTokenResponse = {
+				access_token: '00Dxx0000001gPL!AR8AQJXg5oj8jXSgxJfA0lBog.39AsX.LVpxezPwuX5VAIrrbbHMuol7GQxnMeYMN7cj8EoWr78nt1u44zU31IbYNNJguseu',
+				id: 'https://login.salesforce.com/id/00Dxx0000001gPLEAY/005xx000001SwiUAAS',
+				id_token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c',
+				instance_url: 'https:// yourInstance.salesforce.com',
+				issued_at: '1551531242643',
+				scope: 'web openid api id',
+				signature: 'HHjDwETDb5VyLcjcB6+c/brBnhAE7zNKu0bgYnVqn9o=',
+				token_type: 'Bearer'
+			};
+
+		});
 
 		describe('should throw an error', () => {
 

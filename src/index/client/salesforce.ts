@@ -106,33 +106,6 @@ export interface SalesforceUser extends User {
 }
 
 /**
- * The user information generated when parsing the [Identity URL](https://help.salesforce.com/articleView?id=remoteaccess_using_openid.htm).
- */
-export interface UserInfo {
-
-	/**
-	 * Returns the user ID.
-	 */
-	id?: string;
-
-	/**
-	 * Returns the organization ID.
-	 */
-	organizationId?: string;
-
-	/**
-	 * Returns the full Identity URL.
-	 */
-	url: string;
-
-	/**
-	 * If true, the Identity URL has been validated and is valid.
-	 */
-	validated: boolean;
-
-}
-
-/**
  * A Salesforce Client that implements the [Salesforce OAuth 2.0](https://help.salesforce.com/articleView?id=remoteaccess_authenticate_overview.htm) specification.
  */
 export class SalesforceClient extends OpenIdClient {

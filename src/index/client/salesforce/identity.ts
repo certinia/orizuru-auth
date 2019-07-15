@@ -190,6 +190,33 @@ export interface SalesforceIdentity {
 }
 
 /**
+ * The user information generated when parsing the [Identity URL](https://help.salesforce.com/articleView?id=remoteaccess_using_openid.htm).
+ */
+export interface UserInfo {
+
+	/**
+	 * Returns the user ID.
+	 */
+	id?: string;
+
+	/**
+	 * Returns the organization ID.
+	 */
+	organizationId?: string;
+
+	/**
+	 * Returns the full Identity URL.
+	 */
+	url: string;
+
+	/**
+	 * If true, the Identity URL has been validated and is valid.
+	 */
+	validated: boolean;
+
+}
+
+/**
  * Parse the user information from the `id` property of an access token response.
  *
  * It is assumed that the `id` conforms to the Salesforce [Identity URL](https://help.salesforce.com/articleView?id=remoteaccess_using_openid.htm) format.

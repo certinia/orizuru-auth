@@ -33,8 +33,8 @@ import { clear, Environment } from './index/client/cache';
 import { AccessTokenResponse, AuthOptions, AuthUrlParams, GrantOptions, IntrospectionOptions, IntrospectionResponse, RefreshTokenGrantorParams, TokenGrantorParams } from './index/client/oauth2';
 import { JwtTokenGrantorParams, UserTokenGrantorParams } from './index/client/oauth2Jwt';
 import { OpenIDTokenWithStandardClaims, UserInfoOptions } from './index/client/openid';
-import { SalesforceUser, UserInfo } from './index/client/salesforce';
-import { SalesforceIdentity } from './index/client/salesforce/identity';
+import { SalesforceUser } from './index/client/salesforce';
+import { SalesforceIdentity, UserInfo } from './index/client/salesforce/identity';
 import { createTokenGrantor as createJwtBearerAccessTokenGrantor } from './index/flow/jwtBearerToken';
 import { createTokenGrantor as createRefreshAccessTokenGrantor } from './index/flow/refreshToken';
 import { authorizationUrlGenerator, createTokenGrantor as createWebServerTokenGrantor } from './index/flow/webServer';
@@ -177,8 +177,8 @@ export {
 	UserInfoOptions
 } from './index/client/openid';
 
-export { SalesforceAccessTokenResponse, SalesforceUser, UserInfo } from './index/client/salesforce';
-export { SalesforceIdentity } from './index/client/salesforce/identity';
+export { SalesforceAccessTokenResponse, SalesforceUser } from './index/client/salesforce';
+export { SalesforceIdentity, UserInfo } from './index/client/salesforce/identity';
 
 // Token Grantor types
 export type AuthCodeAccessTokenGrantor = (params: TokenGrantorParams, opts?: GrantOptions) => Promise<AccessTokenResponse>;

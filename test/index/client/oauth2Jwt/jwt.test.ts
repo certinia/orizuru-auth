@@ -55,7 +55,7 @@ describe('index/client/oauth2Jwt/jwt', () => {
 		};
 
 		sinon.stub(Date, 'now').returns(1551521526000);
-		sinon.stub(uuid, 'v4').returns(Buffer.from('579504df-90f7-49d0-af46-647980eeb22c'));
+		sinon.stub(uuid, 'v4').returns('579504df-90f7-49d0-af46-647980eeb22c');
 		jwtSignStub = sinon.stub(jsonwebtoken, 'sign');
 
 	});

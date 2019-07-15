@@ -148,8 +148,10 @@ export interface AuthUrlParams extends HasClientId {
 	/**
 	 * A space-delimited list of scopes that identify the resources that your application
 	 * could access on the user's behalf.
+	 *
+	 * The scopes can be omitted in accordance with the [specification](https://tools.ietf.org/html/rfc6749#section-3.3).
 	 */
-	scope: string;
+	scope?: string;
 
 	/**
 	 * Determines where the API server redirects the user after the user completes the
@@ -490,10 +492,6 @@ export class OAuth2Client implements AuthClient {
 
 		if (!data.redirect_uri) {
 			throw new Error('Missing required string parameter: redirectUri');
-		}
-
-		if (!data.scope) {
-			throw new Error('Missing required string parameter: scope');
 		}
 
 		// Encode the parameters and then replace any encoded spaces (+)

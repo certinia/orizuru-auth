@@ -226,6 +226,11 @@ export interface AuthClient {
 	init(): Promise<void>;
 
 	/**
+	 * Introspect a token.
+	 */
+	introspect(token: string, opts?: IntrospectionOptions): Promise<IntrospectionResponse>;
+
+	/**
 	 * Revoke a token.
 	 *
 	 * This makes a [Revocation Request](https://tools.ietf.org/html/rfc7009#section-2.1) as per the OAuth 2.0 specification.
@@ -342,6 +347,106 @@ export interface GrantOptions {
 }
 
 /**
+ * Introspection Endpoint properties.
+ */
+export interface IntrospectionOptions extends HasClientId {
+
+	/**
+	 * The client secret for your application.
+	 */
+	clientSecret: string;
+
+	/**
+	 * If provided, returns the IP of the incoming request.
+	 */
+	ip?: string;
+
+	/**
+	 * Returns the response format, either JSON, XML or URL_ENCODED.
+	 */
+	responseFormat?: ResponseFormat;
+
+}
+
+/**
+ * [Introspection Response](https://tools.ietf.org/html/rfc7662#section-2.2)
+ */
+export interface IntrospectionResponse {
+
+	/**
+	 * Boolean indicator of whether or not the presented token is currently active.  The
+	 * specifics of a token's "active" state will vary depending on the implementation of the
+	 * authorization server and the information it keeps about its tokens, but a "true" value
+	 * return for the "active" property will generally indicate that a given token has been
+	 * issued by this authorization server, has not been revoked by the resource owner, and
+	 * is within its given time window of validity (e.g., after its issuance time and before its
+	 * expiration time).
+	 */
+	active: boolean;
+
+	/**
+	 * Service-specific string identifier or list of string identifiers representing the intended
+	 * audience for this token, as defined in JWT.
+	 */
+	aud?: string;
+
+	/**
+	 * Client identifier for the OAuth 2.0 client thatrequested this token.
+	 */
+	client_id?: string;
+
+	/**
+	 * Integer timestamp, measured in the number of seconds since January 1 1970 UTC,
+	 * indicating when this token will expire, as defined in JWT.
+	 */
+	exp?: number;
+
+	/**
+	 * Integer timestamp, measured in the number of seconds since January 1 1970 UTC,
+	 * indicating when this token was originally issued, as defined in JWT.
+	 */
+	iat?: number;
+
+	/**
+	 * String representing the issuer of this token, as defined in JWT.
+	 */
+	iss?: string;
+
+	/**
+	 * String identifier for the token, as defined in JWT.
+	 */
+	jti?: string;
+
+	/**
+	 * Integer timestamp, measured in the number of seconds since January 1 1970 UTC,
+	 * indicating when this token is not to be used before, as defined in JWT.
+	 */
+	nbf?: number;
+
+	/**
+	 * A JSON string containing a space-separated list of scopes associated with this token.
+	 */
+	scope?: string;
+
+	/**
+	 * Subject of the token, as defined in JWT. Usually a machine-readable identifier of the
+	 * resource owner who authorized this token.
+	 */
+	sub?: string;
+
+	/**
+	 * Type of the token.
+	 */
+	token_type?: string;
+
+	/**
+	 * Human-readable identifier for the resource owner who authorized this token.
+	 */
+	username?: string;
+
+}
+
+/**
  * Parameters required for the [Refresh request](https://openid.net/specs/openid-connect-core-1_0.html#RefreshingAccessToken).
  */
 export interface RefreshGrantParams extends RefreshTokenGrantorParams {
@@ -416,7 +521,12 @@ export class OAuth2Client implements AuthClient {
 	protected authorizationEndpoint?: string;
 
 	/**
-	 * [Token Endpoint](https://tools.ietf.org/html/rfc6749#section-3.2)
+	 * [Introspection Endpoint](https://tools.ietf.org/html/rfc7662#section-2)
+	 */
+	protected introspectionEndpoint?: string;
+
+	/**
+	 * [Revocation Endpoint](https://tools.ietf.org/html/rfc7009#section-2)
 	 */
 	protected tokenEndpoint?: string;
 
@@ -458,6 +568,7 @@ export class OAuth2Client implements AuthClient {
 		}
 
 		this.authorizationEndpoint = this.env.authorizationEndpoint;
+		this.introspectionEndpoint = this.env.introspectionEndpoint;
 		this.revocationEndpoint = this.env.revocationEndpoint;
 		this.tokenEndpoint = this.env.tokenEndpoint;
 
@@ -533,6 +644,38 @@ export class OAuth2Client implements AuthClient {
 
 		const accessTokenResponse = response.data as AccessTokenResponse;
 		return this.handleAccessTokenResponse(accessTokenResponse, internalOpts);
+
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public async introspect(token: string, opts: IntrospectionOptions) {
+
+		if (!this.introspectionEndpoint) {
+			throw new Error(`${this.clientType} client has not been initialized`);
+		}
+
+		const config = Object.assign({}, OAuth2Client.DEFAULT_REQUEST_CONFIG, {
+			headers: {
+				'Accept': opts.responseFormat || ResponseFormat.JSON,
+				'Content-Type': 'application/x-www-form-urlencoded'
+			}
+		});
+
+		const body = formUrlencoded({
+			client_id: opts.clientId,
+			client_secret: opts.clientSecret,
+			token
+		});
+
+		const response = await axios.post<IntrospectionResponse | ErrorResponse>(this.introspectionEndpoint, body, config);
+		if (response.status !== 200) {
+			const error = response.data as ErrorResponse;
+			throw new Error(`Failed to introspect token: ${error.error} (${error.error_description}).`);
+		}
+
+		return response.data as IntrospectionResponse;
 
 	}
 

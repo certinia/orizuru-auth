@@ -221,6 +221,12 @@ export const EVENT_GRANT_CHECKED = Symbol();
 export const EVENT_USER_IDENTITY_RETRIEVED = Symbol();
 
 /**
+ * The event fired when an access token has been introspected.
+ * @event
+ */
+export const EVENT_TOKEN_INTROSPECTED = Symbol();
+
+/**
  * The event fired when an access token has been validated.
  * @event
  */

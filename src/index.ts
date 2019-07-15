@@ -30,7 +30,7 @@
  */
 
 import { clear, Environment } from './index/client/cache';
-import { AccessTokenResponse, AuthOptions, AuthUrlParams, GrantOptions, RefreshTokenGrantorParams, TokenGrantorParams } from './index/client/oauth2';
+import { AccessTokenResponse, AuthOptions, AuthUrlParams, GrantOptions, IntrospectionOptions, IntrospectionResponse, RefreshTokenGrantorParams, TokenGrantorParams } from './index/client/oauth2';
 import { JwtTokenGrantorParams, UserTokenGrantorParams } from './index/client/oauth2Jwt';
 import { OpenIDTokenWithStandardClaims, UserInfoOptions } from './index/client/openid';
 import { SalesforceUser, UserInfo } from './index/client/salesforce';
@@ -42,6 +42,7 @@ import { getToken, Grant } from './index/grant/grant';
 import { createMiddleware as authCallback } from './index/middleware/authCallback';
 import { createMiddleware as grantChecker } from './index/middleware/grantChecker';
 import { createMiddleware as retrieveIdentityInformation } from './index/middleware/identity';
+import { createMiddleware as tokenIntrospection } from './index/middleware/tokenIntrospection';
 import { createMiddleware as tokenValidator } from './index/middleware/tokenValidator';
 import { createTokenRevoker } from './index/revocation/revoke';
 import { createUserInfoRequester } from './index/userInfo/userinfo';
@@ -87,6 +88,11 @@ declare global {
 				userInfo?: UserInfo;
 
 			};
+
+			/**
+			 * The information retrieved when introspecting the token.
+			 */
+			tokenInformation?: IntrospectionResponse;
 
 			/**
 			 * The User credentials required to initialise the JWT flow.
@@ -135,9 +141,42 @@ declare global {
 
 // Export from internal modules
 export { Environment } from './index/client/cache';
-export { AccessTokenResponse, AuthClient, AuthCodeGrantParams, AuthOptions, AuthUrlParams, ErrorResponse, GrantOptions, GrantParams, HasClientId, RefreshGrantParams, RefreshTokenGrantorParams, ResponseFormat, RevocationOptions, TokenGrantorParams } from './index/client/oauth2';
-export { JWT, JwtGrantParams, JwtTokenGrantorParams, User, UserTokenGrantorParams } from './index/client/oauth2Jwt';
-export { OpenIDAccessTokenResponse, OpenIDToken, OpenIDTokenWithStandardClaims, OpenIdTokenAddress, UserInfoOptions } from './index/client/openid';
+
+export {
+	AccessTokenResponse,
+	AuthClient,
+	AuthCodeGrantParams,
+	AuthOptions,
+	AuthUrlParams,
+	ErrorResponse,
+	GrantOptions,
+	GrantParams,
+	HasClientId,
+	IntrospectionOptions,
+	IntrospectionResponse,
+	RefreshGrantParams,
+	RefreshTokenGrantorParams,
+	ResponseFormat,
+	RevocationOptions,
+	TokenGrantorParams
+} from './index/client/oauth2';
+
+export {
+	JWT,
+	JwtGrantParams,
+	JwtTokenGrantorParams,
+	User,
+	UserTokenGrantorParams
+} from './index/client/oauth2Jwt';
+
+export {
+	OpenIDAccessTokenResponse,
+	OpenIDToken,
+	OpenIDTokenWithStandardClaims,
+	OpenIdTokenAddress,
+	UserInfoOptions
+} from './index/client/openid';
+
 export { SalesforceAccessTokenResponse, SalesforceUser, UserInfo } from './index/client/salesforce';
 export { SalesforceIdentity } from './index/client/salesforce/identity';
 
@@ -148,12 +187,13 @@ export type UserTokenGrantor = (params: UserTokenGrantorParams, opts?: GrantOpti
 export type RefreshAccessTokenGrantor = (params: RefreshTokenGrantorParams, opts?: GrantOptions) => Promise<AccessTokenResponse>;
 
 export type AuthUrlGenerator = (params: AuthUrlParams, opts?: AuthOptions) => Promise<string>;
+export type TokenIntrospector = (token: string, opts: IntrospectionOptions) => Promise<IntrospectionResponse>;
 export type UserInfoRequester = (accessToken: string, opts?: UserInfoOptions) => Promise<string | OpenIDTokenWithStandardClaims>;
 
 export type Options = AuthOptions | GrantOptions | UserInfoOptions;
 export type GrantorParams = RefreshTokenGrantorParams | TokenGrantorParams | UserTokenGrantorParams;
 
-export type OpenIdOptions = AuthUrlParams & AuthOptions & GrantorParams & JwtTokenGrantorParams & Options;
+export type OpenIdOptions = AuthUrlParams & AuthOptions & GrantorParams & JwtTokenGrantorParams & Options & IntrospectionOptions;
 
 /**
  * The event fired when the authorization header is set.
@@ -285,6 +325,12 @@ export const middleware = {
 	 * about the current Salesforce user.
 	 */
 	retrieveIdentityInformation,
+
+	/**
+	 * Returns an express middleware that introspects the access token passed in an HTTP
+	 * Authorization header and if successful updates the request object.
+	 */
+	tokenIntrospection,
 
 	/**
 	 * Returns an express middleware that validates the OpenID Connect

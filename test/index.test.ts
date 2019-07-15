@@ -66,6 +66,7 @@ describe('index', () => {
 			'authCallback',
 			'grantChecker',
 			'retrieveIdentityInformation',
+			'tokenIntrospection',
 			'tokenValidator'
 		]);
 

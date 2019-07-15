@@ -33,6 +33,7 @@ import formUrlencoded from 'form-urlencoded';
 
 import { Environment } from './cache';
 import { JwtGrantParams } from './oauth2Jwt';
+import { UserInfoResponse } from './salesforce/identity';
 
 /**
  * The return formats when requesting a grant.
@@ -362,6 +363,13 @@ export interface IntrospectionOptions extends HasClientId {
 	ip?: string;
 
 	/**
+	 * If true, parses the user information from the id field in the access token response.
+	 *
+	 * This returns the user ID, organization ID and the ID url.
+	 */
+	parseUserInfo?: boolean;
+
+	/**
 	 * Returns the response format, either JSON, XML or URL_ENCODED.
 	 */
 	responseFormat?: ResponseFormat;
@@ -371,7 +379,7 @@ export interface IntrospectionOptions extends HasClientId {
 /**
  * [Introspection Response](https://tools.ietf.org/html/rfc7662#section-2.2)
  */
-export interface IntrospectionResponse {
+export interface IntrospectionResponse extends UserInfoResponse {
 
 	/**
 	 * Boolean indicator of whether or not the presented token is currently active.  The
@@ -663,6 +671,10 @@ export class OAuth2Client implements AuthClient {
 			}
 		});
 
+		const internalOpts = Object.assign({}, {
+			parseUserInfo: true
+		}, opts);
+
 		const body = formUrlencoded({
 			client_id: opts.clientId,
 			client_secret: opts.clientSecret,
@@ -675,7 +687,8 @@ export class OAuth2Client implements AuthClient {
 			throw new Error(`Failed to introspect token: ${error.error} (${error.error_description}).`);
 		}
 
-		return response.data as IntrospectionResponse;
+		const introspectionResponse = response.data as IntrospectionResponse;
+		return this.handleIntrospectionResponse(introspectionResponse, internalOpts);
 
 	}
 
@@ -721,13 +734,23 @@ export class OAuth2Client implements AuthClient {
 	}
 
 	/**
-	 * Handle the access token response, performing validation and parsing, as defined in the grant options.
+	 * Handle the access token response, performing validation and parsing as defined in the grant options.
 	 *
 	 * @param accessTokenResponse The access token response.
 	 * @param internalOpts: The internal options.
 	 */
 	protected handleAccessTokenResponse(accessTokenResponse: AccessTokenResponse, internalOpts: GrantOptions) {
 		return accessTokenResponse;
+	}
+
+	/**
+	 * Handle the introspection response, performing validation and parsing as defined in the grant options.
+	 *
+	 * @param introspectionResponse The access token response.
+	 * @param internalOpts: The internal options.
+	 */
+	protected handleIntrospectionResponse(introspectionResponse: IntrospectionResponse, internalOpts: IntrospectionOptions) {
+		return introspectionResponse;
 	}
 
 	/**

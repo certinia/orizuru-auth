@@ -435,7 +435,7 @@ describe('index/client/openid', () => {
 							'Accept': 'application/json',
 							'Content-Type': 'application/x-www-form-urlencoded'
 						},
-						validateStatus: undefined
+						validateStatus: sinon.match.func
 					});
 
 				});
@@ -468,7 +468,7 @@ describe('index/client/openid', () => {
 							'Accept': 'application/json',
 							'Content-Type': 'application/x-www-form-urlencoded'
 						},
-						validateStatus: undefined
+						validateStatus: sinon.match.func
 					});
 
 					expect(identity.decodeIdToken).to.have.been.calledOnce;
@@ -520,7 +520,7 @@ describe('index/client/openid', () => {
 							'Accept': 'application/json',
 							'Content-Type': 'application/x-www-form-urlencoded'
 						},
-						validateStatus: undefined
+						validateStatus: sinon.match.func
 					});
 
 					expect(identity.decodeIdToken).to.have.been.calledOnce;
@@ -560,7 +560,7 @@ describe('index/client/openid', () => {
 							'Accept': 'application/json',
 							'Content-Type': 'application/x-www-form-urlencoded'
 						},
-						validateStatus: undefined
+						validateStatus: sinon.match.func
 					});
 
 					expect(identity.decodeIdToken).to.not.have.been.called;
@@ -608,7 +608,7 @@ describe('index/client/openid', () => {
 							'Accept': 'application/json',
 							'Content-Type': 'application/x-www-form-urlencoded'
 						},
-						validateStatus: undefined
+						validateStatus: sinon.match.func
 					});
 
 					expect(identity.decodeIdToken).to.have.been.calledOnce;
@@ -663,7 +663,7 @@ describe('index/client/openid', () => {
 				headers: {
 					'Content-Type': 'application/x-www-form-urlencoded'
 				},
-				validateStatus: undefined
+				validateStatus: sinon.match.func
 			});
 
 		});
@@ -690,7 +690,7 @@ describe('index/client/openid', () => {
 			expect(axios.get).to.have.been.calledTwice;
 			expect(axios.get).to.have.been.calledWithExactly('https://login.salesforce.com/.well-known/openid-configuration', { timeout: 4001 });
 			expect(axios.get).to.have.been.calledWithExactly('https://login.salesforce.com/services/oauth2/revoke?token=testToken', {
-				validateStatus: undefined
+				validateStatus: sinon.match.func
 			});
 
 		});
@@ -759,7 +759,7 @@ describe('index/client/openid', () => {
 					Accept: 'application/json',
 					Authorization: `Bearer testToken`
 				},
-				validateStatus: undefined
+				validateStatus: sinon.match.func
 			});
 
 		});

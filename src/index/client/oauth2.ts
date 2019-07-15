@@ -28,7 +28,7 @@
  * @module client/oauth2
  */
 
-import axios, { AxiosResponse } from 'axios';
+import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 import formUrlencoded from 'form-urlencoded';
 
 import { Environment } from './cache';
@@ -393,14 +393,17 @@ const DEFAULT_REVOCATION_OPTIONS = Object.freeze({
 	useGet: false
 });
 
-const DEFAULT_REQUEST_CONFIG = Object.freeze({
-	validateStatus: undefined
-});
-
 /**
  *  An OAuth 2.0 client that implements the [OAuth 2.0 Authorization Framework](https://tools.ietf.org/html/rfc6749) specification.
  */
 export class OAuth2Client implements AuthClient {
+
+	/**
+	 * The default configuration for an Axios request.
+	 */
+	public static readonly DEFAULT_REQUEST_CONFIG: AxiosRequestConfig = Object.freeze({
+		validateStatus: () => true
+	});
 
 	/**
 	 * The client name.
@@ -514,7 +517,7 @@ export class OAuth2Client implements AuthClient {
 
 		const body = formUrlencoded(internalParams, { sorted: true });
 
-		const config = Object.assign({}, DEFAULT_REQUEST_CONFIG, {
+		const config = Object.assign({}, OAuth2Client.DEFAULT_REQUEST_CONFIG, {
 			headers: {
 				'Accept': internalOpts.responseFormat,
 				'Content-Type': 'application/x-www-form-urlencoded'
@@ -549,10 +552,10 @@ export class OAuth2Client implements AuthClient {
 
 		if (internalOpts.useGet) {
 			revocationUri += `?token=${token}`;
-			response = await axios.get(revocationUri, DEFAULT_REQUEST_CONFIG);
+			response = await axios.get(revocationUri, OAuth2Client.DEFAULT_REQUEST_CONFIG);
 		} else {
 
-			const config = Object.assign({}, DEFAULT_REQUEST_CONFIG, {
+			const config = Object.assign({}, OAuth2Client.DEFAULT_REQUEST_CONFIG, {
 				headers: {
 					'Content-Type': 'application/x-www-form-urlencoded'
 				}

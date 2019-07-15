@@ -31,18 +31,13 @@
 import axios from 'axios';
 
 import { Environment } from './cache';
-import { AccessTokenResponse, GrantOptions, GrantParams, ResponseFormat } from './oauth2';
+import { AccessTokenResponse, GrantOptions, GrantParams, OAuth2Client, ResponseFormat } from './oauth2';
 import { JWT, OAuth2JWTClient } from './oauth2Jwt';
 import { decodeIdToken } from './openid/identity';
 
 const DEFAULT_USERINFO_OPTIONS = Object.freeze({
 	responseFormat: 'application/json'
 });
-
-const DEFAULT_REQUEST_CONFIG = Object.freeze({
-	validateStatus: undefined
-});
-
 export interface OpenIDAccessTokenResponse extends AccessTokenResponse {
 
 	/**
@@ -347,7 +342,7 @@ export class OpenIdClient extends OAuth2JWTClient {
 
 		const internalOpts = Object.assign({}, DEFAULT_USERINFO_OPTIONS, opts);
 
-		const config = Object.assign({}, DEFAULT_REQUEST_CONFIG, {
+		const config = Object.assign({}, OAuth2Client.DEFAULT_REQUEST_CONFIG, {
 			headers: {
 				Accept: internalOpts.responseFormat,
 				Authorization: `Bearer ${token}`

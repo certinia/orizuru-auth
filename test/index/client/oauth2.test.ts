@@ -68,6 +68,23 @@ describe('index/client/oauth2', () => {
 		sinon.restore();
 	});
 
+	describe('default request configuration', () => {
+
+		describe('validateStatus', () => {
+
+			it('should return true', () => {
+
+				// Given
+				// When
+				// Then
+				expect(OAuth2Client.DEFAULT_REQUEST_CONFIG.validateStatus!(200)).to.eql(true);
+
+			});
+
+		});
+
+	});
+
 	describe('createAuthorizationUrl', () => {
 
 		let params: AuthUrlParams;
@@ -354,7 +371,7 @@ describe('index/client/oauth2', () => {
 							'Accept': 'application/json',
 							'Content-Type': 'application/x-www-form-urlencoded'
 						},
-						validateStatus: undefined
+						validateStatus: sinon.match.func
 					});
 
 				});
@@ -395,7 +412,7 @@ describe('index/client/oauth2', () => {
 							'Accept': 'application/json',
 							'Content-Type': 'application/x-www-form-urlencoded'
 						},
-						validateStatus: undefined
+						validateStatus: sinon.match.func
 					});
 
 				});
@@ -488,7 +505,7 @@ describe('index/client/oauth2', () => {
 				headers: {
 					'Content-Type': 'application/x-www-form-urlencoded'
 				},
-				validateStatus: undefined
+				validateStatus: sinon.match.func
 			});
 
 		});
@@ -514,7 +531,7 @@ describe('index/client/oauth2', () => {
 
 			expect(axios.get).to.have.been.calledOnce;
 			expect(axios.get).to.have.been.calledWithExactly('https://oauth2.googleapis.com/revoke?token=testToken', {
-				validateStatus: undefined
+				validateStatus: sinon.match.func
 			});
 
 		});

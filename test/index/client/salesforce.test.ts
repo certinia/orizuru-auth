@@ -440,7 +440,7 @@ describe('index/client/salesforce', () => {
 							'Accept': 'application/json',
 							'Content-Type': 'application/x-www-form-urlencoded'
 						},
-						validateStatus: undefined
+						validateStatus: sinon.match.func
 					});
 
 				});
@@ -473,7 +473,7 @@ describe('index/client/salesforce', () => {
 							'Accept': 'application/json',
 							'Content-Type': 'application/x-www-form-urlencoded'
 						},
-						validateStatus: undefined
+						validateStatus: sinon.match.func
 					});
 
 					expect(openidIdentity.decodeIdToken).to.have.been.calledOnce;
@@ -513,7 +513,7 @@ describe('index/client/salesforce', () => {
 							'Accept': 'application/json',
 							'Content-Type': 'application/x-www-form-urlencoded'
 						},
-						validateStatus: undefined
+						validateStatus: sinon.match.func
 					});
 
 					expect(salesforceIdentity.verifySignature).to.have.not.been.called;
@@ -553,7 +553,7 @@ describe('index/client/salesforce', () => {
 							'Accept': 'application/json',
 							'Content-Type': 'application/x-www-form-urlencoded'
 						},
-						validateStatus: undefined
+						validateStatus: sinon.match.func
 					});
 
 					expect(salesforceIdentity.verifySignature).to.have.been.calledOnce;
@@ -595,7 +595,7 @@ describe('index/client/salesforce', () => {
 							'Accept': 'application/json',
 							'Content-Type': 'application/x-www-form-urlencoded'
 						},
-						validateStatus: undefined
+						validateStatus: sinon.match.func
 					});
 
 					expect(salesforceIdentity.parseUserInfo).to.have.been.calledOnce;
@@ -649,7 +649,7 @@ describe('index/client/salesforce', () => {
 							'Accept': 'application/json',
 							'Content-Type': 'application/x-www-form-urlencoded'
 						},
-						validateStatus: undefined
+						validateStatus: sinon.match.func
 					});
 
 					expect(openidIdentity.decodeIdToken).to.have.been.calledOnce;
@@ -696,7 +696,7 @@ describe('index/client/salesforce', () => {
 							'Accept': 'application/json',
 							'Content-Type': 'application/x-www-form-urlencoded'
 						},
-						validateStatus: undefined
+						validateStatus: sinon.match.func
 					});
 
 					expect(openidIdentity.decodeIdToken).to.not.have.been.called;
@@ -748,7 +748,7 @@ describe('index/client/salesforce', () => {
 							'Accept': 'application/json',
 							'Content-Type': 'application/x-www-form-urlencoded'
 						},
-						validateStatus: undefined
+						validateStatus: sinon.match.func
 					});
 
 					expect(openidIdentity.decodeIdToken).to.have.been.calledOnce;
@@ -807,7 +807,7 @@ describe('index/client/salesforce', () => {
 				headers: {
 					'Content-Type': 'application/x-www-form-urlencoded'
 				},
-				validateStatus: undefined
+				validateStatus: sinon.match.func
 			});
 
 		});
@@ -834,7 +834,7 @@ describe('index/client/salesforce', () => {
 			expect(axios.get).to.have.been.calledTwice;
 			expect(axios.get).to.have.been.calledWithExactly('https://login.salesforce.com/.well-known/openid-configuration', { timeout: 4001 });
 			expect(axios.get).to.have.been.calledWithExactly('https://login.salesforce.com/services/oauth2/revoke?token=testToken', {
-				validateStatus: undefined
+				validateStatus: sinon.match.func
 			});
 
 		});
@@ -903,7 +903,7 @@ describe('index/client/salesforce', () => {
 					Accept: 'application/json',
 					Authorization: `Bearer testToken`
 				},
-				validateStatus: undefined
+				validateStatus: sinon.match.func
 			});
 
 		});

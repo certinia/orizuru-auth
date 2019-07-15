@@ -30,8 +30,9 @@
 
 import { NextFunction, Request, RequestHandler, Response } from '@financialforcedev/orizuru';
 
-import { EVENT_TOKEN_VALIDATED } from '../..';
+import { EVENT_TOKEN_INTROSPECTED, EVENT_TOKEN_VALIDATED } from '../..';
 import { IntrospectionOptions, IntrospectionResponse } from '../client/oauth2';
+import { isSalesforceIntrospectionResponse } from '../client/salesforce/identity';
 import { createTokenIntrospector } from '../introspection/introspect';
 import { extractAccessToken } from './common/accessToken';
 import { fail } from './common/fail';
@@ -57,8 +58,7 @@ export function createMiddleware(app: Orizuru.IServer, provider: string, opts?: 
 
 			const accessToken = extractAccessToken(req);
 
-			const middlewareOpts = opts || app.options.openid[provider];
-			const internalOpts = Object.assign({}, middlewareOpts) as IntrospectionOptions;
+			const internalOpts = Object.assign({}, app.options.openid[provider], opts) as IntrospectionOptions;
 
 			const tokenInformation = await introspectAccessToken(accessToken, internalOpts);
 
@@ -80,7 +80,7 @@ export function createMiddleware(app: Orizuru.IServer, provider: string, opts?: 
  * It also sets the username on the request if the username is contained in the
  * introspection response.
  *
- * @fires EVENT_TOKEN_VALIDATED
+ * @fires EVENT_TOKEN_INTROSPECTED, EVENT_TOKEN_VALIDATED
  * @param app The Orizuru server instance.
  * @param req The HTTP request.
  * @param tokenInformation The token information to set on the request.
@@ -89,11 +89,17 @@ function setTokenInformationOnRequest(app: Orizuru.IServer, req: Request, tokenI
 
 	const orizuru = req.orizuru || {};
 
+	app.emit(EVENT_TOKEN_INTROSPECTED, `Token introspected for user (${tokenInformation.username || 'unknown'}) [${req.ip}].`);
+
 	if (tokenInformation.username) {
 
 		orizuru.user = {
 			username: tokenInformation.username
 		};
+
+		if (isSalesforceIntrospectionResponse(tokenInformation)) {
+			orizuru.user.organizationId = tokenInformation.userInfo!.organizationId;
+		}
 
 		app.emit(EVENT_TOKEN_VALIDATED, `Token validated for user (${tokenInformation.username}) [${req.ip}].`);
 	}

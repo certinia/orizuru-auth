@@ -30,7 +30,7 @@ import sinonChai from 'sinon-chai';
 
 import { Request, RequestHandler, Response } from '@financialforcedev/orizuru';
 
-import { Environment, EVENT_TOKEN_VALIDATED, IntrospectionOptions, IntrospectionResponse, OpenIdOptions } from '../../../src';
+import { Environment, EVENT_TOKEN_INTROSPECTED, EVENT_TOKEN_VALIDATED, IntrospectionOptions, IntrospectionResponse, OpenIdOptions } from '../../../src';
 import * as introspect from '../../../src/index/introspection/introspect';
 import * as accessToken from '../../../src/index/middleware/common/accessToken';
 import * as fail from '../../../src/index/middleware/common/fail';
@@ -59,7 +59,8 @@ describe('index/middleware/tokenIntrospection', () => {
 
 		opts = {
 			clientId: 'testClientId',
-			clientSecret: 'testClientSecret'
+			clientSecret: 'testClientSecret',
+			parseUserInfo: true
 		};
 
 		const partialApp: Partial<Orizuru.IServer> = {
@@ -158,7 +159,8 @@ describe('index/middleware/tokenIntrospection', () => {
 				expect(introspectTokenStub).to.have.been.calledOnce;
 				expect(introspectTokenStub).to.have.been.calledWithExactly('12345', {
 					clientId: 'testClientId',
-					clientSecret: 'testClientSecret'
+					clientSecret: 'testClientSecret',
+					parseUserInfo: true
 				});
 
 			});
@@ -186,6 +188,12 @@ describe('index/middleware/tokenIntrospection', () => {
 					scope: 'id api web full refresh_token openid',
 					sub: 'https://login.salesforce.com/id/00Dxx0000001gEREAY/005xx000001Sv6AAAS',
 					token_type: 'access_token',
+					userInfo: {
+						id: '005xx000001Sv6AAAS',
+						organizationId: '00Dxx0000001gEREAY',
+						url: 'https://login.salesforce.com/id/00Dxx0000001gEREAY/005xx000001Sv6AAAS',
+						validated: false
+					},
 					username: 'test@test.com'
 				};
 
@@ -199,7 +207,8 @@ describe('index/middleware/tokenIntrospection', () => {
 				expect(introspectTokenStub).to.have.been.calledOnce;
 				expect(introspectTokenStub).to.have.been.calledWithExactly('12345', {
 					clientId: 'testClientId',
-					clientSecret: 'testClientSecret'
+					clientSecret: 'testClientSecret',
+					parseUserInfo: true
 				});
 				expect(next).to.have.been.calledOnce;
 				expect(next).to.have.been.calledWithExactly();
@@ -214,6 +223,7 @@ describe('index/middleware/tokenIntrospection', () => {
 
 				// Then
 				expect(req.orizuru).to.have.property('user').that.eqls({
+					organizationId: '00Dxx0000001gEREAY',
 					username: 'test@test.com'
 				});
 				expect(req.orizuru).to.have.property('tokenInformation').that.eqls({
@@ -225,10 +235,17 @@ describe('index/middleware/tokenIntrospection', () => {
 					scope: 'id api web full refresh_token openid',
 					sub: 'https://login.salesforce.com/id/00Dxx0000001gEREAY/005xx000001Sv6AAAS',
 					token_type: 'access_token',
+					userInfo: {
+						id: '005xx000001Sv6AAAS',
+						organizationId: '00Dxx0000001gEREAY',
+						url: 'https://login.salesforce.com/id/00Dxx0000001gEREAY/005xx000001Sv6AAAS',
+						validated: false
+					},
 					username: 'test@test.com'
 				});
 
-				expect(app.emit).to.have.been.calledOnce;
+				expect(app.emit).to.have.been.calledTwice;
+				expect(app.emit).to.have.been.calledWithExactly(EVENT_TOKEN_INTROSPECTED, 'Token introspected for user (test@test.com) [1.1.1.1].');
 				expect(app.emit).to.have.been.calledWithExactly(EVENT_TOKEN_VALIDATED, 'Token validated for user (test@test.com) [1.1.1.1].');
 
 			});
@@ -236,6 +253,8 @@ describe('index/middleware/tokenIntrospection', () => {
 			it('and set orizuru on the request without the username', async () => {
 
 				// Given
+				delete response.sub;
+				delete response.userInfo;
 				delete response.username;
 
 				// When
@@ -249,12 +268,43 @@ describe('index/middleware/tokenIntrospection', () => {
 					iat: 1528494909,
 					nbf: 1528494909,
 					scope: 'id api web full refresh_token openid',
-					sub: 'https://login.salesforce.com/id/00Dxx0000001gEREAY/005xx000001Sv6AAAS',
 					token_type: 'access_token'
 				});
 
+				expect(app.emit).to.have.been.calledOnce;
+				expect(app.emit).to.have.been.calledWithExactly(EVENT_TOKEN_INTROSPECTED, 'Token introspected for user (unknown) [1.1.1.1].');
+
 				expect(req.orizuru).to.not.have.property('user');
-				expect(app.emit).to.not.have.been.called;
+
+			});
+
+			it('and set orizuru on the request without the userInfo', async () => {
+
+				// Given
+				delete response.sub;
+				delete response.userInfo;
+
+				// When
+				await middleware(req, res, next);
+
+				// Then
+				expect(req.orizuru).to.have.property('user').that.eqls({
+					username: 'test@test.com'
+				});
+				expect(req.orizuru).to.have.property('tokenInformation').that.eqls({
+					active: true,
+					client_id: 'OAuthSp',
+					exp: 1528502109,
+					iat: 1528494909,
+					nbf: 1528494909,
+					scope: 'id api web full refresh_token openid',
+					token_type: 'access_token',
+					username: 'test@test.com'
+				});
+
+				expect(app.emit).to.have.been.calledTwice;
+				expect(app.emit).to.have.been.calledWithExactly(EVENT_TOKEN_INTROSPECTED, 'Token introspected for user (test@test.com) [1.1.1.1].');
+				expect(app.emit).to.have.been.calledWithExactly(EVENT_TOKEN_VALIDATED, 'Token validated for user (test@test.com) [1.1.1.1].');
 
 			});
 
@@ -271,6 +321,7 @@ describe('index/middleware/tokenIntrospection', () => {
 				// Then
 				expect(req.orizuru).to.have.property('grantChecked', true);
 				expect(req.orizuru).to.have.property('user').that.eqls({
+					organizationId: '00Dxx0000001gEREAY',
 					username: 'test@test.com'
 				});
 				expect(req.orizuru).to.have.property('tokenInformation').that.eqls({
@@ -282,10 +333,17 @@ describe('index/middleware/tokenIntrospection', () => {
 					scope: 'id api web full refresh_token openid',
 					sub: 'https://login.salesforce.com/id/00Dxx0000001gEREAY/005xx000001Sv6AAAS',
 					token_type: 'access_token',
+					userInfo: {
+						id: '005xx000001Sv6AAAS',
+						organizationId: '00Dxx0000001gEREAY',
+						url: 'https://login.salesforce.com/id/00Dxx0000001gEREAY/005xx000001Sv6AAAS',
+						validated: false
+					},
 					username: 'test@test.com'
 				});
 
-				expect(app.emit).to.have.been.calledOnce;
+				expect(app.emit).to.have.been.calledTwice;
+				expect(app.emit).to.have.been.calledWithExactly(EVENT_TOKEN_INTROSPECTED, 'Token introspected for user (test@test.com) [1.1.1.1].');
 				expect(app.emit).to.have.been.calledWithExactly(EVENT_TOKEN_VALIDATED, 'Token validated for user (test@test.com) [1.1.1.1].');
 
 			});

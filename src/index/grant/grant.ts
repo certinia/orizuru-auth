@@ -116,7 +116,7 @@ async function obtainGrant(env: Environment, params: JwtGrantParams, opts?: Gran
 	try {
 
 		const client = await findOrCreateClient(env);
-		return client.grant(params, opts);
+		return await client.grant(params, opts);
 
 	} catch (error) {
 		throw new Error(` (${params.user.username}). Caused by: ${error.message}`);

@@ -52,7 +52,7 @@ export function createTokenGrantor(env?: Environment): JwtBearerAccessTokenGrant
 			internalParams.grantType = 'urn:ietf:params:oauth:grant-type:jwt-bearer';
 
 			const client = await findOrCreateClient(validatedEnvironment);
-			return client.grant(internalParams as JwtGrantParams, opts);
+			return await client.grant(internalParams as JwtGrantParams, opts);
 
 		} catch (error) {
 			throw new Error(`Invalid grant for user (${params.user.username}). Caused by: ${error.message}`);

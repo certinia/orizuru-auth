@@ -348,7 +348,7 @@ server.addRoute({
         urlencoded({
             extended: true
         }),
-        middleware.tokenIntrospection(server, 'salesforce', server.options.openid.salesforce),
+        middleware.tokenIntrospection(server, 'salesforce'),
         errorMiddleware
     ],
     responseWriter: (app) => async (error, req, res) => {

@@ -47,6 +47,7 @@ describe('index', () => {
 			'ResponseFormat',
 			'flow',
 			'grant',
+			'introspection',
 			'middleware',
 			'openIdClient',
 			'revocation',
@@ -61,6 +62,10 @@ describe('index', () => {
 
 		expect(index.grant).to.have.keys([
 			'getToken'
+		]);
+
+		expect(index.introspection).to.have.keys([
+			'createTokenIntrospector'
 		]);
 
 		expect(index.middleware).to.have.keys([

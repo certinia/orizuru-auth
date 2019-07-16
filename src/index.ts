@@ -39,6 +39,7 @@ import { createTokenGrantor as createJwtBearerAccessTokenGrantor } from './index
 import { createTokenGrantor as createRefreshAccessTokenGrantor } from './index/flow/refreshToken';
 import { authorizationUrlGenerator, createTokenGrantor as createWebServerTokenGrantor } from './index/flow/webServer';
 import { getToken, Grant } from './index/grant/grant';
+import { createTokenIntrospector } from './index/introspection/introspect';
 import { createMiddleware as authCallback } from './index/middleware/authCallback';
 import { createMiddleware as grantChecker } from './index/middleware/grantChecker';
 import { createMiddleware as retrieveIdentityInformation } from './index/middleware/identity';
@@ -301,6 +302,18 @@ export const grant = {
 	 * Returns a function that can obtain a token for the passed user.
 	 */
 	getToken
+
+};
+
+/**
+ * Returns the collection of introspection functions.
+ */
+export const introspection = {
+
+	/**
+	 * Returns a function that introspects a token.
+	 */
+	createTokenIntrospector
 
 };
 

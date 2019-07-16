@@ -2,7 +2,17 @@
 
 ## Latest changes (not yet released)
 
+### NEW FEATURES
+
+- Support [token introspection](https://tools.ietf.org/html/rfc7662) for both OAuth2 and [Salesforce](https://help.salesforce.com/articleView?id=remoteaccess_oidc_token_introspection.htm)
+
 ### FIXES
 
 - Make the scope property optional
   - Follows the [specification](https://tools.ietf.org/html/rfc6749#section-3.3)
+
+### OTHER CHANGES
+
+- Update the example server
+  - Add a token introspection endpoint
+  - Improve the logging and error handling

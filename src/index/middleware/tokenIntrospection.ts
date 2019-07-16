@@ -38,9 +38,10 @@ import { extractAccessToken } from './common/accessToken';
 import { fail } from './common/fail';
 
 /**
- * Returns an express middleware that validates the OpenID Connect access token
- * passed in an HTTP Authorization header and if successful sets the user object onto
- * the request object.
+ * Returns an express middleware that introspects the OpenID Connect access token
+ * passed in an HTTP Authorization header.
+ *
+ * If successful, the token information and the user object are set on the request object.
  *
  * @fires EVENT_TOKEN_INTROSPECTED, EVENT_DENIED
  * @param app The Orizuru server instance.
@@ -75,10 +76,10 @@ export function createMiddleware(app: Orizuru.IServer, provider: string, opts?: 
 }
 
 /**
- * Sets the token infrormation on the Orizuru context.
+ * Sets the token information on the Orizuru context.
  *
- * It also sets the username on the request if the username is contained in the
- * introspection response.
+ * It also sets the user on the request if the username is contained in the introspection
+ * response.
  *
  * @fires EVENT_TOKEN_INTROSPECTED, EVENT_TOKEN_VALIDATED
  * @param app The Orizuru server instance.

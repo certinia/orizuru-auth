@@ -36,7 +36,6 @@ import { validate } from '../client/validator/environment';
  * Returns a function that introspects a token.
  *
  * @param [env] The auth environment parameters.
- * @param [emitter] The event emitter to log events.
  */
 export function createTokenIntrospector(env?: Environment): TokenIntrospector {
 

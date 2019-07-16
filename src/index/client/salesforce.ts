@@ -36,6 +36,7 @@ import { parseUserInfo, UserInfoResponse, verifySignature } from './salesforce/i
 
 /**
  * The Salesforce Access Token Response.
+ *
  * @example
  * ```json
  *
@@ -85,6 +86,23 @@ export interface SalesforceAccessTokenResponse extends OpenIDAccessTokenResponse
 
 /**
  * The Salesforce Introspection Response.
+ *
+ * Adds the user info information to the standard introspection response.
+ *
+ * @example
+ * ```json
+ * {
+ * 	"active": true,
+ * 	"client_id": "OAuthSp",
+ * 	"exp": 1528502109,
+ * 	"iat": 1528494909,
+ * 	"nbf": 1528494909,
+ * 	"scope": "id api web full refresh_token openid",
+ * 	"sub": "https://login.salesforce.com/id/00Dxx0000001gEREAY/005xx000001Sv6AAAS",
+ * 	"token_type": "access_token",
+ * 	"username": "test@test.com"
+ * }
+ * ```
  */
 export interface SalesforceIntrospectionResponse extends IntrospectionResponse, UserInfoResponse {
 }

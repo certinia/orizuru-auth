@@ -28,7 +28,7 @@
  * @module revocation/revoke
  */
 
-import { Environment } from '..';
+import { Environment, TokenRevoker } from '..';
 import { findOrCreateClient } from '../client/cache';
 import { validate } from '../client/validator/environment';
 
@@ -38,7 +38,7 @@ import { validate } from '../client/validator/environment';
  *
  * @param [env] The auth environment parameters.
  */
-export function createTokenRevoker(env: Environment) {
+export function createTokenRevoker(env: Environment): TokenRevoker {
 
 	const validatedEnvironment = validate(env);
 

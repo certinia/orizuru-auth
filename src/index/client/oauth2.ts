@@ -531,7 +531,7 @@ export class OAuth2Client implements AuthClient {
 	/**
 	 * [Introspection Endpoint](https://tools.ietf.org/html/rfc7662#section-2)
 	 */
-	protected introspectionEndpoint?: string;
+	protected introspectionEndpoint?: string | null;
 
 	/**
 	 * [Revocation Endpoint](https://tools.ietf.org/html/rfc7009#section-2)
@@ -576,7 +576,7 @@ export class OAuth2Client implements AuthClient {
 		}
 
 		this.authorizationEndpoint = this.env.authorizationEndpoint;
-		this.introspectionEndpoint = this.env.introspectionEndpoint;
+		this.introspectionEndpoint = this.env.introspectionEndpoint || null;
 		this.revocationEndpoint = this.env.revocationEndpoint;
 		this.tokenEndpoint = this.env.tokenEndpoint;
 
@@ -660,8 +660,12 @@ export class OAuth2Client implements AuthClient {
 	 */
 	public async introspect(token: string, opts: IntrospectionOptions) {
 
-		if (!this.introspectionEndpoint) {
+		if (this.introspectionEndpoint === undefined) {
 			throw new Error(`${this.clientType} client has not been initialized`);
+		}
+
+		if (this.introspectionEndpoint === null) {
+			throw new Error(`${this.clientType} client does not support token introspection`);
 		}
 
 		const config = Object.assign({}, OAuth2Client.DEFAULT_REQUEST_CONFIG, {

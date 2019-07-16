@@ -321,7 +321,7 @@ export class OpenIdClient extends OAuth2JWTClient {
 		const data = response.data;
 
 		this.authorizationEndpoint = data.authorization_endpoint;
-		this.introspectionEndpoint = data.introspection_endpoint;
+		this.introspectionEndpoint = data.introspection_endpoint || null;
 		this.revocationEndpoint = data.revocation_endpoint;
 		this.tokenEndpoint = data.token_endpoint;
 		this.userinfoEndpoint = data.userinfo_endpoint;

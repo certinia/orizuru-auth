@@ -521,6 +521,21 @@ describe('index/client/oauth2', () => {
 
 			});
 
+			it('if the client does not support the introspection endpoint', async () => {
+
+				// Given
+				delete env.introspectionEndpoint;
+
+				client = new OAuth2Client(env);
+
+				// When
+				await client.init();
+
+				// Then
+				await expect(client.introspect('testToken', opts)).to.eventually.be.rejectedWith('OAuth2 client does not support token introspection');
+
+			});
+
 			it('for an invalid token', async () => {
 
 				// Given

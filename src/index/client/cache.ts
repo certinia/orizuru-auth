@@ -61,7 +61,7 @@ export interface Environment {
 	 * This may be defined for OAuth2 clients; it should be omitted for OpenID clients as
 	 * they use the [OpenID Provider Issuer Discovery](https://openid.net/specs/openid-connect-discovery-1_0.html).
 	 */
-	introspectionEndpoint?: string;
+	introspectionEndpoint?: string | null;
 
 	/**
 	 * The Issuer URI used when creating an Auth Client.

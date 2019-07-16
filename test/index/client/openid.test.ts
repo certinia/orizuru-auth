@@ -31,7 +31,7 @@ import sinonChai from 'sinon-chai';
 
 import { AxiosRequestConfig, AxiosResponse, default as axios } from 'axios';
 
-import { AuthCodeGrantParams, AuthOptions, AuthUrlParams, Environment, GrantOptions, JwtGrantParams, RefreshGrantParams } from '../../../src';
+import { AuthCodeGrantParams, AuthOptions, AuthUrlParams, Environment, GrantOptions, IntrospectionOptions, JwtGrantParams, RefreshGrantParams } from '../../../src';
 import * as jwt from '../../../src/index/client/oauth2Jwt/jwt';
 import * as identity from '../../../src/index/client/openid/identity';
 
@@ -639,6 +639,48 @@ describe('index/client/openid', () => {
 					expect(jwt.createJwtBearerGrantAssertion).to.not.have.been.called;
 
 				});
+
+			});
+
+		});
+
+	});
+
+	describe('introspect', () => {
+
+		let opts: IntrospectionOptions;
+
+		beforeEach(() => {
+			opts = {
+				clientId: 'testClientId',
+				clientSecret: 'testClientSecret',
+				ip: '1.1.1.1'
+			};
+		});
+
+		describe('should throw an error', () => {
+
+			it('if the client has not been initialised', async () => {
+
+				// Given
+				// When
+				// Then
+				await expect(client.introspect('testToken', opts)).to.eventually.be.rejectedWith('OpenID client has not been initialized');
+
+			});
+
+			it('if the client does not support the introspection endpoint', async () => {
+
+				// Given
+				delete env.introspectionEndpoint;
+
+				client = new OpenIdClient(env);
+
+				// When
+				await client.init();
+
+				// Then
+				await expect(client.introspect('testToken', opts)).to.eventually.be.rejectedWith('OpenID client does not support token introspection');
 
 			});
 

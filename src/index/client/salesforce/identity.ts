@@ -30,9 +30,9 @@
 
 import crypto from 'crypto';
 
-import { AccessTokenResponse } from '../oauth2';
+import { AccessTokenResponse, IntrospectionResponse } from '../oauth2';
 import { OpenIDAccessTokenResponse } from '../openid';
-import { SalesforceAccessTokenResponse } from '../salesforce';
+import { SalesforceAccessTokenResponse, SalesforceIntrospectionResponse } from '../salesforce';
 
 /**
  * The Salesforce User Identity Information.
@@ -190,38 +190,96 @@ export interface SalesforceIdentity {
 }
 
 /**
+ * The user information generated when parsing the [Identity URL](https://help.salesforce.com/articleView?id=remoteaccess_using_openid.htm).
+ */
+export interface UserInfo {
+
+	/**
+	 * Returns the user ID.
+	 */
+	id?: string;
+
+	/**
+	 * Returns the organization ID.
+	 */
+	organizationId?: string;
+
+	/**
+	 * Returns the full Identity URL.
+	 */
+	url: string;
+
+	/**
+	 * If true, the Identity URL has been validated and is valid.
+	 */
+	validated: boolean;
+
+}
+
+export interface UserInfoResponse {
+
+	/**
+	 * Identity URL that can be used to both identify the user and query for more information about the user.
+	 */
+	id?: string;
+
+	/**
+	 * Subject  that can be used to both identify the user and query for more information about the user.
+	 */
+	sub?: string;
+
+	/**
+	 * The user information generated when parsing the [Identity URL](https://help.salesforce.com/articleView?id=remoteaccess_using_openid.htm).
+	 */
+	userInfo?: UserInfo;
+
+}
+
+/**
  * Parse the user information from the `id` property of an access token response.
  *
  * It is assumed that the `id` conforms to the Salesforce [Identity URL](https://help.salesforce.com/articleView?id=remoteaccess_using_openid.htm) format.
  *
- * @param accessTokenResponse The Salesforce access token response.
+ * @param response The Salesforce user info response.
  */
-export function parseUserInfo(accessTokenResponse: SalesforceAccessTokenResponse) {
+export function parseUserInfo(response: UserInfoResponse) {
 
-	if (accessTokenResponse.id) {
+	let identityUrl: string;
+	let validated: boolean;
 
-		const idUrls = accessTokenResponse.id.split('/');
-		const id = idUrls.pop();
-		const organizationId = idUrls.pop();
+	if (response.id) {
+		identityUrl = response.id;
+		validated = false;
+	} else if (response.sub) {
 
-		if (!id || (id.length !== 15 && id.length !== 18)) {
-			throw new Error('User ID not present');
-		}
+		identityUrl = response.sub;
 
-		if (!organizationId || (organizationId.length !== 15 && organizationId.length !== 18)) {
-			throw new Error('Organization ID not present');
-		}
-
-		accessTokenResponse.userInfo = Object.assign({
-			id,
-			organizationId,
-			url: accessTokenResponse.id,
-			validated: false
-		}, accessTokenResponse.userInfo);
+		// This response is obtained when the token has been introspected.
+		// Set validated to true as the token is valid.
+		validated = true;
 
 	} else {
-		throw new Error('No id present');
+		throw new Error('Missing required string parameter: identityUrl');
 	}
+
+	const idUrls = identityUrl.split('/');
+	const id = idUrls.pop();
+	const organizationId = idUrls.pop();
+
+	if (!id || (id.length !== 15 && id.length !== 18)) {
+		throw new Error('Missing required string parameter: id');
+	}
+
+	if (!organizationId || (organizationId.length !== 15 && organizationId.length !== 18)) {
+		throw new Error('Missing required string parameter: organizationId');
+	}
+
+	response.userInfo = Object.assign({
+		id,
+		organizationId,
+		url: identityUrl,
+		validated
+	}, response.userInfo);
 
 }
 
@@ -252,7 +310,7 @@ export function verifySignature(clientSecret: string, accessTokenResponse: Sales
 		}
 
 		accessTokenResponse.userInfo = {
-			url: accessTokenResponse.id,
+			url: accessTokenResponse.id as string,
 			validated: true
 		};
 
@@ -263,7 +321,7 @@ export function verifySignature(clientSecret: string, accessTokenResponse: Sales
 }
 
 /**
- * Determines whether the token is a Salesforce access token response.
+ * Determines whether the response is a Salesforce access token response.
  *
  * @param token The access token response.
  * @returns A boolean indicating if this token is a Salesforce access token response.
@@ -273,4 +331,14 @@ export function isSalesforceAccessTokenResponse(token: AccessTokenResponse | Ope
 		|| (token as SalesforceAccessTokenResponse).instance_url !== undefined
 		|| (token as SalesforceAccessTokenResponse).issued_at !== undefined
 		|| (token as SalesforceAccessTokenResponse).signature !== undefined;
+}
+
+/**
+ * Determines whether the response is a Salesforce introspection response.
+ *
+ * @param token The introspection response.
+ * @returns A boolean indicating if this token is a Salesforce introspection response.
+ */
+export function isSalesforceIntrospectionResponse(token: IntrospectionResponse | SalesforceIntrospectionResponse): token is SalesforceIntrospectionResponse {
+	return (token as SalesforceIntrospectionResponse).userInfo !== undefined;
 }

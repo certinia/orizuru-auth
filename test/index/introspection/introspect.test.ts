@@ -25,24 +25,25 @@
  */
 
 import chai from 'chai';
-import sinon, { SinonStubbedInstance } from 'sinon';
+import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
 
-import { Environment, RefreshAccessTokenGrantor } from '../../../src';
-import { createTokenGrantor } from '../../../src/index//flow/refreshToken';
+import { Environment, IntrospectionParams, TokenIntrospector } from '../../../src';
 import * as cache from '../../../src/index/client/cache';
 import { OpenIdClient } from '../../../src/index/client/openid';
 import * as validator from '../../../src/index/client/validator/environment';
+
+import { createTokenIntrospector } from '../../../src/index/introspection/introspect';
 
 const expect = chai.expect;
 
 chai.use(sinonChai);
 
-describe('index/flow/refreshToken', () => {
+describe('index/introspection/introspect', () => {
 
 	let env: Environment;
 
-	beforeEach(() => {
+	beforeAll(() => {
 
 		env = {
 			httpTimeout: 4001,
@@ -50,8 +51,10 @@ describe('index/flow/refreshToken', () => {
 			type: 'OpenID'
 		};
 
-		sinon.stub(validator, 'validate').returns(env);
+	});
 
+	beforeEach(() => {
+		sinon.stub(validator, 'validate').returns(env);
 	});
 
 	afterEach(() => {
@@ -62,65 +65,80 @@ describe('index/flow/refreshToken', () => {
 
 		// Given
 		// When
-		const tokenGrantor = createTokenGrantor(env);
+		const introspect = createTokenIntrospector(env);
 
 		// Then
-		expect(tokenGrantor).to.be.a('function');
+		expect(introspect).to.be.a('function');
 
 		expect(validator.validate).to.have.been.calledOnce;
 		expect(validator.validate).to.have.been.calledWithExactly(env);
 
 	});
 
-	describe('requestAccessToken', () => {
+	it('should return a function when called with the environment and emitter', () => {
 
-		let tokenGrantor: RefreshAccessTokenGrantor;
-		let openIdClientStubInstance: SinonStubbedInstance<OpenIdClient>;
+		// Given
+		// When
+		const introspect = createTokenIntrospector(env);
+
+		// Then
+		expect(introspect).to.be.a('function');
+
+		expect(validator.validate).to.have.been.calledOnce;
+		expect(validator.validate).to.have.been.calledWithExactly(env);
+
+	});
+
+	describe('introspect', () => {
+
+		let introspectToken: TokenIntrospector;
 
 		beforeEach(() => {
-
-			openIdClientStubInstance = sinon.createStubInstance(OpenIdClient);
-			sinon.stub(cache, 'findOrCreateClient').resolves(openIdClientStubInstance);
-
-			tokenGrantor = createTokenGrantor(env);
-
+			introspectToken = createTokenIntrospector(env);
 		});
 
-		it('should call the openIdClient grant method with the correct parameters', async () => {
+		it('should call the revoke function from the OpenID client', async () => {
 
 			// Given
-			const expectedAccessTokenResponse = {
-				access_token: '00Dx0000000BV7z!AR8AQP0jITN80ESEsj5EbaZTFG0RNBaT1cyWk7TrqoDjoNIWQ2ME_sTZzBjfmOE6zMHq6y8PIW4eWze9JksNEkWUl.Cju7m4',
-				id: 'https://login.salesforce.com/id/00Dx0000000BV7z/005x00000012Q9P',
-				instance_url: 'https://yourInstance.salesforce.com/',
-				issued_at: '1278448101416',
-				refresh_token: '5Aep8614iLM.Dq661ePDmPEgaAW9Oh_L3JKkDpB4xReb54_pZebnUG0h6Sb4KUVDpNtWEofWM39yg==',
-				scope: 'id api refresh_token',
-				signature: 'CMJ4l+CCaPQiKjoOEwEig9H4wqhpuLSk4J2urAe + fVg=',
-				token_type: 'Bearer'
+			const params: IntrospectionParams = {
+				clientId: 'testClientId',
+				clientSecret: 'testClientSecret'
 			};
 
-			openIdClientStubInstance.grant.resolves(expectedAccessTokenResponse);
+			const openIdClientStubInstance = sinon.createStubInstance(OpenIdClient);
+			sinon.stub(cache, 'findOrCreateClient').resolves(openIdClientStubInstance);
+
+			openIdClientStubInstance.introspect.resolves({
+				active: true,
+				client_id: 'OAuthSp',
+				exp: 1528502109,
+				iat: 1528494909,
+				nbf: 1528494909,
+				scope: 'id api web full refresh_token openid',
+				sub: 'https://login.salesforce.com/id/00Dxx0000001gEREAY/005xx000001Sv6AAAS',
+				token_type: 'access_token',
+				username: 'myuser@salesforce.com'
+			});
 
 			// When
-			const accessTokenResponse = await tokenGrantor({
-				clientId: 'test',
-				clientSecret: 'test',
-				refreshToken: 'token'
-			}, { signingSecret: 'testSigningSecret' });
+			const result = await introspectToken('testToken', params);
 
 			// Then
-			expect(accessTokenResponse).to.eql(expectedAccessTokenResponse);
-
+			expect(result).to.eql({
+				active: true,
+				client_id: 'OAuthSp',
+				exp: 1528502109,
+				iat: 1528494909,
+				nbf: 1528494909,
+				scope: 'id api web full refresh_token openid',
+				sub: 'https://login.salesforce.com/id/00Dxx0000001gEREAY/005xx000001Sv6AAAS',
+				token_type: 'access_token',
+				username: 'myuser@salesforce.com'
+			});
 			expect(cache.findOrCreateClient).to.have.been.calledOnce;
 			expect(cache.findOrCreateClient).to.have.been.calledWithExactly(env);
-			expect(openIdClientStubInstance.grant).to.have.been.calledOnce;
-			expect(openIdClientStubInstance.grant).to.have.been.calledWithExactly({
-				clientId: 'test',
-				clientSecret: 'test',
-				grantType: 'refresh_token',
-				refreshToken: 'token'
-			}, { signingSecret: 'testSigningSecret' });
+			expect(openIdClientStubInstance.introspect).to.have.been.calledOnce;
+			expect(openIdClientStubInstance.introspect).to.have.been.calledWith('testToken');
 
 		});
 

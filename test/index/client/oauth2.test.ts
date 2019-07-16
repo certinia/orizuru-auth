@@ -33,7 +33,7 @@ import { AxiosRequestConfig, AxiosResponse, default as axios } from 'axios';
 
 import { AuthCodeGrantParams, AuthOptions, AuthUrlParams, Environment, GrantOptions, RefreshGrantParams } from '../../../src';
 
-import { OAuth2Client } from '../../../src/index/client/oauth2';
+import { IntrospectionParams, OAuth2Client } from '../../../src/index/client/oauth2';
 
 const expect = chai.expect;
 
@@ -50,11 +50,12 @@ describe('index/client/oauth2', () => {
 	beforeEach(() => {
 
 		env = {
-			authorizationEndpoint: 'https://accounts.google.com/o/oauth2/v2/auth',
+			authorizationEndpoint: 'https://login.salesforce.com/services/oauth2/authorize',
 			httpTimeout: 4001,
-			issuerURI: 'https://accounts.google.com',
-			revocationEndpoint: 'https://oauth2.googleapis.com/revoke',
-			tokenEndpoint: 'https://oauth2.googleapis.com/token',
+			introspectionEndpoint: 'https://login.salesforce.com/services/oauth2/introspect',
+			issuerURI: 'https://login.salesforce.com',
+			revocationEndpoint: 'https://login.salesforce.com/services/oauth2/revoke',
+			tokenEndpoint: 'https://login.salesforce.com/services/oauth2/token',
 			type: 'OAuth2'
 		};
 
@@ -66,6 +67,23 @@ describe('index/client/oauth2', () => {
 
 	afterEach(() => {
 		sinon.restore();
+	});
+
+	describe('default request configuration', () => {
+
+		describe('validateStatus', () => {
+
+			it('should return true', () => {
+
+				// Given
+				// When
+				// Then
+				expect(OAuth2Client.DEFAULT_REQUEST_CONFIG.validateStatus!(200)).to.eql(true);
+
+			});
+
+		});
+
 	});
 
 	describe('createAuthorizationUrl', () => {
@@ -134,7 +152,7 @@ describe('index/client/oauth2', () => {
 			const authorizationUrl = client.createAuthorizationUrl(params);
 
 			// Then
-			expect(authorizationUrl).to.eql('https://accounts.google.com/o/oauth2/v2/auth?client_id=testClientId&redirect_uri=https%3A%2F%2Ftest.app.com%2Fauth%2Fcallback&response_type=code');
+			expect(authorizationUrl).to.eql('https://login.salesforce.com/services/oauth2/authorize?client_id=testClientId&redirect_uri=https%3A%2F%2Ftest.app.com%2Fauth%2Fcallback&response_type=code');
 
 		});
 
@@ -147,7 +165,7 @@ describe('index/client/oauth2', () => {
 			const authorizationUrl = client.createAuthorizationUrl(params);
 
 			// Then
-			expect(authorizationUrl).to.eql('https://accounts.google.com/o/oauth2/v2/auth?client_id=testClientId&redirect_uri=https%3A%2F%2Ftest.app.com%2Fauth%2Fcallback&response_type=code&scope=api');
+			expect(authorizationUrl).to.eql('https://login.salesforce.com/services/oauth2/authorize?client_id=testClientId&redirect_uri=https%3A%2F%2Ftest.app.com%2Fauth%2Fcallback&response_type=code&scope=api');
 
 		});
 
@@ -164,7 +182,7 @@ describe('index/client/oauth2', () => {
 			const authorizationUrl = client.createAuthorizationUrl(params, opts);
 
 			// Then
-			expect(authorizationUrl).to.eql('https://accounts.google.com/o/oauth2/v2/auth?client_id=testClientId&redirect_uri=https%3A%2F%2Ftest.app.com%2Fauth%2Fcallback&response_type=code&scope=api&state=testState');
+			expect(authorizationUrl).to.eql('https://login.salesforce.com/services/oauth2/authorize?client_id=testClientId&redirect_uri=https%3A%2F%2Ftest.app.com%2Fauth%2Fcallback&response_type=code&scope=api&state=testState');
 
 		});
 
@@ -179,7 +197,7 @@ describe('index/client/oauth2', () => {
 			const authorizationUrl = client.createAuthorizationUrl(params);
 
 			// Then
-			expect(authorizationUrl).to.eql('https://accounts.google.com/o/oauth2/v2/auth?client_id=testClientId&redirect_uri=https%3A%2F%2Ftest.app.com%2Fauth%2Fcallback&response_type=code&scope=api%20id');
+			expect(authorizationUrl).to.eql('https://login.salesforce.com/services/oauth2/authorize?client_id=testClientId&redirect_uri=https%3A%2F%2Ftest.app.com%2Fauth%2Fcallback&response_type=code&scope=api%20id');
 
 		});
 
@@ -228,6 +246,7 @@ describe('index/client/oauth2', () => {
 			describe('if the grant_type is authorization code', () => {
 
 				let params: AuthCodeGrantParams;
+				let opts: GrantOptions;
 
 				beforeEach(() => {
 
@@ -235,6 +254,11 @@ describe('index/client/oauth2', () => {
 						clientId: 'testClientId',
 						code: 'testCode',
 						grantType: 'authorization_code'
+					};
+
+					opts = {
+						clientSecret: 'testClientSecret',
+						redirectUri: 'https://test.app.com/auth/callback'
 					};
 
 				});
@@ -285,6 +309,33 @@ describe('index/client/oauth2', () => {
 
 				});
 
+				it('for an invalid token', async () => {
+
+					// Given
+					await client.init();
+
+					postResponse.data = {
+						error: 'invalid_client_id',
+						error_description: 'Client identifier invalid'
+					};
+					postResponse.status = 400;
+					postResponse.statusText = 'Bad Request';
+
+					// When
+					await expect(client.grant(params, opts)).to.rejectedWith('Failed to obtain grant: invalid_client_id (Client identifier invalid).');
+
+					// Then
+					expect(axios.post).to.have.been.calledOnce;
+					expect(axios.post).to.have.been.calledWithExactly('https://login.salesforce.com/services/oauth2/token', 'client_id=testClientId&client_secret=testClientSecret&code=testCode&grant_type=authorization_code&redirect_uri=https%3A%2F%2Ftest.app.com%2Fauth%2Fcallback', {
+						headers: {
+							'Accept': 'application/json',
+							'Content-Type': 'application/x-www-form-urlencoded'
+						},
+						validateStatus: sinon.match.func
+					});
+
+				});
+
 			});
 
 			describe('if the grant_type is refresh token', () => {
@@ -322,24 +373,18 @@ describe('index/client/oauth2', () => {
 
 			describe('if the grant_type is authorization code', () => {
 
-				let params: AuthCodeGrantParams;
+				it('and the flow is using the client secret', async () => {
 
-				beforeEach(() => {
-
-					params = {
+					// Given
+					const params: AuthCodeGrantParams = {
 						clientId: 'testClientId',
 						code: 'testCode',
 						grantType: 'authorization_code'
 					};
 
-				});
-
-				it('and the flow is using the client secret', async () => {
-
-					// Given
 					await client.init();
 
-					const opts: GrantOptions = {
+					const opts = {
 						clientSecret: 'testClientSecret',
 						redirectUri: 'https://test.app.com/auth/callback'
 					};
@@ -349,12 +394,12 @@ describe('index/client/oauth2', () => {
 
 					// Then
 					expect(axios.post).to.have.been.calledOnce;
-					expect(axios.post).to.have.been.calledWithExactly('https://oauth2.googleapis.com/token', 'client_id=testClientId&client_secret=testClientSecret&code=testCode&grant_type=authorization_code&redirect_uri=https%3A%2F%2Ftest.app.com%2Fauth%2Fcallback', {
+					expect(axios.post).to.have.been.calledWithExactly('https://login.salesforce.com/services/oauth2/token', 'client_id=testClientId&client_secret=testClientSecret&code=testCode&grant_type=authorization_code&redirect_uri=https%3A%2F%2Ftest.app.com%2Fauth%2Fcallback', {
 						headers: {
 							'Accept': 'application/json',
 							'Content-Type': 'application/x-www-form-urlencoded'
 						},
-						validateStatus: undefined
+						validateStatus: sinon.match.func
 					});
 
 				});
@@ -390,12 +435,12 @@ describe('index/client/oauth2', () => {
 
 					// Then
 					expect(axios.post).to.have.been.calledOnce;
-					expect(axios.post).to.have.been.calledWithExactly('https://oauth2.googleapis.com/token', 'client_id=testClientId&client_secret=testClientSecret&grant_type=refresh_token&refresh_token=testRefreshToken', {
+					expect(axios.post).to.have.been.calledWithExactly('https://login.salesforce.com/services/oauth2/token', 'client_id=testClientId&client_secret=testClientSecret&grant_type=refresh_token&refresh_token=testRefreshToken', {
 						headers: {
 							'Accept': 'application/json',
 							'Content-Type': 'application/x-www-form-urlencoded'
 						},
-						validateStatus: undefined
+						validateStatus: sinon.match.func
 					});
 
 				});
@@ -453,6 +498,154 @@ describe('index/client/oauth2', () => {
 
 	});
 
+	describe('introspect', () => {
+
+		let params: IntrospectionParams;
+
+		beforeEach(() => {
+			params = {
+				clientId: 'testClientId',
+				clientSecret: 'testClientSecret'
+			};
+		});
+
+		describe('should throw an error', () => {
+
+			it('if the client has not been initialised', async () => {
+
+				// Given
+				// When
+				// Then
+				await expect(client.introspect('testToken', params)).to.eventually.be.rejectedWith('OAuth2 client has not been initialized');
+
+			});
+
+			it('if the client does not support the introspection endpoint', async () => {
+
+				// Given
+				delete env.introspectionEndpoint;
+
+				client = new OAuth2Client(env);
+
+				// When
+				await client.init();
+
+				// Then
+				await expect(client.introspect('testToken', params)).to.eventually.be.rejectedWith('OAuth2 client does not support token introspection');
+
+			});
+
+			it('if the clientId is not provided', async () => {
+
+				// Given
+				delete params.clientId;
+
+				await client.init();
+
+				// When
+				// Then
+				await expect(client.introspect('testToken', params)).to.eventually.be.rejectedWith('Missing required string parameter: clientId');
+
+			});
+
+			it('if the clientSecret is not provided', async () => {
+
+				// Given
+				delete params.clientSecret;
+
+				await client.init();
+
+				// When
+				// Then
+				await expect(client.introspect('testToken', params)).to.eventually.be.rejectedWith('Missing required string parameter: clientSecret');
+
+			});
+
+			it('for an invalid token', async () => {
+
+				// Given
+				await client.init();
+
+				sinon.stub(axios, 'post').resolves({
+					config: {},
+					data: {
+						error: 'invalid_token',
+						error_description: 'this token is invalid, unknown, or malformed'
+					},
+					headers: {},
+					status: 400,
+					statusText: 'Bad Request'
+				});
+
+				// When
+				await expect(client.introspect('testToken', params)).to.rejectedWith('Failed to introspect token: invalid_token (this token is invalid, unknown, or malformed).');
+
+				// Then
+				expect(axios.post).to.have.been.calledOnce;
+				expect(axios.post).to.have.been.calledWithExactly('https://login.salesforce.com/services/oauth2/introspect', 'client_id=testClientId&client_secret=testClientSecret&token=testToken', {
+					headers: {
+						'Accept': 'application/json',
+						'Content-Type': 'application/x-www-form-urlencoded'
+					},
+					validateStatus: sinon.match.func
+				});
+
+			});
+
+		});
+
+		it('should introspect the given token', async () => {
+
+			await client.init();
+
+			sinon.stub(axios, 'post').resolves({
+				config: {},
+				data: {
+					active: true,
+					client_id: 'OAuthSp',
+					exp: 1528502109,
+					iat: 1528494909,
+					nbf: 1528494909,
+					scope: 'id api web full refresh_token openid',
+					sub: 'https://login.salesforce.com/id/00Dxx0000001gEREAY/005xx000001Sv6AAAS',
+					token_type: 'access_token',
+					username: 'test@test.com'
+				},
+				headers: {},
+				status: 200,
+				statusText: 'OK'
+			});
+
+			// Given
+			// When
+			const result = await client.introspect('testToken', params);
+
+			// Then
+			expect(result).to.eql({
+				active: true,
+				client_id: 'OAuthSp',
+				exp: 1528502109,
+				iat: 1528494909,
+				nbf: 1528494909,
+				scope: 'id api web full refresh_token openid',
+				sub: 'https://login.salesforce.com/id/00Dxx0000001gEREAY/005xx000001Sv6AAAS',
+				token_type: 'access_token',
+				username: 'test@test.com'
+			});
+
+			expect(axios.post).to.have.been.calledOnce;
+			expect(axios.post).to.have.been.calledWithExactly('https://login.salesforce.com/services/oauth2/introspect', 'client_id=testClientId&client_secret=testClientSecret&token=testToken', {
+				headers: {
+					'Accept': 'application/json',
+					'Content-Type': 'application/x-www-form-urlencoded'
+				},
+				validateStatus: sinon.match.func
+			});
+
+		});
+
+	});
+
 	describe('revoke', () => {
 
 		it('should throw an error if the client has not been initialised', async () => {
@@ -484,11 +677,11 @@ describe('index/client/oauth2', () => {
 			expect(result).to.be.true;
 
 			expect(axios.post).to.have.been.calledOnce;
-			expect(axios.post).to.have.been.calledWithExactly('https://oauth2.googleapis.com/revoke', 'token=testToken', {
+			expect(axios.post).to.have.been.calledWithExactly('https://login.salesforce.com/services/oauth2/revoke', 'token=testToken', {
 				headers: {
 					'Content-Type': 'application/x-www-form-urlencoded'
 				},
-				validateStatus: undefined
+				validateStatus: sinon.match.func
 			});
 
 		});
@@ -498,7 +691,7 @@ describe('index/client/oauth2', () => {
 			// Given
 			await client.init();
 
-			axiosGetStub.withArgs('https://oauth2.googleapis.com/revoke?token=testToken').resolves({
+			axiosGetStub.withArgs('https://login.salesforce.com/services/oauth2/revoke?token=testToken').resolves({
 				config: {},
 				data: {},
 				headers: {},
@@ -513,8 +706,8 @@ describe('index/client/oauth2', () => {
 			expect(result).to.be.true;
 
 			expect(axios.get).to.have.been.calledOnce;
-			expect(axios.get).to.have.been.calledWithExactly('https://oauth2.googleapis.com/revoke?token=testToken', {
-				validateStatus: undefined
+			expect(axios.get).to.have.been.calledWithExactly('https://login.salesforce.com/services/oauth2/revoke?token=testToken', {
+				validateStatus: sinon.match.func
 			});
 
 		});

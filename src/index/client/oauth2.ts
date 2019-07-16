@@ -28,11 +28,12 @@
  * @module client/oauth2
  */
 
-import axios, { AxiosResponse } from 'axios';
+import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 import formUrlencoded from 'form-urlencoded';
 
 import { Environment } from './cache';
 import { JwtGrantParams } from './oauth2Jwt';
+import { UserInfoResponse } from './salesforce/identity';
 
 /**
  * The return formats when requesting a grant.
@@ -226,6 +227,11 @@ export interface AuthClient {
 	init(): Promise<void>;
 
 	/**
+	 * Introspect a token.
+	 */
+	introspect(token: string, params: IntrospectionParams, opts?: IntrospectionOptions): Promise<IntrospectionResponse>;
+
+	/**
 	 * Revoke a token.
 	 *
 	 * This makes a [Revocation Request](https://tools.ietf.org/html/rfc7009#section-2.1) as per the OAuth 2.0 specification.
@@ -342,6 +348,108 @@ export interface GrantOptions {
 }
 
 /**
+ * Required parameters whrn introspecting tokens.
+ */
+export interface IntrospectionParams extends HasClientId {
+
+	/**
+	 * The client secret for your application.
+	 */
+	clientSecret: string;
+
+}
+
+/**
+ * Optional parameters used when introspecting tokens.
+ */
+export interface IntrospectionOptions {
+
+	/**
+	 * Returns the response format, either JSON, XML or URL_ENCODED.
+	 */
+	responseFormat?: ResponseFormat;
+
+}
+
+/**
+ * [Introspection Response](https://tools.ietf.org/html/rfc7662#section-2.2)
+ */
+export interface IntrospectionResponse extends UserInfoResponse {
+
+	/**
+	 * Boolean indicator of whether or not the presented token is currently active.  The
+	 * specifics of a token's "active" state will vary depending on the implementation of the
+	 * authorization server and the information it keeps about its tokens, but a "true" value
+	 * return for the "active" property will generally indicate that a given token has been
+	 * issued by this authorization server, has not been revoked by the resource owner, and
+	 * is within its given time window of validity (e.g., after its issuance time and before its
+	 * expiration time).
+	 */
+	active: boolean;
+
+	/**
+	 * Service-specific string identifier or list of string identifiers representing the intended
+	 * audience for this token, as defined in JWT.
+	 */
+	aud?: string;
+
+	/**
+	 * Client identifier for the OAuth 2.0 client that requested this token.
+	 */
+	client_id?: string;
+
+	/**
+	 * Integer timestamp, measured in the number of seconds since January 1 1970 UTC,
+	 * indicating when this token will expire, as defined in JWT.
+	 */
+	exp?: number;
+
+	/**
+	 * Integer timestamp, measured in the number of seconds since January 1 1970 UTC,
+	 * indicating when this token was originally issued, as defined in JWT.
+	 */
+	iat?: number;
+
+	/**
+	 * String representing the issuer of this token, as defined in JWT.
+	 */
+	iss?: string;
+
+	/**
+	 * String identifier for the token, as defined in JWT.
+	 */
+	jti?: string;
+
+	/**
+	 * Integer timestamp, measured in the number of seconds since January 1 1970 UTC,
+	 * indicating when this token is not to be used before, as defined in JWT.
+	 */
+	nbf?: number;
+
+	/**
+	 * A JSON string containing a space-separated list of scopes associated with this token.
+	 */
+	scope?: string;
+
+	/**
+	 * Subject of the token, as defined in JWT. Usually a machine-readable identifier of the
+	 * resource owner who authorized this token.
+	 */
+	sub?: string;
+
+	/**
+	 * Type of the token.
+	 */
+	token_type?: string;
+
+	/**
+	 * Human-readable identifier for the resource owner who authorized this token.
+	 */
+	username?: string;
+
+}
+
+/**
  * Parameters required for the [Refresh request](https://openid.net/specs/openid-connect-core-1_0.html#RefreshingAccessToken).
  */
 export interface RefreshGrantParams extends RefreshTokenGrantorParams {
@@ -393,14 +501,17 @@ const DEFAULT_REVOCATION_OPTIONS = Object.freeze({
 	useGet: false
 });
 
-const DEFAULT_REQUEST_CONFIG = Object.freeze({
-	validateStatus: undefined
-});
-
 /**
  *  An OAuth 2.0 client that implements the [OAuth 2.0 Authorization Framework](https://tools.ietf.org/html/rfc6749) specification.
  */
 export class OAuth2Client implements AuthClient {
+
+	/**
+	 * The default configuration for an Axios request.
+	 */
+	public static readonly DEFAULT_REQUEST_CONFIG: AxiosRequestConfig = Object.freeze({
+		validateStatus: () => true
+	});
 
 	/**
 	 * The client name.
@@ -413,7 +524,12 @@ export class OAuth2Client implements AuthClient {
 	protected authorizationEndpoint?: string;
 
 	/**
-	 * [Token Endpoint](https://tools.ietf.org/html/rfc6749#section-3.2)
+	 * [Introspection Endpoint](https://tools.ietf.org/html/rfc7662#section-2)
+	 */
+	protected introspectionEndpoint?: string | null;
+
+	/**
+	 * [Revocation Endpoint](https://tools.ietf.org/html/rfc7009#section-2)
 	 */
 	protected tokenEndpoint?: string;
 
@@ -455,6 +571,7 @@ export class OAuth2Client implements AuthClient {
 		}
 
 		this.authorizationEndpoint = this.env.authorizationEndpoint;
+		this.introspectionEndpoint = this.env.introspectionEndpoint || null;
 		this.revocationEndpoint = this.env.revocationEndpoint;
 		this.tokenEndpoint = this.env.tokenEndpoint;
 
@@ -514,7 +631,7 @@ export class OAuth2Client implements AuthClient {
 
 		const body = formUrlencoded(internalParams, { sorted: true });
 
-		const config = Object.assign({}, DEFAULT_REQUEST_CONFIG, {
+		const config = Object.assign({}, OAuth2Client.DEFAULT_REQUEST_CONFIG, {
 			headers: {
 				'Accept': internalOpts.responseFormat,
 				'Content-Type': 'application/x-www-form-urlencoded'
@@ -536,6 +653,55 @@ export class OAuth2Client implements AuthClient {
 	/**
 	 * @inheritdoc
 	 */
+	public async introspect(token: string, params: IntrospectionParams, opts?: IntrospectionOptions) {
+
+		if (this.introspectionEndpoint === undefined) {
+			throw new Error(`${this.clientType} client has not been initialized`);
+		}
+
+		if (this.introspectionEndpoint === null) {
+			throw new Error(`${this.clientType} client does not support token introspection`);
+		}
+
+		if (!params.clientId) {
+			throw new Error('Missing required string parameter: clientId');
+		}
+
+		if (!params.clientSecret) {
+			throw new Error('Missing required string parameter: clientSecret');
+		}
+
+		const config = Object.assign({}, OAuth2Client.DEFAULT_REQUEST_CONFIG, {
+			headers: {
+				'Accept': (opts && opts.responseFormat) || ResponseFormat.JSON,
+				'Content-Type': 'application/x-www-form-urlencoded'
+			}
+		});
+
+		const internalOpts = Object.assign({}, {
+			parseUserInfo: true
+		}, opts);
+
+		const body = formUrlencoded({
+			client_id: params.clientId,
+			client_secret: params.clientSecret,
+			token
+		});
+
+		const response = await axios.post<IntrospectionResponse | ErrorResponse>(this.introspectionEndpoint, body, config);
+		if (response.status !== 200) {
+			const error = response.data as ErrorResponse;
+			throw new Error(`Failed to introspect token: ${error.error} (${error.error_description}).`);
+		}
+
+		const introspectionResponse = response.data as IntrospectionResponse;
+		return this.handleIntrospectionResponse(introspectionResponse, internalOpts);
+
+	}
+
+	/**
+	 * @inheritdoc
+	 */
 	public async revoke(token: string, opts?: RevocationOptions) {
 
 		if (!this.revocationEndpoint) {
@@ -549,10 +715,10 @@ export class OAuth2Client implements AuthClient {
 
 		if (internalOpts.useGet) {
 			revocationUri += `?token=${token}`;
-			response = await axios.get(revocationUri, DEFAULT_REQUEST_CONFIG);
+			response = await axios.get(revocationUri, OAuth2Client.DEFAULT_REQUEST_CONFIG);
 		} else {
 
-			const config = Object.assign({}, DEFAULT_REQUEST_CONFIG, {
+			const config = Object.assign({}, OAuth2Client.DEFAULT_REQUEST_CONFIG, {
 				headers: {
 					'Content-Type': 'application/x-www-form-urlencoded'
 				}
@@ -575,13 +741,23 @@ export class OAuth2Client implements AuthClient {
 	}
 
 	/**
-	 * Handle the access token response, performing validation and parsing, as defined in the grant options.
+	 * Handle the access token response, performing validation and parsing as defined in the grant options.
 	 *
 	 * @param accessTokenResponse The access token response.
 	 * @param internalOpts: The internal options.
 	 */
 	protected handleAccessTokenResponse(accessTokenResponse: AccessTokenResponse, internalOpts: GrantOptions) {
 		return accessTokenResponse;
+	}
+
+	/**
+	 * Handle the introspection response, performing validation and parsing as defined in the grant options.
+	 *
+	 * @param introspectionResponse The access token response.
+	 * @param internalOpts: The internal options.
+	 */
+	protected handleIntrospectionResponse(introspectionResponse: IntrospectionResponse, internalOpts: IntrospectionOptions) {
+		return introspectionResponse;
 	}
 
 	/**

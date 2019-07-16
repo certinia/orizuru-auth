@@ -26,14 +26,15 @@
 
 import config from 'config';
 import debug, { Debugger } from 'debug';
-import http from 'http';
-import https from 'https';
 import pem, { CertificateCreationResult } from 'pem';
 import { SuperAgentRequest } from 'superagent';
 
+import http from 'http';
+import https from 'https';
+
 import { ITransport, Server } from '@financialforcedev/orizuru';
 
-import { Environment, EVENT_AUTHORIZATION_HEADER_SET, EVENT_DENIED, EVENT_GRANT_CHECKED, EVENT_TOKEN_VALIDATED, OpenIdOptions } from '../../src';
+import { Environment, EVENT_AUTHORIZATION_HEADER_SET, EVENT_DENIED, EVENT_GRANT_CHECKED, EVENT_TOKEN_INTROSPECTED, EVENT_TOKEN_VALIDATED, OpenIdOptions } from '../../src';
 
 export interface TrustedSuperAgentRequest extends SuperAgentRequest {
 	trustLocalhost: (toggle: boolean) => TrustedSuperAgentRequest;
@@ -75,7 +76,7 @@ export class TestServer extends Server {
 			});
 		});
 
-		const events = [EVENT_AUTHORIZATION_HEADER_SET, EVENT_DENIED, EVENT_GRANT_CHECKED, EVENT_TOKEN_VALIDATED];
+		const events = [EVENT_AUTHORIZATION_HEADER_SET, EVENT_DENIED, EVENT_GRANT_CHECKED, EVENT_TOKEN_INTROSPECTED, EVENT_TOKEN_VALIDATED];
 		events.map((event) => {
 			this.on(event, (args) => {
 				testdebugInstance(args);

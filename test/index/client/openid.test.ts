@@ -31,7 +31,7 @@ import sinonChai from 'sinon-chai';
 
 import { AxiosRequestConfig, AxiosResponse, default as axios } from 'axios';
 
-import { AuthCodeGrantParams, AuthOptions, AuthUrlParams, Environment, GrantOptions, JwtGrantParams, RefreshGrantParams } from '../../../src';
+import { AuthCodeGrantParams, AuthOptions, AuthUrlParams, Environment, GrantOptions, IntrospectionParams, JwtGrantParams, RefreshGrantParams } from '../../../src';
 import * as jwt from '../../../src/index/client/oauth2Jwt/jwt';
 import * as identity from '../../../src/index/client/openid/identity';
 
@@ -59,7 +59,7 @@ describe('index/client/openid', () => {
 
 		client = new OpenIdClient(env);
 
-		axiosGetStub = sinon.stub(axios, 'get').withArgs('https://login.salesforce.com/.well-known/openid-configuration', { timeout: 4001 }).resolves({
+		axiosGetStub = sinon.stub(axios, 'get').withArgs('https://login.salesforce.com/.well-known/openid-configuration', sinon.match.object).resolves({
 			config: {},
 			data: {
 				authorization_endpoint: 'https://login.salesforce.com/services/oauth2/authorize',
@@ -77,6 +77,27 @@ describe('index/client/openid', () => {
 
 	afterEach(() => {
 		sinon.restore();
+	});
+
+	describe('init', () => {
+
+		it('should throw an error if the configuration request fails', async () => {
+
+			// Given
+			axiosGetStub.withArgs('https://login.salesforce.com/.well-known/openid-configuration', sinon.match.object).resolves({
+				config: {},
+				data: {},
+				headers: {},
+				status: 400,
+				statusText: 'Bad Request'
+			});
+
+			// When
+			// Then
+			await expect(client.init()).to.be.rejectedWith('Failed to initialise OpenID client. OpenID configuration request failed.');
+
+		});
+
 	});
 
 	describe('createAuthorizationUrl', () => {
@@ -435,7 +456,7 @@ describe('index/client/openid', () => {
 							'Accept': 'application/json',
 							'Content-Type': 'application/x-www-form-urlencoded'
 						},
-						validateStatus: undefined
+						validateStatus: sinon.match.func
 					});
 
 				});
@@ -468,7 +489,7 @@ describe('index/client/openid', () => {
 							'Accept': 'application/json',
 							'Content-Type': 'application/x-www-form-urlencoded'
 						},
-						validateStatus: undefined
+						validateStatus: sinon.match.func
 					});
 
 					expect(identity.decodeIdToken).to.have.been.calledOnce;
@@ -520,7 +541,7 @@ describe('index/client/openid', () => {
 							'Accept': 'application/json',
 							'Content-Type': 'application/x-www-form-urlencoded'
 						},
-						validateStatus: undefined
+						validateStatus: sinon.match.func
 					});
 
 					expect(identity.decodeIdToken).to.have.been.calledOnce;
@@ -560,7 +581,7 @@ describe('index/client/openid', () => {
 							'Accept': 'application/json',
 							'Content-Type': 'application/x-www-form-urlencoded'
 						},
-						validateStatus: undefined
+						validateStatus: sinon.match.func
 					});
 
 					expect(identity.decodeIdToken).to.not.have.been.called;
@@ -608,7 +629,7 @@ describe('index/client/openid', () => {
 							'Accept': 'application/json',
 							'Content-Type': 'application/x-www-form-urlencoded'
 						},
-						validateStatus: undefined
+						validateStatus: sinon.match.func
 					});
 
 					expect(identity.decodeIdToken).to.have.been.calledOnce;
@@ -618,6 +639,47 @@ describe('index/client/openid', () => {
 					expect(jwt.createJwtBearerGrantAssertion).to.not.have.been.called;
 
 				});
+
+			});
+
+		});
+
+	});
+
+	describe('introspect', () => {
+
+		let params: IntrospectionParams;
+
+		beforeEach(() => {
+			params = {
+				clientId: 'testClientId',
+				clientSecret: 'testClientSecret'
+			};
+		});
+
+		describe('should throw an error', () => {
+
+			it('if the client has not been initialised', async () => {
+
+				// Given
+				// When
+				// Then
+				await expect(client.introspect('testToken', params)).to.eventually.be.rejectedWith('OpenID client has not been initialized');
+
+			});
+
+			it('if the client does not support the introspection endpoint', async () => {
+
+				// Given
+				delete env.introspectionEndpoint;
+
+				client = new OpenIdClient(env);
+
+				// When
+				await client.init();
+
+				// Then
+				await expect(client.introspect('testToken', params)).to.eventually.be.rejectedWith('OpenID client does not support token introspection');
 
 			});
 
@@ -656,14 +718,16 @@ describe('index/client/openid', () => {
 			expect(result).to.be.true;
 
 			expect(axios.get).to.have.been.calledOnce;
-			expect(axios.get).to.have.been.calledWithExactly('https://login.salesforce.com/.well-known/openid-configuration', { timeout: 4001 });
-
+			expect(axios.get).to.have.been.calledWithExactly('https://login.salesforce.com/.well-known/openid-configuration', {
+				timeout: 4001,
+				validateStatus: sinon.match.func
+			});
 			expect(axios.post).to.have.been.calledOnce;
 			expect(axios.post).to.have.been.calledWithExactly('https://login.salesforce.com/services/oauth2/revoke', 'token=testToken', {
 				headers: {
 					'Content-Type': 'application/x-www-form-urlencoded'
 				},
-				validateStatus: undefined
+				validateStatus: sinon.match.func
 			});
 
 		});
@@ -688,9 +752,12 @@ describe('index/client/openid', () => {
 			expect(result).to.be.true;
 
 			expect(axios.get).to.have.been.calledTwice;
-			expect(axios.get).to.have.been.calledWithExactly('https://login.salesforce.com/.well-known/openid-configuration', { timeout: 4001 });
+			expect(axios.get).to.have.been.calledWithExactly('https://login.salesforce.com/.well-known/openid-configuration', {
+				timeout: 4001,
+				validateStatus: sinon.match.func
+			});
 			expect(axios.get).to.have.been.calledWithExactly('https://login.salesforce.com/services/oauth2/revoke?token=testToken', {
-				validateStatus: undefined
+				validateStatus: sinon.match.func
 			});
 
 		});
@@ -753,13 +820,16 @@ describe('index/client/openid', () => {
 			});
 
 			expect(axios.get).to.have.been.calledTwice;
-			expect(axios.get).to.have.been.calledWithExactly('https://login.salesforce.com/.well-known/openid-configuration', { timeout: 4001 });
+			expect(axios.get).to.have.been.calledWithExactly('https://login.salesforce.com/.well-known/openid-configuration', {
+				timeout: 4001,
+				validateStatus: sinon.match.func
+			});
 			expect(axios.get).to.have.been.calledWithExactly('https://login.salesforce.com/services/oauth2/userinfo', {
 				headers: {
 					Accept: 'application/json',
 					Authorization: `Bearer testToken`
 				},
-				validateStatus: undefined
+				validateStatus: sinon.match.func
 			});
 
 		});

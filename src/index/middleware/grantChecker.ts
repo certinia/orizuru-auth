@@ -32,7 +32,6 @@ import { NextFunction, Request, RequestHandler, Response } from '@financialforce
 
 import { EVENT_GRANT_CHECKED, GrantOptions, JwtGrantParams, JwtTokenGrantorParams } from '../..';
 import { createTokenGrantor } from '../flow/jwtBearerToken';
-
 import { fail } from './common/fail';
 
 /**

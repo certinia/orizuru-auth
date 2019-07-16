@@ -45,7 +45,8 @@ export interface Environment {
 	/**
 	 * [Authorization Endpoint](https://tools.ietf.org/html/rfc6749#section-3.1).
 	 *
-	 * This must be defined for OAuth2 clients but should be omitted for OpenID clients.
+	 * This must be defined for OAuth2 clients; it should be omitted for OpenID clients as
+	 * they use the [OpenID Provider Issuer Discovery](https://openid.net/specs/openid-connect-discovery-1_0.html).
 	 */
 	authorizationEndpoint?: string;
 
@@ -55,6 +56,14 @@ export interface Environment {
 	httpTimeout: number;
 
 	/**
+	 * [Introspection Endpoint](https://tools.ietf.org/html/rfc7662#section-2).
+	 *
+	 * This may be defined for OAuth2 clients; it should be omitted for OpenID clients as
+	 * they use the [OpenID Provider Issuer Discovery](https://openid.net/specs/openid-connect-discovery-1_0.html).
+	 */
+	introspectionEndpoint?: string | null;
+
+	/**
 	 * The Issuer URI used when creating an Auth Client.
 	 */
 	issuerURI: string;
@@ -62,14 +71,16 @@ export interface Environment {
 	/**
 	 * [Revocation Endpoint](https://tools.ietf.org/html/rfc7009#section-2.1)
 	 *
-	 * This must be defined for OAuth2 clients but should be omitted for OpenID clients.
+	 * This must be defined for OAuth2 clients; it should be omitted for OpenID clients as
+	 * they use the [OpenID Provider Issuer Discovery](https://openid.net/specs/openid-connect-discovery-1_0.html).
 	 */
 	revocationEndpoint?: string;
 
 	/**
 	 * [Token Endpoint](https://tools.ietf.org/html/rfc6749#section-3.2)
 	 *
-	 * This must be defined for OAuth2 clients but should be omitted for OpenID clients.
+	 * This must be defined for OAuth2 clients; it should be omitted for OpenID clients as
+	 * they use the [OpenID Provider Issuer Discovery](https://openid.net/specs/openid-connect-discovery-1_0.html).
 	 */
 	tokenEndpoint?: string;
 

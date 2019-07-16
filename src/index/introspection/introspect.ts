@@ -25,27 +25,27 @@
  */
 
 /**
- * @module revocation/revoke
+ * @module introspection/introspect
  */
 
-import { Environment, TokenRevoker } from '..';
+import { Environment, IntrospectionOptions, TokenIntrospector } from '../..';
 import { findOrCreateClient } from '../client/cache';
+import { IntrospectionParams } from '../client/oauth2';
 import { validate } from '../client/validator/environment';
 
 /**
- * [Revokes access tokens](https://help.salesforce.com/articleView?id=remoteaccess_revoke_token.htm)
- * so that users can no longer access Salesforce.
+ * Returns a function that introspects a token.
  *
  * @param [env] The auth environment parameters.
  */
-export function createTokenRevoker(env: Environment): TokenRevoker {
+export function createTokenIntrospector(env?: Environment): TokenIntrospector {
 
 	const validatedEnvironment = validate(env);
 
-	return async function revokeToken(token: string) {
+	return async function introspectToken(token: string, params: IntrospectionParams, opts?: IntrospectionOptions) {
 
 		const client = await findOrCreateClient(validatedEnvironment);
-		return client.revoke(token);
+		return client.introspect(token, params, opts);
 
 	};
 

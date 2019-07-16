@@ -31,18 +31,13 @@
 import axios from 'axios';
 
 import { Environment } from './cache';
-import { AccessTokenResponse, GrantOptions, GrantParams, ResponseFormat } from './oauth2';
+import { AccessTokenResponse, GrantOptions, GrantParams, OAuth2Client, ResponseFormat } from './oauth2';
 import { JWT, OAuth2JWTClient } from './oauth2Jwt';
 import { decodeIdToken } from './openid/identity';
 
 const DEFAULT_USERINFO_OPTIONS = Object.freeze({
 	responseFormat: 'application/json'
 });
-
-const DEFAULT_REQUEST_CONFIG = Object.freeze({
-	validateStatus: undefined
-});
-
 export interface OpenIDAccessTokenResponse extends AccessTokenResponse {
 
 	/**
@@ -315,10 +310,18 @@ export class OpenIdClient extends OAuth2JWTClient {
 	public async init() {
 
 		const uri = `${this.env.issuerURI.replace(/\/$/, '')}/.well-known/openid-configuration`;
-		const response = await axios.get(uri, { timeout: this.env.httpTimeout });
+		const response = await axios.get(uri, Object.assign({}, OAuth2Client.DEFAULT_REQUEST_CONFIG, {
+			timeout: this.env.httpTimeout
+		}));
+
+		if (response.status !== 200) {
+			throw new Error(`Failed to initialise ${this.clientType} client. OpenID configuration request failed.`);
+		}
+
 		const data = response.data;
 
 		this.authorizationEndpoint = data.authorization_endpoint;
+		this.introspectionEndpoint = data.introspection_endpoint || null;
 		this.revocationEndpoint = data.revocation_endpoint;
 		this.tokenEndpoint = data.token_endpoint;
 		this.userinfoEndpoint = data.userinfo_endpoint;
@@ -347,7 +350,7 @@ export class OpenIdClient extends OAuth2JWTClient {
 
 		const internalOpts = Object.assign({}, DEFAULT_USERINFO_OPTIONS, opts);
 
-		const config = Object.assign({}, DEFAULT_REQUEST_CONFIG, {
+		const config = Object.assign({}, OAuth2Client.DEFAULT_REQUEST_CONFIG, {
 			headers: {
 				Accept: internalOpts.responseFormat,
 				Authorization: `Bearer ${token}`

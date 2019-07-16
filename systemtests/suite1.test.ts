@@ -25,15 +25,13 @@
  */
 
 import chai from 'chai';
+import config from 'config';
 import { Browser, BrowserContext, launch, Page } from 'puppeteer';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
 import superagent from 'superagent';
 
-import config from 'config';
-
-import { EVENT_AUTHORIZATION_HEADER_SET, EVENT_DENIED, EVENT_GRANT_CHECKED, EVENT_TOKEN_VALIDATED } from '../src/index';
-
+import { EVENT_AUTHORIZATION_HEADER_SET, EVENT_DENIED, EVENT_GRANT_CHECKED, EVENT_TOKEN_INTROSPECTED, EVENT_TOKEN_VALIDATED } from '../src/index';
 import { TestServer, TrustedSuperAgentRequest } from './server/common';
 import { createServer } from './server/salesforce';
 
@@ -133,6 +131,7 @@ describe('Suite 1 - Puppeteer script for Salesforce authentication', () => {
 			fail('No access token');
 		}
 
+		const organizationId = config.get<string>('test.salesforce.organizationId');
 		const username = config.get<string>('test.salesforce.username');
 
 		const request = superagent.get('https://localhost:8080/api/auth/v1.0/validateToken') as TrustedSuperAgentRequest;
@@ -146,6 +145,7 @@ describe('Suite 1 - Puppeteer script for Salesforce authentication', () => {
 		expect(response).to.have.property('status', 200);
 		expect(response).to.have.property('body').that.eqls({
 			user: {
+				organizationId,
 				username
 			}
 		});
@@ -162,6 +162,7 @@ describe('Suite 1 - Puppeteer script for Salesforce authentication', () => {
 			fail('No access token');
 		}
 
+		const organizationId = config.get<string>('test.salesforce.organizationId');
 		const username = config.get<string>('test.salesforce.username');
 
 		const request = superagent.get('https://localhost:8080/api/auth/v1.0/checkGrant') as TrustedSuperAgentRequest;
@@ -176,6 +177,7 @@ describe('Suite 1 - Puppeteer script for Salesforce authentication', () => {
 		expect(response).to.have.property('body').that.eqls({
 			grantChecked: true,
 			user: {
+				organizationId,
 				username
 			}
 		});
@@ -183,6 +185,38 @@ describe('Suite 1 - Puppeteer script for Salesforce authentication', () => {
 		expect(server.emit).to.have.been.calledTwice;
 		expect(server.emit).to.have.been.calledWithExactly(EVENT_TOKEN_VALIDATED, `Token validated for user (${username}) [::ffff:127.0.0.1].`);
 		expect(server.emit).to.have.been.calledWithExactly(EVENT_GRANT_CHECKED, `Grant checked for user (${username}) [::ffff:127.0.0.1].`);
+
+	});
+
+	it('should introspect the token', async () => {
+
+		// Given
+		if (!accessToken) {
+			fail('No access token');
+		}
+
+		const organizationId = config.get<string>('test.salesforce.organizationId');
+		const username = config.get<string>('test.salesforce.username');
+
+		const request = superagent.get('https://localhost:8080/api/auth/v1.0/introspectToken') as TrustedSuperAgentRequest;
+
+		// When
+		const response = await request.trustLocalhost(true)
+			.set('Authorization', accessToken)
+			.send({});
+
+		// Then
+		expect(response).to.have.property('status', 200);
+		expect(response).to.have.property('body');
+		expect(response.body).to.have.property('user').that.eqls({
+			organizationId,
+			username
+		});
+		expect(response.body).to.have.property('tokenInformation');
+
+		expect(server.emit).to.have.been.calledTwice;
+		expect(server.emit).to.have.been.calledWithExactly(EVENT_TOKEN_INTROSPECTED, `Token introspected for user (${username}) [::ffff:127.0.0.1].`);
+		expect(server.emit).to.have.been.calledWithExactly(EVENT_TOKEN_VALIDATED, `Token validated for user (${username}) [::ffff:127.0.0.1].`);
 
 	});
 

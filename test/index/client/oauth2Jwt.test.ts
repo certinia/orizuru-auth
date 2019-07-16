@@ -381,7 +381,7 @@ describe('index/client/oauth2Jwt', () => {
 							'Accept': 'application/json',
 							'Content-Type': 'application/x-www-form-urlencoded'
 						},
-						validateStatus: undefined
+						validateStatus: sinon.match.func
 					});
 
 				});
@@ -455,7 +455,7 @@ describe('index/client/oauth2Jwt', () => {
 							'Accept': 'application/json',
 							'Content-Type': 'application/x-www-form-urlencoded'
 						},
-						validateStatus: undefined
+						validateStatus: sinon.match.func
 					});
 
 				});
@@ -496,7 +496,7 @@ describe('index/client/oauth2Jwt', () => {
 							'Accept': 'application/json',
 							'Content-Type': 'application/x-www-form-urlencoded'
 						},
-						validateStatus: undefined
+						validateStatus: sinon.match.func
 					});
 
 				});
@@ -589,7 +589,7 @@ describe('index/client/oauth2Jwt', () => {
 				headers: {
 					'Content-Type': 'application/x-www-form-urlencoded'
 				},
-				validateStatus: undefined
+				validateStatus: sinon.match.func
 			});
 
 		});
@@ -615,7 +615,7 @@ describe('index/client/oauth2Jwt', () => {
 
 			expect(axios.get).to.have.been.calledOnce;
 			expect(axios.get).to.have.been.calledWithExactly('https://login.salesforce.com/services/oauth2/revoke?token=testToken', {
-				validateStatus: undefined
+				validateStatus: sinon.match.func
 			});
 
 		});

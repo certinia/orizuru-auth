@@ -31,9 +31,9 @@
 import { NextFunction, Request, RequestHandler, Response } from '@financialforcedev/orizuru';
 
 import { EVENT_TOKEN_VALIDATED, OpenIDTokenWithStandardClaims, User, UserInfoOptions } from '../..';
-import { createUserInfoRequester } from '../userInfo/userinfo';
-
 import { SalesforceUser } from '../client/salesforce';
+import { createUserInfoRequester } from '../userInfo/userinfo';
+import { extractAccessToken } from './common/accessToken';
 import { fail } from './common/fail';
 
 /**
@@ -50,13 +50,12 @@ import { fail } from './common/fail';
 export function createMiddleware(app: Orizuru.IServer, provider: string, opts?: UserInfoOptions): RequestHandler {
 
 	const validateAccessToken = createUserInfoRequester(app.options.authProvider[provider]);
-	const tokenRegex = new RegExp('^Bearer (.+)$');
 
 	return async function validateToken(req: Request, res: Response, next: NextFunction) {
 
 		try {
 
-			const accessToken = extractAccessToken(req, tokenRegex);
+			const accessToken = extractAccessToken(req);
 			const userInfo = await validateAccessToken(accessToken, opts) as OpenIDTokenWithStandardClaims;
 
 			let user: User | SalesforceUser;
@@ -81,32 +80,6 @@ export function createMiddleware(app: Orizuru.IServer, provider: string, opts?: 
 		}
 
 	};
-
-}
-
-/**
- * Extracts the access token from the incoming request.
- *
- * @param req The HTTP request.
- * @param tokenRegex The regular expression used for parsing the token.
- * @returns The access token from the request authorization header.
- */
-function extractAccessToken(req: Request, tokenRegex: RegExp) {
-
-	if (!req.headers) {
-		throw new Error('Missing required object parameter: headers.');
-	}
-
-	if (!req.headers.authorization) {
-		throw new Error('Missing required string parameter: headers[authorization].');
-	}
-
-	const matches = tokenRegex.exec(req.headers.authorization);
-	if (matches === null) {
-		throw new Error('Authorization header with \'Bearer ***...\' required.');
-	}
-
-	return matches[1];
 
 }
 

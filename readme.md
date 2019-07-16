@@ -61,7 +61,7 @@ import config from 'config';
 import https from 'https';
 import pem, { CertificateCreationResult } from 'pem';
 
-import { json, Request, Response, Server } from '@financialforcedev/orizuru';
+import { json, NextFunction, Request, Response, Server } from '@financialforcedev/orizuru';
 import { flow } from '@financialforcedev/orizuru-auth';
 import { Transport } from '@financialforcedev/orizuru-transport-rabbitmq';
 
@@ -77,6 +77,16 @@ function createCertificate(): Promise<CertificateCreationResult> {
         });
     });
 }
+
+// Define a simple error middleware
+const errorMiddleware = (error: Error | undefined, req: Request, res: Response, next: NextFunction) => {
+    if (error) {
+        server.error(error);
+        res.sendStatus(401);
+    } else {
+        next();
+    }
+};
 
 // Create the server
 const server = new Server({
@@ -94,11 +104,21 @@ const server = new Server({
     })
 });
 
+// Add listeners for the server error and info events
+server.on(Server.ERROR, (message) => {
+    process.stdout.write(`${message}\n`);
+});
+
+server.on(Server.INFO, (message) => {
+    process.stdout.write(`${message}\n`);
+});
+
 // Add the route to generate the authorization URL (in this case we use 'test' as the state parameter)
 server.addRoute({
     method: 'get',
     middleware: [
-        json()
+        json(),
+        errorMiddleware
     ],
     responseWriter: () => async (err: Error | undefined, req: Request, res: Response) => {
         const url = await flow.webServer.authorizationUrlGenerator(server.options.authProvider.salesforce)(server.options.openid.salesforce, server.options.openid.salesforce);
@@ -142,7 +162,7 @@ The auth callback middleware exchanges a verification code for an access token a
 
 If a verification token is successfully exchanged for an access token then the `Authorization` HTTP header is set on the request.
 
-The following example illustrates how the auth callback middleware can be used with [Orizuru](https://github.com/financialforcedev/orizuru) and [Orizuru Transport RabbitMQ](https://github.com/financialforcedev/orizuru-transport-rabbitmq). It follows on from the example given in the [OAuth 2.0 Web Server Authentication Flow](#oauth-20-web-server-authentication-flow) section. 
+The following example illustrates how the auth callback middleware can be used with [Orizuru](https://github.com/financialforcedev/orizuru) and [Orizuru Transport RabbitMQ](https://github.com/financialforcedev/orizuru-transport-rabbitmq). It follows on from the example given in the [OAuth 2.0 Web Server Authentication Flow](#oauth-20-web-server-authentication-flow) section.
 
 The route `https://localhost:8080/api/auth/v1.0/callback` is added to the server and is called once the user has authorized the connected app. If the request is successful, a **Authorization Header Set** message is printed to the console and the token is returned. This token can be used to test the subsequent routes.
 
@@ -156,7 +176,8 @@ server.on(EVENT_AUTHORIZATION_HEADER_SET, (message) => {
 server.addRoute({
     method: 'get',
     middleware: [
-        middleware.authCallback(server, 'salesforce', server.options.openid.salesforce, server.options.openid.salesforce)
+        middleware.authCallback(server, 'salesforce', server.options.openid.salesforce, server.options.openid.salesforce),
+        errorMiddleware
     ],
     responseWriter: (app) => async (error, req, res) => {
         res.json(req.headers.authorization);
@@ -195,7 +216,8 @@ server.on(EVENT_TOKEN_VALIDATED, (message) => {
 server.addRoute({
     method: 'get',
     middleware: [
-        middleware.tokenValidator(server, 'salesforce')
+        middleware.tokenValidator(server, 'salesforce'),
+        errorMiddleware
     ],
     responseWriter: (app) => async (error, req, res) => {
         res.json(req.orizuru);
@@ -216,7 +238,7 @@ The grant checker is designed to be used in tandem with the token Validator. It 
 
 If this completes successfully it sets the `orizuru` object `grantChecked` property to be true, otherwise the user will be refused access.
 
-The following example illustrates how the grant checker can be used, with [Orizuru](https://github.com/financialforcedev/orizuru) and [Orizuru Transport RabbitMQ](https://github.com/financialforcedev/orizuru-transport-rabbitmq), to validate tokens contained in the authorization request header. It follows on from the example given in the [Token Validator](#token-validator) section. 
+The following example illustrates how the grant checker can be used, with [Orizuru](https://github.com/financialforcedev/orizuru) and [Orizuru Transport RabbitMQ](https://github.com/financialforcedev/orizuru-transport-rabbitmq), to validate tokens contained in the authorization request header. It follows on from the example given in the [Token Validator](#token-validator) section.
 
 The route `https://localhost:8080/api/auth/v1.0/checkGrant` is added to the server as a GET request. If the request is successful, a **grant checked** message is printed to the console and the *orizuru* object is returned. Otherwise, a denied message is printed to the console.
 
@@ -233,7 +255,8 @@ server.addRoute({
         middleware.tokenValidator(server, 'salesforce'),
         middleware.grantChecker(server, 'salesforce', server.options.openid.salesforceConnection, {
             verifySignature: false
-        })
+        }),
+        errorMiddleware
     ],
     responseWriter: (app) => async (error, req, res) => {
         res.json(req.orizuru);
@@ -290,13 +313,51 @@ async function retrieveOrgLimits(err: Error | undefined, req: Request, res: Resp
 server.addRoute({
     method: 'get',
     middleware: [
-        middleware.tokenValidator(server, 'salesforce')
+        middleware.tokenValidator(server, 'salesforce'),
+        errorMiddleware
     ],
     responseWriter: (app) => retrieveOrgLimits,
     schema: {
         fields: [],
         name: 'limits',
         namespace: 'api.v1_0',
+        type: 'record'
+    },
+    synchronous: true
+});
+```
+
+### Token Introspector
+
+The token introspector middleware can be used to determine the active state of an OAuth 2.0 token and retrieve meta-information about this token. It can be used in tandem with either the [Auth Callback](#auth-callback) or the [Token Grantor](#token-granter) middlewares.
+
+The following example illustrates how the token introspector can be used, with [Orizuru](https://github.com/financialforcedev/orizuru) and [Orizuru Transport RabbitMQ](https://github.com/financialforcedev/orizuru-transport-rabbitmq), to retrieve the token information. It follows on from the example given in the [Token Granter](#token-granter) section. 
+
+The route `https://localhost:8080/api/auth/v1.0/introspectToken` is added to the server as a GET request. If the request is successful, a **token introspected** message is printed to the console and the *orizuru* object is returned. Otherwise, a denied message is printed to the console.
+
+```typescript
+// Add the listeners
+server.on(EVENT_TOKEN_INTROSPECTED, (message) => {
+    process.stdout.write(`${message}\n`);
+});
+
+// Add a route to the server
+server.addRoute({
+    method: 'get',
+    middleware: [
+        urlencoded({
+            extended: true
+        }),
+        middleware.tokenIntrospection(server, 'salesforce'),
+        errorMiddleware
+    ],
+    responseWriter: (app) => async (error, req, res) => {
+        res.json(req.orizuru);
+    },
+    schema: {
+        fields: [],
+        name: 'introspectToken',
+        namespace: 'api.auth.v1_0',
         type: 'record'
     },
     synchronous: true

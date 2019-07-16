@@ -30,8 +30,7 @@
 
 import { AccessTokenResponse, Environment, GrantOptions, JwtGrantParams, User, UserTokenGrantor, UserTokenGrantorParams } from '../..';
 import { findOrCreateClient } from '../client/cache';
-import { UserInfo } from '../client/salesforce';
-import { isSalesforceAccessTokenResponse } from '../client/salesforce/identity';
+import { isSalesforceAccessTokenResponse, UserInfo } from '../client/salesforce/identity';
 import { validate } from '../client/validator/environment';
 
 export interface Grant {

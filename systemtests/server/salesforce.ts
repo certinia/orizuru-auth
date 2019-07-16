@@ -27,7 +27,6 @@
 import { json, Request, Response, Server, urlencoded } from '@financialforcedev/orizuru';
 
 import { flow, middleware, revocation } from '../../src';
-
 import { TestServer } from './common';
 
 export async function createServer() {
@@ -36,6 +35,7 @@ export async function createServer() {
 
 	addAuthRoute(server);
 	addAuthCallbackRoute(server);
+	addTokenIntrospectionRoute(server);
 	addTokenValidationRoute(server);
 	addGrantCheckRoute(server);
 	addRevokeTokenRoute(server);
@@ -92,6 +92,27 @@ function addAuthCallbackRoute(server: Server) {
 		schema: {
 			fields: [],
 			name: 'callback',
+			namespace: 'api.auth.v1_0',
+			type: 'record'
+		},
+		synchronous: true
+	});
+
+}
+
+function addTokenIntrospectionRoute(server: Server) {
+
+	server.addRoute({
+		method: 'get',
+		middleware: [
+			middleware.tokenIntrospection(server, 'salesforceIdentity')
+		],
+		responseWriter: (app) => async (error, req, res) => {
+			res.json(req.orizuru);
+		},
+		schema: {
+			fields: [],
+			name: 'introspectToken',
 			namespace: 'api.auth.v1_0',
 			type: 'record'
 		},

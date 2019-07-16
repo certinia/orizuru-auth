@@ -41,11 +41,13 @@ describe('index', () => {
 			'EVENT_AUTHORIZATION_HEADER_SET',
 			'EVENT_DENIED',
 			'EVENT_GRANT_CHECKED',
+			'EVENT_TOKEN_INTROSPECTED',
 			'EVENT_TOKEN_VALIDATED',
 			'EVENT_USER_IDENTITY_RETRIEVED',
 			'ResponseFormat',
 			'flow',
 			'grant',
+			'introspection',
 			'middleware',
 			'openIdClient',
 			'revocation',
@@ -62,10 +64,15 @@ describe('index', () => {
 			'getToken'
 		]);
 
+		expect(index.introspection).to.have.keys([
+			'createTokenIntrospector'
+		]);
+
 		expect(index.middleware).to.have.keys([
 			'authCallback',
 			'grantChecker',
 			'retrieveIdentityInformation',
+			'tokenIntrospection',
 			'tokenValidator'
 		]);
 

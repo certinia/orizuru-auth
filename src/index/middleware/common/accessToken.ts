@@ -25,28 +25,35 @@
  */
 
 /**
- * @module revocation/revoke
+ * @module middleware/common/accessToken
  */
 
-import { Environment, TokenRevoker } from '..';
-import { findOrCreateClient } from '../client/cache';
-import { validate } from '../client/validator/environment';
+import { Request } from '@financialforcedev/orizuru';
+
+const tokenRegex = new RegExp('^Bearer (.+)$');
 
 /**
- * [Revokes access tokens](https://help.salesforce.com/articleView?id=remoteaccess_revoke_token.htm)
- * so that users can no longer access Salesforce.
+ * Extracts the access token from the incoming request.
  *
- * @param [env] The auth environment parameters.
+ * @param req The HTTP request.
+ * @param tokenRegex The regular expression used for parsing the token.
+ * @returns The access token from the request authorization header.
  */
-export function createTokenRevoker(env: Environment): TokenRevoker {
+export function extractAccessToken(req: Request) {
 
-	const validatedEnvironment = validate(env);
+	if (!req.headers) {
+		throw new Error('Missing required object parameter: headers.');
+	}
 
-	return async function revokeToken(token: string) {
+	if (!req.headers.authorization) {
+		throw new Error('Missing required string parameter: headers[authorization].');
+	}
 
-		const client = await findOrCreateClient(validatedEnvironment);
-		return client.revoke(token);
+	const matches = tokenRegex.exec(req.headers.authorization);
+	if (matches === null) {
+		throw new Error('Authorization header with \'Bearer ***...\' required.');
+	}
 
-	};
+	return matches[1];
 
 }

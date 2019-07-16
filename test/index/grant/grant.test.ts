@@ -29,12 +29,11 @@ import chaiAsPromised from 'chai-as-promised';
 import sinon, { SinonStub, SinonStubbedInstance } from 'sinon';
 import sinonChai from 'sinon-chai';
 
+import { AccessTokenResponse, Environment, GrantOptions, JwtGrantParams, SalesforceAccessTokenResponse, UserTokenGrantor } from '../../../src';
 import * as cache from '../../../src/index/client/cache';
 import { AuthClient } from '../../../src/index/client/oauth2';
 import { OpenIdClient } from '../../../src/index/client/openid';
 import * as validator from '../../../src/index/client/validator/environment';
-
-import { AccessTokenResponse, Environment, GrantOptions, JwtGrantParams, SalesforceAccessTokenResponse, UserTokenGrantor } from '../../../src';
 
 import { getToken } from '../../../src/index/grant/grant';
 

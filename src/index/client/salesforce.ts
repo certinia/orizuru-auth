@@ -29,13 +29,14 @@
  */
 
 import { Environment } from './cache';
-import { GrantOptions, GrantParams } from './oauth2';
+import { GrantOptions, GrantParams, IntrospectionOptions, IntrospectionResponse } from './oauth2';
 import { User } from './oauth2Jwt';
 import { OpenIDAccessTokenResponse, OpenIdClient } from './openid';
-import { parseUserInfo, verifySignature } from './salesforce/identity';
+import { parseUserInfo, UserInfoResponse, verifySignature } from './salesforce/identity';
 
 /**
  * The Salesforce Access Token Response.
+ *
  * @example
  * ```json
  *
@@ -52,17 +53,12 @@ import { parseUserInfo, verifySignature } from './salesforce/identity';
  *
  * ```
  */
-export interface SalesforceAccessTokenResponse extends OpenIDAccessTokenResponse {
+export interface SalesforceAccessTokenResponse extends OpenIDAccessTokenResponse, UserInfoResponse {
 
 	/**
 	 * A URL indicating the instance of the user’s org. For example: https://yourInstance.salesforce.com/.
 	 */
 	instance_url?: string;
-
-	/**
-	 * Identity URL that can be used to both identify the user and query for more information about the user.
-	 */
-	id: string;
 
 	/**
 	 * If the user is a member of a Salesforce community, the community URL is provided.
@@ -86,11 +82,43 @@ export interface SalesforceAccessTokenResponse extends OpenIDAccessTokenResponse
 	 */
 	issued_at: string;
 
-	/**
-	 * The user information generated when parsing the [Identity URL](https://help.salesforce.com/articleView?id=remoteaccess_using_openid.htm).
-	 */
-	userInfo?: UserInfo;
+}
 
+/**
+ * The Salesforce Introspection Options.
+ */
+export interface SalesforceIntrospectionOptions extends IntrospectionOptions {
+
+	/**
+	 * If true, parses the user information from the id field in the access token response.
+	 *
+	 * This returns the user ID, organization ID and the ID url.
+	 */
+	parseUserInfo?: boolean;
+
+}
+
+/**
+ * The Salesforce Introspection Response.
+ *
+ * Adds the user info information to the standard introspection response.
+ *
+ * @example
+ * ```json
+ * {
+ * 	"active": true,
+ * 	"client_id": "OAuthSp",
+ * 	"exp": 1528502109,
+ * 	"iat": 1528494909,
+ * 	"nbf": 1528494909,
+ * 	"scope": "id api web full refresh_token openid",
+ * 	"sub": "https://login.salesforce.com/id/00Dxx0000001gEREAY/005xx000001Sv6AAAS",
+ * 	"token_type": "access_token",
+ * 	"username": "test@test.com"
+ * }
+ * ```
+ */
+export interface SalesforceIntrospectionResponse extends IntrospectionResponse, UserInfoResponse {
 }
 
 /**
@@ -102,33 +130,6 @@ export interface SalesforceUser extends User {
 	 * The organization ID.
 	 */
 	organizationId?: string;
-
-}
-
-/**
- * The user information generated when parsing the [Identity URL](https://help.salesforce.com/articleView?id=remoteaccess_using_openid.htm).
- */
-export interface UserInfo {
-
-	/**
-	 * Returns the user ID.
-	 */
-	id?: string;
-
-	/**
-	 * Returns the organization ID.
-	 */
-	organizationId?: string;
-
-	/**
-	 * Returns the full Identity URL.
-	 */
-	url: string;
-
-	/**
-	 * If true, the Identity URL has been validated and is valid.
-	 */
-	validated: boolean;
 
 }
 
@@ -184,6 +185,18 @@ export class SalesforceClient extends OpenIdClient {
 
 		return accessTokenResponse;
 
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	protected handleIntrospectionResponse(introspectionResponse: SalesforceIntrospectionResponse, internalOpts: SalesforceIntrospectionOptions) {
+
+		if (internalOpts.parseUserInfo) {
+			parseUserInfo(introspectionResponse);
+		}
+
+		return introspectionResponse;
 	}
 
 }

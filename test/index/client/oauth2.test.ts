@@ -33,7 +33,7 @@ import { AxiosRequestConfig, AxiosResponse, default as axios } from 'axios';
 
 import { AuthCodeGrantParams, AuthOptions, AuthUrlParams, Environment, GrantOptions, RefreshGrantParams } from '../../../src';
 
-import { IntrospectionOptions, OAuth2Client } from '../../../src/index/client/oauth2';
+import { IntrospectionParams, OAuth2Client } from '../../../src/index/client/oauth2';
 
 const expect = chai.expect;
 
@@ -500,13 +500,12 @@ describe('index/client/oauth2', () => {
 
 	describe('introspect', () => {
 
-		let opts: IntrospectionOptions;
+		let params: IntrospectionParams;
 
 		beforeEach(() => {
-			opts = {
+			params = {
 				clientId: 'testClientId',
-				clientSecret: 'testClientSecret',
-				ip: '1.1.1.1'
+				clientSecret: 'testClientSecret'
 			};
 		});
 
@@ -517,7 +516,7 @@ describe('index/client/oauth2', () => {
 				// Given
 				// When
 				// Then
-				await expect(client.introspect('testToken', opts)).to.eventually.be.rejectedWith('OAuth2 client has not been initialized');
+				await expect(client.introspect('testToken', params)).to.eventually.be.rejectedWith('OAuth2 client has not been initialized');
 
 			});
 
@@ -532,7 +531,33 @@ describe('index/client/oauth2', () => {
 				await client.init();
 
 				// Then
-				await expect(client.introspect('testToken', opts)).to.eventually.be.rejectedWith('OAuth2 client does not support token introspection');
+				await expect(client.introspect('testToken', params)).to.eventually.be.rejectedWith('OAuth2 client does not support token introspection');
+
+			});
+
+			it('if the clientId is not provided', async () => {
+
+				// Given
+				delete params.clientId;
+
+				await client.init();
+
+				// When
+				// Then
+				await expect(client.introspect('testToken', params)).to.eventually.be.rejectedWith('Missing required string parameter: clientId');
+
+			});
+
+			it('if the clientSecret is not provided', async () => {
+
+				// Given
+				delete params.clientSecret;
+
+				await client.init();
+
+				// When
+				// Then
+				await expect(client.introspect('testToken', params)).to.eventually.be.rejectedWith('Missing required string parameter: clientSecret');
 
 			});
 
@@ -553,7 +578,7 @@ describe('index/client/oauth2', () => {
 				});
 
 				// When
-				await expect(client.introspect('testToken', opts)).to.rejectedWith('Failed to introspect token: invalid_token (this token is invalid, unknown, or malformed).');
+				await expect(client.introspect('testToken', params)).to.rejectedWith('Failed to introspect token: invalid_token (this token is invalid, unknown, or malformed).');
 
 				// Then
 				expect(axios.post).to.have.been.calledOnce;
@@ -592,10 +617,8 @@ describe('index/client/oauth2', () => {
 			});
 
 			// Given
-			delete opts.ip;
-
 			// When
-			const result = await client.introspect('testToken', opts);
+			const result = await client.introspect('testToken', params);
 
 			// Then
 			expect(result).to.eql({

@@ -85,6 +85,20 @@ export interface SalesforceAccessTokenResponse extends OpenIDAccessTokenResponse
 }
 
 /**
+ * The Salesforce Introspection Options.
+ */
+export interface SalesforceIntrospectionOptions extends IntrospectionOptions {
+
+	/**
+	 * If true, parses the user information from the id field in the access token response.
+	 *
+	 * This returns the user ID, organization ID and the ID url.
+	 */
+	parseUserInfo?: boolean;
+
+}
+
+/**
  * The Salesforce Introspection Response.
  *
  * Adds the user info information to the standard introspection response.
@@ -176,7 +190,7 @@ export class SalesforceClient extends OpenIdClient {
 	/**
 	 * @inheritdoc
 	 */
-	protected handleIntrospectionResponse(introspectionResponse: SalesforceIntrospectionResponse, internalOpts: IntrospectionOptions) {
+	protected handleIntrospectionResponse(introspectionResponse: SalesforceIntrospectionResponse, internalOpts: SalesforceIntrospectionOptions) {
 
 		if (internalOpts.parseUserInfo) {
 			parseUserInfo(introspectionResponse);

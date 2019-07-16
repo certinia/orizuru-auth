@@ -30,7 +30,7 @@ import sinonChai from 'sinon-chai';
 
 import { Request, RequestHandler, Response } from '@financialforcedev/orizuru';
 
-import { Environment, EVENT_TOKEN_INTROSPECTED, EVENT_TOKEN_VALIDATED, IntrospectionOptions, IntrospectionResponse, OpenIdOptions } from '../../../src';
+import { Environment, EVENT_TOKEN_INTROSPECTED, EVENT_TOKEN_VALIDATED, IntrospectionParams, IntrospectionResponse, OpenIdOptions } from '../../../src';
 import * as introspect from '../../../src/index/introspection/introspect';
 import * as accessToken from '../../../src/index/middleware/common/accessToken';
 import * as fail from '../../../src/index/middleware/common/fail';
@@ -46,7 +46,7 @@ describe('index/middleware/tokenIntrospection', () => {
 
 	let app: Orizuru.IServer;
 	let env: Environment;
-	let opts: IntrospectionOptions;
+	let params: IntrospectionParams;
 	let introspectTokenStub: SinonStub;
 
 	beforeEach(() => {
@@ -57,10 +57,9 @@ describe('index/middleware/tokenIntrospection', () => {
 			type: 'OpenID'
 		};
 
-		opts = {
+		params = {
 			clientId: 'testClientId',
-			clientSecret: 'testClientSecret',
-			parseUserInfo: true
+			clientSecret: 'testClientSecret'
 		};
 
 		const partialApp: Partial<Orizuru.IServer> = {
@@ -70,7 +69,7 @@ describe('index/middleware/tokenIntrospection', () => {
 					salesforce: env
 				},
 				openid: {
-					salesforce: opts as OpenIdOptions
+					salesforce: params as OpenIdOptions
 				}
 			}
 		};
@@ -99,7 +98,7 @@ describe('index/middleware/tokenIntrospection', () => {
 
 		// Given
 		// When
-		const middleware = createMiddleware(app, 'salesforce', opts);
+		const middleware = createMiddleware(app, 'salesforce');
 
 		// Then
 		expect(middleware).to.be.a('function');
@@ -130,7 +129,7 @@ describe('index/middleware/tokenIntrospection', () => {
 		describe('should fail the request', () => {
 
 			beforeEach(() => {
-				middleware = createMiddleware(app, 'salesforce', opts);
+				middleware = createMiddleware(app, 'salesforce');
 			});
 
 			afterEach(() => {
@@ -159,9 +158,8 @@ describe('index/middleware/tokenIntrospection', () => {
 				expect(introspectTokenStub).to.have.been.calledOnce;
 				expect(introspectTokenStub).to.have.been.calledWithExactly('12345', {
 					clientId: 'testClientId',
-					clientSecret: 'testClientSecret',
-					parseUserInfo: true
-				});
+					clientSecret: 'testClientSecret'
+				}, undefined);
 
 			});
 
@@ -207,9 +205,8 @@ describe('index/middleware/tokenIntrospection', () => {
 				expect(introspectTokenStub).to.have.been.calledOnce;
 				expect(introspectTokenStub).to.have.been.calledWithExactly('12345', {
 					clientId: 'testClientId',
-					clientSecret: 'testClientSecret',
-					parseUserInfo: true
-				});
+					clientSecret: 'testClientSecret'
+				}, undefined);
 				expect(next).to.have.been.calledOnce;
 				expect(next).to.have.been.calledWithExactly();
 

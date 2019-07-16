@@ -30,6 +30,7 @@
 
 import { Environment, IntrospectionOptions, TokenIntrospector } from '../..';
 import { findOrCreateClient } from '../client/cache';
+import { IntrospectionParams } from '../client/oauth2';
 import { validate } from '../client/validator/environment';
 
 /**
@@ -41,10 +42,10 @@ export function createTokenIntrospector(env?: Environment): TokenIntrospector {
 
 	const validatedEnvironment = validate(env);
 
-	return async function introspectToken(token: string, opts: IntrospectionOptions) {
+	return async function introspectToken(token: string, params: IntrospectionParams, opts?: IntrospectionOptions) {
 
 		const client = await findOrCreateClient(validatedEnvironment);
-		return client.introspect(token, opts);
+		return client.introspect(token, params, opts);
 
 	};
 

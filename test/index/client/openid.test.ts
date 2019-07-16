@@ -31,7 +31,7 @@ import sinonChai from 'sinon-chai';
 
 import { AxiosRequestConfig, AxiosResponse, default as axios } from 'axios';
 
-import { AuthCodeGrantParams, AuthOptions, AuthUrlParams, Environment, GrantOptions, IntrospectionOptions, JwtGrantParams, RefreshGrantParams } from '../../../src';
+import { AuthCodeGrantParams, AuthOptions, AuthUrlParams, Environment, GrantOptions, IntrospectionParams, JwtGrantParams, RefreshGrantParams } from '../../../src';
 import * as jwt from '../../../src/index/client/oauth2Jwt/jwt';
 import * as identity from '../../../src/index/client/openid/identity';
 
@@ -648,13 +648,12 @@ describe('index/client/openid', () => {
 
 	describe('introspect', () => {
 
-		let opts: IntrospectionOptions;
+		let params: IntrospectionParams;
 
 		beforeEach(() => {
-			opts = {
+			params = {
 				clientId: 'testClientId',
-				clientSecret: 'testClientSecret',
-				ip: '1.1.1.1'
+				clientSecret: 'testClientSecret'
 			};
 		});
 
@@ -665,7 +664,7 @@ describe('index/client/openid', () => {
 				// Given
 				// When
 				// Then
-				await expect(client.introspect('testToken', opts)).to.eventually.be.rejectedWith('OpenID client has not been initialized');
+				await expect(client.introspect('testToken', params)).to.eventually.be.rejectedWith('OpenID client has not been initialized');
 
 			});
 
@@ -680,7 +679,7 @@ describe('index/client/openid', () => {
 				await client.init();
 
 				// Then
-				await expect(client.introspect('testToken', opts)).to.eventually.be.rejectedWith('OpenID client does not support token introspection');
+				await expect(client.introspect('testToken', params)).to.eventually.be.rejectedWith('OpenID client does not support token introspection');
 
 			});
 

@@ -31,12 +31,12 @@ import sinonChai from 'sinon-chai';
 
 import { AxiosRequestConfig, AxiosResponse, default as axios } from 'axios';
 
-import { AuthCodeGrantParams, AuthOptions, AuthUrlParams, Environment, GrantOptions, IntrospectionOptions, JwtGrantParams, RefreshGrantParams } from '../../../src';
+import { AuthCodeGrantParams, AuthOptions, AuthUrlParams, Environment, GrantOptions, IntrospectionParams, JwtGrantParams, RefreshGrantParams } from '../../../src';
 import * as jwt from '../../../src/index/client/oauth2Jwt/jwt';
 import * as openidIdentity from '../../../src/index/client/openid/identity';
 import * as salesforceIdentity from '../../../src/index/client/salesforce/identity';
 
-import { SalesforceClient } from '../../../src/index/client/salesforce';
+import { SalesforceClient, SalesforceIntrospectionOptions } from '../../../src/index/client/salesforce';
 
 const expect = chai.expect;
 
@@ -772,14 +772,17 @@ describe('index/client/salesforce', () => {
 
 	describe('introspect', () => {
 
-		let opts: IntrospectionOptions;
+		let opts: SalesforceIntrospectionOptions;
+		let params: IntrospectionParams;
 
 		beforeEach(async () => {
 
-			opts = {
+			params = {
 				clientId: 'testClientId',
-				clientSecret: 'testClientSecret',
-				ip: '1.1.1.1',
+				clientSecret: 'testClientSecret'
+			};
+
+			opts = {
 				parseUserInfo: true
 			};
 
@@ -809,7 +812,7 @@ describe('index/client/salesforce', () => {
 
 			// Given
 			// When
-			const result = await client.introspect('testToken', opts);
+			const result = await client.introspect('testToken', params, opts);
 
 			// Then
 			expect(result).to.eql({
@@ -847,7 +850,7 @@ describe('index/client/salesforce', () => {
 			opts.parseUserInfo = false;
 
 			// When
-			const result = await client.introspect('testToken', opts);
+			const result = await client.introspect('testToken', params, opts);
 
 			// Then
 			expect(result).to.eql({

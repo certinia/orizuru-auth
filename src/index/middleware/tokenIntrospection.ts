@@ -46,7 +46,7 @@ import { fail } from './common/fail';
  * @fires EVENT_TOKEN_INTROSPECTED, EVENT_DENIED
  * @param app The Orizuru server instance.
  * @param provider The name of the auth provider.
- * @param [opts] The parameters used when introspecting tokens.
+ * @param [opts] The optional parameters used when introspecting tokens.
  * @returns An express middleware that introspects an access token.
  */
 export function createMiddleware(app: Orizuru.IServer, provider: string, opts?: IntrospectionOptions): RequestHandler {
@@ -59,9 +59,7 @@ export function createMiddleware(app: Orizuru.IServer, provider: string, opts?: 
 
 			const accessToken = extractAccessToken(req);
 
-			const internalOpts = Object.assign({}, app.options.openid[provider], opts) as IntrospectionOptions;
-
-			const tokenInformation = await introspectAccessToken(accessToken, internalOpts);
+			const tokenInformation = await introspectAccessToken(accessToken, app.options.openid[provider], opts);
 
 			setTokenInformationOnRequest(app, req, tokenInformation);
 

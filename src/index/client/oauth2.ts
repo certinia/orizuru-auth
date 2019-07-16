@@ -229,7 +229,7 @@ export interface AuthClient {
 	/**
 	 * Introspect a token.
 	 */
-	introspect(token: string, opts?: IntrospectionOptions): Promise<IntrospectionResponse>;
+	introspect(token: string, params: IntrospectionParams, opts?: IntrospectionOptions): Promise<IntrospectionResponse>;
 
 	/**
 	 * Revoke a token.
@@ -348,26 +348,21 @@ export interface GrantOptions {
 }
 
 /**
- * Introspection Endpoint properties.
+ * Required parameters whrn introspecting tokens.
  */
-export interface IntrospectionOptions extends HasClientId {
+export interface IntrospectionParams extends HasClientId {
 
 	/**
 	 * The client secret for your application.
 	 */
 	clientSecret: string;
 
-	/**
-	 * If provided, returns the IP of the incoming request.
-	 */
-	ip?: string;
+}
 
-	/**
-	 * If true, parses the user information from the id field in the access token response.
-	 *
-	 * This returns the user ID, organization ID and the ID url.
-	 */
-	parseUserInfo?: boolean;
+/**
+ * Optional parameters used when introspecting tokens.
+ */
+export interface IntrospectionOptions {
 
 	/**
 	 * Returns the response format, either JSON, XML or URL_ENCODED.
@@ -399,7 +394,7 @@ export interface IntrospectionResponse extends UserInfoResponse {
 	aud?: string;
 
 	/**
-	 * Client identifier for the OAuth 2.0 client thatrequested this token.
+	 * Client identifier for the OAuth 2.0 client that requested this token.
 	 */
 	client_id?: string;
 
@@ -658,7 +653,7 @@ export class OAuth2Client implements AuthClient {
 	/**
 	 * @inheritdoc
 	 */
-	public async introspect(token: string, opts: IntrospectionOptions) {
+	public async introspect(token: string, params: IntrospectionParams, opts?: IntrospectionOptions) {
 
 		if (this.introspectionEndpoint === undefined) {
 			throw new Error(`${this.clientType} client has not been initialized`);
@@ -668,9 +663,17 @@ export class OAuth2Client implements AuthClient {
 			throw new Error(`${this.clientType} client does not support token introspection`);
 		}
 
+		if (!params.clientId) {
+			throw new Error('Missing required string parameter: clientId');
+		}
+
+		if (!params.clientSecret) {
+			throw new Error('Missing required string parameter: clientSecret');
+		}
+
 		const config = Object.assign({}, OAuth2Client.DEFAULT_REQUEST_CONFIG, {
 			headers: {
-				'Accept': opts.responseFormat || ResponseFormat.JSON,
+				'Accept': (opts && opts.responseFormat) || ResponseFormat.JSON,
 				'Content-Type': 'application/x-www-form-urlencoded'
 			}
 		});
@@ -680,8 +683,8 @@ export class OAuth2Client implements AuthClient {
 		}, opts);
 
 		const body = formUrlencoded({
-			client_id: opts.clientId,
-			client_secret: opts.clientSecret,
+			client_id: params.clientId,
+			client_secret: params.clientSecret,
 			token
 		});
 

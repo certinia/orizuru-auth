@@ -28,7 +28,7 @@ import chai from 'chai';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
 
-import { Environment, IntrospectionOptions, TokenIntrospector } from '../../../src';
+import { Environment, IntrospectionParams, TokenIntrospector } from '../../../src';
 import * as cache from '../../../src/index/client/cache';
 import { OpenIdClient } from '../../../src/index/client/openid';
 import * as validator from '../../../src/index/client/validator/environment';
@@ -100,7 +100,7 @@ describe('index/introspection/introspect', () => {
 		it('should call the revoke function from the OpenID client', async () => {
 
 			// Given
-			const opts: IntrospectionOptions = {
+			const params: IntrospectionParams = {
 				clientId: 'testClientId',
 				clientSecret: 'testClientSecret'
 			};
@@ -121,7 +121,7 @@ describe('index/introspection/introspect', () => {
 			});
 
 			// When
-			const result = await introspectToken('testToken', opts);
+			const result = await introspectToken('testToken', params);
 
 			// Then
 			expect(result).to.eql({

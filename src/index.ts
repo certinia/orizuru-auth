@@ -30,7 +30,7 @@
  */
 
 import { clear, Environment } from './index/client/cache';
-import { AccessTokenResponse, AuthOptions, AuthUrlParams, GrantOptions, IntrospectionOptions, IntrospectionResponse, RefreshTokenGrantorParams, TokenGrantorParams } from './index/client/oauth2';
+import { AccessTokenResponse, AuthOptions, AuthUrlParams, GrantOptions, IntrospectionOptions, IntrospectionParams, IntrospectionResponse, RefreshTokenGrantorParams, TokenGrantorParams } from './index/client/oauth2';
 import { JwtTokenGrantorParams, UserTokenGrantorParams } from './index/client/oauth2Jwt';
 import { OpenIDTokenWithStandardClaims, UserInfoOptions } from './index/client/openid';
 import { SalesforceUser } from './index/client/salesforce';
@@ -154,6 +154,7 @@ export {
 	GrantParams,
 	HasClientId,
 	IntrospectionOptions,
+	IntrospectionParams,
 	IntrospectionResponse,
 	RefreshGrantParams,
 	RefreshTokenGrantorParams,
@@ -188,13 +189,13 @@ export type UserTokenGrantor = (params: UserTokenGrantorParams, opts?: GrantOpti
 export type RefreshAccessTokenGrantor = (params: RefreshTokenGrantorParams, opts?: GrantOptions) => Promise<AccessTokenResponse>;
 
 export type AuthUrlGenerator = (params: AuthUrlParams, opts?: AuthOptions) => Promise<string>;
-export type TokenIntrospector = (token: string, opts: IntrospectionOptions) => Promise<IntrospectionResponse>;
+export type TokenIntrospector = (token: string, params: IntrospectionParams, opts?: IntrospectionOptions) => Promise<IntrospectionResponse>;
 export type UserInfoRequester = (accessToken: string, opts?: UserInfoOptions) => Promise<string | OpenIDTokenWithStandardClaims>;
 
 export type Options = AuthOptions | GrantOptions | UserInfoOptions;
 export type GrantorParams = RefreshTokenGrantorParams | TokenGrantorParams | UserTokenGrantorParams;
 
-export type OpenIdOptions = AuthUrlParams & AuthOptions & GrantorParams & JwtTokenGrantorParams & Options & IntrospectionOptions;
+export type OpenIdOptions = AuthUrlParams & AuthOptions & GrantorParams & IntrospectionParams & JwtTokenGrantorParams & Options;
 
 /**
  * The event fired when the authorization header is set.

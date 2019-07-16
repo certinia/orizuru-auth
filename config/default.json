@@ -54,8 +54,7 @@
 		"salesforceIdentity": {
 			"immediate": false,
 			"prompt": "consent",
-			"redirectUri": "https://localhost:8080/api/auth/v1.0/callback",
-			"parseUserInfo": true
+			"redirectUri": "https://localhost:8080/api/auth/v1.0/callback"
 		}
 	}
 }

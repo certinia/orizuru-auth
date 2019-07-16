@@ -825,7 +825,7 @@ describe('index/client/salesforce', () => {
 					id: '005xx000001SwiUAAS',
 					organizationId: '00Dxx0000001gPLEAY',
 					url: 'https://login.salesforce.com/id/00Dxx0000001gPLEAY/005xx000001SwiUAAS',
-					validated: false
+					validated: true
 				},
 				username: 'test@test.com'
 			});

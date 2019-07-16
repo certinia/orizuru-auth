@@ -245,10 +245,19 @@ export interface UserInfoResponse {
 export function parseUserInfo(response: UserInfoResponse) {
 
 	let identityUrl: string;
+	let validated: boolean;
+
 	if (response.id) {
 		identityUrl = response.id;
+		validated = false;
 	} else if (response.sub) {
+
 		identityUrl = response.sub;
+
+		// This response is obtained when the token has been introspected.
+		// Set validated to true as the token is valid.
+		validated = true;
+
 	} else {
 		throw new Error('Missing required string parameter: identityUrl');
 	}
@@ -269,7 +278,7 @@ export function parseUserInfo(response: UserInfoResponse) {
 		id,
 		organizationId,
 		url: identityUrl,
-		validated: false
+		validated
 	}, response.userInfo);
 
 }

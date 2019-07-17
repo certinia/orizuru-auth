@@ -30,6 +30,7 @@
 
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 import formUrlencoded from 'form-urlencoded';
+import { Secret } from 'jsonwebtoken';
 
 import { Environment } from './cache';
 import { JwtGrantParams } from './oauth2Jwt';
@@ -338,7 +339,7 @@ export interface GrantOptions {
 	 *
 	 * Either this value or the signingSecret should be set for the authorization code or refresh flows.
 	 */
-	signingSecret?: string;
+	signingSecret?: Secret;
 
 	/**
 	 * If true, the signature on the access token response is verified.

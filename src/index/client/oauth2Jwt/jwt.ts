@@ -28,7 +28,7 @@
  * @module client/oauth2Jwt/jwt
  */
 
-import { sign } from 'jsonwebtoken';
+import { Secret, sign } from 'jsonwebtoken';
 import { v4 as uuid } from 'uuid';
 
 import { Environment } from '../cache';
@@ -50,7 +50,7 @@ enum AssertionType {
  * @param signingSecret The secret used to sign the payload.
  * @param tokenEndpoint The [OpenID token endpoint](https://openid.net/specs/openid-connect-core-1_0.html#TokenEndpoint).
  */
-export async function createJwtBearerClientAssertion(params: GrantParams, signingSecret: string, tokenEndpoint: string) {
+export async function createJwtBearerClientAssertion(params: GrantParams, signingSecret: Secret, tokenEndpoint: string) {
 	const payload = createPayload(tokenEndpoint, params.clientId, params.clientId);
 	return signClientAssertion(payload, signingSecret, AssertionType.CLIENT);
 
@@ -101,7 +101,7 @@ function createPayload(aud: string, iss: string, sub: string): JWT {
  * @param signingSecret The private key to sign the payload with.
  * @param type The assertion type (either client or grant).
  */
-function signClientAssertion(payload: JWT, signingSecret: string, type: AssertionType) {
+function signClientAssertion(payload: JWT, signingSecret: Secret, type: AssertionType) {
 
 	return new Promise<string>((resolve, reject) => {
 

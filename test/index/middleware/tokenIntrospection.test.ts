@@ -129,7 +129,7 @@ describe('index/middleware/tokenIntrospection', () => {
 		describe('should fail the request', () => {
 
 			beforeEach(() => {
-				middleware = createMiddleware(app, 'salesforce');
+				middleware = createMiddleware(app, 'salesforce', app.options.openid.salesforce);
 			});
 
 			afterEach(() => {
@@ -175,7 +175,7 @@ describe('index/middleware/tokenIntrospection', () => {
 					authorization: 'Bearer 12345'
 				};
 
-				middleware = createMiddleware(app, 'salesforce');
+				middleware = createMiddleware(app, 'salesforce', app.options.openid.salesforce);
 
 				response = {
 					active: true,

@@ -99,6 +99,8 @@ server.addRoute({
 	synchronous: true
 });
 
+// **All code specified in the rest of the readme should be added here**
+
 // Create a self-signed certificate and then start the server listening to connections using HTTPS
 createCertificate().then((certificate) => {
 

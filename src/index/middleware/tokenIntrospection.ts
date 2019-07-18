@@ -31,7 +31,7 @@
 import { NextFunction, Request, RequestHandler, Response } from '@financialforcedev/orizuru';
 
 import { EVENT_TOKEN_INTROSPECTED, EVENT_TOKEN_VALIDATED } from '../..';
-import { IntrospectionOptions, IntrospectionResponse } from '../client/oauth2';
+import { IntrospectionOptions, IntrospectionParams, IntrospectionResponse } from '../client/oauth2';
 import { isSalesforceIntrospectionResponse } from '../client/salesforce/identity';
 import { createTokenIntrospector } from '../introspection/introspect';
 import { extractAccessToken } from './common/accessToken';
@@ -46,12 +46,14 @@ import { fail } from './common/fail';
  * @fires EVENT_TOKEN_INTROSPECTED, EVENT_DENIED
  * @param app The Orizuru server instance.
  * @param provider The name of the auth provider.
+ * @param [params] The token introspection middleware parameters.
  * @param [opts] The optional parameters used when introspecting tokens.
  * @returns An express middleware that introspects an access token.
  */
-export function createMiddleware(app: Orizuru.IServer, provider: string, opts?: IntrospectionOptions): RequestHandler {
+export function createMiddleware(app: Orizuru.IServer, provider: string, params?: IntrospectionParams, opts?: IntrospectionOptions): RequestHandler {
 
 	const introspectAccessToken = createTokenIntrospector(app.options.authProvider[provider]);
+	const internalParams = params || app.options.openid[provider];
 
 	return async function introspectToken(req: Request, res: Response, next: NextFunction) {
 
@@ -59,7 +61,7 @@ export function createMiddleware(app: Orizuru.IServer, provider: string, opts?: 
 
 			const accessToken = extractAccessToken(req);
 
-			const tokenInformation = await introspectAccessToken(accessToken, app.options.openid[provider], opts);
+			const tokenInformation = await introspectAccessToken(accessToken, internalParams, opts);
 
 			setTokenInformationOnRequest(app, req, tokenInformation);
 

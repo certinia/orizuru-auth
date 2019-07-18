@@ -105,7 +105,7 @@ function addTokenIntrospectionRoute(server: Server) {
 	server.addRoute({
 		method: 'get',
 		middleware: [
-			middleware.tokenIntrospection(server, 'salesforceIdentity')
+			middleware.tokenIntrospection(server, 'salesforceIdentity', server.options.openid.salesforceIdentity)
 		],
 		responseWriter: (app) => async (error, req, res) => {
 			res.json(req.orizuru);

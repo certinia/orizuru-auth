@@ -356,7 +356,7 @@ export interface IntrospectionParams extends HasClientId {
 	/**
 	 * The client secret for your application.
 	 */
-	clientSecret: string;
+	clientSecret?: string;
 
 }
 

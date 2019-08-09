@@ -236,7 +236,7 @@ server.addRoute({
 
 The grant checker is designed to be used in tandem with the token Validator. It uses the `user` object on the request's `orizuru` object and attempts to obtain an OpenID Connect access token using a JWT Bearer grant request. In order for this to work the Identity Provider must have a previously established authorisation for the user requested. With the Salesforce identity provider this is achieved by using a Connected App with an uploaded certificate.
 
-If this completes successfully it sets the `orizuru` object `grantChecked` property to be true, otherwise the user will be refused access.
+If this completes successfully it sets the `orizuru` object `grantChecked` property to be true, otherwise the user will be refused access. The access token can also be directly set on the `orizuru` object by setting the `setTokenOnContext` option to true when creating the middleware.
 
 The following example illustrates how the grant checker can be used, with [Orizuru](https://github.com/financialforcedev/orizuru) and [Orizuru Transport RabbitMQ](https://github.com/financialforcedev/orizuru-transport-rabbitmq), to validate tokens contained in the authorization request header. It follows on from the example given in the [Token Validator](#token-validator) section.
 

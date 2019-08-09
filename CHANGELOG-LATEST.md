@@ -6,6 +6,7 @@
 
 - Support [token introspection](https://tools.ietf.org/html/rfc7662) for both OAuth2 and [Salesforce](https://help.salesforce.com/articleView?id=remoteaccess_oidc_token_introspection.htm)
 - Update the type of the `signingSecret` to allow encrypted keys
+- Add option to grantChecker middleware to add issued access token to context
 
 ### FIXES
 

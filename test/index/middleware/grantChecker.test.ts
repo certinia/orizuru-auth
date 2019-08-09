@@ -34,7 +34,7 @@ import { Environment, EVENT_GRANT_CHECKED, GrantOptions, OpenIdOptions } from '.
 import * as jwtBearerToken from '../../../src/index/flow/jwtBearerToken';
 import * as fail from '../../../src/index/middleware/common/fail';
 
-import { createMiddleware } from '../../../src/index/middleware/grantChecker';
+import { createMiddleware, GrantRequestOptions } from '../../../src/index/middleware/grantChecker';
 
 const expect = chai.expect;
 const has = sinon.match.has;
@@ -110,6 +110,7 @@ describe('index/middleware/grantChecker', () => {
 		let req: Request;
 		let res: Response;
 		let next: SinonStub;
+		let opts: GrantRequestOptions & GrantOptions;
 
 		beforeEach(() => {
 
@@ -129,7 +130,7 @@ describe('index/middleware/grantChecker', () => {
 
 			next = sinon.stub();
 
-			const opts: GrantOptions = {
+			opts = {
 				verifySignature: false
 			};
 
@@ -246,6 +247,32 @@ describe('index/middleware/grantChecker', () => {
 				expect(app.emit).to.have.been.calledWithExactly(EVENT_GRANT_CHECKED, 'Grant checked for user (test@test.com) [1.1.1.1].');
 				expect(next).to.have.been.calledOnce;
 				expect(next).to.have.been.calledWithExactly();
+
+			});
+
+			it('and set the access token on request if required', async () => {
+
+				// Given
+				sinon.resetHistory();
+
+				opts.setTokenOnContext = true;
+				middleware = createMiddleware(app, 'salesforce', app.options.openid.salesforce, opts);
+
+				requestAccessTokenStub.resolves({
+					access_token: 'testAccessToken'
+				});
+
+				// When
+				await middleware(req, res, next);
+
+				// Then
+				expect(req.orizuru).to.have.property('accessToken').that.eqls('testAccessToken');
+
+				expect(requestAccessTokenStub).to.have.been.calledOnce;
+				expect(requestAccessTokenStub).to.have.been.calledWithExactly(sinon.match.object, {
+					verifySignature: false
+				});
+				expect(next).to.have.been.calledOnce;
 
 			});
 

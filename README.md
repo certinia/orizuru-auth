@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/financialforcedev/orizuru-auth.svg?branch=master)](https://travis-ci.org/financialforcedev/orizuru-auth)
 
-Orizuru authentication is an [Express](http://expressjs.com/)-compatible authentication middleware for [Node.js](http://nodejs.org/). 
+Orizuru authentication is an [Express](http://expressjs.com/)-compatible authentication middleware for [Node.js](http://nodejs.org/).
 
 It is aimed at users of the [Orizuru](https://www.npmjs.com/package/@financialforcedev/orizuru) framework, but can also be used standalone. The authentication process has been tested with Salesforce and Google as Identity Providers, although it should be possible to use it with others.
 
@@ -27,7 +27,7 @@ Orizuru Auth provides a function to initialise the [OAuth 2.0 Web Server Authent
 
 For the examples, the initial configuration has been provided in the `examples` directory of this repository. This can be copied to another directory to be worked with.
 
-Two configuration files should be provided: the `default.json` file which contains any insensitive data (this is included with the source); and the `local.json` configuration file which contains sensitive data. Create a `local.json` file, within the `config` directory with the following contents, where each of the values has been substituted for your Salesforce connected app details. 
+Two configuration files should be provided: the `default.json` file which contains any insensitive data (this is included with the source); and the `local.json` configuration file which contains sensitive data. Create a `local.json` file, within the `config` directory with the following contents, where each of the values has been substituted for your Salesforce connected app details.
 
 ```json
 {
@@ -48,11 +48,11 @@ Two configuration files should be provided: the `default.json` file which contai
 }
 ```
 
-Once completed, the server can be started via `npm start` or in VS Code via the launch configuration. 
+Once completed, the server can be started via `npm start` or in VS Code via the launch configuration.
 
 Changes to the imports are omitted from further examples; assuming VS Code is being used, the examples directory contains the default configuration for automatically optimising imports.
 
-The first example illustrates how the authentication URL generator can be used with [Orizuru](https://github.com/financialforcedev/orizuru) and [Orizuru Transport RabbitMQ](https://github.com/financialforcedev/orizuru-transport-rabbitmq). A HTTPS server is used with a generated self-signed certificate. 
+The first example illustrates how the authentication URL generator can be used with [Orizuru](https://github.com/financialforcedev/orizuru) and [Orizuru Transport RabbitMQ](https://github.com/financialforcedev/orizuru-transport-rabbitmq). A HTTPS server is used with a generated self-signed certificate.
 
 The route `https://localhost:8080/api/v1.0/auth` is added to the server. This route redirects the user to the Salesforce login page; it initialises the [OAuth 2.0 Web Server Authentication Flow](https://help.salesforce.com/articleView?id=remoteaccess_oauth_web_server_flow.htm).
 
@@ -133,7 +133,7 @@ server.addRoute({
     synchronous: true
 });
 
-/** 
+/**
  * All the code specified in the rest of the readme should be added here.
  */
 
@@ -198,7 +198,7 @@ The token validator middleware checks that a valid OpenID Connect Bearer token e
 
 If the token is successfully validated then a *user* object is set on the request's *orizuru* object.
 
-The following example illustrates how the token validator middleware can be used with [Orizuru](https://github.com/financialforcedev/orizuru) and [Orizuru Transport RabbitMQ](https://github.com/financialforcedev/orizuru-transport-rabbitmq) to validate tokens contained in the authorization request header. It follows on from the example given in the [Auth Callback](#auth-callback) section. 
+The following example illustrates how the token validator middleware can be used with [Orizuru](https://github.com/financialforcedev/orizuru) and [Orizuru Transport RabbitMQ](https://github.com/financialforcedev/orizuru-transport-rabbitmq) to validate tokens contained in the authorization request header. It follows on from the example given in the [Auth Callback](#auth-callback) section.
 
 The route `https://localhost:8080/api/auth/v1.0/validateToken` is added to the server as a GET request. If the request is successful, a **token validated** message is printed to the console and the *orizuru* object is returned. Otherwise, a denied message is printed to the console.
 
@@ -276,7 +276,7 @@ This can be called at any time to obtain credentials to connect to Salesforce. I
 
 The credentials returned are in a form suitable to be used with [JSforce](https://jsforce.github.io/).
 
-The following example illustrates how the token granter can be used, with [Orizuru](https://github.com/financialforcedev/orizuru) and [Orizuru Transport RabbitMQ](https://github.com/financialforcedev/orizuru-transport-rabbitmq), to retrieve the limits for a Salesforce organization. It follows on from the example given in the [Grant Checker](#grant-checker) section. 
+The following example illustrates how the token granter can be used, with [Orizuru](https://github.com/financialforcedev/orizuru) and [Orizuru Transport RabbitMQ](https://github.com/financialforcedev/orizuru-transport-rabbitmq), to retrieve the limits for a Salesforce organization. It follows on from the example given in the [Grant Checker](#grant-checker) section.
 
 The route `https://localhost:8080/api/v1.0/limits` is added to the server as a GET request. If the request is successful, a JSON response containing the limits is returned. Otherwise, a denied message is printed to the console. It makes use of an Orizuru response writer function, rather than a middleware, to retrieve the limits and send them to the user.
 
@@ -331,7 +331,7 @@ server.addRoute({
 
 The token introspector middleware can be used to determine the active state of an OAuth 2.0 token and retrieve meta-information about this token. It can be used in tandem with either the [Auth Callback](#auth-callback) or the [Token Grantor](#token-granter) middlewares.
 
-The following example illustrates how the token introspector can be used, with [Orizuru](https://github.com/financialforcedev/orizuru) and [Orizuru Transport RabbitMQ](https://github.com/financialforcedev/orizuru-transport-rabbitmq), to retrieve the token information. It follows on from the example given in the [Token Granter](#token-granter) section. 
+The following example illustrates how the token introspector can be used, with [Orizuru](https://github.com/financialforcedev/orizuru) and [Orizuru Transport RabbitMQ](https://github.com/financialforcedev/orizuru-transport-rabbitmq), to retrieve the token information. It follows on from the example given in the [Token Granter](#token-granter) section.
 
 The route `https://localhost:8080/api/auth/v1.0/introspectToken` is added to the server as a GET request. If the request is successful, a **token introspected** message is printed to the console and the *orizuru* object is returned. Otherwise, a denied message is printed to the console.
 

@@ -31,8 +31,18 @@
 import { NextFunction, Request, RequestHandler, Response } from '@financialforcedev/orizuru';
 
 import { EVENT_GRANT_CHECKED, GrantOptions, JwtGrantParams, JwtTokenGrantorParams } from '../..';
+import { AccessTokenResponse } from '../client/oauth2';
 import { createTokenGrantor } from '../flow/jwtBearerToken';
 import { fail } from './common/fail';
+
+export interface GrantRequestOptions {
+
+	/**
+	 * Set the token on orizuru context.
+	 */
+	setTokenOnContext?: boolean;
+
+}
 
 /**
  * Returns an express middleware that checks that an access token can be retrieved
@@ -50,9 +60,16 @@ import { fail } from './common/fail';
  * @returns A express middleware that checks an access token can be retrieved for
  * the user on the request.
  */
-export function createMiddleware(app: Orizuru.IServer, provider: string, params: JwtTokenGrantorParams, opts?: GrantOptions): RequestHandler {
+export function createMiddleware(app: Orizuru.IServer, provider: string, params: JwtTokenGrantorParams, opts?: GrantRequestOptions & GrantOptions): RequestHandler {
 
 	const requestAccessToken = createTokenGrantor(app.options.authProvider[provider]);
+
+	const defaultRequestOptions: GrantRequestOptions = {
+		setTokenOnContext: false
+	};
+
+	// Collect request options
+	const { setTokenOnContext, ...grantOptions } = opts || defaultRequestOptions;
 
 	// The GrantCheckerMiddlewareParameters type excludes the grant_type
 	// so that it doesn't have to be set by the caller. Make sure it is set here.
@@ -65,9 +82,9 @@ export function createMiddleware(app: Orizuru.IServer, provider: string, params:
 
 			const user = checkUserIsOnTheRequest(req);
 
-			await requestAccessToken(Object.assign(internalParams, { user }) as JwtGrantParams, opts);
+			const tokenResponse = await requestAccessToken(Object.assign(internalParams, { user }) as JwtGrantParams, grantOptions);
 
-			setGrant(app, req);
+			setGrant(app, req, tokenResponse, setTokenOnContext);
 
 			next();
 
@@ -113,10 +130,14 @@ function checkUserIsOnTheRequest(req: Request) {
  * @param app The Orizuru server instance.
  * @param req The HTTP request.
  */
-function setGrant(app: Orizuru.IServer, req: Request) {
+function setGrant(app: Orizuru.IServer, req: Request, tokenResponse: AccessTokenResponse, setTokenOnContext?: boolean) {
 
 	const orizuru = req.orizuru!;
 	orizuru.grantChecked = true;
+
+	if (setTokenOnContext) {
+		orizuru.accessToken = tokenResponse.access_token;
+	}
 
 	app.emit(EVENT_GRANT_CHECKED, `Grant checked for user (${orizuru.user!.username}) [${req.ip}].`);
 

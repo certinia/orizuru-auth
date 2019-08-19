@@ -32,9 +32,10 @@ import { Request, RequestHandler, Response } from '@financialforcedev/orizuru';
 
 import { Environment, EVENT_GRANT_CHECKED, GrantOptions, OpenIdOptions } from '../../../src';
 import * as jwtBearerToken from '../../../src/index/flow/jwtBearerToken';
+import { MiddlewareOptions } from '../../../src/index/middleware/common/accessToken';
 import * as fail from '../../../src/index/middleware/common/fail';
 
-import { createMiddleware, GrantRequestOptions } from '../../../src/index/middleware/grantChecker';
+import { createMiddleware } from '../../../src/index/middleware/grantChecker';
 
 const expect = chai.expect;
 const has = sinon.match.has;
@@ -110,7 +111,7 @@ describe('index/middleware/grantChecker', () => {
 		let req: Request;
 		let res: Response;
 		let next: SinonStub;
-		let opts: GrantRequestOptions & GrantOptions;
+		let opts: MiddlewareOptions & GrantOptions;
 
 		beforeEach(() => {
 
@@ -217,11 +218,15 @@ describe('index/middleware/grantChecker', () => {
 
 		describe('should call next if the grant is validated', () => {
 
+			beforeEach(() => {
+				requestAccessTokenStub.resolves({
+					access_token: 'testAccessToken'
+				});
+			});
+
 			it('and update orizuru on the request', async () => {
 
 				// Given
-				requestAccessTokenStub.resolves();
-
 				// When
 				await middleware(req, res, next);
 
@@ -257,10 +262,6 @@ describe('index/middleware/grantChecker', () => {
 
 				opts.setTokenOnContext = true;
 				middleware = createMiddleware(app, 'salesforce', app.options.openid.salesforce, opts);
-
-				requestAccessTokenStub.resolves({
-					access_token: 'testAccessToken'
-				});
 
 				// When
 				await middleware(req, res, next);

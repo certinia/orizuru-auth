@@ -96,8 +96,8 @@ export function verifyIdToken(accessTokenResponse: OpenIDAccessTokenResponse, jw
 			throw new Error('Unable to verify ID token: decoded token header does not contain the kid');
 		}
 
-		const secret = jwkPemFormatMap[decodedIdToken.header.kid];
-		verify(accessTokenResponse.id_token, secret);
+		const publicKey = jwkPemFormatMap[decodedIdToken.header.kid];
+		verify(accessTokenResponse.id_token, publicKey);
 
 	} else if (accessTokenResponse.scope) {
 

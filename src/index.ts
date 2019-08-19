@@ -68,6 +68,11 @@ declare global {
 		interface Context {
 
 			/**
+			 * The access token, following the grant check. Optionally added during the grant check.
+			 */
+			accessToken?: string;
+
+			/**
 			 * If true, the grant check has been performed for this user; an access token can be
 			 * retrieved for the user.
 			 */
@@ -181,6 +186,8 @@ export {
 
 export { SalesforceAccessTokenResponse, SalesforceUser } from './index/client/salesforce';
 export { SalesforceIdentity, UserInfo } from './index/client/salesforce/identity';
+
+export { GrantRequestOptions } from './index/middleware/grantChecker';
 
 // Token Grantor types
 export type AuthCodeAccessTokenGrantor = (params: TokenGrantorParams, opts?: GrantOptions) => Promise<AccessTokenResponse>;

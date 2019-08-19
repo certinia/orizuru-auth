@@ -504,10 +504,6 @@ const DEFAULT_GRANT_OPTIONS = Object.freeze({
 	verifySignature: true
 });
 
-const DEFAULT_REVOCATION_OPTIONS = Object.freeze({
-	useGet: false
-});
-
 /**
  *  An OAuth 2.0 client that implements the [OAuth 2.0 Authorization Framework](https://tools.ietf.org/html/rfc6749) specification.
  */
@@ -715,7 +711,9 @@ export class OAuth2Client implements AuthClient {
 			throw new Error(`${this.clientType} client has not been initialized`);
 		}
 
-		const internalOpts = Object.assign({}, DEFAULT_REVOCATION_OPTIONS, opts);
+		const internalOpts = Object.assign({
+			useGet: false
+		}, opts);
 
 		let response: AxiosResponse;
 		let revocationUri = this.revocationEndpoint;

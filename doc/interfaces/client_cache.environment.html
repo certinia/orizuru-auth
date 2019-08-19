@@ -93,6 +93,7 @@
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="client_cache.environment.html#authorizationendpoint" class="tsd-kind-icon">authorization<wbr>Endpoint</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="client_cache.environment.html#httptimeout" class="tsd-kind-icon">http<wbr>Timeout</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="client_cache.environment.html#introspectionendpoint" class="tsd-kind-icon">introspection<wbr>Endpoint</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="client_cache.environment.html#issueruri" class="tsd-kind-icon">issuerURI</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="client_cache.environment.html#revocationendpoint" class="tsd-kind-icon">revocation<wbr>Endpoint</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="client_cache.environment.html#tokenendpoint" class="tsd-kind-icon">token<wbr>Endpoint</a></li>
@@ -110,14 +111,15 @@
 					<div class="tsd-signature tsd-kind-icon">authorization<wbr>Endpoint<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/cache.ts#L50">index/client/cache.ts:50</a></li>
+							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/cache.ts#L51">index/client/cache.ts:51</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
 							<p><a href="https://tools.ietf.org/html/rfc6749#section-3.1">Authorization Endpoint</a>.</p>
 						</div>
-						<p>This must be defined for OAuth2 clients but should be omitted for OpenID clients.</p>
+						<p>This must be defined for OAuth2 clients; it should be omitted for OpenID clients as
+						they use the <a href="https://openid.net/specs/openid-connect-discovery-1_0.html">OpenID Provider Issuer Discovery</a>.</p>
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
@@ -126,7 +128,7 @@
 					<div class="tsd-signature tsd-kind-icon">http<wbr>Timeout<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/cache.ts#L55">index/client/cache.ts:55</a></li>
+							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/cache.ts#L56">index/client/cache.ts:56</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -136,12 +138,29 @@
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="introspectionendpoint" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> introspection<wbr>Endpoint</h3>
+					<div class="tsd-signature tsd-kind-icon">introspection<wbr>Endpoint<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/cache.ts#L64">index/client/cache.ts:64</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p><a href="https://tools.ietf.org/html/rfc7662#section-2">Introspection Endpoint</a>.</p>
+						</div>
+						<p>This may be defined for OAuth2 clients; it should be omitted for OpenID clients as
+						they use the <a href="https://openid.net/specs/openid-connect-discovery-1_0.html">OpenID Provider Issuer Discovery</a>.</p>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="issueruri" class="tsd-anchor"></a>
 					<h3>issuerURI</h3>
 					<div class="tsd-signature tsd-kind-icon">issuerURI<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/cache.ts#L60">index/client/cache.ts:60</a></li>
+							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/cache.ts#L69">index/client/cache.ts:69</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -156,14 +175,15 @@
 					<div class="tsd-signature tsd-kind-icon">revocation<wbr>Endpoint<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/cache.ts#L67">index/client/cache.ts:67</a></li>
+							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/cache.ts#L77">index/client/cache.ts:77</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
 							<p><a href="https://tools.ietf.org/html/rfc7009#section-2.1">Revocation Endpoint</a></p>
 						</div>
-						<p>This must be defined for OAuth2 clients but should be omitted for OpenID clients.</p>
+						<p>This must be defined for OAuth2 clients; it should be omitted for OpenID clients as
+						they use the <a href="https://openid.net/specs/openid-connect-discovery-1_0.html">OpenID Provider Issuer Discovery</a>.</p>
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
@@ -172,14 +192,15 @@
 					<div class="tsd-signature tsd-kind-icon">token<wbr>Endpoint<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/cache.ts#L74">index/client/cache.ts:74</a></li>
+							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/cache.ts#L85">index/client/cache.ts:85</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
 							<p><a href="https://tools.ietf.org/html/rfc6749#section-3.2">Token Endpoint</a></p>
 						</div>
-						<p>This must be defined for OAuth2 clients but should be omitted for OpenID clients.</p>
+						<p>This must be defined for OAuth2 clients; it should be omitted for OpenID clients as
+						they use the <a href="https://openid.net/specs/openid-connect-discovery-1_0.html">OpenID Provider Issuer Discovery</a>.</p>
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
@@ -188,7 +209,7 @@
 					<div class="tsd-signature tsd-kind-icon">type<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"OAuth2"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"OAuth2JWT"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"OpenID"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"Salesforce"</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/cache.ts#L79">index/client/cache.ts:79</a></li>
+							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/cache.ts#L90">index/client/cache.ts:90</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -205,74 +226,8 @@
 					<li class="globals  ">
 						<a href="../globals.html"><em>Globals</em></a>
 					</li>
-					<li class="label tsd-is-external">
-						<span>Internals</span>
-					</li>
 					<li class="current tsd-kind-external-module">
 						<a href="../modules/client_cache.html">client/cache</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/client_oauth2.html">client/oauth2</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/client_oauth2jwt.html">client/oauth2<wbr>Jwt</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/client_oauth2jwt_jwt.html">client/oauth2<wbr>Jwt/jwt</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/client_openid.html">client/openid</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/client_openid_identity.html">client/openid/identity</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/client_salesforce.html">client/salesforce</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/client_salesforce_identity.html">client/salesforce/identity</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/client_validator_environment.html">client/validator/environment</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/flow_jwtbearertoken.html">flow/jwt<wbr>Bearer<wbr>Token</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/flow_refreshtoken.html">flow/refresh<wbr>Token</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/flow_webserver.html">flow/web<wbr>Server</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/grant_grant.html">grant/grant</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/middleware_authcallback.html">middleware/auth<wbr>Callback</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/middleware_common_fail.html">middleware/common/fail</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/middleware_grantchecker.html">middleware/grant<wbr>Checker</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/middleware_identity.html">middleware/identity</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/middleware_tokenvalidator.html">middleware/token<wbr>Validator</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/revocation_revoke.html">revocation/revoke</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/userinfo_userinfo.html">user<wbr>Info/userinfo</a>
-					</li>
-					<li class="label tsd-is-external">
-						<span>Externals</span>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="../modules/_financialforcedev_orizuru_auth.html">@financialforcedev/orizuru-<wbr>auth</a>
 					</li>
 				</ul>
 			</nav>
@@ -288,6 +243,9 @@
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
 								<a href="client_cache.environment.html#httptimeout" class="tsd-kind-icon">http<wbr>Timeout</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="client_cache.environment.html#introspectionendpoint" class="tsd-kind-icon">introspection<wbr>Endpoint</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
 								<a href="client_cache.environment.html#issueruri" class="tsd-kind-icon">issuerURI</a>

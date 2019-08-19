@@ -97,6 +97,9 @@
 				<ul class="tsd-hierarchy">
 					<li>
 						<a href="client_openid.openidaccesstokenresponse.html" class="tsd-signature-type">OpenIDAccessTokenResponse</a>
+					</li>
+					<li>
+						<a href="client_salesforce_identity.userinforesponse.html" class="tsd-signature-type">UserInfoResponse</a>
 						<ul class="tsd-hierarchy">
 							<li>
 								<span class="target">SalesforceAccessTokenResponse</span>
@@ -114,7 +117,7 @@
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="client_salesforce.salesforceaccesstokenresponse.html#access_token" class="tsd-kind-icon">access_<wbr>token</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="client_salesforce.salesforceaccesstokenresponse.html#expires_in" class="tsd-kind-icon">expires_<wbr>in</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="client_salesforce.salesforceaccesstokenresponse.html#id" class="tsd-kind-icon">id</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="client_salesforce.salesforceaccesstokenresponse.html#id" class="tsd-kind-icon">id</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="client_salesforce.salesforceaccesstokenresponse.html#id_token" class="tsd-kind-icon">id_<wbr>token</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="client_salesforce.salesforceaccesstokenresponse.html#instance_url" class="tsd-kind-icon">instance_<wbr>url</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="client_salesforce.salesforceaccesstokenresponse.html#issued_at" class="tsd-kind-icon">issued_<wbr>at</a></li>
@@ -123,8 +126,9 @@
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="client_salesforce.salesforceaccesstokenresponse.html#sfdc_community_id" class="tsd-kind-icon">sfdc_<wbr>community_<wbr>id</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="client_salesforce.salesforceaccesstokenresponse.html#sfdc_community_url" class="tsd-kind-icon">sfdc_<wbr>community_<wbr>url</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="client_salesforce.salesforceaccesstokenresponse.html#signature" class="tsd-kind-icon">signature</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="client_salesforce.salesforceaccesstokenresponse.html#sub" class="tsd-kind-icon">sub</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="client_salesforce.salesforceaccesstokenresponse.html#token_type" class="tsd-kind-icon">token_<wbr>type</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="client_salesforce.salesforceaccesstokenresponse.html#userinfo" class="tsd-kind-icon">user<wbr>Info</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="client_salesforce.salesforceaccesstokenresponse.html#userinfo" class="tsd-kind-icon">user<wbr>Info</a></li>
 							</ul>
 						</section>
 					</div>
@@ -139,7 +143,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="client_oauth2.accesstokenresponse.html">AccessTokenResponse</a>.<a href="client_oauth2.accesstokenresponse.html#access_token">access_token</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/oauth2.ts#L67">index/client/oauth2.ts:67</a></li>
+							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/oauth2.ts#L68">index/client/oauth2.ts:68</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -155,7 +159,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="client_oauth2.accesstokenresponse.html">AccessTokenResponse</a>.<a href="client_oauth2.accesstokenresponse.html#expires_in">expires_in</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/oauth2.ts#L72">index/client/oauth2.ts:72</a></li>
+							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/oauth2.ts#L73">index/client/oauth2.ts:73</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -164,13 +168,14 @@
 						</div>
 					</div>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
 					<a name="id" class="tsd-anchor"></a>
-					<h3>id</h3>
-					<div class="tsd-signature tsd-kind-icon">id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> id</h3>
+					<div class="tsd-signature tsd-kind-icon">id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
+						<p>Inherited from <a href="client_salesforce_identity.userinforesponse.html">UserInfoResponse</a>.<a href="client_salesforce_identity.userinforesponse.html#id">id</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/salesforce.ts#L65">index/client/salesforce.ts:65</a></li>
+							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/salesforce/identity.ts#L224">index/client/salesforce/identity.ts:224</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -186,7 +191,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="client_openid.openidaccesstokenresponse.html">OpenIDAccessTokenResponse</a>.<a href="client_openid.openidaccesstokenresponse.html#id_token">id_token</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/openid.ts#L52">index/client/openid.ts:52</a></li>
+							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/openid.ts#L49">index/client/openid.ts:49</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -202,7 +207,7 @@
 					<div class="tsd-signature tsd-kind-icon">instance_<wbr>url<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/salesforce.ts#L60">index/client/salesforce.ts:60</a></li>
+							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/salesforce.ts#L61">index/client/salesforce.ts:61</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -217,7 +222,7 @@
 					<div class="tsd-signature tsd-kind-icon">issued_<wbr>at<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/salesforce.ts#L87">index/client/salesforce.ts:87</a></li>
+							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/salesforce.ts#L83">index/client/salesforce.ts:83</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -233,7 +238,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="client_oauth2.accesstokenresponse.html">AccessTokenResponse</a>.<a href="client_oauth2.accesstokenresponse.html#refresh_token">refresh_token</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/oauth2.ts#L78">index/client/oauth2.ts:78</a></li>
+							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/oauth2.ts#L79">index/client/oauth2.ts:79</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -250,7 +255,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="client_oauth2.accesstokenresponse.html">AccessTokenResponse</a>.<a href="client_oauth2.accesstokenresponse.html#scope">scope</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/oauth2.ts#L83">index/client/oauth2.ts:83</a></li>
+							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/oauth2.ts#L84">index/client/oauth2.ts:84</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -265,7 +270,7 @@
 					<div class="tsd-signature tsd-kind-icon">sfdc_<wbr>community_<wbr>id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/salesforce.ts#L75">index/client/salesforce.ts:75</a></li>
+							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/salesforce.ts#L71">index/client/salesforce.ts:71</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -280,7 +285,7 @@
 					<div class="tsd-signature tsd-kind-icon">sfdc_<wbr>community_<wbr>url<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/salesforce.ts#L70">index/client/salesforce.ts:70</a></li>
+							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/salesforce.ts#L66">index/client/salesforce.ts:66</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -295,7 +300,7 @@
 					<div class="tsd-signature tsd-kind-icon">signature<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/salesforce.ts#L82">index/client/salesforce.ts:82</a></li>
+							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/salesforce.ts#L78">index/client/salesforce.ts:78</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -307,13 +312,29 @@
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+					<a name="sub" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> sub</h3>
+					<div class="tsd-signature tsd-kind-icon">sub<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="client_salesforce_identity.userinforesponse.html">UserInfoResponse</a>.<a href="client_salesforce_identity.userinforesponse.html#sub">sub</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/salesforce/identity.ts#L229">index/client/salesforce/identity.ts:229</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Subject  that can be used to both identify the user and query for more information about the user.</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
 					<a name="token_type" class="tsd-anchor"></a>
 					<h3>token_<wbr>type</h3>
 					<div class="tsd-signature tsd-kind-icon">token_<wbr>type<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="client_oauth2.accesstokenresponse.html">AccessTokenResponse</a>.<a href="client_oauth2.accesstokenresponse.html#token_type">token_type</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/oauth2.ts#L88">index/client/oauth2.ts:88</a></li>
+							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/oauth2.ts#L89">index/client/oauth2.ts:89</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -322,13 +343,14 @@
 						</div>
 					</div>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
 					<a name="userinfo" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagOptional">Optional</span> user<wbr>Info</h3>
-					<div class="tsd-signature tsd-kind-icon">user<wbr>Info<span class="tsd-signature-symbol">:</span> <a href="client_salesforce.userinfo.html" class="tsd-signature-type">UserInfo</a></div>
+					<div class="tsd-signature tsd-kind-icon">user<wbr>Info<span class="tsd-signature-symbol">:</span> <a href="client_salesforce_identity.userinfo.html" class="tsd-signature-type">UserInfo</a></div>
 					<aside class="tsd-sources">
+						<p>Inherited from <a href="client_salesforce_identity.userinforesponse.html">UserInfoResponse</a>.<a href="client_salesforce_identity.userinforesponse.html#userinfo">userInfo</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/salesforce.ts#L92">index/client/salesforce.ts:92</a></li>
+							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/salesforce/identity.ts#L234">index/client/salesforce/identity.ts:234</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -345,74 +367,8 @@
 					<li class="globals  ">
 						<a href="../globals.html"><em>Globals</em></a>
 					</li>
-					<li class="label tsd-is-external">
-						<span>Internals</span>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/client_cache.html">client/cache</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/client_oauth2.html">client/oauth2</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/client_oauth2jwt.html">client/oauth2<wbr>Jwt</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/client_oauth2jwt_jwt.html">client/oauth2<wbr>Jwt/jwt</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/client_openid.html">client/openid</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/client_openid_identity.html">client/openid/identity</a>
-					</li>
 					<li class="current tsd-kind-external-module">
 						<a href="../modules/client_salesforce.html">client/salesforce</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/client_salesforce_identity.html">client/salesforce/identity</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/client_validator_environment.html">client/validator/environment</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/flow_jwtbearertoken.html">flow/jwt<wbr>Bearer<wbr>Token</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/flow_refreshtoken.html">flow/refresh<wbr>Token</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/flow_webserver.html">flow/web<wbr>Server</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/grant_grant.html">grant/grant</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/middleware_authcallback.html">middleware/auth<wbr>Callback</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/middleware_common_fail.html">middleware/common/fail</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/middleware_grantchecker.html">middleware/grant<wbr>Checker</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/middleware_identity.html">middleware/identity</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/middleware_tokenvalidator.html">middleware/token<wbr>Validator</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/revocation_revoke.html">revocation/revoke</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/userinfo_userinfo.html">user<wbr>Info/userinfo</a>
-					</li>
-					<li class="label tsd-is-external">
-						<span>Externals</span>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="../modules/_financialforcedev_orizuru_auth.html">@financialforcedev/orizuru-<wbr>auth</a>
 					</li>
 				</ul>
 			</nav>
@@ -432,7 +388,7 @@
 							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
 								<a href="client_salesforce.salesforceaccesstokenresponse.html#expires_in" class="tsd-kind-icon">expires_<wbr>in</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
 								<a href="client_salesforce.salesforceaccesstokenresponse.html#id" class="tsd-kind-icon">id</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
@@ -460,9 +416,12 @@
 								<a href="client_salesforce.salesforceaccesstokenresponse.html#signature" class="tsd-kind-icon">signature</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+								<a href="client_salesforce.salesforceaccesstokenresponse.html#sub" class="tsd-kind-icon">sub</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
 								<a href="client_salesforce.salesforceaccesstokenresponse.html#token_type" class="tsd-kind-icon">token_<wbr>type</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
 								<a href="client_salesforce.salesforceaccesstokenresponse.html#userinfo" class="tsd-kind-icon">user<wbr>Info</a>
 							</li>
 						</ul>
@@ -470,10 +429,16 @@
 				</ul>
 				<ul class="after-current">
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="client_salesforce.salesforceuser.html" class="tsd-kind-icon">Salesforce<wbr>User</a>
+						<a href="client_salesforce.salesforcegrantoptions.html" class="tsd-kind-icon">Salesforce<wbr>Grant<wbr>Options</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="client_salesforce.userinfo.html" class="tsd-kind-icon">User<wbr>Info</a>
+						<a href="client_salesforce.salesforceintrospectionoptions.html" class="tsd-kind-icon">Salesforce<wbr>Introspection<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
+						<a href="client_salesforce.salesforceintrospectionresponse.html" class="tsd-kind-icon">Salesforce<wbr>Introspection<wbr>Response</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
+						<a href="client_salesforce.salesforceuser.html" class="tsd-kind-icon">Salesforce<wbr>User</a>
 					</li>
 				</ul>
 			</nav>

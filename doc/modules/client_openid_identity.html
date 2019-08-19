@@ -76,6 +76,7 @@
 								<li class="tsd-kind-function tsd-parent-kind-external-module"><a href="client_openid_identity.html#decodeidtoken" class="tsd-kind-icon">decode<wbr>IdToken</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-external-module"><a href="client_openid_identity.html#isopenidaccesstokenresponse" class="tsd-kind-icon">is<wbr>Open<wbr>IdAccess<wbr>Token<wbr>Response</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-external-module"><a href="client_openid_identity.html#isopenidtokenwithstandardclaims" class="tsd-kind-icon">is<wbr>Open<wbr>IdToken<wbr>With<wbr>Standard<wbr>Claims</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-external-module"><a href="client_openid_identity.html#verifyidtoken" class="tsd-kind-icon">verify<wbr>IdToken</a></li>
 							</ul>
 						</section>
 					</div>
@@ -93,7 +94,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/openid/identity.ts#L43">index/client/openid/identity.ts:43</a></li>
+									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/openid/identity.ts#L44">index/client/openid/identity.ts:44</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -125,7 +126,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/openid/identity.ts#L80">index/client/openid/identity.ts:80</a></li>
+									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/openid/identity.ts#L131">index/client/openid/identity.ts:131</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -157,7 +158,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/openid/identity.ts#L70">index/client/openid/identity.ts:70</a></li>
+									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/openid/identity.ts#L121">index/client/openid/identity.ts:121</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -179,6 +180,40 @@
 						</li>
 					</ul>
 				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module">
+					<a name="verifyidtoken" class="tsd-anchor"></a>
+					<h3>verify<wbr>IdToken</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module">
+						<li class="tsd-signature tsd-kind-icon">verify<wbr>IdToken<span class="tsd-signature-symbol">(</span>accessTokenResponse<span class="tsd-signature-symbol">: </span><a href="../interfaces/client_openid.openidaccesstokenresponse.html" class="tsd-signature-type">OpenIDAccessTokenResponse</a>, jwkPemFormatMap<span class="tsd-signature-symbol">?: </span><a href="../interfaces/client_openid_jwk.jsonwebkeypemformatmap.html" class="tsd-signature-type">JsonWebKeyPemFormatMap</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/openid/identity.ts#L71">index/client/openid/identity.ts:71</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Verify the <code>id_token</code> from an access token response.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>accessTokenResponse: <a href="../interfaces/client_openid.openidaccesstokenresponse.html" class="tsd-signature-type">OpenIDAccessTokenResponse</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The access token response.</p>
+									</div>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> jwkPemFormatMap: <a href="../interfaces/client_openid_jwk.jsonwebkeypemformatmap.html" class="tsd-signature-type">JsonWebKeyPemFormatMap</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
 			</section>
 		</div>
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
@@ -187,74 +222,8 @@
 					<li class="globals  ">
 						<a href="../globals.html"><em>Globals</em></a>
 					</li>
-					<li class="label tsd-is-external">
-						<span>Internals</span>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="client_cache.html">client/cache</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="client_oauth2.html">client/oauth2</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="client_oauth2jwt.html">client/oauth2<wbr>Jwt</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="client_oauth2jwt_jwt.html">client/oauth2<wbr>Jwt/jwt</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="client_openid.html">client/openid</a>
-					</li>
 					<li class="current tsd-kind-external-module">
 						<a href="client_openid_identity.html">client/openid/identity</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="client_salesforce.html">client/salesforce</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="client_salesforce_identity.html">client/salesforce/identity</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="client_validator_environment.html">client/validator/environment</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="flow_jwtbearertoken.html">flow/jwt<wbr>Bearer<wbr>Token</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="flow_refreshtoken.html">flow/refresh<wbr>Token</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="flow_webserver.html">flow/web<wbr>Server</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="grant_grant.html">grant/grant</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="middleware_authcallback.html">middleware/auth<wbr>Callback</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="middleware_common_fail.html">middleware/common/fail</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="middleware_grantchecker.html">middleware/grant<wbr>Checker</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="middleware_identity.html">middleware/identity</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="middleware_tokenvalidator.html">middleware/token<wbr>Validator</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="revocation_revoke.html">revocation/revoke</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="userinfo_userinfo.html">user<wbr>Info/userinfo</a>
-					</li>
-					<li class="label tsd-is-external">
-						<span>Externals</span>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="_financialforcedev_orizuru_auth.html">@financialforcedev/orizuru-<wbr>auth</a>
 					</li>
 				</ul>
 			</nav>
@@ -268,6 +237,9 @@
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module">
 						<a href="client_openid_identity.html#isopenidtokenwithstandardclaims" class="tsd-kind-icon">is<wbr>Open<wbr>IdToken<wbr>With<wbr>Standard<wbr>Claims</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module">
+						<a href="client_openid_identity.html#verifyidtoken" class="tsd-kind-icon">verify<wbr>IdToken</a>
 					</li>
 				</ul>
 			</nav>

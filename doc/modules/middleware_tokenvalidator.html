@@ -74,7 +74,6 @@
 							<h3>Functions</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-function tsd-parent-kind-external-module"><a href="middleware_tokenvalidator.html#createmiddleware" class="tsd-kind-icon">create<wbr>Middleware</a></li>
-								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported"><a href="middleware_tokenvalidator.html#extractaccesstoken" class="tsd-kind-icon">extract<wbr>Access<wbr>Token</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported"><a href="middleware_tokenvalidator.html#setuseronrequest" class="tsd-kind-icon">set<wbr>User<wbr>OnRequest</a></li>
 							</ul>
 						</section>
@@ -87,7 +86,7 @@
 					<a name="createmiddleware" class="tsd-anchor"></a>
 					<h3>create<wbr>Middleware</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module">
-						<li class="tsd-signature tsd-kind-icon">create<wbr>Middleware<span class="tsd-signature-symbol">(</span>app<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">IServer</span>, provider<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, opts<span class="tsd-signature-symbol">?: </span><a href="../interfaces/client_openid.userinfooptions.html" class="tsd-signature-type">UserInfoOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">RequestHandler</span></li>
+						<li class="tsd-signature tsd-kind-icon">create<wbr>Middleware<span class="tsd-signature-symbol">(</span>app<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">IServer</span>, provider<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span>, opts<span class="tsd-signature-symbol">?: </span><a href="../interfaces/middleware_common_accesstoken.middlewareoptions.html" class="tsd-signature-type">MiddlewareOptions</a><span class="tsd-signature-symbol"> &amp; </span><a href="../interfaces/client_openid.userinfooptions.html" class="tsd-signature-type">UserInfoOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">RequestHandler</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
@@ -117,13 +116,10 @@
 									</div>
 								</li>
 								<li>
-									<h5>provider: <span class="tsd-signature-type">string</span></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>The name of the auth provider.</p>
-									</div>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> provider: <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></h5>
 								</li>
 								<li>
-									<h5><span class="tsd-flag ts-flagOptional">Optional</span> opts: <a href="../interfaces/client_openid.userinfooptions.html" class="tsd-signature-type">UserInfoOptions</a></h5>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> opts: <a href="../interfaces/middleware_common_accesstoken.middlewareoptions.html" class="tsd-signature-type">MiddlewareOptions</a><span class="tsd-signature-symbol"> &amp; </span><a href="../interfaces/client_openid.userinfooptions.html" class="tsd-signature-type">UserInfoOptions</a></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">RequestHandler</span></h4>
@@ -132,54 +128,16 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
-					<a name="extractaccesstoken" class="tsd-anchor"></a>
-					<h3>extract<wbr>Access<wbr>Token</h3>
-					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
-						<li class="tsd-signature tsd-kind-icon">extract<wbr>Access<wbr>Token<span class="tsd-signature-symbol">(</span>req<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Request</span>, tokenRegex<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">RegExp</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/middleware/tokenValidator.ts#L94">index/middleware/tokenValidator.ts:94</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Extracts the access token from the incoming request.</p>
-								</div>
-							</div>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>req: <span class="tsd-signature-type">Request</span></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>The HTTP request.</p>
-									</div>
-								</li>
-								<li>
-									<h5>tokenRegex: <span class="tsd-signature-type">RegExp</span></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>The regular expression used for parsing the token.</p>
-									</div>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
-							<p>The access token from the request authorization header.</p>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
 					<a name="setuseronrequest" class="tsd-anchor"></a>
 					<h3>set<wbr>User<wbr>OnRequest</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
-						<li class="tsd-signature tsd-kind-icon">set<wbr>User<wbr>OnRequest<span class="tsd-signature-symbol">(</span>app<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">IServer</span>, req<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Request</span>, user<span class="tsd-signature-symbol">: </span><a href="../interfaces/client_oauth2jwt.user.html" class="tsd-signature-type">User</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">set<wbr>User<wbr>OnRequest<span class="tsd-signature-symbol">(</span>app<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">IServer</span>, req<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Request</span>, userInfo<span class="tsd-signature-symbol">: </span><a href="../interfaces/client_openid.openidtokenwithstandardclaims.html" class="tsd-signature-type">OpenIDTokenWithStandardClaims</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/middleware/tokenValidator.ts#L121">index/middleware/tokenValidator.ts:121</a></li>
+									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/middleware/tokenValidator.ts#L84">index/middleware/tokenValidator.ts:84</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -207,9 +165,9 @@
 									</div>
 								</li>
 								<li>
-									<h5>user: <a href="../interfaces/client_oauth2jwt.user.html" class="tsd-signature-type">User</a></h5>
+									<h5>userInfo: <a href="../interfaces/client_openid.openidtokenwithstandardclaims.html" class="tsd-signature-type">OpenIDTokenWithStandardClaims</a></h5>
 									<div class="tsd-comment tsd-typography">
-										<p>The user to set on the request.</p>
+										<p>The user information.</p>
 									</div>
 								</li>
 							</ul>
@@ -225,74 +183,8 @@
 					<li class="globals  ">
 						<a href="../globals.html"><em>Globals</em></a>
 					</li>
-					<li class="label tsd-is-external">
-						<span>Internals</span>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="client_cache.html">client/cache</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="client_oauth2.html">client/oauth2</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="client_oauth2jwt.html">client/oauth2<wbr>Jwt</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="client_oauth2jwt_jwt.html">client/oauth2<wbr>Jwt/jwt</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="client_openid.html">client/openid</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="client_openid_identity.html">client/openid/identity</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="client_salesforce.html">client/salesforce</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="client_salesforce_identity.html">client/salesforce/identity</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="client_validator_environment.html">client/validator/environment</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="flow_jwtbearertoken.html">flow/jwt<wbr>Bearer<wbr>Token</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="flow_refreshtoken.html">flow/refresh<wbr>Token</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="flow_webserver.html">flow/web<wbr>Server</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="grant_grant.html">grant/grant</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="middleware_authcallback.html">middleware/auth<wbr>Callback</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="middleware_common_fail.html">middleware/common/fail</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="middleware_grantchecker.html">middleware/grant<wbr>Checker</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="middleware_identity.html">middleware/identity</a>
-					</li>
 					<li class="current tsd-kind-external-module">
 						<a href="middleware_tokenvalidator.html">middleware/token<wbr>Validator</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="revocation_revoke.html">revocation/revoke</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="userinfo_userinfo.html">user<wbr>Info/userinfo</a>
-					</li>
-					<li class="label tsd-is-external">
-						<span>Externals</span>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="_financialforcedev_orizuru_auth.html">@financialforcedev/orizuru-<wbr>auth</a>
 					</li>
 				</ul>
 			</nav>
@@ -300,9 +192,6 @@
 				<ul class="before-current">
 					<li class=" tsd-kind-function tsd-parent-kind-external-module">
 						<a href="middleware_tokenvalidator.html#createmiddleware" class="tsd-kind-icon">create<wbr>Middleware</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="middleware_tokenvalidator.html#extractaccesstoken" class="tsd-kind-icon">extract<wbr>Access<wbr>Token</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
 						<a href="middleware_tokenvalidator.html#setuseronrequest" class="tsd-kind-icon">set<wbr>User<wbr>OnRequest</a>

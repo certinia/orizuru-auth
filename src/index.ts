@@ -187,7 +187,7 @@ export {
 export { SalesforceAccessTokenResponse, SalesforceUser } from './index/client/salesforce';
 export { SalesforceIdentity, UserInfo } from './index/client/salesforce/identity';
 
-export { GrantRequestOptions } from './index/middleware/grantChecker';
+export { MiddlewareOptions } from './index/middleware/common/accessToken';
 
 // Token Grantor types
 export type AuthCodeAccessTokenGrantor = (params: TokenGrantorParams, opts?: GrantOptions) => Promise<AccessTokenResponse>;

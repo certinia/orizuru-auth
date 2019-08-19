@@ -41,6 +41,10 @@ export interface MiddlewareOptions {
 
 }
 
+export const DEFAULT_MIDDLEWARE_OPTIONS: MiddlewareOptions = Object.freeze({
+	setTokenOnContext: false
+});
+
 /**
  * Extracts the access token from the incoming request.
  *

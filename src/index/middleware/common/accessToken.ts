@@ -32,6 +32,15 @@ import { Request } from '@financialforcedev/orizuru';
 
 const tokenRegex = new RegExp('^Bearer (.+)$');
 
+export interface MiddlewareOptions {
+
+	/**
+	 * Set the token on orizuru context.
+	 */
+	setTokenOnContext?: boolean;
+
+}
+
 /**
  * Extracts the access token from the incoming request.
  *
@@ -55,5 +64,24 @@ export function extractAccessToken(req: Request) {
 	}
 
 	return matches[1];
+
+}
+
+/**
+ * Sets the access token on the Orizuru context.
+ *
+ * @param req The HTTP request.
+ * @param accessToken The access token.
+ * @param setTokenOnContext If true, add the token to the Orizuru context.
+ */
+export function setAccessTokenOnRequest(req: Request, accessToken: string, setTokenOnContext?: boolean) {
+
+	if (!setTokenOnContext) {
+		return;
+	}
+
+	const orizuru = req.orizuru || {};
+	orizuru.accessToken = accessToken;
+	req.orizuru = orizuru;
 
 }

@@ -28,24 +28,24 @@ import chai from 'chai';
 
 import { Request } from '@financialforcedev/orizuru';
 
-import { extractAccessToken } from '../../../../src/index/middleware/common/accessToken';
+import { extractAccessToken, setAccessTokenOnRequest } from '../../../../src/index/middleware/common/accessToken';
 
 const expect = chai.expect;
 
 describe('index/middleware/common/accessToken', () => {
 
+	let req: Request;
+
+	beforeEach(() => {
+
+		const partialRequest: Partial<Request> = {
+			ip: '1.1.1.1'
+		};
+		req = partialRequest as Request;
+
+	});
+
 	describe('extractAccessToken', () => {
-
-		let req: Request;
-
-		beforeEach(() => {
-
-			const partialRequest: Partial<Request> = {
-				ip: '1.1.1.1'
-			};
-			req = partialRequest as Request;
-
-		});
 
 		it('should extract the access token from the request', () => {
 
@@ -120,6 +120,69 @@ describe('index/middleware/common/accessToken', () => {
 				// When
 				// Then
 				expect(() => extractAccessToken(req)).to.throw('Authorization header with \'Bearer ***...\' required.');
+
+			});
+
+		});
+
+	});
+
+	describe('setAccessTokenOnRequest', () => {
+
+		describe('should do nothing', () => {
+
+			it('if setTokenOnContext is undefined', () => {
+
+				// Given
+				// When
+				setAccessTokenOnRequest(req, 'token');
+
+				// Then
+				expect(req).to.not.have.property('orizuru');
+
+			});
+
+			it('if setTokenOnContext is false', () => {
+
+				// Given
+				// When
+				setAccessTokenOnRequest(req, 'token', false);
+
+				// Then
+				expect(req).to.not.have.property('orizuru');
+
+			});
+
+		});
+
+		describe('should add the token to the context', () => {
+
+			it('if setTokenOnContext is true', () => {
+
+				// Given
+				// When
+				setAccessTokenOnRequest(req, 'token', true);
+
+				// Then
+				expect(req).to.have.property('orizuru');
+				expect(req.orizuru).to.have.property('accessToken', 'token');
+
+			});
+
+			it('if setTokenOnContext is true respecting an existing orizuru property', () => {
+
+				// Given
+				req.orizuru = {
+					grantChecked: true
+				};
+
+				// When
+				setAccessTokenOnRequest(req, 'token', true);
+
+				// Then
+				expect(req).to.have.property('orizuru');
+				expect(req.orizuru).to.have.property('accessToken', 'token');
+				expect(req.orizuru).to.have.property('grantChecked', true);
 
 			});
 

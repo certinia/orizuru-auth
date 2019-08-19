@@ -28,10 +28,11 @@
  * @module client/openid/identity
  */
 
-import { decode } from 'jsonwebtoken';
+import { decode, verify } from 'jsonwebtoken';
 
 import { AccessTokenResponse } from '../oauth2';
 import { OpenIDAccessTokenResponse, OpenIDToken, OpenIDTokenWithStandardClaims } from '../openid';
+import { JsonWebKeyPemFormatMap } from './jwk';
 
 /**
  * Decode the `id_token` from an access token response.
@@ -47,6 +48,56 @@ export function decodeIdToken(accessTokenResponse: OpenIDAccessTokenResponse) {
 		if (typeof accessTokenResponse.id_token === 'string') {
 			accessTokenResponse.id_token = decode(accessTokenResponse.id_token) as OpenIDToken | OpenIDTokenWithStandardClaims;
 		}
+
+	} else if (accessTokenResponse.scope) {
+
+		const scopes = accessTokenResponse.scope.split(' ');
+		if (scopes.includes('openid')) {
+			throw new Error('No id_token present');
+		}
+
+	} else {
+		throw new Error('No id_token present');
+	}
+
+}
+
+/**
+ * Verify the `id_token` from an access token response.
+ *
+ * @param accessTokenResponse The access token response.
+ * @param [jwkPemFormatMap] Map of the retrieved JSON Web Keys, keyed by the Key ID Parameter, in PEM format.
+ */
+export function verifyIdToken(accessTokenResponse: OpenIDAccessTokenResponse, jwkPemFormatMap?: JsonWebKeyPemFormatMap) {
+
+	if (!jwkPemFormatMap) {
+		throw new Error('Unable to verify ID token: No JWKs provided');
+	}
+
+	if (accessTokenResponse.id_token) {
+
+		if (typeof accessTokenResponse.id_token !== 'string') {
+			throw new Error('Unable to verify ID token: id_token is not a string');
+		}
+
+		const decodedIdToken = decode(accessTokenResponse.id_token, {
+			complete: true
+		});
+
+		if (!decodedIdToken || typeof decodedIdToken !== 'object') {
+			throw new Error('Unable to verify ID token: decoded token is not an object');
+		}
+
+		if (!decodedIdToken.header) {
+			throw new Error('Unable to verify ID token: decoded token does not contain the header');
+		}
+
+		if (!decodedIdToken.header.kid) {
+			throw new Error('Unable to verify ID token: decoded token header does not contain the kid');
+		}
+
+		const secret = jwkPemFormatMap[decodedIdToken.header.kid];
+		verify(accessTokenResponse.id_token, secret);
 
 	} else if (accessTokenResponse.scope) {
 

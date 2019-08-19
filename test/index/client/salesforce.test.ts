@@ -34,6 +34,7 @@ import { AxiosRequestConfig, AxiosResponse, default as axios } from 'axios';
 import { AuthCodeGrantParams, AuthOptions, AuthUrlParams, Environment, GrantOptions, IntrospectionParams, JwtGrantParams, RefreshGrantParams } from '../../../src';
 import * as jwt from '../../../src/index/client/oauth2Jwt/jwt';
 import * as openidIdentity from '../../../src/index/client/openid/identity';
+import * as jwk from '../../../src/index/client/openid/jwk';
 import * as salesforceIdentity from '../../../src/index/client/salesforce/identity';
 
 import { SalesforceClient, SalesforceIntrospectionOptions } from '../../../src/index/client/salesforce';
@@ -74,6 +75,12 @@ describe('index/client/salesforce', () => {
 			status: 200,
 			statusText: 'OK'
 		});
+
+		sinon.stub(jwk, 'retrieveJsonWebKeysInPemFormat').resolves({
+			124: 'test'
+		});
+
+		sinon.stub(openidIdentity, 'verifyIdToken');
 
 	});
 

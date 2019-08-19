@@ -33,11 +33,13 @@ import axios from 'axios';
 import { Environment } from './cache';
 import { AccessTokenResponse, GrantOptions, GrantParams, OAuth2Client, ResponseFormat } from './oauth2';
 import { JWT, OAuth2JWTClient } from './oauth2Jwt';
-import { decodeIdToken } from './openid/identity';
+import { decodeIdToken, verifyIdToken } from './openid/identity';
+import { JsonWebKeyPemFormatMap, retrieveJsonWebKeysInPemFormat } from './openid/jwk';
 
 const DEFAULT_USERINFO_OPTIONS = Object.freeze({
 	responseFormat: 'application/json'
 });
+
 export interface OpenIDAccessTokenResponse extends AccessTokenResponse {
 
 	/**
@@ -289,9 +291,19 @@ export interface UserInfoOptions {
 export class OpenIdClient extends OAuth2JWTClient {
 
 	/**
+	 * [JSON Web Key Set Document](https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderMetadata)
+	 */
+	private jwksEndpoint?: string;
+
+	/**
 	 * [UserInfo endpoint](https://openid.net/specs/openid-connect-core-1_0.html#UserInfo)
 	 */
 	private userinfoEndpoint?: string;
+
+	/**
+	 * Map of the retrieved JSON Web Keys, keyed by the Key ID Parameter, in PEM format.
+	 */
+	private jwkPemFormatMap?: JsonWebKeyPemFormatMap;
 
 	/**
 	 * Creates a new OpenID client with the given environment.
@@ -309,10 +321,12 @@ export class OpenIdClient extends OAuth2JWTClient {
 	 */
 	public async init() {
 
-		const uri = `${this.env.issuerURI.replace(/\/$/, '')}/.well-known/openid-configuration`;
-		const response = await axios.get(uri, Object.assign({}, OAuth2Client.DEFAULT_REQUEST_CONFIG, {
+		const config = Object.assign({}, OAuth2Client.DEFAULT_REQUEST_CONFIG, {
 			timeout: this.env.httpTimeout
-		}));
+		});
+
+		const uri = `${this.env.issuerURI.replace(/\/$/, '')}/.well-known/openid-configuration`;
+		const response = await axios.get(uri, config);
 
 		if (response.status !== 200) {
 			throw new Error(`Failed to initialise ${this.clientType} client. OpenID configuration request failed.`);
@@ -322,9 +336,14 @@ export class OpenIdClient extends OAuth2JWTClient {
 
 		this.authorizationEndpoint = data.authorization_endpoint;
 		this.introspectionEndpoint = data.introspection_endpoint || null;
+		this.jwksEndpoint = data.jwks_uri;
 		this.revocationEndpoint = data.revocation_endpoint;
 		this.tokenEndpoint = data.token_endpoint;
 		this.userinfoEndpoint = data.userinfo_endpoint;
+
+		if (this.jwksEndpoint) {
+			this.jwkPemFormatMap = await retrieveJsonWebKeysInPemFormat(this.jwksEndpoint, config);
+		}
 
 	}
 
@@ -373,6 +392,10 @@ export class OpenIdClient extends OAuth2JWTClient {
 	protected handleAccessTokenResponse(accessTokenResponse: AccessTokenResponse, internalOpts: GrantOptions) {
 
 		try {
+
+			if (internalOpts.verifyIdToken) {
+				verifyIdToken(accessTokenResponse, this.jwkPemFormatMap);
+			}
 
 			if (internalOpts.decodeIdToken) {
 				decodeIdToken(accessTokenResponse);

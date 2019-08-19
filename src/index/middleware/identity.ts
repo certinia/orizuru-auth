@@ -33,6 +33,7 @@ import { AxiosResponse, default as axios } from 'axios';
 import { NextFunction, Request, RequestHandler, Response } from '@financialforcedev/orizuru';
 
 import { EVENT_USER_IDENTITY_RETRIEVED, SalesforceIdentity } from '../..';
+import { extractAccessToken } from './common/accessToken';
 import { fail } from './common/fail';
 
 /**
@@ -47,13 +48,11 @@ import { fail } from './common/fail';
  */
 export function createMiddleware(app: Orizuru.IServer): RequestHandler {
 
-	const tokenRegex = new RegExp('^Bearer (.+)$');
-
 	return async function retrieveIdentityInformation(req: Request, res: Response, next: NextFunction) {
 
 		try {
 
-			const identityUrl = validateRequest(req, tokenRegex);
+			const identityUrl = validateRequest(req);
 
 			const identityResponse: AxiosResponse<SalesforceIdentity> = await axios.get(identityUrl, {
 				headers: {
@@ -77,23 +76,11 @@ export function createMiddleware(app: Orizuru.IServer): RequestHandler {
  * Validate the request.
  *
  * @param req The HTTP request.
- * @param tokenRegex The regular expression used for parsing the token.
  * @returns The Identity URL.
  */
-function validateRequest(req: Request, tokenRegex: RegExp) {
+function validateRequest(req: Request) {
 
-	if (!req.headers) {
-		throw new Error('Missing required object parameter: headers.');
-	}
-
-	if (!req.headers.authorization) {
-		throw new Error('Missing required string parameter: headers[authorization].');
-	}
-
-	const matches = tokenRegex.exec(req.headers.authorization);
-	if (matches === null) {
-		throw new Error('Authorization header with \'Bearer ***...\' required.');
-	}
+	extractAccessToken(req);
 
 	if (!req.orizuru) {
 		throw new Error('Missing required object parameter: orizuru.');

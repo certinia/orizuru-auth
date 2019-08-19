@@ -52,7 +52,7 @@ export interface JWT {
 	 *
 	 * The audience claim identifies the recipients that the JWT is intended for.
 	 */
-	aud: string;
+	aud?: string;
 
 	/**
 	 * [Expiration Time Claim](https://tools.ietf.org/html/rfc7519#section-4.1.4)
@@ -60,7 +60,7 @@ export interface JWT {
 	 * The expiration time claim identifies the expiration time on or after which the JWT
 	 * must not be accepted for processing.
 	 */
-	exp: number;
+	exp?: number;
 
 	/**
 	 * [Issued At Claim](https://tools.ietf.org/html/rfc7519#section-4.1.6)
@@ -96,7 +96,7 @@ export interface JWT {
 	 *
 	 * The subject claim identifies the principal that is the subject of the JWT.
 	 */
-	sub: string;
+	sub?: string;
 
 }
 

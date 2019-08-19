@@ -168,24 +168,6 @@ export class OAuth2JWTClient extends OAuth2Client {
 	/**
 	 * @inheritdoc
 	 */
-	protected validateExtraGrantParamters(params: GrantParams) {
-
-		if (params.grantType === 'urn:ietf:params:oauth:grant-type:jwt-bearer') {
-
-			if (!params.signingSecret) {
-				throw new Error('Missing required object parameter: signingSecret.');
-			}
-
-			if (!params.user) {
-				throw new Error('Missing required object parameter: user.');
-			}
-		}
-
-	}
-
-	/**
-	 * @inheritdoc
-	 */
 	protected async handleClientAuthentication(params: GrantParams, internalParams: AuthClientGrantParams, internalOpts: GrantOptions) {
 
 		if (params.grantType === 'urn:ietf:params:oauth:grant-type:jwt-bearer') {
@@ -213,6 +195,26 @@ export class OAuth2JWTClient extends OAuth2Client {
 
 				internalParams.client_secret = internalOpts.clientSecret;
 
+			}
+		}
+
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	protected validateGrantParameters(params: GrantParams) {
+
+		super.validateGrantParameters(params);
+
+		if (params.grantType === 'urn:ietf:params:oauth:grant-type:jwt-bearer') {
+
+			if (!params.signingSecret) {
+				throw new Error('Missing required object parameter: signingSecret.');
+			}
+
+			if (!params.user) {
+				throw new Error('Missing required object parameter: user.');
 			}
 		}
 

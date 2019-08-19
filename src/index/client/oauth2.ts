@@ -768,15 +768,6 @@ export class OAuth2Client implements AuthClient {
 	}
 
 	/**
-	 * Validate any extra grant parameters.
-	 *
-	 * @param params The grant parameters.
-	 */
-	protected validateExtraGrantParamters(params: GrantParams) {
-		// Nothing extra to validate
-	}
-
-	/**
 	 * Update the internal grant parameters is accordance with the selected [client authentication](https://openid.net/specs/openid-connect-core-1_0.html#ClientAuthentication)
 	 * mechanism.
 	 *
@@ -796,6 +787,33 @@ export class OAuth2Client implements AuthClient {
 
 		internalParams.client_id = params.clientId;
 		internalParams.client_secret = internalOpts.clientSecret;
+
+	}
+
+	/**
+	 * Validate the grant parameters.
+	 *
+	 * @param params The grant parameters.
+	 */
+	protected validateGrantParameters(params: GrantParams) {
+
+		if (!this.tokenEndpoint) {
+			throw new Error(`${this.clientType} client has not been initialized`);
+		}
+
+		if (params.grantType === 'authorization_code') {
+
+			if (!params.code) {
+				throw new Error('Missing required string parameter: code');
+			}
+
+		} else if (params.grantType === 'refresh_token') {
+
+			if (!params.refreshToken) {
+				throw new Error('Missing required string parameter: refreshToken');
+			}
+
+		}
 
 	}
 
@@ -824,35 +842,6 @@ export class OAuth2Client implements AuthClient {
 		await this.handleClientAuthentication(params, internalParams, internalOpts);
 
 		return internalParams;
-
-	}
-
-	/**
-	 * Validate the grant parameters.
-	 *
-	 * @param params The grant parameters.
-	 */
-	private validateGrantParameters(params: GrantParams) {
-
-		if (!this.tokenEndpoint) {
-			throw new Error(`${this.clientType} client has not been initialized`);
-		}
-
-		if (params.grantType === 'authorization_code') {
-
-			if (!params.code) {
-				throw new Error('Missing required string parameter: code');
-			}
-
-		} else if (params.grantType === 'refresh_token') {
-
-			if (!params.refreshToken) {
-				throw new Error('Missing required string parameter: refreshToken');
-			}
-
-		}
-
-		this.validateExtraGrantParamters(params);
 
 	}
 

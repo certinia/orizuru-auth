@@ -198,7 +198,7 @@ export type RefreshAccessTokenGrantor = (params: RefreshTokenGrantorParams, opts
 export type AuthUrlGenerator = (params: AuthUrlParams, opts?: AuthOptions) => Promise<string>;
 export type TokenIntrospector = (token: string, params: IntrospectionParams, opts?: IntrospectionOptions) => Promise<IntrospectionResponse>;
 export type TokenRevoker = (token: string) => Promise<boolean>;
-export type UserInfoRequester = (accessToken: string, opts?: UserInfoOptions) => Promise<string | OpenIDTokenWithStandardClaims>;
+export type UserInfoRequester = (accessToken: string, opts?: UserInfoOptions) => Promise<OpenIDTokenWithStandardClaims>;
 
 export type Options = AuthOptions | GrantOptions | UserInfoOptions;
 export type GrantorParams = RefreshTokenGrantorParams | TokenGrantorParams | UserTokenGrantorParams;

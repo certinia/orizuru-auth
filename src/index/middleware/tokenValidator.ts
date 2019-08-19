@@ -30,7 +30,7 @@
 
 import { NextFunction, Request, RequestHandler, Response } from '@financialforcedev/orizuru';
 
-import { EVENT_TOKEN_VALIDATED, OpenIDTokenWithStandardClaims, User, UserInfoOptions } from '../..';
+import { EVENT_TOKEN_VALIDATED, OpenIDTokenWithStandardClaims, UserInfoOptions } from '../..';
 import { SalesforceUser } from '../client/salesforce';
 import { createUserInfoRequester } from '../userInfo/userinfo';
 import { extractAccessToken } from './common/accessToken';
@@ -50,29 +50,15 @@ import { fail } from './common/fail';
 export function createMiddleware(app: Orizuru.IServer, provider?: string, opts?: UserInfoOptions): RequestHandler {
 
 	const internalProvider = provider || 'salesforce';
-	const validateAccessToken = createUserInfoRequester(app.options.authProvider[internalProvider]);
+	const requestUserInfo = createUserInfoRequester(app.options.authProvider[internalProvider]);
 
 	return async function validateToken(req: Request, res: Response, next: NextFunction) {
 
 		try {
 
 			const accessToken = extractAccessToken(req);
-			const userInfo = await validateAccessToken(accessToken, opts) as OpenIDTokenWithStandardClaims;
-
-			let user: User | SalesforceUser;
-
-			if (userInfo.organization_id) {
-				user = {
-					organizationId: userInfo.organization_id as string,
-					username: userInfo.preferred_username
-				};
-			} else {
-				user = {
-					username: userInfo.preferred_username
-				};
-			}
-
-			setUserOnRequest(app, req, user);
+			const userInfo = await requestUserInfo(accessToken, opts);
+			setUserOnRequest(app, req, userInfo);
 
 			next();
 
@@ -90,9 +76,17 @@ export function createMiddleware(app: Orizuru.IServer, provider?: string, opts?:
  * @fires EVENT_TOKEN_VALIDATED
  * @param app The Orizuru server instance.
  * @param req The HTTP request.
- * @param user The user to set on the request.
+ * @param userInfo The user information.
  */
-function setUserOnRequest(app: Orizuru.IServer, req: Request, user: User) {
+function setUserOnRequest(app: Orizuru.IServer, req: Request, userInfo: OpenIDTokenWithStandardClaims) {
+
+	const user: SalesforceUser = {
+		username: userInfo.preferred_username
+	};
+
+	if (userInfo.organization_id && typeof userInfo.organization_id === 'string') {
+		user.organizationId = userInfo.organization_id;
+	}
 
 	const orizuru = req.orizuru || {};
 	orizuru.user = user;

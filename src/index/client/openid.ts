@@ -361,7 +361,7 @@ export class OpenIdClient extends OAuth2JWTClient {
 	 * @param token The token to be used.
 	 * @param [opts] The user info options to be used.
 	 */
-	public async userinfo(token: string, opts?: UserInfoOptions): Promise<string | OpenIDTokenWithStandardClaims> {
+	public async userinfo(token: string, opts?: UserInfoOptions): Promise<OpenIDTokenWithStandardClaims> {
 
 		if (!this.userinfoEndpoint) {
 			throw new Error(`${this.clientType} client has not been initialized`);

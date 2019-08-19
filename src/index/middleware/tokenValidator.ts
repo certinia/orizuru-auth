@@ -43,13 +43,14 @@ import { fail } from './common/fail';
  *
  * @fires EVENT_TOKEN_VALIDATED, EVENT_DENIED
  * @param app The Orizuru server instance.
- * @param provider The name of the auth provider.
+ * @param [provider] The name of the auth provider. Defaults to 'salesforce'.
  * @param [opts] The optional parameters used when requesting user information.
  * @returns An express middleware that validates an access token.
  */
-export function createMiddleware(app: Orizuru.IServer, provider: string, opts?: UserInfoOptions): RequestHandler {
+export function createMiddleware(app: Orizuru.IServer, provider?: string, opts?: UserInfoOptions): RequestHandler {
 
-	const validateAccessToken = createUserInfoRequester(app.options.authProvider[provider]);
+	const internalProvider = provider || 'salesforce';
+	const validateAccessToken = createUserInfoRequester(app.options.authProvider[internalProvider]);
 
 	return async function validateToken(req: Request, res: Response, next: NextFunction) {
 

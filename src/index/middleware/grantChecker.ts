@@ -57,15 +57,18 @@ export interface GrantRequestOptions {
  *
  * @fires EVENT_GRANT_CHECKED, EVENT_DENIED
  * @param app The Orizuru server instance.
- * @param provider The name of the auth provider.
- * @param params The grant checker middleware parameters.
+ * @param [provider] The name of the auth provider. Defaults to 'salesforce'.
+ * @param [params] The grant checker middleware parameters.
  * @param [opts] The optional parameters used when requesting grants.
  * @returns A express middleware that checks an access token can be retrieved for
  * the user on the request.
  */
-export function createMiddleware(app: Orizuru.IServer, provider: string, params: JwtTokenGrantorParams, opts?: GrantRequestOptions & GrantOptions): RequestHandler {
+export function createMiddleware(app: Orizuru.IServer, provider?: string, params?: JwtTokenGrantorParams, opts?: GrantRequestOptions & GrantOptions): RequestHandler {
 
-	const requestAccessToken = createTokenGrantor(app.options.authProvider[provider]);
+	const internalProvider = provider || 'salesforce';
+	const internalParams = params || app.options.openid[internalProvider];
+
+	const requestAccessToken = createTokenGrantor(app.options.authProvider[internalProvider]);
 
 	const defaultRequestOptions: GrantRequestOptions = {
 		setTokenOnContext: false
@@ -76,8 +79,8 @@ export function createMiddleware(app: Orizuru.IServer, provider: string, params:
 
 	// The GrantCheckerMiddlewareParameters type excludes the grant_type
 	// so that it doesn't have to be set by the caller. Make sure it is set here.
-	const internalParams: Partial<JwtGrantParams> = Object.assign({}, params);
-	internalParams.grantType = 'urn:ietf:params:oauth:grant-type:jwt-bearer';
+	const grantParams: Partial<JwtGrantParams> = Object.assign({}, internalParams);
+	grantParams.grantType = 'urn:ietf:params:oauth:grant-type:jwt-bearer';
 
 	return async function checkUserGrant(req: Request, res: Response, next: NextFunction) {
 
@@ -85,7 +88,7 @@ export function createMiddleware(app: Orizuru.IServer, provider: string, params:
 
 			const user = checkUserIsOnTheRequest(req);
 
-			const tokenResponse = await requestAccessToken(Object.assign(internalParams, { user }) as JwtGrantParams, grantOptions);
+			const tokenResponse = await requestAccessToken(Object.assign({}, grantParams, { user }) as JwtGrantParams, grantOptions);
 
 			setGrant(app, req, tokenResponse, setTokenOnContext);
 

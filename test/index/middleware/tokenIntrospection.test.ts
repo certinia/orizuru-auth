@@ -98,7 +98,7 @@ describe('index/middleware/tokenIntrospection', () => {
 
 		// Given
 		// When
-		const middleware = createMiddleware(app, 'salesforce');
+		const middleware = createMiddleware(app);
 
 		// Then
 		expect(middleware).to.be.a('function');

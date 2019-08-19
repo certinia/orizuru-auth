@@ -98,7 +98,7 @@ describe('index/middleware/authCallback', () => {
 
 		// Given
 		// When
-		const middleware = createMiddleware(app, 'salesforce', app.options.openid.salesforce);
+		const middleware = createMiddleware(app);
 
 		// Then
 		expect(middleware).to.be.a('function');

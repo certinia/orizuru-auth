@@ -45,15 +45,16 @@ import { fail } from './common/fail';
  *
  * @fires EVENT_TOKEN_INTROSPECTED, EVENT_DENIED
  * @param app The Orizuru server instance.
- * @param provider The name of the auth provider.
+ * @param [provider] The name of the auth provider. Defaults to 'salesforce'.
  * @param [params] The token introspection middleware parameters.
  * @param [opts] The optional parameters used when introspecting tokens.
  * @returns An express middleware that introspects an access token.
  */
-export function createMiddleware(app: Orizuru.IServer, provider: string, params?: IntrospectionParams, opts?: IntrospectionOptions): RequestHandler {
+export function createMiddleware(app: Orizuru.IServer, provider?: string, params?: IntrospectionParams, opts?: IntrospectionOptions): RequestHandler {
 
-	const introspectAccessToken = createTokenIntrospector(app.options.authProvider[provider]);
-	const internalParams = params || app.options.openid[provider];
+	const internalProvider = provider || 'salesforce';
+	const introspectAccessToken = createTokenIntrospector(app.options.authProvider[internalProvider]);
+	const internalParams = params || app.options.openid[internalProvider];
 
 	return async function introspectToken(req: Request, res: Response, next: NextFunction) {
 

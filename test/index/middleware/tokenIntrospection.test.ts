@@ -98,7 +98,7 @@ describe('index/middleware/tokenIntrospection', () => {
 
 		// Given
 		// When
-		const middleware = createMiddleware(app, 'salesforce');
+		const middleware = createMiddleware(app);
 
 		// Then
 		expect(middleware).to.be.a('function');
@@ -159,7 +159,7 @@ describe('index/middleware/tokenIntrospection', () => {
 				expect(introspectTokenStub).to.have.been.calledWithExactly('12345', {
 					clientId: 'testClientId',
 					clientSecret: 'testClientSecret'
-				}, undefined);
+				}, {});
 
 			});
 
@@ -206,9 +206,53 @@ describe('index/middleware/tokenIntrospection', () => {
 				expect(introspectTokenStub).to.have.been.calledWithExactly('12345', {
 					clientId: 'testClientId',
 					clientSecret: 'testClientSecret'
-				}, undefined);
+				}, {});
 				expect(next).to.have.been.calledOnce;
 				expect(next).to.have.been.calledWithExactly();
+
+			});
+
+			it('adding the orizuru access token property for a salesforce access token', async () => {
+
+				// Given
+				sinon.resetHistory();
+
+				middleware = createMiddleware(app, 'salesforce', app.options.openid.salesforce, {
+					setTokenOnContext: true
+				});
+
+				// When
+				await middleware(req, res, next);
+
+				// Then
+				expect(req.headers).to.have.property('authorization', 'Bearer 12345');
+				expect(req).to.have.property('orizuru');
+				expect(req.orizuru).to.have.property('accessToken', '12345');
+				expect(req.orizuru).to.have.property('user').that.eqls({
+					organizationId: '00Dxx0000001gEREAY',
+					username: 'test@test.com'
+				});
+				expect(req.orizuru).to.have.property('tokenInformation').that.eqls({
+					active: true,
+					client_id: 'OAuthSp',
+					exp: 1528502109,
+					iat: 1528494909,
+					nbf: 1528494909,
+					scope: 'id api web full refresh_token openid',
+					sub: 'https://login.salesforce.com/id/00Dxx0000001gEREAY/005xx000001Sv6AAAS',
+					token_type: 'access_token',
+					userInfo: {
+						id: '005xx000001Sv6AAAS',
+						organizationId: '00Dxx0000001gEREAY',
+						url: 'https://login.salesforce.com/id/00Dxx0000001gEREAY/005xx000001Sv6AAAS',
+						validated: false
+					},
+					username: 'test@test.com'
+				});
+
+				expect(app.emit).to.have.been.calledTwice;
+				expect(app.emit).to.have.been.calledWithExactly(EVENT_TOKEN_INTROSPECTED, 'Token introspected for user (test@test.com) [1.1.1.1].');
+				expect(app.emit).to.have.been.calledWithExactly(EVENT_TOKEN_VALIDATED, 'Token validated for user (test@test.com) [1.1.1.1].');
 
 			});
 
@@ -244,6 +288,8 @@ describe('index/middleware/tokenIntrospection', () => {
 				expect(app.emit).to.have.been.calledTwice;
 				expect(app.emit).to.have.been.calledWithExactly(EVENT_TOKEN_INTROSPECTED, 'Token introspected for user (test@test.com) [1.1.1.1].');
 				expect(app.emit).to.have.been.calledWithExactly(EVENT_TOKEN_VALIDATED, 'Token validated for user (test@test.com) [1.1.1.1].');
+
+				expect(req.orizuru).to.not.have.property('accessToken');
 
 			});
 

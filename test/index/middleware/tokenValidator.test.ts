@@ -46,7 +46,7 @@ describe('index/middleware/tokenValidator', () => {
 
 	let app: Orizuru.IServer;
 	let env: Environment;
-	let validateAccessTokenStub: SinonStub;
+	let requestUserInfoStub: SinonStub;
 
 	beforeEach(() => {
 
@@ -76,9 +76,9 @@ describe('index/middleware/tokenValidator', () => {
 
 		app = partialApp as Orizuru.IServer;
 
-		validateAccessTokenStub = sinon.stub();
+		requestUserInfoStub = sinon.stub();
 
-		sinon.stub(userInfo, 'createUserInfoRequester').returns(validateAccessTokenStub);
+		sinon.stub(userInfo, 'createUserInfoRequester').returns(requestUserInfoStub);
 		sinon.stub(accessToken, 'extractAccessToken').returns('12345');
 		sinon.stub(fail, 'fail');
 
@@ -98,7 +98,7 @@ describe('index/middleware/tokenValidator', () => {
 
 		// Given
 		// When
-		const middleware = createMiddleware(app, 'salesforce');
+		const middleware = createMiddleware(app);
 
 		// Then
 		expect(middleware).to.be.a('function');
@@ -149,7 +149,7 @@ describe('index/middleware/tokenValidator', () => {
 					authorization: 'Bearer 12345'
 				};
 
-				validateAccessTokenStub.rejects(new Error('Failed to retrieve user information.'));
+				requestUserInfoStub.rejects(new Error('Failed to retrieve user information.'));
 
 				// When
 				await middleware(req, res, next);
@@ -157,8 +157,8 @@ describe('index/middleware/tokenValidator', () => {
 				// Then
 				expect(fail.fail).to.have.been.calledWithExactly(app, has('message', 'Failed to retrieve user information.'), req, res, next);
 
-				expect(validateAccessTokenStub).to.have.been.calledOnce;
-				expect(validateAccessTokenStub).to.have.been.calledWithExactly('12345', {
+				expect(requestUserInfoStub).to.have.been.calledOnce;
+				expect(requestUserInfoStub).to.have.been.calledWithExactly('12345', {
 					responseFormat: ResponseFormat.JSON
 				});
 
@@ -174,7 +174,7 @@ describe('index/middleware/tokenValidator', () => {
 					authorization: 'Bearer 12345'
 				};
 
-				validateAccessTokenStub.resolves({
+				requestUserInfoStub.resolves({
 					preferred_username: 'test@test.com'
 				});
 
@@ -183,10 +183,7 @@ describe('index/middleware/tokenValidator', () => {
 			afterEach(() => {
 
 				// Then
-				expect(validateAccessTokenStub).to.have.been.calledOnce;
-				expect(validateAccessTokenStub).to.have.been.calledWithExactly('12345', {
-					responseFormat: ResponseFormat.JSON
-				});
+				expect(requestUserInfoStub).to.have.been.calledOnce;
 				expect(app.emit).to.have.been.calledOnce;
 				expect(app.emit).to.have.been.calledWithExactly(EVENT_TOKEN_VALIDATED, 'Token validated for user (test@test.com) [1.1.1.1].');
 				expect(next).to.have.been.calledOnce;
@@ -204,6 +201,37 @@ describe('index/middleware/tokenValidator', () => {
 				expect(req.orizuru).to.have.property('user').that.eqls({
 					username: 'test@test.com'
 				});
+				expect(requestUserInfoStub).to.have.been.calledWithExactly('12345', {
+					responseFormat: ResponseFormat.JSON
+				});
+
+				expect(req.orizuru).to.not.have.property('accessToken');
+
+			});
+
+			it('adding the orizuru access token property for a salesforce access token', async () => {
+
+				// Given
+				sinon.resetHistory();
+
+				middleware = createMiddleware(app, 'salesforce', {
+					responseFormat: ResponseFormat.JSON,
+					setTokenOnContext: true
+				});
+
+				// When
+				await middleware(req, res, next);
+
+				// Then
+				expect(req.headers).to.have.property('authorization', 'Bearer 12345');
+				expect(req).to.have.property('orizuru');
+				expect(req.orizuru).to.have.property('accessToken', '12345');
+				expect(req.orizuru).to.have.property('user').that.eqls({
+					username: 'test@test.com'
+				});
+				expect(requestUserInfoStub).to.have.been.calledWithExactly('12345', {
+					responseFormat: ResponseFormat.JSON
+				});
 
 			});
 
@@ -219,13 +247,16 @@ describe('index/middleware/tokenValidator', () => {
 
 				// Then
 				expect(req.orizuru).to.have.property('grantChecked', true);
+				expect(requestUserInfoStub).to.have.been.calledWithExactly('12345', {
+					responseFormat: ResponseFormat.JSON
+				});
 
 			});
 
 			it('and set organization id on the request if available', async () => {
 
 				// Given
-				validateAccessTokenStub.resolves({
+				requestUserInfoStub.resolves({
 					organization_id: 'orgid',
 					preferred_username: 'test@test.com'
 				});
@@ -237,6 +268,9 @@ describe('index/middleware/tokenValidator', () => {
 				expect(req.orizuru).to.have.property('user').that.eqls({
 					organizationId: 'orgid',
 					username: 'test@test.com'
+				});
+				expect(requestUserInfoStub).to.have.been.calledWithExactly('12345', {
+					responseFormat: ResponseFormat.JSON
 				});
 
 			});

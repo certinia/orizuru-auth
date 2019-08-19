@@ -29,9 +29,9 @@
  */
 
 import { Environment } from './cache';
-import { GrantOptions, GrantParams, IntrospectionOptions, IntrospectionResponse } from './oauth2';
+import { GrantParams, IntrospectionOptions, IntrospectionResponse } from './oauth2';
 import { User } from './oauth2Jwt';
-import { OpenIDAccessTokenResponse, OpenIdClient } from './openid';
+import { OpenIDAccessTokenResponse, OpenIdClient, OpenIdGrantOptions } from './openid';
 import { parseUserInfo, UserInfoResponse, verifySignature } from './salesforce/identity';
 
 /**
@@ -81,6 +81,25 @@ export interface SalesforceAccessTokenResponse extends OpenIDAccessTokenResponse
 	 * When the signature was created.
 	 */
 	issued_at: string;
+
+}
+
+/**
+ * Optional parameters used when requesting grants.
+ */
+export interface SalesforceGrantOptions extends OpenIdGrantOptions {
+
+	/**
+	 * If true, parses the user information from the id field in the access token response.
+	 *
+	 * This returns the user ID, organization ID and the ID url.
+	 */
+	parseUserInfo?: boolean;
+
+	/**
+	 * If true, the signature on the access token response is verified.
+	 */
+	verifySignature?: boolean;
 
 }
 
@@ -152,14 +171,14 @@ export class SalesforceClient extends OpenIdClient {
 	 * @inheritdoc
 	 * @returns The Salesforce Access Token Response.
 	 */
-	public async grant(params: GrantParams, opts?: GrantOptions): Promise<SalesforceAccessTokenResponse> {
+	public async grant(params: GrantParams, opts?: SalesforceGrantOptions): Promise<SalesforceAccessTokenResponse> {
 		return super.grant(params as GrantParams, opts) as Promise<SalesforceAccessTokenResponse>;
 	}
 
 	/**
 	 * @inheritdoc
 	 */
-	protected handleAccessTokenResponse(accessTokenResponse: SalesforceAccessTokenResponse, internalOpts: GrantOptions) {
+	protected handleAccessTokenResponse(accessTokenResponse: SalesforceAccessTokenResponse, internalOpts: SalesforceGrantOptions) {
 
 		super.handleAccessTokenResponse(accessTokenResponse, internalOpts);
 

@@ -31,7 +31,7 @@
 import { Secret } from 'jsonwebtoken';
 
 import { Environment } from './cache';
-import { AccessTokenResponse, AuthClientGrantParams, GrantOptions, GrantParams, OAuth2Client, TokenGrantorParams } from './oauth2';
+import { AccessTokenResponse, AuthClientGrantParams, GrantParams, OAuth2Client, OAuth2GrantOptions, TokenGrantorParams } from './oauth2';
 import { createJwtBearerClientAssertion, createJwtBearerGrantAssertion } from './oauth2Jwt/jwt';
 
 /**
@@ -52,7 +52,7 @@ export interface JWT {
 	 *
 	 * The audience claim identifies the recipients that the JWT is intended for.
 	 */
-	aud: string;
+	aud?: string;
 
 	/**
 	 * [Expiration Time Claim](https://tools.ietf.org/html/rfc7519#section-4.1.4)
@@ -60,7 +60,7 @@ export interface JWT {
 	 * The expiration time claim identifies the expiration time on or after which the JWT
 	 * must not be accepted for processing.
 	 */
-	exp: number;
+	exp?: number;
 
 	/**
 	 * [Issued At Claim](https://tools.ietf.org/html/rfc7519#section-4.1.6)
@@ -96,7 +96,21 @@ export interface JWT {
 	 *
 	 * The subject claim identifies the principal that is the subject of the JWT.
 	 */
-	sub: string;
+	sub?: string;
+
+}
+
+/**
+ * Optional parameters used when requesting grants.
+ */
+export interface JwtGrantOptions extends OAuth2GrantOptions {
+
+	/**
+	 * The private key used for signing grant assertions as part of the [OAuth 2.0 JWT Bearer Token Flow](https://help.salesforce.com/articleView?id=remoteaccess_oauth_jwt_flow.htm).
+	 *
+	 * Either this value or the signingSecret should be set for the authorization code or refresh flows.
+	 */
+	signingSecret?: Secret;
 
 }
 
@@ -161,32 +175,14 @@ export class OAuth2JWTClient extends OAuth2Client {
 	/**
 	 * @inheritdoc
 	 */
-	public async grant(params: GrantParams, opts?: GrantOptions): Promise<AccessTokenResponse> {
+	public async grant(params: GrantParams, opts?: JwtGrantOptions): Promise<AccessTokenResponse> {
 		return super.grant(params, opts);
 	}
 
 	/**
 	 * @inheritdoc
 	 */
-	protected validateExtraGrantParamters(params: GrantParams) {
-
-		if (params.grantType === 'urn:ietf:params:oauth:grant-type:jwt-bearer') {
-
-			if (!params.signingSecret) {
-				throw new Error('Missing required object parameter: signingSecret.');
-			}
-
-			if (!params.user) {
-				throw new Error('Missing required object parameter: user.');
-			}
-		}
-
-	}
-
-	/**
-	 * @inheritdoc
-	 */
-	protected async handleClientAuthentication(params: GrantParams, internalParams: AuthClientGrantParams, internalOpts: GrantOptions) {
+	protected async handleClientAuthentication(params: GrantParams, internalParams: AuthClientGrantParams, internalOpts: JwtGrantOptions) {
 
 		if (params.grantType === 'urn:ietf:params:oauth:grant-type:jwt-bearer') {
 
@@ -213,6 +209,26 @@ export class OAuth2JWTClient extends OAuth2Client {
 
 				internalParams.client_secret = internalOpts.clientSecret;
 
+			}
+		}
+
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	protected validateGrantParameters(params: GrantParams) {
+
+		super.validateGrantParameters(params);
+
+		if (params.grantType === 'urn:ietf:params:oauth:grant-type:jwt-bearer') {
+
+			if (!params.signingSecret) {
+				throw new Error('Missing required object parameter: signingSecret.');
+			}
+
+			if (!params.user) {
+				throw new Error('Missing required object parameter: user.');
 			}
 		}
 

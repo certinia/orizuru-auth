@@ -98,7 +98,7 @@ describe('index/middleware/authCallback', () => {
 
 		// Given
 		// When
-		const middleware = createMiddleware(app, 'salesforce', app.options.openid.salesforce);
+		const middleware = createMiddleware(app);
 
 		// Then
 		expect(middleware).to.be.a('function');
@@ -268,6 +268,7 @@ describe('index/middleware/authCallback', () => {
 				expect(next).to.have.been.calledOnce;
 				expect(next).to.have.been.calledWithExactly();
 
+				expect(req.orizuru).to.not.have.property('accessToken');
 				expect(req.orizuru).to.not.have.property('grantChecked');
 
 			});
@@ -298,6 +299,43 @@ describe('index/middleware/authCallback', () => {
 				expect(app.emit).to.have.been.calledWithExactly(EVENT_AUTHORIZATION_HEADER_SET, 'Authorization headers set for user (test@test.com) [1.1.1.1].');
 				expect(next).to.have.been.calledOnce;
 				expect(next).to.have.been.calledWithExactly();
+
+				expect(req.orizuru).to.not.have.property('accessToken');
+
+			});
+
+			it('adding the orizuru access token property for a salesforce access token', async () => {
+
+				// Given
+				sinon.resetHistory();
+
+				middleware = createMiddleware(app, 'salesforce', app.options.openid.salesforce, {
+					decodeIdToken: true,
+					setTokenOnContext: true,
+					signingSecret: 'testSigningSecret'
+				});
+
+				// When
+				await middleware(req, res, next);
+
+				// Then
+				expect(req.headers).to.have.property('authorization', 'Bearer 00Dx0000000BV7z!AR8AQP0jITN80ESEsj5EbaZTFG0RNBaT1cyWk7TrqoDjoNIWQ2ME_sTZzBjfmOE6zMHq6y8PIW4eWze9JksNEkWUl.Cju7m4');
+				expect(req).to.have.property('orizuru');
+				expect(req.orizuru).to.have.property('accessToken', '00Dx0000000BV7z!AR8AQP0jITN80ESEsj5EbaZTFG0RNBaT1cyWk7TrqoDjoNIWQ2ME_sTZzBjfmOE6zMHq6y8PIW4eWze9JksNEkWUl.Cju7m4');
+				expect(req.orizuru).to.have.property('salesforce');
+				expect(req.orizuru!.salesforce).to.have.property('userInfo').that.eqls({
+					id: '005xx000001SwiUAAS',
+					organizationId: '00Dxx0000001gPLEAY',
+					url: 'https://login.salesforce.com/id/00Dxx0000001gPLEAY/005xx000001SwiUAAS',
+					validated: true
+				});
+
+				expect(app.emit).to.have.been.calledOnce;
+				expect(app.emit).to.have.been.calledWithExactly(EVENT_AUTHORIZATION_HEADER_SET, 'Authorization headers set for user (test@test.com) [1.1.1.1].');
+				expect(next).to.have.been.calledOnce;
+				expect(next).to.have.been.calledWithExactly();
+
+				expect(req.orizuru).to.not.have.property('grantChecked');
 
 			});
 

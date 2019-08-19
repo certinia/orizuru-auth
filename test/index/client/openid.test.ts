@@ -34,6 +34,7 @@ import { AxiosRequestConfig, AxiosResponse, default as axios } from 'axios';
 import { AuthCodeGrantParams, AuthOptions, AuthUrlParams, Environment, GrantOptions, IntrospectionParams, JwtGrantParams, RefreshGrantParams } from '../../../src';
 import * as jwt from '../../../src/index/client/oauth2Jwt/jwt';
 import * as identity from '../../../src/index/client/openid/identity';
+import * as jwk from '../../../src/index/client/openid/jwk';
 
 import { OpenIdClient } from '../../../src/index/client/openid';
 
@@ -64,6 +65,7 @@ describe('index/client/openid', () => {
 			data: {
 				authorization_endpoint: 'https://login.salesforce.com/services/oauth2/authorize',
 				issuer: 'https://login.salesforce.com',
+				jwks_uri: 'https://login.salesforce.com/id/keys',
 				revocation_endpoint: 'https://login.salesforce.com/services/oauth2/revoke',
 				token_endpoint: 'https://login.salesforce.com/services/oauth2/token',
 				userinfo_endpoint: 'https://login.salesforce.com/services/oauth2/userinfo'
@@ -71,6 +73,10 @@ describe('index/client/openid', () => {
 			headers: {},
 			status: 200,
 			statusText: 'OK'
+		});
+
+		sinon.stub(jwk, 'retrieveJsonWebKeysInPemFormat').resolves({
+			124: 'test'
 		});
 
 	});
@@ -95,6 +101,33 @@ describe('index/client/openid', () => {
 			// When
 			// Then
 			await expect(client.init()).to.be.rejectedWith('Failed to initialise OpenID client. OpenID configuration request failed.');
+
+			expect(jwk.retrieveJsonWebKeysInPemFormat).to.not.have.been.called;
+
+		});
+
+		it('should not retrieve the json web keys if the jwks uri is not present', async () => {
+
+			// Given
+			axiosGetStub.withArgs('https://login.salesforce.com/.well-known/openid-configuration', sinon.match.object).resolves({
+				config: {},
+				data: {
+					authorization_endpoint: 'https://login.salesforce.com/services/oauth2/authorize',
+					issuer: 'https://login.salesforce.com',
+					revocation_endpoint: 'https://login.salesforce.com/services/oauth2/revoke',
+					token_endpoint: 'https://login.salesforce.com/services/oauth2/token',
+					userinfo_endpoint: 'https://login.salesforce.com/services/oauth2/userinfo'
+				},
+				headers: {},
+				status: 200,
+				statusText: 'OK'
+			});
+
+			// When
+			await client.init();
+
+			// Then
+			expect(jwk.retrieveJsonWebKeysInPemFormat).to.not.have.been.called;
 
 		});
 
@@ -467,6 +500,7 @@ describe('index/client/openid', () => {
 					await client.init();
 
 					sinon.stub(jwt, 'createJwtBearerGrantAssertion').resolves('signed');
+					sinon.stub(identity, 'verifyIdToken');
 					sinon.stub(identity, 'decodeIdToken').throws(new Error('No id_token present'));
 
 					// When
@@ -525,6 +559,7 @@ describe('index/client/openid', () => {
 					sinon.stub(jwt, 'createJwtBearerClientAssertion');
 					sinon.stub(jwt, 'createJwtBearerGrantAssertion');
 					sinon.stub(identity, 'decodeIdToken');
+					sinon.stub(identity, 'verifyIdToken');
 
 					const opts: GrantOptions = {
 						clientSecret: 'testOpenidClientSecret',
@@ -546,6 +581,10 @@ describe('index/client/openid', () => {
 
 					expect(identity.decodeIdToken).to.have.been.calledOnce;
 					expect(identity.decodeIdToken).to.have.been.calledWithExactly(postResponse.data);
+					expect(identity.verifyIdToken).to.have.been.calledOnce;
+					expect(identity.verifyIdToken).to.have.been.calledWithExactly(postResponse.data, {
+						124: 'test'
+					});
 
 					expect(jwt.createJwtBearerClientAssertion).to.not.have.been.called;
 					expect(jwt.createJwtBearerGrantAssertion).to.not.have.been.called;
@@ -560,12 +599,14 @@ describe('index/client/openid', () => {
 					sinon.stub(jwt, 'createJwtBearerClientAssertion').resolves('signed');
 					sinon.stub(jwt, 'createJwtBearerGrantAssertion');
 					sinon.stub(identity, 'decodeIdToken');
+					sinon.stub(identity, 'verifyIdToken');
 
 					const opts: GrantOptions = {
 						decodeIdToken: false,
 						parseUserInfo: false,
 						redirectUri: 'https://test.app.com/auth/callback',
-						signingSecret: 'testSigningSecret'
+						signingSecret: 'testSigningSecret',
+						verifyIdToken: false
 					};
 
 					// When
@@ -585,6 +626,7 @@ describe('index/client/openid', () => {
 					});
 
 					expect(identity.decodeIdToken).to.not.have.been.called;
+					expect(identity.verifyIdToken).to.not.have.been.called;
 					expect(jwt.createJwtBearerGrantAssertion).to.not.have.been.called;
 
 				});
@@ -613,6 +655,7 @@ describe('index/client/openid', () => {
 					sinon.stub(jwt, 'createJwtBearerClientAssertion');
 					sinon.stub(jwt, 'createJwtBearerGrantAssertion');
 					sinon.stub(identity, 'decodeIdToken');
+					sinon.stub(identity, 'verifyIdToken');
 
 					const opts: GrantOptions = {
 						clientSecret: 'testOpenidClientSecret',
@@ -634,6 +677,10 @@ describe('index/client/openid', () => {
 
 					expect(identity.decodeIdToken).to.have.been.calledOnce;
 					expect(identity.decodeIdToken).to.have.been.calledWithExactly(postResponse.data);
+					expect(identity.verifyIdToken).to.have.been.calledOnce;
+					expect(identity.verifyIdToken).to.have.been.calledWithExactly(postResponse.data, {
+						124: 'test'
+					});
 
 					expect(jwt.createJwtBearerClientAssertion).to.not.have.been.called;
 					expect(jwt.createJwtBearerGrantAssertion).to.not.have.been.called;

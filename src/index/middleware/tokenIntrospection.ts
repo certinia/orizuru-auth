@@ -34,7 +34,7 @@ import { EVENT_TOKEN_INTROSPECTED, EVENT_TOKEN_VALIDATED } from '../..';
 import { IntrospectionOptions, IntrospectionParams, IntrospectionResponse } from '../client/oauth2';
 import { isSalesforceIntrospectionResponse } from '../client/salesforce/identity';
 import { createTokenIntrospector } from '../introspection/introspect';
-import { extractAccessToken } from './common/accessToken';
+import { DEFAULT_MIDDLEWARE_OPTIONS, extractAccessToken, MiddlewareOptions, setAccessTokenOnRequest } from './common/accessToken';
 import { fail } from './common/fail';
 
 /**
@@ -45,15 +45,18 @@ import { fail } from './common/fail';
  *
  * @fires EVENT_TOKEN_INTROSPECTED, EVENT_DENIED
  * @param app The Orizuru server instance.
- * @param provider The name of the auth provider.
+ * @param [provider] The name of the auth provider. Defaults to 'salesforce'.
  * @param [params] The token introspection middleware parameters.
  * @param [opts] The optional parameters used when introspecting tokens.
  * @returns An express middleware that introspects an access token.
  */
-export function createMiddleware(app: Orizuru.IServer, provider: string, params?: IntrospectionParams, opts?: IntrospectionOptions): RequestHandler {
+export function createMiddleware(app: Orizuru.IServer, provider?: string, params?: IntrospectionParams, opts?: MiddlewareOptions & IntrospectionOptions): RequestHandler {
 
-	const introspectAccessToken = createTokenIntrospector(app.options.authProvider[provider]);
-	const internalParams = params || app.options.openid[provider];
+	const internalProvider = provider || 'salesforce';
+	const internalParams = params || app.options.openid[internalProvider];
+	const { setTokenOnContext, ...grantOptions } = opts || DEFAULT_MIDDLEWARE_OPTIONS;
+
+	const introspectAccessToken = createTokenIntrospector(app.options.authProvider[internalProvider]);
 
 	return async function introspectToken(req: Request, res: Response, next: NextFunction) {
 
@@ -61,9 +64,10 @@ export function createMiddleware(app: Orizuru.IServer, provider: string, params?
 
 			const accessToken = extractAccessToken(req);
 
-			const tokenInformation = await introspectAccessToken(accessToken, internalParams, opts);
+			const tokenInformation = await introspectAccessToken(accessToken, internalParams, grantOptions);
 
 			setTokenInformationOnRequest(app, req, tokenInformation);
+			setAccessTokenOnRequest(req, accessToken, setTokenOnContext);
 
 			next();
 

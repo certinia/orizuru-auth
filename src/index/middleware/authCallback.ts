@@ -34,6 +34,7 @@ import { AccessTokenResponse, AuthCodeGrantParams, EVENT_AUTHORIZATION_HEADER_SE
 import { isOpenIdAccessTokenResponse, isOpenIdTokenWithStandardClaims } from '../client/openid/identity';
 import { isSalesforceAccessTokenResponse } from '../client/salesforce/identity';
 import { createTokenGrantor } from '../flow/webServer';
+import { DEFAULT_MIDDLEWARE_OPTIONS, MiddlewareOptions, setAccessTokenOnRequest } from './common/accessToken';
 import { fail } from './common/fail';
 
 /**
@@ -43,20 +44,24 @@ import { fail } from './common/fail';
  *
  * @fires EVENT_AUTHORIZATION_HEADER_SET
  * @param app The Orizuru server instance.
- * @param provider The name of the auth provider.
- * @param params The auth callback middleware parameters.
+ * @param [provider] The name of the auth provider. Defaults to 'salesforce'.
+ * @param [params] The auth callback middleware parameters.
  * @param [opts] The optional parameters used when requesting grants.
  * @returns An express middleware that exchanges a verification code for an access
  * token.
  */
-export function createMiddleware(app: Orizuru.IServer, provider: string, params: TokenGrantorParams, opts?: GrantOptions): RequestHandler {
+export function createMiddleware(app: Orizuru.IServer, provider?: string, params?: TokenGrantorParams, opts?: MiddlewareOptions & GrantOptions): RequestHandler {
 
-	const requestAccessToken = createTokenGrantor(app.options.authProvider[provider]);
+	const internalProvider = provider || 'salesforce';
+	const internalParams = params || app.options.openid[internalProvider];
+	const { setTokenOnContext, ...grantOptions } = opts || DEFAULT_MIDDLEWARE_OPTIONS;
+
+	const requestAccessToken = createTokenGrantor(app.options.authProvider[internalProvider]);
 
 	// The AuthCallbackMiddlewareParameters interface excludes the grant_type
 	// so that it doesn't have to be set by the caller. Make sure it is set here.
-	const internalParams: Partial<AuthCodeGrantParams> = Object.assign({}, params);
-	internalParams.grantType = 'authorization_code';
+	const authParams: Partial<AuthCodeGrantParams> = Object.assign({}, internalParams);
+	authParams.grantType = 'authorization_code';
 
 	return async function checkUserGrant(req: Request, res: Response, next: NextFunction) {
 
@@ -64,11 +69,12 @@ export function createMiddleware(app: Orizuru.IServer, provider: string, params:
 
 			validateRequest(req);
 
-			const token = await requestAccessToken(Object.assign(internalParams, {
+			const token = await requestAccessToken(Object.assign({}, authParams, {
 				code: req.query.code
-			}) as AuthCodeGrantParams, opts);
+			}) as AuthCodeGrantParams, grantOptions);
 
 			setAuthorizationHeaderAndIdentity(app, req, token);
+			setAccessTokenOnRequest(req, token.access_token, setTokenOnContext);
 
 			next();
 

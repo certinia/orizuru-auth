@@ -30,7 +30,6 @@
 
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 import formUrlencoded from 'form-urlencoded';
-import { Secret } from 'jsonwebtoken';
 
 import { Environment } from './cache';
 import { JwtGrantParams } from './oauth2Jwt';
@@ -220,7 +219,7 @@ export interface AuthClient {
 	 * @param [opts] The grant options to be used.
 	 * @returns The [Access Token Response](https://tools.ietf.org/html/rfc6749#section-4.1.4).
 	 */
-	grant(params: GrantParams, opts?: GrantOptions): Promise<AccessTokenResponse>;
+	grant(params: GrantParams, opts?: OAuth2GrantOptions): Promise<AccessTokenResponse>;
 
 	/**
 	 * Initalize the client by defining the endpoints.
@@ -300,7 +299,7 @@ export interface AuthClientGrantParams {
 /**
  * Optional parameters used when requesting grants.
  */
-export interface GrantOptions {
+export interface OAuth2GrantOptions {
 
 	/**
 	 * The client secret for your application.
@@ -308,18 +307,6 @@ export interface GrantOptions {
 	 * Either this value or the signingSecret should be set for the authorization code or refresh flows.
 	 */
 	clientSecret?: string;
-
-	/**
-	 * If true, the JWT present in the id_token field of the access token response is parsed.
-	 */
-	decodeIdToken?: boolean;
-
-	/**
-	 * If true, parses the user information from the id field in the access token response.
-	 *
-	 * This returns the user ID, organization ID and the ID url.
-	 */
-	parseUserInfo?: boolean;
 
 	/**
 	 * Determines where the API server redirects the user after the user completes the
@@ -333,18 +320,6 @@ export interface GrantOptions {
 	 * Returns the response format, either JSON, XML or URL_ENCODED.
 	 */
 	responseFormat?: ResponseFormat;
-
-	/**
-	 * The private key used for signing grant assertions as part of the [OAuth 2.0 JWT Bearer Token Flow](https://help.salesforce.com/articleView?id=remoteaccess_oauth_jwt_flow.htm).
-	 *
-	 * Either this value or the signingSecret should be set for the authorization code or refresh flows.
-	 */
-	signingSecret?: Secret;
-
-	/**
-	 * If true, the signature on the access token response is verified.
-	 */
-	verifySignature?: boolean;
 
 }
 
@@ -495,11 +470,8 @@ const DEFAULT_GRANT_OPTIONS = Object.freeze({
 	decodeIdToken: true,
 	parseUserInfo: true,
 	responseFormat: 'application/json',
+	verifyIdToken: true,
 	verifySignature: true
-});
-
-const DEFAULT_REVOCATION_OPTIONS = Object.freeze({
-	useGet: false
 });
 
 /**
@@ -622,7 +594,7 @@ export class OAuth2Client implements AuthClient {
 	/**
 	 * @inheritdoc
 	 */
-	public async grant(params: GrantParams, opts?: GrantOptions): Promise<AccessTokenResponse> {
+	public async grant(params: GrantParams, opts?: OAuth2GrantOptions): Promise<AccessTokenResponse> {
 
 		this.validateGrantParameters(params);
 
@@ -709,7 +681,9 @@ export class OAuth2Client implements AuthClient {
 			throw new Error(`${this.clientType} client has not been initialized`);
 		}
 
-		const internalOpts = Object.assign({}, DEFAULT_REVOCATION_OPTIONS, opts);
+		const internalOpts = Object.assign({
+			useGet: false
+		}, opts);
 
 		let response: AxiosResponse;
 		let revocationUri = this.revocationEndpoint;
@@ -747,7 +721,7 @@ export class OAuth2Client implements AuthClient {
 	 * @param accessTokenResponse The access token response.
 	 * @param internalOpts: The internal options.
 	 */
-	protected handleAccessTokenResponse(accessTokenResponse: AccessTokenResponse, internalOpts: GrantOptions) {
+	protected handleAccessTokenResponse(accessTokenResponse: AccessTokenResponse, internalOpts: OAuth2GrantOptions) {
 		return accessTokenResponse;
 	}
 
@@ -762,15 +736,6 @@ export class OAuth2Client implements AuthClient {
 	}
 
 	/**
-	 * Validate any extra grant parameters.
-	 *
-	 * @param params The grant parameters.
-	 */
-	protected validateExtraGrantParamters(params: GrantParams) {
-		// Nothing extra to validate
-	}
-
-	/**
 	 * Update the internal grant parameters is accordance with the selected [client authentication](https://openid.net/specs/openid-connect-core-1_0.html#ClientAuthentication)
 	 * mechanism.
 	 *
@@ -778,7 +743,7 @@ export class OAuth2Client implements AuthClient {
 	 * @param internalParams The internal grant parameters.
 	 * @param internalOpts: The internal options.
 	 */
-	protected async handleClientAuthentication(params: GrantParams, internalParams: AuthClientGrantParams, internalOpts: GrantOptions) {
+	protected async handleClientAuthentication(params: GrantParams, internalParams: AuthClientGrantParams, internalOpts: OAuth2GrantOptions) {
 
 		if (!params.clientId) {
 			throw new Error('Missing required string parameter: clientId');
@@ -794,39 +759,11 @@ export class OAuth2Client implements AuthClient {
 	}
 
 	/**
-	 * To avoid any inadvertent parameter leaks, create a new object from which to generate the grant request.
-	 *
-	 * @param params The grant parameters.
-	 * @param internalOpts: The internal options.
-	 * @returns The internal grant parameters.
-	 */
-	private async createGrantInternalParameters(params: GrantParams, internalOpts: GrantOptions) {
-
-		const internalParams: AuthClientGrantParams = {};
-
-		if (params.grantType === 'authorization_code') {
-			internalParams.code = params.code;
-			internalParams.grant_type = 'authorization_code';
-			internalParams.redirect_uri = internalOpts.redirectUri;
-		}
-
-		if (params.grantType === 'refresh_token') {
-			internalParams.grant_type = 'refresh_token';
-			internalParams.refresh_token = params.refreshToken;
-		}
-
-		await this.handleClientAuthentication(params, internalParams, internalOpts);
-
-		return internalParams;
-
-	}
-
-	/**
 	 * Validate the grant parameters.
 	 *
 	 * @param params The grant parameters.
 	 */
-	private validateGrantParameters(params: GrantParams) {
+	protected validateGrantParameters(params: GrantParams) {
 
 		if (!this.tokenEndpoint) {
 			throw new Error(`${this.clientType} client has not been initialized`);
@@ -846,7 +783,33 @@ export class OAuth2Client implements AuthClient {
 
 		}
 
-		this.validateExtraGrantParamters(params);
+	}
+
+	/**
+	 * To avoid any inadvertent parameter leaks, create a new object from which to generate the grant request.
+	 *
+	 * @param params The grant parameters.
+	 * @param internalOpts: The internal options.
+	 * @returns The internal grant parameters.
+	 */
+	private async createGrantInternalParameters(params: GrantParams, internalOpts: OAuth2GrantOptions) {
+
+		const internalParams: AuthClientGrantParams = {};
+
+		if (params.grantType === 'authorization_code') {
+			internalParams.code = params.code;
+			internalParams.grant_type = 'authorization_code';
+			internalParams.redirect_uri = internalOpts.redirectUri;
+		}
+
+		if (params.grantType === 'refresh_token') {
+			internalParams.grant_type = 'refresh_token';
+			internalParams.refresh_token = params.refreshToken;
+		}
+
+		await this.handleClientAuthentication(params, internalParams, internalOpts);
+
+		return internalParams;
 
 	}
 

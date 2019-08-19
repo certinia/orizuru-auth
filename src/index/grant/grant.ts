@@ -55,10 +55,10 @@ export interface Grant {
 /**
  * Returns a function that can obtain a token for the passed user.
  *
- * @param [env] The auth environment parameters.
+ * @param env The auth environment parameters.
  * @returns A function that retrieves the user credentials.
  */
-export function getToken(env?: Environment): UserTokenGrantor {
+export function getToken(env: Environment): UserTokenGrantor {
 
 	const validatedEnvironment = validate(env);
 

@@ -30,10 +30,10 @@
 
 import { NextFunction, Request, RequestHandler, Response } from '@financialforcedev/orizuru';
 
-import { EVENT_TOKEN_VALIDATED, OpenIDTokenWithStandardClaims, User, UserInfoOptions } from '../..';
+import { EVENT_TOKEN_VALIDATED, OpenIDTokenWithStandardClaims, UserInfoOptions } from '../..';
 import { SalesforceUser } from '../client/salesforce';
 import { createUserInfoRequester } from '../userInfo/userinfo';
-import { extractAccessToken } from './common/accessToken';
+import { DEFAULT_MIDDLEWARE_OPTIONS, extractAccessToken, MiddlewareOptions, setAccessTokenOnRequest } from './common/accessToken';
 import { fail } from './common/fail';
 
 /**
@@ -43,35 +43,25 @@ import { fail } from './common/fail';
  *
  * @fires EVENT_TOKEN_VALIDATED, EVENT_DENIED
  * @param app The Orizuru server instance.
- * @param provider The name of the auth provider.
+ * @param [provider] The name of the auth provider. Defaults to 'salesforce'.
  * @param [opts] The optional parameters used when requesting user information.
  * @returns An express middleware that validates an access token.
  */
-export function createMiddleware(app: Orizuru.IServer, provider: string, opts?: UserInfoOptions): RequestHandler {
+export function createMiddleware(app: Orizuru.IServer, provider?: string, opts?: MiddlewareOptions & UserInfoOptions): RequestHandler {
 
-	const validateAccessToken = createUserInfoRequester(app.options.authProvider[provider]);
+	const internalProvider = provider || 'salesforce';
+	const { setTokenOnContext, ...userInfoOptions } = opts || DEFAULT_MIDDLEWARE_OPTIONS;
+
+	const requestUserInfo = createUserInfoRequester(app.options.authProvider[internalProvider]);
 
 	return async function validateToken(req: Request, res: Response, next: NextFunction) {
 
 		try {
 
 			const accessToken = extractAccessToken(req);
-			const userInfo = await validateAccessToken(accessToken, opts) as OpenIDTokenWithStandardClaims;
-
-			let user: User | SalesforceUser;
-
-			if (userInfo.organization_id) {
-				user = {
-					organizationId: userInfo.organization_id as string,
-					username: userInfo.preferred_username
-				};
-			} else {
-				user = {
-					username: userInfo.preferred_username
-				};
-			}
-
-			setUserOnRequest(app, req, user);
+			const userInfo = await requestUserInfo(accessToken, userInfoOptions);
+			setUserOnRequest(app, req, userInfo);
+			setAccessTokenOnRequest(req, accessToken, setTokenOnContext);
 
 			next();
 
@@ -89,9 +79,17 @@ export function createMiddleware(app: Orizuru.IServer, provider: string, opts?: 
  * @fires EVENT_TOKEN_VALIDATED
  * @param app The Orizuru server instance.
  * @param req The HTTP request.
- * @param user The user to set on the request.
+ * @param userInfo The user information.
  */
-function setUserOnRequest(app: Orizuru.IServer, req: Request, user: User) {
+function setUserOnRequest(app: Orizuru.IServer, req: Request, userInfo: OpenIDTokenWithStandardClaims) {
+
+	const user: SalesforceUser = {
+		username: userInfo.preferred_username
+	};
+
+	if (userInfo.organization_id && typeof userInfo.organization_id === 'string') {
+		user.organizationId = userInfo.organization_id;
+	}
 
 	const orizuru = req.orizuru || {};
 	orizuru.user = user;

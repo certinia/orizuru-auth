@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>GrantOptions | @financialforcedev/orizuru-auth</title>
+	<title>SalesforceGrantOptions | @financialforcedev/orizuru-auth</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -56,13 +56,13 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="../modules/client_oauth2.html">client/oauth2</a>
+					<a href="../modules/client_salesforce.html">client/salesforce</a>
 				</li>
 				<li>
-					<a href="client_oauth2.grantoptions.html">GrantOptions</a>
+					<a href="client_salesforce.salesforcegrantoptions.html">SalesforceGrantOptions</a>
 				</li>
 			</ul>
-			<h1>Interface GrantOptions</h1>
+			<h1>Interface SalesforceGrantOptions</h1>
 		</div>
 	</div>
 </header>
@@ -80,7 +80,12 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">GrantOptions</span>
+						<a href="client_openid.openidgrantoptions.html" class="tsd-signature-type">OpenIdGrantOptions</a>
+						<ul class="tsd-hierarchy">
+							<li>
+								<span class="target">SalesforceGrantOptions</span>
+							</li>
+						</ul>
 					</li>
 				</ul>
 			</section>
@@ -91,13 +96,14 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="client_oauth2.grantoptions.html#clientsecret" class="tsd-kind-icon">client<wbr>Secret</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="client_oauth2.grantoptions.html#decodeidtoken" class="tsd-kind-icon">decode<wbr>IdToken</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="client_oauth2.grantoptions.html#parseuserinfo" class="tsd-kind-icon">parse<wbr>User<wbr>Info</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="client_oauth2.grantoptions.html#redirecturi" class="tsd-kind-icon">redirect<wbr>Uri</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="client_oauth2.grantoptions.html#responseformat" class="tsd-kind-icon">response<wbr>Format</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="client_oauth2.grantoptions.html#signingsecret" class="tsd-kind-icon">signing<wbr>Secret</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="client_oauth2.grantoptions.html#verifysignature" class="tsd-kind-icon">verify<wbr>Signature</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="client_salesforce.salesforcegrantoptions.html#clientsecret" class="tsd-kind-icon">client<wbr>Secret</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="client_salesforce.salesforcegrantoptions.html#decodeidtoken" class="tsd-kind-icon">decode<wbr>IdToken</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="client_salesforce.salesforcegrantoptions.html#parseuserinfo" class="tsd-kind-icon">parse<wbr>User<wbr>Info</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="client_salesforce.salesforcegrantoptions.html#redirecturi" class="tsd-kind-icon">redirect<wbr>Uri</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="client_salesforce.salesforcegrantoptions.html#responseformat" class="tsd-kind-icon">response<wbr>Format</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="client_salesforce.salesforcegrantoptions.html#signingsecret" class="tsd-kind-icon">signing<wbr>Secret</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="client_salesforce.salesforcegrantoptions.html#verifyidtoken" class="tsd-kind-icon">verify<wbr>IdToken</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="client_salesforce.salesforcegrantoptions.html#verifysignature" class="tsd-kind-icon">verify<wbr>Signature</a></li>
 							</ul>
 						</section>
 					</div>
@@ -105,13 +111,14 @@
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
 					<a name="clientsecret" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagOptional">Optional</span> client<wbr>Secret</h3>
 					<div class="tsd-signature tsd-kind-icon">client<wbr>Secret<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
+						<p>Inherited from <a href="client_oauth2.oauth2grantoptions.html">OAuth2GrantOptions</a>.<a href="client_oauth2.oauth2grantoptions.html#clientsecret">clientSecret</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/oauth2.ts#L301">index/client/oauth2.ts:301</a></li>
+							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/oauth2.ts#L309">index/client/oauth2.ts:309</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -121,13 +128,14 @@
 						<p>Either this value or the signingSecret should be set for the authorization code or refresh flows.</p>
 					</div>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
 					<a name="decodeidtoken" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagOptional">Optional</span> decode<wbr>IdToken</h3>
 					<div class="tsd-signature tsd-kind-icon">decode<wbr>IdToken<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span></div>
 					<aside class="tsd-sources">
+						<p>Inherited from <a href="client_openid.openidgrantoptions.html">OpenIdGrantOptions</a>.<a href="client_openid.openidgrantoptions.html#decodeidtoken">decodeIdToken</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/oauth2.ts#L306">index/client/oauth2.ts:306</a></li>
+							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/openid.ts#L61">index/client/openid.ts:61</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -142,7 +150,7 @@
 					<div class="tsd-signature tsd-kind-icon">parse<wbr>User<wbr>Info<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/oauth2.ts#L313">index/client/oauth2.ts:313</a></li>
+							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/salesforce.ts#L97">index/client/salesforce.ts:97</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -152,13 +160,14 @@
 						<p>This returns the user ID, organization ID and the ID url.</p>
 					</div>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
 					<a name="redirecturi" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagOptional">Optional</span> redirect<wbr>Uri</h3>
 					<div class="tsd-signature tsd-kind-icon">redirect<wbr>Uri<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
+						<p>Inherited from <a href="client_oauth2.oauth2grantoptions.html">OAuth2GrantOptions</a>.<a href="client_oauth2.oauth2grantoptions.html#redirecturi">redirectUri</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/oauth2.ts#L321">index/client/oauth2.ts:321</a></li>
+							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/oauth2.ts#L317">index/client/oauth2.ts:317</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -169,13 +178,14 @@
 						<p>It must be the same value sent by the initial redirect.</p>
 					</div>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
 					<a name="responseformat" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagOptional">Optional</span> response<wbr>Format</h3>
 					<div class="tsd-signature tsd-kind-icon">response<wbr>Format<span class="tsd-signature-symbol">:</span> <a href="../enums/client_oauth2.responseformat.html" class="tsd-signature-type">ResponseFormat</a></div>
 					<aside class="tsd-sources">
+						<p>Inherited from <a href="client_oauth2.oauth2grantoptions.html">OAuth2GrantOptions</a>.<a href="client_oauth2.oauth2grantoptions.html#responseformat">responseFormat</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/oauth2.ts#L326">index/client/oauth2.ts:326</a></li>
+							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/oauth2.ts#L322">index/client/oauth2.ts:322</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -184,13 +194,14 @@
 						</div>
 					</div>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
 					<a name="signingsecret" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagOptional">Optional</span> signing<wbr>Secret</h3>
-					<div class="tsd-signature tsd-kind-icon">signing<wbr>Secret<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
+					<div class="tsd-signature tsd-kind-icon">signing<wbr>Secret<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Secret</span></div>
 					<aside class="tsd-sources">
+						<p>Inherited from <a href="client_oauth2jwt.jwtgrantoptions.html">JwtGrantOptions</a>.<a href="client_oauth2jwt.jwtgrantoptions.html#signingsecret">signingSecret</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/oauth2.ts#L333">index/client/oauth2.ts:333</a></li>
+							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/oauth2Jwt.ts#L113">index/client/oauth2Jwt.ts:113</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -200,13 +211,29 @@
 						<p>Either this value or the signingSecret should be set for the authorization code or refresh flows.</p>
 					</div>
 				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+					<a name="verifyidtoken" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> verify<wbr>IdToken</h3>
+					<div class="tsd-signature tsd-kind-icon">verify<wbr>IdToken<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="client_openid.openidgrantoptions.html">OpenIdGrantOptions</a>.<a href="client_openid.openidgrantoptions.html#verifyidtoken">verifyIdToken</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/openid.ts#L66">index/client/openid.ts:66</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>If true, verify the ID token with the retrieved JWKs.</p>
+						</div>
+					</div>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="verifysignature" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagOptional">Optional</span> verify<wbr>Signature</h3>
 					<div class="tsd-signature tsd-kind-icon">verify<wbr>Signature<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/oauth2.ts#L338">index/client/oauth2.ts:338</a></li>
+							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/salesforce.ts#L102">index/client/salesforce.ts:102</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -223,162 +250,60 @@
 					<li class="globals  ">
 						<a href="../globals.html"><em>Globals</em></a>
 					</li>
-					<li class="label tsd-is-external">
-						<span>Internals</span>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/client_cache.html">client/cache</a>
-					</li>
 					<li class="current tsd-kind-external-module">
-						<a href="../modules/client_oauth2.html">client/oauth2</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/client_oauth2jwt.html">client/oauth2<wbr>Jwt</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/client_oauth2jwt_jwt.html">client/oauth2<wbr>Jwt/jwt</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/client_openid.html">client/openid</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/client_openid_identity.html">client/openid/identity</a>
-					</li>
-					<li class=" tsd-kind-external-module">
 						<a href="../modules/client_salesforce.html">client/salesforce</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/client_salesforce_identity.html">client/salesforce/identity</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/client_validator_environment.html">client/validator/environment</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/flow_jwtbearertoken.html">flow/jwt<wbr>Bearer<wbr>Token</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/flow_refreshtoken.html">flow/refresh<wbr>Token</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/flow_webserver.html">flow/web<wbr>Server</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/grant_grant.html">grant/grant</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/middleware_authcallback.html">middleware/auth<wbr>Callback</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/middleware_common_fail.html">middleware/common/fail</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/middleware_grantchecker.html">middleware/grant<wbr>Checker</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/middleware_identity.html">middleware/identity</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/middleware_tokenvalidator.html">middleware/token<wbr>Validator</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/revocation_revoke.html">revocation/revoke</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/userinfo_userinfo.html">user<wbr>Info/userinfo</a>
-					</li>
-					<li class="label tsd-is-external">
-						<span>Externals</span>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="../modules/_financialforcedev_orizuru_auth.html">@financialforcedev/orizuru-<wbr>auth</a>
 					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
-					<li class=" tsd-kind-enum tsd-parent-kind-external-module">
-						<a href="../enums/client_oauth2.responseformat.html" class="tsd-kind-icon">Response<wbr>Format</a>
-					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="../classes/client_oauth2.oauth2client.html" class="tsd-kind-icon">OAuth2<wbr>Client</a>
+						<a href="../classes/client_salesforce.salesforceclient.html" class="tsd-kind-icon">Salesforce<wbr>Client</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="client_oauth2.accesstokenresponse.html" class="tsd-kind-icon">Access<wbr>Token<wbr>Response</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="client_oauth2.authclient.html" class="tsd-kind-icon">Auth<wbr>Client</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="client_oauth2.authclientgrantparams.html" class="tsd-kind-icon">Auth<wbr>Client<wbr>Grant<wbr>Params</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="client_oauth2.authcodegrantparams.html" class="tsd-kind-icon">Auth<wbr>Code<wbr>Grant<wbr>Params</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="client_oauth2.authoptions.html" class="tsd-kind-icon">Auth<wbr>Options</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="client_oauth2.authurlparams.html" class="tsd-kind-icon">Auth<wbr>Url<wbr>Params</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="client_oauth2.errorresponse.html" class="tsd-kind-icon">Error<wbr>Response</a>
+						<a href="client_salesforce.salesforceaccesstokenresponse.html" class="tsd-kind-icon">Salesforce<wbr>Access<wbr>Token<wbr>Response</a>
 					</li>
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="client_oauth2.grantoptions.html" class="tsd-kind-icon">Grant<wbr>Options</a>
+						<a href="client_salesforce.salesforcegrantoptions.html" class="tsd-kind-icon">Salesforce<wbr>Grant<wbr>Options</a>
 						<ul>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="client_oauth2.grantoptions.html#clientsecret" class="tsd-kind-icon">client<wbr>Secret</a>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+								<a href="client_salesforce.salesforcegrantoptions.html#clientsecret" class="tsd-kind-icon">client<wbr>Secret</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+								<a href="client_salesforce.salesforcegrantoptions.html#decodeidtoken" class="tsd-kind-icon">decode<wbr>IdToken</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="client_oauth2.grantoptions.html#decodeidtoken" class="tsd-kind-icon">decode<wbr>IdToken</a>
+								<a href="client_salesforce.salesforcegrantoptions.html#parseuserinfo" class="tsd-kind-icon">parse<wbr>User<wbr>Info</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+								<a href="client_salesforce.salesforcegrantoptions.html#redirecturi" class="tsd-kind-icon">redirect<wbr>Uri</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+								<a href="client_salesforce.salesforcegrantoptions.html#responseformat" class="tsd-kind-icon">response<wbr>Format</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+								<a href="client_salesforce.salesforcegrantoptions.html#signingsecret" class="tsd-kind-icon">signing<wbr>Secret</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+								<a href="client_salesforce.salesforcegrantoptions.html#verifyidtoken" class="tsd-kind-icon">verify<wbr>IdToken</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="client_oauth2.grantoptions.html#parseuserinfo" class="tsd-kind-icon">parse<wbr>User<wbr>Info</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="client_oauth2.grantoptions.html#redirecturi" class="tsd-kind-icon">redirect<wbr>Uri</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="client_oauth2.grantoptions.html#responseformat" class="tsd-kind-icon">response<wbr>Format</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="client_oauth2.grantoptions.html#signingsecret" class="tsd-kind-icon">signing<wbr>Secret</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="client_oauth2.grantoptions.html#verifysignature" class="tsd-kind-icon">verify<wbr>Signature</a>
+								<a href="client_salesforce.salesforcegrantoptions.html#verifysignature" class="tsd-kind-icon">verify<wbr>Signature</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="client_oauth2.hasclientid.html" class="tsd-kind-icon">Has<wbr>Client<wbr>Id</a>
+						<a href="client_salesforce.salesforceintrospectionoptions.html" class="tsd-kind-icon">Salesforce<wbr>Introspection<wbr>Options</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="client_oauth2.refreshgrantparams.html" class="tsd-kind-icon">Refresh<wbr>Grant<wbr>Params</a>
+						<a href="client_salesforce.salesforceintrospectionresponse.html" class="tsd-kind-icon">Salesforce<wbr>Introspection<wbr>Response</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="client_oauth2.refreshtokengrantorparams.html" class="tsd-kind-icon">Refresh<wbr>Token<wbr>Grantor<wbr>Params</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="client_oauth2.revocationoptions.html" class="tsd-kind-icon">Revocation<wbr>Options</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="client_oauth2.tokengrantorparams.html" class="tsd-kind-icon">Token<wbr>Grantor<wbr>Params</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-parent-kind-external-module">
-						<a href="../modules/client_oauth2.html#grantparams" class="tsd-kind-icon">Grant<wbr>Params</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/client_oauth2.html#default_grant_options" class="tsd-kind-icon">DEFAULT_<wbr>GRANT_<wbr>OPTIONS</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/client_oauth2.html#default_request_config" class="tsd-kind-icon">DEFAULT_<wbr>REQUEST_<wbr>CONFIG</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/client_oauth2.html#default_revocation_options" class="tsd-kind-icon">DEFAULT_<wbr>REVOCATION_<wbr>OPTIONS</a>
+						<a href="client_salesforce.salesforceuser.html" class="tsd-kind-icon">Salesforce<wbr>User</a>
 					</li>
 				</ul>
 			</nav>

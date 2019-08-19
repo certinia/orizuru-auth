@@ -105,14 +105,16 @@
 								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="client_oauth2.oauth2client.html#constructor" class="tsd-kind-icon">constructor</a></li>
 							</ul>
 						</section>
-						<section class="tsd-index-section tsd-is-private-protected">
+						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><a href="client_oauth2.oauth2client.html#authorizationendpoint" class="tsd-kind-icon">authorization<wbr>Endpoint</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><a href="client_oauth2.oauth2client.html#clienttype" class="tsd-kind-icon">client<wbr>Type</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><a href="client_oauth2.oauth2client.html#env" class="tsd-kind-icon">env</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><a href="client_oauth2.oauth2client.html#introspectionendpoint" class="tsd-kind-icon">introspection<wbr>Endpoint</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><a href="client_oauth2.oauth2client.html#revocationendpoint" class="tsd-kind-icon">revocation<wbr>Endpoint</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><a href="client_oauth2.oauth2client.html#tokenendpoint" class="tsd-kind-icon">token<wbr>Endpoint</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><a href="client_oauth2.oauth2client.html#default_request_config" class="tsd-kind-icon">DEFAULT_<wbr>REQUEST_<wbr>CONFIG</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
@@ -124,10 +126,11 @@
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="client_oauth2.oauth2client.html#grant" class="tsd-kind-icon">grant</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected"><a href="client_oauth2.oauth2client.html#handleaccesstokenresponse" class="tsd-kind-icon">handle<wbr>Access<wbr>Token<wbr>Response</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected"><a href="client_oauth2.oauth2client.html#handleclientauthentication" class="tsd-kind-icon">handle<wbr>Client<wbr>Authentication</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected"><a href="client_oauth2.oauth2client.html#handleintrospectionresponse" class="tsd-kind-icon">handle<wbr>Introspection<wbr>Response</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="client_oauth2.oauth2client.html#init" class="tsd-kind-icon">init</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="client_oauth2.oauth2client.html#introspect" class="tsd-kind-icon">introspect</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="client_oauth2.oauth2client.html#revoke" class="tsd-kind-icon">revoke</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected"><a href="client_oauth2.oauth2client.html#validateextragrantparamters" class="tsd-kind-icon">validate<wbr>Extra<wbr>Grant<wbr>Paramters</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="client_oauth2.oauth2client.html#validategrantparameters" class="tsd-kind-icon">validate<wbr>Grant<wbr>Parameters</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected"><a href="client_oauth2.oauth2client.html#validategrantparameters" class="tsd-kind-icon">validate<wbr>Grant<wbr>Parameters</a></li>
 							</ul>
 						</section>
 					</div>
@@ -145,7 +148,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/oauth2.ts#L426">index/client/oauth2.ts:426</a></li>
+									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/oauth2.ts#L517">index/client/oauth2.ts:517</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -169,7 +172,7 @@
 					</ul>
 				</section>
 			</section>
-			<section class="tsd-panel-group tsd-member-group tsd-is-private-protected">
+			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-protected">
 					<a name="authorizationendpoint" class="tsd-anchor"></a>
@@ -177,7 +180,7 @@
 					<div class="tsd-signature tsd-kind-icon">authorization<wbr>Endpoint<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/oauth2.ts#L411">index/client/oauth2.ts:411</a></li>
+							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/oauth2.ts#L497">index/client/oauth2.ts:497</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -192,7 +195,7 @@
 					<div class="tsd-signature tsd-kind-icon">client<wbr>Type<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/oauth2.ts#L406">index/client/oauth2.ts:406</a></li>
+							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/oauth2.ts#L492">index/client/oauth2.ts:492</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -207,7 +210,7 @@
 					<div class="tsd-signature tsd-kind-icon">env<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Readonly</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/client_cache.environment.html" class="tsd-signature-type">Environment</a><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/oauth2.ts#L426">index/client/oauth2.ts:426</a></li>
+							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/oauth2.ts#L517">index/client/oauth2.ts:517</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -217,12 +220,27 @@
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-protected">
+					<a name="introspectionendpoint" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagProtected">Protected</span> <span class="tsd-flag ts-flagOptional">Optional</span> introspection<wbr>Endpoint</h3>
+					<div class="tsd-signature tsd-kind-icon">introspection<wbr>Endpoint<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/oauth2.ts#L502">index/client/oauth2.ts:502</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p><a href="https://tools.ietf.org/html/rfc7662#section-2">Introspection Endpoint</a></p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-protected">
 					<a name="revocationendpoint" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagProtected">Protected</span> <span class="tsd-flag ts-flagOptional">Optional</span> revocation<wbr>Endpoint</h3>
 					<div class="tsd-signature tsd-kind-icon">revocation<wbr>Endpoint<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/oauth2.ts#L421">index/client/oauth2.ts:421</a></li>
+							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/oauth2.ts#L512">index/client/oauth2.ts:512</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -237,12 +255,27 @@
 					<div class="tsd-signature tsd-kind-icon">token<wbr>Endpoint<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/oauth2.ts#L416">index/client/oauth2.ts:416</a></li>
+							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/oauth2.ts#L507">index/client/oauth2.ts:507</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p><a href="https://tools.ietf.org/html/rfc6749#section-3.2">Token Endpoint</a></p>
+							<p><a href="https://tools.ietf.org/html/rfc7009#section-2">Revocation Endpoint</a></p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-static">
+					<a name="default_request_config" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> DEFAULT_<wbr>REQUEST_<wbr>CONFIG</h3>
+					<div class="tsd-signature tsd-kind-icon">DEFAULT_<wbr>REQUEST_<wbr>CONFIG<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">AxiosRequestConfig</span><span class="tsd-signature-symbol"> =&nbsp;Object.freeze({validateStatus: () &#x3D;&gt; true})</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/oauth2.ts#L485">index/client/oauth2.ts:485</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>The default configuration for an Axios request.</p>
 						</div>
 					</div>
 				</section>
@@ -260,7 +293,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/client_oauth2.authclient.html">AuthClient</a>.<a href="../interfaces/client_oauth2.authclient.html#createauthorizationurl">createAuthorizationUrl</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/oauth2.ts#L464">index/client/oauth2.ts:464</a></li>
+									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/oauth2.ts#L556">index/client/oauth2.ts:556</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -286,13 +319,13 @@
 					<a name="creategrantinternalparameters" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagPrivate">Private</span> create<wbr>Grant<wbr>Internal<wbr>Parameters</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
-						<li class="tsd-signature tsd-kind-icon">create<wbr>Grant<wbr>Internal<wbr>Parameters<span class="tsd-signature-symbol">(</span>params<span class="tsd-signature-symbol">: </span><a href="../modules/client_oauth2.html#grantparams" class="tsd-signature-type">GrantParams</a>, internalOpts<span class="tsd-signature-symbol">: </span><a href="../interfaces/client_oauth2.grantoptions.html" class="tsd-signature-type">GrantOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/client_oauth2.authclientgrantparams.html" class="tsd-signature-type">AuthClientGrantParams</a><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">create<wbr>Grant<wbr>Internal<wbr>Parameters<span class="tsd-signature-symbol">(</span>params<span class="tsd-signature-symbol">: </span><a href="../modules/client_oauth2.html#grantparams" class="tsd-signature-type">GrantParams</a>, internalOpts<span class="tsd-signature-symbol">: </span><a href="../interfaces/client_oauth2.oauth2grantoptions.html" class="tsd-signature-type">OAuth2GrantOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/client_oauth2.authclientgrantparams.html" class="tsd-signature-type">AuthClientGrantParams</a><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/oauth2.ts#L628">index/client/oauth2.ts:628</a></li>
+									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/oauth2.ts#L795">index/client/oauth2.ts:795</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -309,7 +342,7 @@
 									</div>
 								</li>
 								<li>
-									<h5>internalOpts: <a href="../interfaces/client_oauth2.grantoptions.html" class="tsd-signature-type">GrantOptions</a></h5>
+									<h5>internalOpts: <a href="../interfaces/client_oauth2.oauth2grantoptions.html" class="tsd-signature-type">OAuth2GrantOptions</a></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/client_oauth2.authclientgrantparams.html" class="tsd-signature-type">AuthClientGrantParams</a><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -328,7 +361,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/client_oauth2.authclient.html">AuthClient</a>.<a href="../interfaces/client_oauth2.authclient.html#gettype">getType</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/oauth2.ts#L575">index/client/oauth2.ts:575</a></li>
+									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/oauth2.ts#L714">index/client/oauth2.ts:714</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -344,14 +377,14 @@
 					<a name="grant" class="tsd-anchor"></a>
 					<h3>grant</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">grant<span class="tsd-signature-symbol">(</span>params<span class="tsd-signature-symbol">: </span><a href="../modules/client_oauth2.html#grantparams" class="tsd-signature-type">GrantParams</a>, opts<span class="tsd-signature-symbol">?: </span><a href="../interfaces/client_oauth2.grantoptions.html" class="tsd-signature-type">GrantOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/client_oauth2.accesstokenresponse.html" class="tsd-signature-type">AccessTokenResponse</a><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">grant<span class="tsd-signature-symbol">(</span>params<span class="tsd-signature-symbol">: </span><a href="../modules/client_oauth2.html#grantparams" class="tsd-signature-type">GrantParams</a>, opts<span class="tsd-signature-symbol">?: </span><a href="../interfaces/client_oauth2.oauth2grantoptions.html" class="tsd-signature-type">OAuth2GrantOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/client_oauth2.accesstokenresponse.html" class="tsd-signature-type">AccessTokenResponse</a><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/client_oauth2.authclient.html">AuthClient</a>.<a href="../interfaces/client_oauth2.authclient.html#grant">grant</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/oauth2.ts#L509">index/client/oauth2.ts:509</a></li>
+									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/oauth2.ts#L597">index/client/oauth2.ts:597</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -366,7 +399,7 @@
 									<h5>params: <a href="../modules/client_oauth2.html#grantparams" class="tsd-signature-type">GrantParams</a></h5>
 								</li>
 								<li>
-									<h5><span class="tsd-flag ts-flagOptional">Optional</span> opts: <a href="../interfaces/client_oauth2.grantoptions.html" class="tsd-signature-type">GrantOptions</a></h5>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> opts: <a href="../interfaces/client_oauth2.oauth2grantoptions.html" class="tsd-signature-type">OAuth2GrantOptions</a></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/client_oauth2.accesstokenresponse.html" class="tsd-signature-type">AccessTokenResponse</a><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -378,18 +411,18 @@
 					<a name="handleaccesstokenresponse" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagProtected">Protected</span> handle<wbr>Access<wbr>Token<wbr>Response</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-protected">
-						<li class="tsd-signature tsd-kind-icon">handle<wbr>Access<wbr>Token<wbr>Response<span class="tsd-signature-symbol">(</span>accessTokenResponse<span class="tsd-signature-symbol">: </span><a href="../interfaces/client_oauth2.accesstokenresponse.html" class="tsd-signature-type">AccessTokenResponse</a>, internalOpts<span class="tsd-signature-symbol">: </span><a href="../interfaces/client_oauth2.grantoptions.html" class="tsd-signature-type">GrantOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/client_oauth2.accesstokenresponse.html" class="tsd-signature-type">AccessTokenResponse</a></li>
+						<li class="tsd-signature tsd-kind-icon">handle<wbr>Access<wbr>Token<wbr>Response<span class="tsd-signature-symbol">(</span>accessTokenResponse<span class="tsd-signature-symbol">: </span><a href="../interfaces/client_oauth2.accesstokenresponse.html" class="tsd-signature-type">AccessTokenResponse</a>, internalOpts<span class="tsd-signature-symbol">: </span><a href="../interfaces/client_oauth2.oauth2grantoptions.html" class="tsd-signature-type">OAuth2GrantOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/client_oauth2.accesstokenresponse.html" class="tsd-signature-type">AccessTokenResponse</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/oauth2.ts#L585">index/client/oauth2.ts:585</a></li>
+									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/oauth2.ts#L724">index/client/oauth2.ts:724</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Handle the access token response, performing validation and parsing, as defined in the grant options.</p>
+									<p>Handle the access token response, performing validation and parsing as defined in the grant options.</p>
 								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -401,7 +434,7 @@
 									</div>
 								</li>
 								<li>
-									<h5>internalOpts: <a href="../interfaces/client_oauth2.grantoptions.html" class="tsd-signature-type">GrantOptions</a></h5>
+									<h5>internalOpts: <a href="../interfaces/client_oauth2.oauth2grantoptions.html" class="tsd-signature-type">OAuth2GrantOptions</a></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="../interfaces/client_oauth2.accesstokenresponse.html" class="tsd-signature-type">AccessTokenResponse</a></h4>
@@ -412,13 +445,13 @@
 					<a name="handleclientauthentication" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagProtected">Protected</span> handle<wbr>Client<wbr>Authentication</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-protected">
-						<li class="tsd-signature tsd-kind-icon">handle<wbr>Client<wbr>Authentication<span class="tsd-signature-symbol">(</span>params<span class="tsd-signature-symbol">: </span><a href="../modules/client_oauth2.html#grantparams" class="tsd-signature-type">GrantParams</a>, internalParams<span class="tsd-signature-symbol">: </span><a href="../interfaces/client_oauth2.authclientgrantparams.html" class="tsd-signature-type">AuthClientGrantParams</a>, internalOpts<span class="tsd-signature-symbol">: </span><a href="../interfaces/client_oauth2.grantoptions.html" class="tsd-signature-type">GrantOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">handle<wbr>Client<wbr>Authentication<span class="tsd-signature-symbol">(</span>params<span class="tsd-signature-symbol">: </span><a href="../modules/client_oauth2.html#grantparams" class="tsd-signature-type">GrantParams</a>, internalParams<span class="tsd-signature-symbol">: </span><a href="../interfaces/client_oauth2.authclientgrantparams.html" class="tsd-signature-type">AuthClientGrantParams</a>, internalOpts<span class="tsd-signature-symbol">: </span><a href="../interfaces/client_oauth2.oauth2grantoptions.html" class="tsd-signature-type">OAuth2GrantOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/oauth2.ts#L606">index/client/oauth2.ts:606</a></li>
+									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/oauth2.ts#L746">index/client/oauth2.ts:746</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -442,10 +475,44 @@
 									</div>
 								</li>
 								<li>
-									<h5>internalOpts: <a href="../interfaces/client_oauth2.grantoptions.html" class="tsd-signature-type">GrantOptions</a></h5>
+									<h5>internalOpts: <a href="../interfaces/client_oauth2.oauth2grantoptions.html" class="tsd-signature-type">OAuth2GrantOptions</a></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+					<a name="handleintrospectionresponse" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagProtected">Protected</span> handle<wbr>Introspection<wbr>Response</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+						<li class="tsd-signature tsd-kind-icon">handle<wbr>Introspection<wbr>Response<span class="tsd-signature-symbol">(</span>introspectionResponse<span class="tsd-signature-symbol">: </span><a href="../interfaces/client_oauth2.introspectionresponse.html" class="tsd-signature-type">IntrospectionResponse</a>, internalOpts<span class="tsd-signature-symbol">: </span><a href="../interfaces/client_oauth2.introspectionoptions.html" class="tsd-signature-type">IntrospectionOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/client_oauth2.introspectionresponse.html" class="tsd-signature-type">IntrospectionResponse</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/oauth2.ts#L734">index/client/oauth2.ts:734</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Handle the introspection response, performing validation and parsing as defined in the grant options.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>introspectionResponse: <a href="../interfaces/client_oauth2.introspectionresponse.html" class="tsd-signature-type">IntrospectionResponse</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The access token response.</p>
+									</div>
+								</li>
+								<li>
+									<h5>internalOpts: <a href="../interfaces/client_oauth2.introspectionoptions.html" class="tsd-signature-type">IntrospectionOptions</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/client_oauth2.introspectionresponse.html" class="tsd-signature-type">IntrospectionResponse</a></h4>
 						</li>
 					</ul>
 				</section>
@@ -460,7 +527,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/client_oauth2.authclient.html">AuthClient</a>.<a href="../interfaces/client_oauth2.authclient.html#init">init</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/oauth2.ts#L441">index/client/oauth2.ts:441</a></li>
+									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/oauth2.ts#L532">index/client/oauth2.ts:532</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -469,6 +536,41 @@
 								</div>
 							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="introspect" class="tsd-anchor"></a>
+					<h3>introspect</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">introspect<span class="tsd-signature-symbol">(</span>token<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, params<span class="tsd-signature-symbol">: </span><a href="../interfaces/client_oauth2.introspectionparams.html" class="tsd-signature-type">IntrospectionParams</a>, opts<span class="tsd-signature-symbol">?: </span><a href="../interfaces/client_oauth2.introspectionoptions.html" class="tsd-signature-type">IntrospectionOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/client_oauth2.introspectionresponse.html" class="tsd-signature-type">IntrospectionResponse</a><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Implementation of <a href="../interfaces/client_oauth2.authclient.html">AuthClient</a>.<a href="../interfaces/client_oauth2.authclient.html#introspect">introspect</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/oauth2.ts#L629">index/client/oauth2.ts:629</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Introspect a token.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>token: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5>params: <a href="../interfaces/client_oauth2.introspectionparams.html" class="tsd-signature-type">IntrospectionParams</a></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> opts: <a href="../interfaces/client_oauth2.introspectionoptions.html" class="tsd-signature-type">IntrospectionOptions</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/client_oauth2.introspectionresponse.html" class="tsd-signature-type">IntrospectionResponse</a><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -483,7 +585,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/client_oauth2.authclient.html">AuthClient</a>.<a href="../interfaces/client_oauth2.authclient.html#revoke">revoke</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/oauth2.ts#L541">index/client/oauth2.ts:541</a></li>
+									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/oauth2.ts#L678">index/client/oauth2.ts:678</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -507,47 +609,16 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-protected">
-					<a name="validateextragrantparamters" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagProtected">Protected</span> validate<wbr>Extra<wbr>Grant<wbr>Paramters</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-protected">
-						<li class="tsd-signature tsd-kind-icon">validate<wbr>Extra<wbr>Grant<wbr>Paramters<span class="tsd-signature-symbol">(</span>params<span class="tsd-signature-symbol">: </span><a href="../modules/client_oauth2.html#grantparams" class="tsd-signature-type">GrantParams</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/oauth2.ts#L594">index/client/oauth2.ts:594</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Validate any extra grant parameters.</p>
-								</div>
-							</div>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>params: <a href="../modules/client_oauth2.html#grantparams" class="tsd-signature-type">GrantParams</a></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>The grant parameters.</p>
-									</div>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
 					<a name="validategrantparameters" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagPrivate">Private</span> validate<wbr>Grant<wbr>Parameters</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+					<h3><span class="tsd-flag ts-flagProtected">Protected</span> validate<wbr>Grant<wbr>Parameters</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-protected">
 						<li class="tsd-signature tsd-kind-icon">validate<wbr>Grant<wbr>Parameters<span class="tsd-signature-symbol">(</span>params<span class="tsd-signature-symbol">: </span><a href="../modules/client_oauth2.html#grantparams" class="tsd-signature-type">GrantParams</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/oauth2.ts#L654">index/client/oauth2.ts:654</a></li>
+									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/oauth2.ts#L766">index/client/oauth2.ts:766</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -576,74 +647,8 @@
 					<li class="globals  ">
 						<a href="../globals.html"><em>Globals</em></a>
 					</li>
-					<li class="label tsd-is-external">
-						<span>Internals</span>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/client_cache.html">client/cache</a>
-					</li>
 					<li class="current tsd-kind-external-module">
 						<a href="../modules/client_oauth2.html">client/oauth2</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/client_oauth2jwt.html">client/oauth2<wbr>Jwt</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/client_oauth2jwt_jwt.html">client/oauth2<wbr>Jwt/jwt</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/client_openid.html">client/openid</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/client_openid_identity.html">client/openid/identity</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/client_salesforce.html">client/salesforce</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/client_salesforce_identity.html">client/salesforce/identity</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/client_validator_environment.html">client/validator/environment</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/flow_jwtbearertoken.html">flow/jwt<wbr>Bearer<wbr>Token</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/flow_refreshtoken.html">flow/refresh<wbr>Token</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/flow_webserver.html">flow/web<wbr>Server</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/grant_grant.html">grant/grant</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/middleware_authcallback.html">middleware/auth<wbr>Callback</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/middleware_common_fail.html">middleware/common/fail</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/middleware_grantchecker.html">middleware/grant<wbr>Checker</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/middleware_identity.html">middleware/identity</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/middleware_tokenvalidator.html">middleware/token<wbr>Validator</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/revocation_revoke.html">revocation/revoke</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/userinfo_userinfo.html">user<wbr>Info/userinfo</a>
-					</li>
-					<li class="label tsd-is-external">
-						<span>Externals</span>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="../modules/_financialforcedev_orizuru_auth.html">@financialforcedev/orizuru-<wbr>auth</a>
 					</li>
 				</ul>
 			</nav>
@@ -670,10 +675,16 @@
 								<a href="client_oauth2.oauth2client.html#env" class="tsd-kind-icon">env</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-protected">
+								<a href="client_oauth2.oauth2client.html#introspectionendpoint" class="tsd-kind-icon">introspection<wbr>Endpoint</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-protected">
 								<a href="client_oauth2.oauth2client.html#revocationendpoint" class="tsd-kind-icon">revocation<wbr>Endpoint</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-protected">
 								<a href="client_oauth2.oauth2client.html#tokenendpoint" class="tsd-kind-icon">token<wbr>Endpoint</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-static">
+								<a href="client_oauth2.oauth2client.html#default_request_config" class="tsd-kind-icon">DEFAULT_<wbr>REQUEST_<wbr>CONFIG</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="client_oauth2.oauth2client.html#createauthorizationurl" class="tsd-kind-icon">create<wbr>Authorization<wbr>Url</a>
@@ -693,16 +704,19 @@
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-protected">
 								<a href="client_oauth2.oauth2client.html#handleclientauthentication" class="tsd-kind-icon">handle<wbr>Client<wbr>Authentication</a>
 							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+								<a href="client_oauth2.oauth2client.html#handleintrospectionresponse" class="tsd-kind-icon">handle<wbr>Introspection<wbr>Response</a>
+							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="client_oauth2.oauth2client.html#init" class="tsd-kind-icon">init</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="client_oauth2.oauth2client.html#introspect" class="tsd-kind-icon">introspect</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="client_oauth2.oauth2client.html#revoke" class="tsd-kind-icon">revoke</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-protected">
-								<a href="client_oauth2.oauth2client.html#validateextragrantparamters" class="tsd-kind-icon">validate<wbr>Extra<wbr>Grant<wbr>Paramters</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
 								<a href="client_oauth2.oauth2client.html#validategrantparameters" class="tsd-kind-icon">validate<wbr>Grant<wbr>Parameters</a>
 							</li>
 						</ul>
@@ -731,10 +745,19 @@
 						<a href="../interfaces/client_oauth2.errorresponse.html" class="tsd-kind-icon">Error<wbr>Response</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="../interfaces/client_oauth2.grantoptions.html" class="tsd-kind-icon">Grant<wbr>Options</a>
+						<a href="../interfaces/client_oauth2.hasclientid.html" class="tsd-kind-icon">Has<wbr>Client<wbr>Id</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="../interfaces/client_oauth2.hasclientid.html" class="tsd-kind-icon">Has<wbr>Client<wbr>Id</a>
+						<a href="../interfaces/client_oauth2.introspectionoptions.html" class="tsd-kind-icon">Introspection<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
+						<a href="../interfaces/client_oauth2.introspectionparams.html" class="tsd-kind-icon">Introspection<wbr>Params</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
+						<a href="../interfaces/client_oauth2.introspectionresponse.html" class="tsd-kind-icon">Introspection<wbr>Response</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
+						<a href="../interfaces/client_oauth2.oauth2grantoptions.html" class="tsd-kind-icon">OAuth2<wbr>Grant<wbr>Options</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
 						<a href="../interfaces/client_oauth2.refreshgrantparams.html" class="tsd-kind-icon">Refresh<wbr>Grant<wbr>Params</a>
@@ -753,12 +776,6 @@
 					</li>
 					<li class=" tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
 						<a href="../modules/client_oauth2.html#default_grant_options" class="tsd-kind-icon">DEFAULT_<wbr>GRANT_<wbr>OPTIONS</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/client_oauth2.html#default_request_config" class="tsd-kind-icon">DEFAULT_<wbr>REQUEST_<wbr>CONFIG</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/client_oauth2.html#default_revocation_options" class="tsd-kind-icon">DEFAULT_<wbr>REVOCATION_<wbr>OPTIONS</a>
 					</li>
 				</ul>
 			</nav>

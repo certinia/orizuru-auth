@@ -94,7 +94,7 @@
 					<a name="createjwtbearerclientassertion" class="tsd-anchor"></a>
 					<h3>create<wbr>Jwt<wbr>Bearer<wbr>Client<wbr>Assertion</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module">
-						<li class="tsd-signature tsd-kind-icon">create<wbr>Jwt<wbr>Bearer<wbr>Client<wbr>Assertion<span class="tsd-signature-symbol">(</span>params<span class="tsd-signature-symbol">: </span><a href="client_oauth2.html#grantparams" class="tsd-signature-type">GrantParams</a>, signingSecret<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, tokenEndpoint<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">create<wbr>Jwt<wbr>Bearer<wbr>Client<wbr>Assertion<span class="tsd-signature-symbol">(</span>params<span class="tsd-signature-symbol">: </span><a href="client_oauth2.html#grantparams" class="tsd-signature-type">GrantParams</a>, signingSecret<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Secret</span>, tokenEndpoint<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
@@ -117,7 +117,7 @@
 									</div>
 								</li>
 								<li>
-									<h5>signingSecret: <span class="tsd-signature-type">string</span></h5>
+									<h5>signingSecret: <span class="tsd-signature-type">Secret</span></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>The secret used to sign the payload.</p>
 									</div>
@@ -219,7 +219,7 @@
 					<a name="signclientassertion" class="tsd-anchor"></a>
 					<h3>sign<wbr>Client<wbr>Assertion</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
-						<li class="tsd-signature tsd-kind-icon">sign<wbr>Client<wbr>Assertion<span class="tsd-signature-symbol">(</span>payload<span class="tsd-signature-symbol">: </span><a href="../interfaces/client_oauth2jwt.jwt.html" class="tsd-signature-type">JWT</a>, signingSecret<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, type<span class="tsd-signature-symbol">: </span><a href="../enums/client_oauth2jwt_jwt.assertiontype.html" class="tsd-signature-type">AssertionType</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">sign<wbr>Client<wbr>Assertion<span class="tsd-signature-symbol">(</span>payload<span class="tsd-signature-symbol">: </span><a href="../interfaces/client_oauth2jwt.jwt.html" class="tsd-signature-type">JWT</a>, signingSecret<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Secret</span>, type<span class="tsd-signature-symbol">: </span><a href="../enums/client_oauth2jwt_jwt.assertiontype.html" class="tsd-signature-type">AssertionType</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
@@ -242,7 +242,7 @@
 									</div>
 								</li>
 								<li>
-									<h5>signingSecret: <span class="tsd-signature-type">string</span></h5>
+									<h5>signingSecret: <span class="tsd-signature-type">Secret</span></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>The private key to sign the payload with.</p>
 									</div>
@@ -266,74 +266,8 @@
 					<li class="globals  ">
 						<a href="../globals.html"><em>Globals</em></a>
 					</li>
-					<li class="label tsd-is-external">
-						<span>Internals</span>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="client_cache.html">client/cache</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="client_oauth2.html">client/oauth2</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="client_oauth2jwt.html">client/oauth2<wbr>Jwt</a>
-					</li>
 					<li class="current tsd-kind-external-module">
 						<a href="client_oauth2jwt_jwt.html">client/oauth2<wbr>Jwt/jwt</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="client_openid.html">client/openid</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="client_openid_identity.html">client/openid/identity</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="client_salesforce.html">client/salesforce</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="client_salesforce_identity.html">client/salesforce/identity</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="client_validator_environment.html">client/validator/environment</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="flow_jwtbearertoken.html">flow/jwt<wbr>Bearer<wbr>Token</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="flow_refreshtoken.html">flow/refresh<wbr>Token</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="flow_webserver.html">flow/web<wbr>Server</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="grant_grant.html">grant/grant</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="middleware_authcallback.html">middleware/auth<wbr>Callback</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="middleware_common_fail.html">middleware/common/fail</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="middleware_grantchecker.html">middleware/grant<wbr>Checker</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="middleware_identity.html">middleware/identity</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="middleware_tokenvalidator.html">middleware/token<wbr>Validator</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="revocation_revoke.html">revocation/revoke</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="userinfo_userinfo.html">user<wbr>Info/userinfo</a>
-					</li>
-					<li class="label tsd-is-external">
-						<span>Externals</span>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="_financialforcedev_orizuru_auth.html">@financialforcedev/orizuru-<wbr>auth</a>
 					</li>
 				</ul>
 			</nav>

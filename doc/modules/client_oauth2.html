@@ -92,8 +92,11 @@
 								<li class="tsd-kind-interface tsd-parent-kind-external-module"><a href="../interfaces/client_oauth2.authoptions.html" class="tsd-kind-icon">Auth<wbr>Options</a></li>
 								<li class="tsd-kind-interface tsd-parent-kind-external-module"><a href="../interfaces/client_oauth2.authurlparams.html" class="tsd-kind-icon">Auth<wbr>Url<wbr>Params</a></li>
 								<li class="tsd-kind-interface tsd-parent-kind-external-module"><a href="../interfaces/client_oauth2.errorresponse.html" class="tsd-kind-icon">Error<wbr>Response</a></li>
-								<li class="tsd-kind-interface tsd-parent-kind-external-module"><a href="../interfaces/client_oauth2.grantoptions.html" class="tsd-kind-icon">Grant<wbr>Options</a></li>
 								<li class="tsd-kind-interface tsd-parent-kind-external-module"><a href="../interfaces/client_oauth2.hasclientid.html" class="tsd-kind-icon">Has<wbr>Client<wbr>Id</a></li>
+								<li class="tsd-kind-interface tsd-parent-kind-external-module"><a href="../interfaces/client_oauth2.introspectionoptions.html" class="tsd-kind-icon">Introspection<wbr>Options</a></li>
+								<li class="tsd-kind-interface tsd-parent-kind-external-module"><a href="../interfaces/client_oauth2.introspectionparams.html" class="tsd-kind-icon">Introspection<wbr>Params</a></li>
+								<li class="tsd-kind-interface tsd-parent-kind-external-module"><a href="../interfaces/client_oauth2.introspectionresponse.html" class="tsd-kind-icon">Introspection<wbr>Response</a></li>
+								<li class="tsd-kind-interface tsd-parent-kind-external-module"><a href="../interfaces/client_oauth2.oauth2grantoptions.html" class="tsd-kind-icon">OAuth2<wbr>Grant<wbr>Options</a></li>
 								<li class="tsd-kind-interface tsd-parent-kind-external-module"><a href="../interfaces/client_oauth2.refreshgrantparams.html" class="tsd-kind-icon">Refresh<wbr>Grant<wbr>Params</a></li>
 								<li class="tsd-kind-interface tsd-parent-kind-external-module"><a href="../interfaces/client_oauth2.refreshtokengrantorparams.html" class="tsd-kind-icon">Refresh<wbr>Token<wbr>Grantor<wbr>Params</a></li>
 								<li class="tsd-kind-interface tsd-parent-kind-external-module"><a href="../interfaces/client_oauth2.revocationoptions.html" class="tsd-kind-icon">Revocation<wbr>Options</a></li>
@@ -110,8 +113,6 @@
 							<h3>Variables</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported"><a href="client_oauth2.html#default_grant_options" class="tsd-kind-icon">DEFAULT_<wbr>GRANT_<wbr>OPTIONS</a></li>
-								<li class="tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported"><a href="client_oauth2.html#default_request_config" class="tsd-kind-icon">DEFAULT_<wbr>REQUEST_<wbr>CONFIG</a></li>
-								<li class="tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported"><a href="client_oauth2.html#default_revocation_options" class="tsd-kind-icon">DEFAULT_<wbr>REVOCATION_<wbr>OPTIONS</a></li>
 							</ul>
 						</section>
 					</div>
@@ -125,7 +126,7 @@
 					<div class="tsd-signature tsd-kind-icon">Grant<wbr>Params<span class="tsd-signature-symbol">:</span> <a href="../interfaces/client_oauth2.authcodegrantparams.html" class="tsd-signature-type">AuthCodeGrantParams</a><span class="tsd-signature-symbol"> | </span><a href="../interfaces/client_oauth2jwt.jwtgrantparams.html" class="tsd-signature-type">JwtGrantParams</a><span class="tsd-signature-symbol"> | </span><a href="../interfaces/client_oauth2.refreshgrantparams.html" class="tsd-signature-type">RefreshGrantParams</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/oauth2.ts#L381">index/client/oauth2.ts:381</a></li>
+							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/oauth2.ts#L467">index/client/oauth2.ts:467</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -135,40 +136,10 @@
 				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
 					<a name="default_grant_options" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagConst">Const</span> DEFAULT_<wbr>GRANT_<wbr>OPTIONS</h3>
-					<div class="tsd-signature tsd-kind-icon">DEFAULT_<wbr>GRANT_<wbr>OPTIONS<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span><span class="tsd-signature-symbol"> =&nbsp;Object.freeze({decodeIdToken: true,parseUserInfo: true,responseFormat: &#x27;application/json&#x27;,verifySignature: true})</span></div>
+					<div class="tsd-signature tsd-kind-icon">DEFAULT_<wbr>GRANT_<wbr>OPTIONS<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span><span class="tsd-signature-symbol"> =&nbsp;Object.freeze({decodeIdToken: true,parseUserInfo: true,responseFormat: &#x27;application/json&#x27;,verifyIdToken: true,verifySignature: true})</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/oauth2.ts#L383">index/client/oauth2.ts:383</a></li>
-						</ul>
-					</aside>
-					<div class="tsd-type-declaration">
-						<h4>Type declaration</h4>
-						<ul class="tsd-parameters">
-						</ul>
-					</div>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
-					<a name="default_request_config" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagConst">Const</span> DEFAULT_<wbr>REQUEST_<wbr>CONFIG</h3>
-					<div class="tsd-signature tsd-kind-icon">DEFAULT_<wbr>REQUEST_<wbr>CONFIG<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span><span class="tsd-signature-symbol"> =&nbsp;Object.freeze({validateStatus: undefined})</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/oauth2.ts#L394">index/client/oauth2.ts:394</a></li>
-						</ul>
-					</aside>
-					<div class="tsd-type-declaration">
-						<h4>Type declaration</h4>
-						<ul class="tsd-parameters">
-						</ul>
-					</div>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
-					<a name="default_revocation_options" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagConst">Const</span> DEFAULT_<wbr>REVOCATION_<wbr>OPTIONS</h3>
-					<div class="tsd-signature tsd-kind-icon">DEFAULT_<wbr>REVOCATION_<wbr>OPTIONS<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span><span class="tsd-signature-symbol"> =&nbsp;Object.freeze({useGet: false})</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/oauth2.ts#L390">index/client/oauth2.ts:390</a></li>
+							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/client/oauth2.ts#L469">index/client/oauth2.ts:469</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
@@ -185,74 +156,8 @@
 					<li class="globals  ">
 						<a href="../globals.html"><em>Globals</em></a>
 					</li>
-					<li class="label tsd-is-external">
-						<span>Internals</span>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="client_cache.html">client/cache</a>
-					</li>
 					<li class="current tsd-kind-external-module">
 						<a href="client_oauth2.html">client/oauth2</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="client_oauth2jwt.html">client/oauth2<wbr>Jwt</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="client_oauth2jwt_jwt.html">client/oauth2<wbr>Jwt/jwt</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="client_openid.html">client/openid</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="client_openid_identity.html">client/openid/identity</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="client_salesforce.html">client/salesforce</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="client_salesforce_identity.html">client/salesforce/identity</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="client_validator_environment.html">client/validator/environment</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="flow_jwtbearertoken.html">flow/jwt<wbr>Bearer<wbr>Token</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="flow_refreshtoken.html">flow/refresh<wbr>Token</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="flow_webserver.html">flow/web<wbr>Server</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="grant_grant.html">grant/grant</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="middleware_authcallback.html">middleware/auth<wbr>Callback</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="middleware_common_fail.html">middleware/common/fail</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="middleware_grantchecker.html">middleware/grant<wbr>Checker</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="middleware_identity.html">middleware/identity</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="middleware_tokenvalidator.html">middleware/token<wbr>Validator</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="revocation_revoke.html">revocation/revoke</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="userinfo_userinfo.html">user<wbr>Info/userinfo</a>
-					</li>
-					<li class="label tsd-is-external">
-						<span>Externals</span>
-					</li>
-					<li class=" tsd-kind-external-module tsd-is-external">
-						<a href="_financialforcedev_orizuru_auth.html">@financialforcedev/orizuru-<wbr>auth</a>
 					</li>
 				</ul>
 			</nav>
@@ -286,10 +191,19 @@
 						<a href="../interfaces/client_oauth2.errorresponse.html" class="tsd-kind-icon">Error<wbr>Response</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="../interfaces/client_oauth2.grantoptions.html" class="tsd-kind-icon">Grant<wbr>Options</a>
+						<a href="../interfaces/client_oauth2.hasclientid.html" class="tsd-kind-icon">Has<wbr>Client<wbr>Id</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="../interfaces/client_oauth2.hasclientid.html" class="tsd-kind-icon">Has<wbr>Client<wbr>Id</a>
+						<a href="../interfaces/client_oauth2.introspectionoptions.html" class="tsd-kind-icon">Introspection<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
+						<a href="../interfaces/client_oauth2.introspectionparams.html" class="tsd-kind-icon">Introspection<wbr>Params</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
+						<a href="../interfaces/client_oauth2.introspectionresponse.html" class="tsd-kind-icon">Introspection<wbr>Response</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
+						<a href="../interfaces/client_oauth2.oauth2grantoptions.html" class="tsd-kind-icon">OAuth2<wbr>Grant<wbr>Options</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module">
 						<a href="../interfaces/client_oauth2.refreshgrantparams.html" class="tsd-kind-icon">Refresh<wbr>Grant<wbr>Params</a>
@@ -308,12 +222,6 @@
 					</li>
 					<li class=" tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
 						<a href="client_oauth2.html#default_grant_options" class="tsd-kind-icon">DEFAULT_<wbr>GRANT_<wbr>OPTIONS</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="client_oauth2.html#default_request_config" class="tsd-kind-icon">DEFAULT_<wbr>REQUEST_<wbr>CONFIG</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="client_oauth2.html#default_revocation_options" class="tsd-kind-icon">DEFAULT_<wbr>REVOCATION_<wbr>OPTIONS</a>
 					</li>
 				</ul>
 			</nav>

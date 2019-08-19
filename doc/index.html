@@ -66,7 +66,7 @@
 			<div class="tsd-panel tsd-typography">
 				<h1 id="orizuru-authentication">Orizuru Authentication</h1>
 				<p><a href="https://travis-ci.org/financialforcedev/orizuru-auth"><img src="https://travis-ci.org/financialforcedev/orizuru-auth.svg?branch=master" alt="Build Status"></a></p>
-				<p>Orizuru authentication is an <a href="http://expressjs.com/">Express</a>-compatible authentication middleware for <a href="http://nodejs.org/">Node.js</a>. </p>
+				<p>Orizuru authentication is an <a href="http://expressjs.com/">Express</a>-compatible authentication middleware for <a href="http://nodejs.org/">Node.js</a>.</p>
 				<p>It is aimed at users of the <a href="https://www.npmjs.com/package/@financialforcedev/orizuru">Orizuru</a> framework, but can also be used standalone. The authentication process has been tested with Salesforce and Google as Identity Providers, although it should be possible to use it with others.</p>
 				<p>In a Salesforce context, using the <code>Token Validator</code> and <code>Grant Checker</code> middleware in combination will establish the following.</p>
 				<ol>
@@ -80,7 +80,7 @@
 				<h3 id="oauth-2-0-web-server-authentication-flow">OAuth 2.0 Web Server Authentication Flow</h3>
 				<p>Orizuru Auth provides a function to initialise the <a href="https://help.salesforce.com/articleView?id=remoteaccess_oauth_web_server_flow.htm">OAuth 2.0 Web Server Authentication Flow</a>. It uses the <a href="https://help.salesforce.com/articleView?id=remoteaccess_using_openid_discovery_endpoint.htm">Salesforce OpenID Connect discovery endpoint</a> supplied in the <code>Environment</code>, with the <a href="https://help.salesforce.com/articleView?id=connected_app_create.htm">Connected app</a> details supplied in the <code>AuthUrlParameters</code>, to create the URL. Optional configuration options for the URL are supplied in the <code>AuthOptions</code>.</p>
 				<p>For the examples, the initial configuration has been provided in the <code>examples</code> directory of this repository. This can be copied to another directory to be worked with.</p>
-				<p>Two configuration files should be provided: the <code>default.json</code> file which contains any insensitive data (this is included with the source); and the <code>local.json</code> configuration file which contains sensitive data. Create a <code>local.json</code> file, within the <code>config</code> directory with the following contents, where each of the values has been substituted for your Salesforce connected app details. </p>
+				<p>Two configuration files should be provided: the <code>default.json</code> file which contains any insensitive data (this is included with the source); and the <code>local.json</code> configuration file which contains sensitive data. Create a <code>local.json</code> file, within the <code>config</code> directory with the following contents, where each of the values has been substituted for your Salesforce connected app details.</p>
 				<pre><code class="language-json">{
     <span class="hljs-attr">"app"</span>: {
         <span class="hljs-attr">"openid"</span>: {
@@ -97,15 +97,15 @@
         }
     }
 }</code></pre>
-				<p>Once completed, the server can be started via <code>npm start</code> or in VS Code via the launch configuration. </p>
+				<p>Once completed, the server can be started via <code>npm start</code> or in VS Code via the launch configuration.</p>
 				<p>Changes to the imports are omitted from further examples; assuming VS Code is being used, the examples directory contains the default configuration for automatically optimising imports.</p>
-				<p>The first example illustrates how the authentication URL generator can be used with <a href="https://github.com/financialforcedev/orizuru">Orizuru</a> and <a href="https://github.com/financialforcedev/orizuru-transport-rabbitmq">Orizuru Transport RabbitMQ</a>. A HTTPS server is used with a generated self-signed certificate. </p>
+				<p>The first example illustrates how the authentication URL generator can be used with <a href="https://github.com/financialforcedev/orizuru">Orizuru</a> and <a href="https://github.com/financialforcedev/orizuru-transport-rabbitmq">Orizuru Transport RabbitMQ</a>. A HTTPS server is used with a generated self-signed certificate.</p>
 				<p>The route <code>https://localhost:8080/api/v1.0/auth</code> is added to the server. This route redirects the user to the Salesforce login page; it initialises the <a href="https://help.salesforce.com/articleView?id=remoteaccess_oauth_web_server_flow.htm">OAuth 2.0 Web Server Authentication Flow</a>.</p>
 				<pre><code class="language-typescript"><span class="hljs-keyword">import</span> config <span class="hljs-keyword">from</span> <span class="hljs-string">'config'</span>;
 <span class="hljs-keyword">import</span> https <span class="hljs-keyword">from</span> <span class="hljs-string">'https'</span>;
 <span class="hljs-keyword">import</span> pem, { CertificateCreationResult } <span class="hljs-keyword">from</span> <span class="hljs-string">'pem'</span>;
 
-<span class="hljs-keyword">import</span> { json, Request, Response, Server } <span class="hljs-keyword">from</span> <span class="hljs-string">'@financialforcedev/orizuru'</span>;
+<span class="hljs-keyword">import</span> { json, NextFunction, Request, Response, Server } <span class="hljs-keyword">from</span> <span class="hljs-string">'@financialforcedev/orizuru'</span>;
 <span class="hljs-keyword">import</span> { flow } <span class="hljs-keyword">from</span> <span class="hljs-string">'@financialforcedev/orizuru-auth'</span>;
 <span class="hljs-keyword">import</span> { Transport } <span class="hljs-keyword">from</span> <span class="hljs-string">'@financialforcedev/orizuru-transport-rabbitmq'</span>;
 
@@ -121,6 +121,16 @@
         });
     });
 }
+
+<span class="hljs-comment">// Define a simple error middleware</span>
+<span class="hljs-keyword">const</span> errorMiddleware = <span class="hljs-function">(<span class="hljs-params">error: <span class="hljs-built_in">Error</span> | <span class="hljs-literal">undefined</span>, req: Request, res: Response, next: NextFunction</span>) =&gt;</span> {
+    <span class="hljs-keyword">if</span> (error) {
+        server.error(error);
+        res.sendStatus(<span class="hljs-number">401</span>);
+    } <span class="hljs-keyword">else</span> {
+        next();
+    }
+};
 
 <span class="hljs-comment">// Create the server</span>
 <span class="hljs-keyword">const</span> server = <span class="hljs-keyword">new</span> Server({
@@ -138,11 +148,21 @@
     })
 });
 
+<span class="hljs-comment">// Add listeners for the server error and info events</span>
+server.on(Server.ERROR, <span class="hljs-function">(<span class="hljs-params">message</span>) =&gt;</span> {
+    process.stdout.write(<span class="hljs-string">`<span class="hljs-subst">${message}</span>\n`</span>);
+});
+
+server.on(Server.INFO, <span class="hljs-function">(<span class="hljs-params">message</span>) =&gt;</span> {
+    process.stdout.write(<span class="hljs-string">`<span class="hljs-subst">${message}</span>\n`</span>);
+});
+
 <span class="hljs-comment">// Add the route to generate the authorization URL (in this case we use 'test' as the state parameter)</span>
 server.addRoute({
     method: <span class="hljs-string">'get'</span>,
     middleware: [
-        json()
+        json(),
+        errorMiddleware
     ],
     responseWriter: <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> <span class="hljs-keyword">async</span> (err: <span class="hljs-built_in">Error</span> | <span class="hljs-literal">undefined</span>, req: Request, res: Response) =&gt; {
         <span class="hljs-keyword">const</span> url = <span class="hljs-keyword">await</span> flow.webServer.authorizationUrlGenerator(server.options.authProvider.salesforce)(server.options.openid.salesforce, server.options.openid.salesforce);
@@ -157,7 +177,7 @@ server.addRoute({
     synchronous: <span class="hljs-literal">true</span>
 });
 
-<span class="hljs-comment">/** 
+<span class="hljs-comment">/**
  * All the code specified in the rest of the readme should be added here.
  */</span>
 
@@ -179,7 +199,7 @@ createCertificate().then(<span class="hljs-function">(<span class="hljs-params">
 				<h4 id="auth-callback">Auth Callback</h4>
 				<p>The auth callback middleware exchanges a verification code for an access token as part of the <a href="https://help.salesforce.com/articleView?id=remoteaccess_oauth_web_server_flow.htm">OAuth 2.0 Web Server Authentication Flow</a>.</p>
 				<p>If a verification token is successfully exchanged for an access token then the <code>Authorization</code> HTTP header is set on the request.</p>
-				<p>The following example illustrates how the auth callback middleware can be used with <a href="https://github.com/financialforcedev/orizuru">Orizuru</a> and <a href="https://github.com/financialforcedev/orizuru-transport-rabbitmq">Orizuru Transport RabbitMQ</a>. It follows on from the example given in the <a href="#oauth-20-web-server-authentication-flow">OAuth 2.0 Web Server Authentication Flow</a> section. </p>
+				<p>The following example illustrates how the auth callback middleware can be used with <a href="https://github.com/financialforcedev/orizuru">Orizuru</a> and <a href="https://github.com/financialforcedev/orizuru-transport-rabbitmq">Orizuru Transport RabbitMQ</a>. It follows on from the example given in the <a href="#oauth-20-web-server-authentication-flow">OAuth 2.0 Web Server Authentication Flow</a> section.</p>
 				<p>The route <code>https://localhost:8080/api/auth/v1.0/callback</code> is added to the server and is called once the user has authorized the connected app. If the request is successful, a <strong>Authorization Header Set</strong> message is printed to the console and the token is returned. This token can be used to test the subsequent routes.</p>
 				<pre><code class="language-typescript"><span class="hljs-comment">// Add the listener</span>
 server.on(EVENT_AUTHORIZATION_HEADER_SET, <span class="hljs-function">(<span class="hljs-params">message</span>) =&gt;</span> {
@@ -190,7 +210,8 @@ server.on(EVENT_AUTHORIZATION_HEADER_SET, <span class="hljs-function">(<span cla
 server.addRoute({
     method: <span class="hljs-string">'get'</span>,
     middleware: [
-        middleware.authCallback(server, <span class="hljs-string">'salesforce'</span>, server.options.openid.salesforce, server.options.openid.salesforce)
+        middleware.authCallback(server, <span class="hljs-string">'salesforce'</span>, server.options.openid.salesforce, server.options.openid.salesforce),
+        errorMiddleware
     ],
     responseWriter: <span class="hljs-function">(<span class="hljs-params">app</span>) =&gt;</span> <span class="hljs-keyword">async</span> (error, req, res) =&gt; {
         res.json(req.headers.authorization);
@@ -206,7 +227,7 @@ server.addRoute({
 				<h4 id="token-validator">Token Validator</h4>
 				<p>The token validator middleware checks that a valid OpenID Connect Bearer token exists in an <strong>Authorization</strong> HTTP header. It does this by calling the specified Identity Provider&#39;s UserInfo endpoint with the Bearer token.</p>
 				<p>If the token is successfully validated then a <em>user</em> object is set on the request&#39;s <em>orizuru</em> object.</p>
-				<p>The following example illustrates how the token validator middleware can be used with <a href="https://github.com/financialforcedev/orizuru">Orizuru</a> and <a href="https://github.com/financialforcedev/orizuru-transport-rabbitmq">Orizuru Transport RabbitMQ</a> to validate tokens contained in the authorization request header. It follows on from the example given in the <a href="#auth-callback">Auth Callback</a> section. </p>
+				<p>The following example illustrates how the token validator middleware can be used with <a href="https://github.com/financialforcedev/orizuru">Orizuru</a> and <a href="https://github.com/financialforcedev/orizuru-transport-rabbitmq">Orizuru Transport RabbitMQ</a> to validate tokens contained in the authorization request header. It follows on from the example given in the <a href="#auth-callback">Auth Callback</a> section.</p>
 				<p>The route <code>https://localhost:8080/api/auth/v1.0/validateToken</code> is added to the server as a GET request. If the request is successful, a <strong>token validated</strong> message is printed to the console and the <em>orizuru</em> object is returned. Otherwise, a denied message is printed to the console.</p>
 				<pre><code class="language-typescript"><span class="hljs-comment">// Add the listeners</span>
 server.on(EVENT_DENIED, <span class="hljs-function">(<span class="hljs-params">message</span>) =&gt;</span> {
@@ -221,7 +242,8 @@ server.on(EVENT_TOKEN_VALIDATED, <span class="hljs-function">(<span class="hljs-
 server.addRoute({
     method: <span class="hljs-string">'get'</span>,
     middleware: [
-        middleware.tokenValidator(server, <span class="hljs-string">'salesforce'</span>)
+        middleware.tokenValidator(server, <span class="hljs-string">'salesforce'</span>),
+        errorMiddleware
     ],
     responseWriter: <span class="hljs-function">(<span class="hljs-params">app</span>) =&gt;</span> <span class="hljs-keyword">async</span> (error, req, res) =&gt; {
         res.json(req.orizuru);
@@ -236,8 +258,8 @@ server.addRoute({
 });</code></pre>
 				<h4 id="grant-checker">Grant Checker</h4>
 				<p>The grant checker is designed to be used in tandem with the token Validator. It uses the <code>user</code> object on the request&#39;s <code>orizuru</code> object and attempts to obtain an OpenID Connect access token using a JWT Bearer grant request. In order for this to work the Identity Provider must have a previously established authorisation for the user requested. With the Salesforce identity provider this is achieved by using a Connected App with an uploaded certificate.</p>
-				<p>If this completes successfully it sets the <code>orizuru</code> object <code>grantChecked</code> property to be true, otherwise the user will be refused access.</p>
-				<p>The following example illustrates how the grant checker can be used, with <a href="https://github.com/financialforcedev/orizuru">Orizuru</a> and <a href="https://github.com/financialforcedev/orizuru-transport-rabbitmq">Orizuru Transport RabbitMQ</a>, to validate tokens contained in the authorization request header. It follows on from the example given in the <a href="#token-validator">Token Validator</a> section. </p>
+				<p>If this completes successfully it sets the <code>orizuru</code> object <code>grantChecked</code> property to be true, otherwise the user will be refused access. The access token can also be directly set on the <code>orizuru</code> object by setting the <code>setTokenOnContext</code> option to true when creating the middleware. Ensure you have adequate security in place to prevent reading or interception of the token.</p>
+				<p>The following example illustrates how the grant checker can be used, with <a href="https://github.com/financialforcedev/orizuru">Orizuru</a> and <a href="https://github.com/financialforcedev/orizuru-transport-rabbitmq">Orizuru Transport RabbitMQ</a>, to validate tokens contained in the authorization request header. It follows on from the example given in the <a href="#token-validator">Token Validator</a> section.</p>
 				<p>The route <code>https://localhost:8080/api/auth/v1.0/checkGrant</code> is added to the server as a GET request. If the request is successful, a <strong>grant checked</strong> message is printed to the console and the <em>orizuru</em> object is returned. Otherwise, a denied message is printed to the console.</p>
 				<pre><code class="language-typescript"><span class="hljs-comment">// Add the listeners</span>
 server.on(EVENT_GRANT_CHECKED, <span class="hljs-function">(<span class="hljs-params">message</span>) =&gt;</span> {
@@ -251,7 +273,8 @@ server.addRoute({
         middleware.tokenValidator(server, <span class="hljs-string">'salesforce'</span>),
         middleware.grantChecker(server, <span class="hljs-string">'salesforce'</span>, server.options.openid.salesforceConnection, {
             verifySignature: <span class="hljs-literal">false</span>
-        })
+        }),
+        errorMiddleware
     ],
     responseWriter: <span class="hljs-function">(<span class="hljs-params">app</span>) =&gt;</span> <span class="hljs-keyword">async</span> (error, req, res) =&gt; {
         res.json(req.orizuru);
@@ -266,7 +289,7 @@ server.addRoute({
 				<h3 id="token-granter">Token Granter</h3>
 				<p>This can be called at any time to obtain credentials to connect to Salesforce. It depends on the configuration of the Connected App in your Salesforce org, with pre-authorized users connected via a Permission Set to it and a certificate uploaded that corresponds to the <code>signingSecret</code>.</p>
 				<p>The credentials returned are in a form suitable to be used with <a href="https://jsforce.github.io/">JSforce</a>.</p>
-				<p>The following example illustrates how the token granter can be used, with <a href="https://github.com/financialforcedev/orizuru">Orizuru</a> and <a href="https://github.com/financialforcedev/orizuru-transport-rabbitmq">Orizuru Transport RabbitMQ</a>, to retrieve the limits for a Salesforce organization. It follows on from the example given in the <a href="#grant-checker">Grant Checker</a> section. </p>
+				<p>The following example illustrates how the token granter can be used, with <a href="https://github.com/financialforcedev/orizuru">Orizuru</a> and <a href="https://github.com/financialforcedev/orizuru-transport-rabbitmq">Orizuru Transport RabbitMQ</a>, to retrieve the limits for a Salesforce organization. It follows on from the example given in the <a href="#grant-checker">Grant Checker</a> section.</p>
 				<p>The route <code>https://localhost:8080/api/v1.0/limits</code> is added to the server as a GET request. If the request is successful, a JSON response containing the limits is returned. Otherwise, a denied message is printed to the console. It makes use of an Orizuru response writer function, rather than a middleware, to retrieve the limits and send them to the user.</p>
 				<pre><code class="language-typescript"><span class="hljs-comment">// Create a function to retrieve the organization limits</span>
 <span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">retrieveOrgLimits</span>(<span class="hljs-params">err: <span class="hljs-built_in">Error</span> | <span class="hljs-literal">undefined</span>, req: Request, res: Response</span>) </span>{
@@ -300,13 +323,44 @@ server.addRoute({
 server.addRoute({
     method: <span class="hljs-string">'get'</span>,
     middleware: [
-        middleware.tokenValidator(server, <span class="hljs-string">'salesforce'</span>)
+        middleware.tokenValidator(server, <span class="hljs-string">'salesforce'</span>),
+        errorMiddleware
     ],
     responseWriter: <span class="hljs-function">(<span class="hljs-params">app</span>) =&gt;</span> retrieveOrgLimits,
     schema: {
         fields: [],
         name: <span class="hljs-string">'limits'</span>,
         <span class="hljs-keyword">namespace</span>: <span class="hljs-string">'api.v1_0'</span>,
+        <span class="hljs-keyword">type</span>: <span class="hljs-string">'record'</span>
+    },
+    synchronous: <span class="hljs-literal">true</span>
+});</code></pre>
+				<h3 id="token-introspector">Token Introspector</h3>
+				<p>The token introspector middleware can be used to determine the active state of an OAuth 2.0 token and retrieve meta-information about this token. It can be used in tandem with either the <a href="#auth-callback">Auth Callback</a> or the <a href="#token-granter">Token Grantor</a> middlewares.</p>
+				<p>The following example illustrates how the token introspector can be used, with <a href="https://github.com/financialforcedev/orizuru">Orizuru</a> and <a href="https://github.com/financialforcedev/orizuru-transport-rabbitmq">Orizuru Transport RabbitMQ</a>, to retrieve the token information. It follows on from the example given in the <a href="#token-granter">Token Granter</a> section.</p>
+				<p>The route <code>https://localhost:8080/api/auth/v1.0/introspectToken</code> is added to the server as a GET request. If the request is successful, a <strong>token introspected</strong> message is printed to the console and the <em>orizuru</em> object is returned. Otherwise, a denied message is printed to the console.</p>
+				<pre><code class="language-typescript"><span class="hljs-comment">// Add the listeners</span>
+server.on(EVENT_TOKEN_INTROSPECTED, <span class="hljs-function">(<span class="hljs-params">message</span>) =&gt;</span> {
+    process.stdout.write(<span class="hljs-string">`<span class="hljs-subst">${message}</span>\n`</span>);
+});
+
+<span class="hljs-comment">// Add a route to the server</span>
+server.addRoute({
+    method: <span class="hljs-string">'get'</span>,
+    middleware: [
+        urlencoded({
+            extended: <span class="hljs-literal">true</span>
+        }),
+        middleware.tokenIntrospection(server, <span class="hljs-string">'salesforce'</span>),
+        errorMiddleware
+    ],
+    responseWriter: <span class="hljs-function">(<span class="hljs-params">app</span>) =&gt;</span> <span class="hljs-keyword">async</span> (error, req, res) =&gt; {
+        res.json(req.orizuru);
+    },
+    schema: {
+        fields: [],
+        name: <span class="hljs-string">'introspectToken'</span>,
+        <span class="hljs-keyword">namespace</span>: <span class="hljs-string">'api.auth.v1_0'</span>,
         <span class="hljs-keyword">type</span>: <span class="hljs-string">'record'</span>
     },
     synchronous: <span class="hljs-literal">true</span>
@@ -343,6 +397,9 @@ server.addRoute({
 						<a href="modules/client_openid_identity.html">client/openid/identity</a>
 					</li>
 					<li class=" tsd-kind-external-module">
+						<a href="modules/client_openid_jwk.html">client/openid/jwk</a>
+					</li>
+					<li class=" tsd-kind-external-module">
 						<a href="modules/client_salesforce.html">client/salesforce</a>
 					</li>
 					<li class=" tsd-kind-external-module">
@@ -364,7 +421,13 @@ server.addRoute({
 						<a href="modules/grant_grant.html">grant/grant</a>
 					</li>
 					<li class=" tsd-kind-external-module">
+						<a href="modules/introspection_introspect.html">introspection/introspect</a>
+					</li>
+					<li class=" tsd-kind-external-module">
 						<a href="modules/middleware_authcallback.html">middleware/auth<wbr>Callback</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/middleware_common_accesstoken.html">middleware/common/access<wbr>Token</a>
 					</li>
 					<li class=" tsd-kind-external-module">
 						<a href="modules/middleware_common_fail.html">middleware/common/fail</a>
@@ -374,6 +437,9 @@ server.addRoute({
 					</li>
 					<li class=" tsd-kind-external-module">
 						<a href="modules/middleware_identity.html">middleware/identity</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/middleware_tokenintrospection.html">middleware/token<wbr>Introspection</a>
 					</li>
 					<li class=" tsd-kind-external-module">
 						<a href="modules/middleware_tokenvalidator.html">middleware/token<wbr>Validator</a>

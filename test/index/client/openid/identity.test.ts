@@ -50,9 +50,7 @@ describe('index/client/openid/identity', () => {
 		keyPair = crypto.generateKeyPairSync('rsa', {
 			modulusLength: 2048,
 			privateKeyEncoding: {
-				cipher: 'aes-256-cbc',
 				format: 'pem',
-				passphrase: '',
 				type: 'pkcs8'
 			},
 			publicKeyEncoding: {

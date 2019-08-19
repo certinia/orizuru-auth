@@ -342,6 +342,11 @@ export interface GrantOptions {
 	signingSecret?: Secret;
 
 	/**
+	 * If true, verify the ID token with the retrieved JWKs.
+	 */
+	verifyIdToken?: boolean;
+
+	/**
 	 * If true, the signature on the access token response is verified.
 	 */
 	verifySignature?: boolean;
@@ -495,6 +500,7 @@ const DEFAULT_GRANT_OPTIONS = Object.freeze({
 	decodeIdToken: true,
 	parseUserInfo: true,
 	responseFormat: 'application/json',
+	verifyIdToken: true,
 	verifySignature: true
 });
 

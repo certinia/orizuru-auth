@@ -36,9 +36,9 @@ import { validate } from '../client/validator/environment';
 /**
  * Returns a function that requests the user information for a given access token.
  *
- * @param [env] The auth environment parameters.
+ * @param env The auth environment parameters.
  */
-export function createUserInfoRequester(env?: Environment): UserInfoRequester {
+export function createUserInfoRequester(env: Environment): UserInfoRequester {
 
 	const validatedEnvironment = validate(env);
 

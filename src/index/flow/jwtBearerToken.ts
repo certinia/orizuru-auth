@@ -35,10 +35,10 @@ import { validate } from '../client/validator/environment';
 /**
  * Uses the [OAuth 2.0 JWT Bearer Token Flow](https://help.salesforce.com/articleView?id=remoteaccess_oauth_jwt_flow.htm) to request an access token.
  *
- * @param [env] The auth environment parameters.
+ * @param env The auth environment parameters.
  * @returns A function that requests an access token for a given user.
  */
-export function createTokenGrantor(env?: Environment): JwtBearerAccessTokenGrantor {
+export function createTokenGrantor(env: Environment): JwtBearerAccessTokenGrantor {
 
 	const validatedEnvironment = validate(env);
 

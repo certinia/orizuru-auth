@@ -36,7 +36,7 @@ import { validate } from '../client/validator/environment';
  * Uses the [OAuth 2.0 Refresh Token Flow](https://help.salesforce.com/articleView?id=remoteaccess_oauth_refresh_token_flow.htm) to renew tokens issued by the web server or
  * user-agent flows.
  *
- * @param [env] The auth environment parameters.
+ * @param env The auth environment parameters.
  * @returns A function that requests an access token from the given refresh token.
  */
 export function createTokenGrantor(env: Environment): RefreshAccessTokenGrantor {

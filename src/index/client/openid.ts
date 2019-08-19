@@ -31,8 +31,8 @@
 import axios from 'axios';
 
 import { Environment } from './cache';
-import { AccessTokenResponse, GrantOptions, GrantParams, OAuth2Client, ResponseFormat } from './oauth2';
-import { JWT, OAuth2JWTClient } from './oauth2Jwt';
+import { AccessTokenResponse, GrantParams, OAuth2Client, ResponseFormat } from './oauth2';
+import { JWT, JwtGrantOptions, OAuth2JWTClient } from './oauth2Jwt';
 import { decodeIdToken, verifyIdToken } from './openid/identity';
 import { JsonWebKeyPemFormatMap, retrieveJsonWebKeysInPemFormat } from './openid/jwk';
 
@@ -47,6 +47,23 @@ export interface OpenIDAccessTokenResponse extends AccessTokenResponse {
 	 * authorization server.
 	 */
 	id_token?: null | string | OpenIDToken | OpenIDTokenWithStandardClaims;
+
+}
+
+/**
+ * Optional parameters used when requesting grants.
+ */
+export interface OpenIdGrantOptions extends JwtGrantOptions {
+
+	/**
+	 * If true, the JWT present in the id_token field of the access token response is parsed.
+	 */
+	decodeIdToken?: boolean;
+
+	/**
+	 * If true, verify the ID token with the retrieved JWKs.
+	 */
+	verifyIdToken?: boolean;
 
 }
 
@@ -351,7 +368,7 @@ export class OpenIdClient extends OAuth2JWTClient {
 	 * @inheritdoc
 	 * @returns The OpenID Access Token Response.
 	 */
-	public async grant(params: GrantParams, opts?: GrantOptions): Promise<OpenIDAccessTokenResponse> {
+	public async grant(params: GrantParams, opts?: OpenIdGrantOptions): Promise<OpenIDAccessTokenResponse> {
 		return super.grant(params as GrantParams, opts);
 	}
 
@@ -389,7 +406,7 @@ export class OpenIdClient extends OAuth2JWTClient {
 	/**
 	 * @inheritdoc
 	 */
-	protected handleAccessTokenResponse(accessTokenResponse: AccessTokenResponse, internalOpts: GrantOptions) {
+	protected handleAccessTokenResponse(accessTokenResponse: AccessTokenResponse, internalOpts: OpenIdGrantOptions) {
 
 		try {
 

@@ -30,10 +30,10 @@
  */
 
 import { clear, Environment } from './index/client/cache';
-import { AccessTokenResponse, AuthOptions, AuthUrlParams, GrantOptions, IntrospectionOptions, IntrospectionParams, IntrospectionResponse, RefreshTokenGrantorParams, TokenGrantorParams } from './index/client/oauth2';
-import { JwtTokenGrantorParams, UserTokenGrantorParams } from './index/client/oauth2Jwt';
-import { OpenIDTokenWithStandardClaims, UserInfoOptions } from './index/client/openid';
-import { SalesforceUser } from './index/client/salesforce';
+import { AccessTokenResponse, AuthOptions, AuthUrlParams, IntrospectionOptions, IntrospectionParams, IntrospectionResponse, OAuth2GrantOptions, RefreshTokenGrantorParams, TokenGrantorParams } from './index/client/oauth2';
+import { JwtGrantOptions, JwtTokenGrantorParams, UserTokenGrantorParams } from './index/client/oauth2Jwt';
+import { OpenIdGrantOptions, OpenIDTokenWithStandardClaims, UserInfoOptions } from './index/client/openid';
+import { SalesforceGrantOptions, SalesforceUser } from './index/client/salesforce';
 import { SalesforceIdentity, UserInfo } from './index/client/salesforce/identity';
 import { createTokenGrantor as createJwtBearerAccessTokenGrantor } from './index/flow/jwtBearerToken';
 import { createTokenGrantor as createRefreshAccessTokenGrantor } from './index/flow/refreshToken';
@@ -155,12 +155,12 @@ export {
 	AuthOptions,
 	AuthUrlParams,
 	ErrorResponse,
-	GrantOptions,
 	GrantParams,
 	HasClientId,
 	IntrospectionOptions,
 	IntrospectionParams,
 	IntrospectionResponse,
+	OAuth2GrantOptions,
 	RefreshGrantParams,
 	RefreshTokenGrantorParams,
 	ResponseFormat,
@@ -170,6 +170,7 @@ export {
 
 export {
 	JWT,
+	JwtGrantOptions,
 	JwtGrantParams,
 	JwtTokenGrantorParams,
 	User,
@@ -178,13 +179,19 @@ export {
 
 export {
 	OpenIDAccessTokenResponse,
+	OpenIdGrantOptions,
 	OpenIDToken,
 	OpenIDTokenWithStandardClaims,
 	OpenIdTokenAddress,
 	UserInfoOptions
 } from './index/client/openid';
 
-export { SalesforceAccessTokenResponse, SalesforceUser } from './index/client/salesforce';
+export {
+	SalesforceAccessTokenResponse,
+	SalesforceGrantOptions,
+	SalesforceUser
+} from './index/client/salesforce';
+
 export { SalesforceIdentity, UserInfo } from './index/client/salesforce/identity';
 
 export { MiddlewareOptions } from './index/middleware/common/accessToken';
@@ -204,6 +211,8 @@ export type Options = AuthOptions | GrantOptions | UserInfoOptions;
 export type GrantorParams = RefreshTokenGrantorParams | TokenGrantorParams | UserTokenGrantorParams;
 
 export type OpenIdOptions = AuthUrlParams & AuthOptions & GrantorParams & IntrospectionParams & JwtTokenGrantorParams & Options;
+
+export type GrantOptions = OAuth2GrantOptions | JwtGrantOptions | OpenIdGrantOptions | SalesforceGrantOptions;
 
 /**
  * The event fired when the authorization header is set.

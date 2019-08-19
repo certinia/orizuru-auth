@@ -31,7 +31,7 @@
 import { Secret } from 'jsonwebtoken';
 
 import { Environment } from './cache';
-import { AccessTokenResponse, AuthClientGrantParams, GrantOptions, GrantParams, OAuth2Client, TokenGrantorParams } from './oauth2';
+import { AccessTokenResponse, AuthClientGrantParams, GrantParams, OAuth2Client, OAuth2GrantOptions, TokenGrantorParams } from './oauth2';
 import { createJwtBearerClientAssertion, createJwtBearerGrantAssertion } from './oauth2Jwt/jwt';
 
 /**
@@ -101,6 +101,20 @@ export interface JWT {
 }
 
 /**
+ * Optional parameters used when requesting grants.
+ */
+export interface JwtGrantOptions extends OAuth2GrantOptions {
+
+	/**
+	 * The private key used for signing grant assertions as part of the [OAuth 2.0 JWT Bearer Token Flow](https://help.salesforce.com/articleView?id=remoteaccess_oauth_jwt_flow.htm).
+	 *
+	 * Either this value or the signingSecret should be set for the authorization code or refresh flows.
+	 */
+	signingSecret?: Secret;
+
+}
+
+/**
  * Parameters required for the JWT grant type.
  */
 export interface JwtGrantParams extends UserTokenGrantorParams {
@@ -161,14 +175,14 @@ export class OAuth2JWTClient extends OAuth2Client {
 	/**
 	 * @inheritdoc
 	 */
-	public async grant(params: GrantParams, opts?: GrantOptions): Promise<AccessTokenResponse> {
+	public async grant(params: GrantParams, opts?: JwtGrantOptions): Promise<AccessTokenResponse> {
 		return super.grant(params, opts);
 	}
 
 	/**
 	 * @inheritdoc
 	 */
-	protected async handleClientAuthentication(params: GrantParams, internalParams: AuthClientGrantParams, internalOpts: GrantOptions) {
+	protected async handleClientAuthentication(params: GrantParams, internalParams: AuthClientGrantParams, internalOpts: JwtGrantOptions) {
 
 		if (params.grantType === 'urn:ietf:params:oauth:grant-type:jwt-bearer') {
 

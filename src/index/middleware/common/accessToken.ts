@@ -36,6 +36,9 @@ export interface MiddlewareOptions {
 
 	/**
 	 * Set the token on orizuru context.
+	 *
+	 * WARNING: This option should be used with care;
+	 * make sure that the token is as secure as possible.
 	 */
 	setTokenOnContext?: boolean;
 

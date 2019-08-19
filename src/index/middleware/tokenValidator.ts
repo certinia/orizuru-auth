@@ -33,7 +33,7 @@ import { NextFunction, Request, RequestHandler, Response } from '@financialforce
 import { EVENT_TOKEN_VALIDATED, OpenIDTokenWithStandardClaims, UserInfoOptions } from '../..';
 import { SalesforceUser } from '../client/salesforce';
 import { createUserInfoRequester } from '../userInfo/userinfo';
-import { extractAccessToken } from './common/accessToken';
+import { DEFAULT_MIDDLEWARE_OPTIONS, extractAccessToken, MiddlewareOptions, setAccessTokenOnRequest } from './common/accessToken';
 import { fail } from './common/fail';
 
 /**
@@ -47,9 +47,11 @@ import { fail } from './common/fail';
  * @param [opts] The optional parameters used when requesting user information.
  * @returns An express middleware that validates an access token.
  */
-export function createMiddleware(app: Orizuru.IServer, provider?: string, opts?: UserInfoOptions): RequestHandler {
+export function createMiddleware(app: Orizuru.IServer, provider?: string, opts?: MiddlewareOptions & UserInfoOptions): RequestHandler {
 
 	const internalProvider = provider || 'salesforce';
+	const { setTokenOnContext, ...userInfoOptions } = opts || DEFAULT_MIDDLEWARE_OPTIONS;
+
 	const requestUserInfo = createUserInfoRequester(app.options.authProvider[internalProvider]);
 
 	return async function validateToken(req: Request, res: Response, next: NextFunction) {
@@ -57,8 +59,9 @@ export function createMiddleware(app: Orizuru.IServer, provider?: string, opts?:
 		try {
 
 			const accessToken = extractAccessToken(req);
-			const userInfo = await requestUserInfo(accessToken, opts);
+			const userInfo = await requestUserInfo(accessToken, userInfoOptions);
 			setUserOnRequest(app, req, userInfo);
+			setAccessTokenOnRequest(req, accessToken, setTokenOnContext);
 
 			next();
 

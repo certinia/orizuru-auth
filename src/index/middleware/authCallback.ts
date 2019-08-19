@@ -34,6 +34,7 @@ import { AccessTokenResponse, AuthCodeGrantParams, EVENT_AUTHORIZATION_HEADER_SE
 import { isOpenIdAccessTokenResponse, isOpenIdTokenWithStandardClaims } from '../client/openid/identity';
 import { isSalesforceAccessTokenResponse } from '../client/salesforce/identity';
 import { createTokenGrantor } from '../flow/webServer';
+import { DEFAULT_MIDDLEWARE_OPTIONS, MiddlewareOptions, setAccessTokenOnRequest } from './common/accessToken';
 import { fail } from './common/fail';
 
 /**
@@ -49,10 +50,11 @@ import { fail } from './common/fail';
  * @returns An express middleware that exchanges a verification code for an access
  * token.
  */
-export function createMiddleware(app: Orizuru.IServer, provider?: string, params?: TokenGrantorParams, opts?: GrantOptions): RequestHandler {
+export function createMiddleware(app: Orizuru.IServer, provider?: string, params?: TokenGrantorParams, opts?: MiddlewareOptions & GrantOptions): RequestHandler {
 
 	const internalProvider = provider || 'salesforce';
 	const internalParams = params || app.options.openid[internalProvider];
+	const { setTokenOnContext, ...grantOptions } = opts || DEFAULT_MIDDLEWARE_OPTIONS;
 
 	const requestAccessToken = createTokenGrantor(app.options.authProvider[internalProvider]);
 
@@ -69,9 +71,10 @@ export function createMiddleware(app: Orizuru.IServer, provider?: string, params
 
 			const token = await requestAccessToken(Object.assign({}, authParams, {
 				code: req.query.code
-			}) as AuthCodeGrantParams, opts);
+			}) as AuthCodeGrantParams, grantOptions);
 
 			setAuthorizationHeaderAndIdentity(app, req, token);
+			setAccessTokenOnRequest(req, token.access_token, setTokenOnContext);
 
 			next();
 

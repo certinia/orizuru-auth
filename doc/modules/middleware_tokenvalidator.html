@@ -70,14 +70,34 @@
 				<h2>Index</h2>
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
+						<section class="tsd-index-section tsd-is-not-exported">
+							<h3>Variables</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported"><a href="middleware_tokenvalidator.html#instanceurlregex" class="tsd-kind-icon">instance<wbr>Url<wbr>Regex</a></li>
+							</ul>
+						</section>
 						<section class="tsd-index-section ">
 							<h3>Functions</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-function tsd-parent-kind-external-module"><a href="middleware_tokenvalidator.html#createmiddleware" class="tsd-kind-icon">create<wbr>Middleware</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported"><a href="middleware_tokenvalidator.html#setinstanceurlonrequest" class="tsd-kind-icon">set<wbr>Instance<wbr>Url<wbr>OnRequest</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported"><a href="middleware_tokenvalidator.html#setuseronrequest" class="tsd-kind-icon">set<wbr>User<wbr>OnRequest</a></li>
 							</ul>
 						</section>
 					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group tsd-is-not-exported">
+				<h2>Variables</h2>
+				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
+					<a name="instanceurlregex" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> instance<wbr>Url<wbr>Regex</h3>
+					<div class="tsd-signature tsd-kind-icon">instance<wbr>Url<wbr>Regex<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">RegExp</span><span class="tsd-signature-symbol"> =&nbsp;new RegExp(&#x27;(https:\/\/[^\/]*)&#x27;)</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/middleware/tokenValidator.ts#L39">index/middleware/tokenValidator.ts:39</a></li>
+						</ul>
+					</aside>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
@@ -92,7 +112,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/middleware/tokenValidator.ts#L50">index/middleware/tokenValidator.ts:50</a></li>
+									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/middleware/tokenValidator.ts#L52">index/middleware/tokenValidator.ts:52</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -128,6 +148,43 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+					<a name="setinstanceurlonrequest" class="tsd-anchor"></a>
+					<h3>set<wbr>Instance<wbr>Url<wbr>OnRequest</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">set<wbr>Instance<wbr>Url<wbr>OnRequest<span class="tsd-signature-symbol">(</span>req<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Request</span>, userInfo<span class="tsd-signature-symbol">: </span><a href="../interfaces/client_openid.openidtokenwithstandardclaims.html" class="tsd-signature-type">OpenIDTokenWithStandardClaims</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/middleware/tokenValidator.ts#L111">index/middleware/tokenValidator.ts:111</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Sets the Salesforce instance URL on the Orizuru context.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>req: <span class="tsd-signature-type">Request</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The HTTP request.</p>
+									</div>
+								</li>
+								<li>
+									<h5>userInfo: <a href="../interfaces/client_openid.openidtokenwithstandardclaims.html" class="tsd-signature-type">OpenIDTokenWithStandardClaims</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The user information.</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
 					<a name="setuseronrequest" class="tsd-anchor"></a>
 					<h3>set<wbr>User<wbr>OnRequest</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
@@ -137,7 +194,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/middleware/tokenValidator.ts#L84">index/middleware/tokenValidator.ts:84</a></li>
+									<li>Defined in <a href="https://github.com/financialforcedev/orizuru-auth/blob/master/src/index/middleware/tokenValidator.ts#L87">index/middleware/tokenValidator.ts:87</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -190,8 +247,14 @@
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
+					<li class=" tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="middleware_tokenvalidator.html#instanceurlregex" class="tsd-kind-icon">instance<wbr>Url<wbr>Regex</a>
+					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module">
 						<a href="middleware_tokenvalidator.html#createmiddleware" class="tsd-kind-icon">create<wbr>Middleware</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="middleware_tokenvalidator.html#setinstanceurlonrequest" class="tsd-kind-icon">set<wbr>Instance<wbr>Url<wbr>OnRequest</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
 						<a href="middleware_tokenvalidator.html#setuseronrequest" class="tsd-kind-icon">set<wbr>User<wbr>OnRequest</a>

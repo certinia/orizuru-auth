@@ -1,5 +1,11 @@
 # @financialforcedev/orizuru-auth
 
+## 7.3.0
+
+### NEW FEATURES
+
+- Add the instance URL to the Orizuru context with the access token
+
 ## 7.2.0
 
 ### NEW FEATURES

@@ -36,6 +36,8 @@ import { createUserInfoRequester } from '../userInfo/userinfo';
 import { DEFAULT_MIDDLEWARE_OPTIONS, extractAccessToken, MiddlewareOptions, setAccessTokenOnRequest } from './common/accessToken';
 import { fail } from './common/fail';
 
+const instanceUrlRegex = new RegExp('(https:\/\/[^\/]*)');
+
 /**
  * Returns an express middleware that validates the OpenID Connect access token
  * passed in an HTTP Authorization header and if successful sets the user object onto
@@ -62,6 +64,7 @@ export function createMiddleware(app: Orizuru.IServer, provider?: string, opts?:
 			const userInfo = await requestUserInfo(accessToken, userInfoOptions);
 			setUserOnRequest(app, req, userInfo);
 			setAccessTokenOnRequest(req, accessToken, setTokenOnContext);
+			setInstanceUrlOnRequest(req, userInfo);
 
 			next();
 
@@ -96,5 +99,37 @@ function setUserOnRequest(app: Orizuru.IServer, req: Request, userInfo: OpenIDTo
 	req.orizuru = orizuru;
 
 	app.emit(EVENT_TOKEN_VALIDATED, `Token validated for user (${user.username}) [${req.ip}].`);
+
+}
+
+/**
+ * Sets the Salesforce instance URL on the Orizuru context.
+ *
+ * @param req The HTTP request.
+ * @param userInfo The user information.
+ */
+function setInstanceUrlOnRequest(req: Request, userInfo: OpenIDTokenWithStandardClaims) {
+
+	if (!userInfo.urls) {
+		return;
+	}
+
+	const orizuru = req.orizuru!;
+	orizuru.salesforce = orizuru.salesforce || {};
+
+	const urls = Object.values(userInfo.urls);
+	while (urls.length) {
+
+		const url = urls.shift();
+
+		const regexResults = instanceUrlRegex.exec(url);
+		if (regexResults) {
+			orizuru.salesforce.instanceUrl = regexResults[0];
+			break;
+		}
+
+	}
+
+	req.orizuru = orizuru;
 
 }

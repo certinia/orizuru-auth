@@ -273,6 +273,65 @@ describe('index/middleware/tokenValidator', () => {
 					responseFormat: ResponseFormat.JSON
 				});
 
+				expect(req.orizuru).to.not.have.property('salesforce');
+
+			});
+
+			it('and set the instance url on the request if available', async () => {
+
+				// Given
+				requestUserInfoStub.resolves({
+					organization_id: 'orgid',
+					preferred_username: 'test@test.com',
+					urls: {
+						enterprise: '',
+						rest: 'https://yourInstance.salesforce.com/services/data/v{version}/',
+						sobjects: 'https://yourInstance.salesforce.com/services/data/v{version}/sobjects/'
+					}
+				});
+
+				// When
+				await middleware(req, res, next);
+
+				// Then
+				expect(req.orizuru).to.have.property('salesforce').that.has.property('instanceUrl', 'https://yourInstance.salesforce.com');
+				expect(req.orizuru).to.have.property('user').that.eqls({
+					organizationId: 'orgid',
+					username: 'test@test.com'
+				});
+				expect(requestUserInfoStub).to.have.been.calledWithExactly('12345', {
+					responseFormat: ResponseFormat.JSON
+				});
+
+			});
+
+			it('and not set the instance URL if none of the urls match the regex', async () => {
+
+				// Given
+				requestUserInfoStub.resolves({
+					organization_id: 'orgid',
+					preferred_username: 'test@test.com',
+					urls: {
+						enterprise: 'enterprise',
+						rest: 'rest',
+						sobjects: 'sobjects'
+					}
+				});
+
+				// When
+				await middleware(req, res, next);
+
+				// Then
+				expect(req.orizuru).to.have.property('user').that.eqls({
+					organizationId: 'orgid',
+					username: 'test@test.com'
+				});
+				expect(requestUserInfoStub).to.have.been.calledWithExactly('12345', {
+					responseFormat: ResponseFormat.JSON
+				});
+
+				expect(req.orizuru).to.have.property('salesforce').that.does.not.have.property('instanceUrl');
+
 			});
 
 		});

@@ -69,12 +69,12 @@ export function createMiddleware(app: Orizuru.IServer, provider?: string, params
 
 			validateRequest(req);
 
-			const token = await requestAccessToken(Object.assign({}, authParams, {
+			const tokenResponse = await requestAccessToken(Object.assign({}, authParams, {
 				code: req.query.code
 			}) as AuthCodeGrantParams, grantOptions);
 
-			setAuthorizationHeaderAndIdentity(app, req, token);
-			setAccessTokenOnRequest(req, token.access_token, setTokenOnContext);
+			setAuthorizationHeaderAndIdentity(app, req, tokenResponse);
+			setAccessTokenOnRequest(req, tokenResponse.access_token, setTokenOnContext);
 
 			next();
 
@@ -129,6 +129,7 @@ function setAuthorizationHeaderAndIdentity(app: Orizuru.IServer, req: Request, t
 
 			const orizuru = req.orizuru || {};
 			orizuru.salesforce = orizuru.salesforce || {};
+			orizuru.salesforce.instanceUrl = token.instance_url;
 			orizuru.salesforce.userInfo = token.userInfo;
 			req.orizuru = orizuru;
 

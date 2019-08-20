@@ -255,7 +255,15 @@ describe('index/middleware/authCallback', () => {
 				// Then
 				expect(req.headers).to.have.property('authorization', 'Bearer 00Dx0000000BV7z!AR8AQP0jITN80ESEsj5EbaZTFG0RNBaT1cyWk7TrqoDjoNIWQ2ME_sTZzBjfmOE6zMHq6y8PIW4eWze9JksNEkWUl.Cju7m4');
 				expect(req).to.have.property('orizuru');
-				expect(req.orizuru).to.have.property('salesforce');
+				expect(req.orizuru).to.have.property('salesforce').that.eqls({
+					instanceUrl: 'https://yourInstance.salesforce.com/',
+					userInfo: {
+						id: '005xx000001SwiUAAS',
+						organizationId: '00Dxx0000001gPLEAY',
+						url: 'https://login.salesforce.com/id/00Dxx0000001gPLEAY/005xx000001SwiUAAS',
+						validated: true
+					}
+				});
 				expect(req.orizuru!.salesforce).to.have.property('userInfo').that.eqls({
 					id: '005xx000001SwiUAAS',
 					organizationId: '00Dxx0000001gPLEAY',

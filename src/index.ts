@@ -68,7 +68,7 @@ declare global {
 		interface Context {
 
 			/**
-			 * The access token, following the grant check. Optionally added during the grant check.
+			 * The access token.
 			 */
 			accessToken?: string;
 
@@ -82,6 +82,11 @@ declare global {
 			 * Salesforce related context information
 			 */
 			salesforce?: {
+
+				/**
+				 * The Salesforce Instance URL.
+				 */
+				instanceUrl?: string;
 
 				/**
 				 * The Salesforce Identity as defined by the [Identity URL](https://help.salesforce.com/articleView?id=remoteaccess_using_openid.htm#response) response.

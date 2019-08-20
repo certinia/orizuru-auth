@@ -143,11 +143,9 @@ describe('Suite 1 - Puppeteer script for Salesforce authentication', () => {
 
 		// Then
 		expect(response).to.have.property('status', 200);
-		expect(response).to.have.property('body').that.eqls({
-			user: {
-				organizationId,
-				username
-			}
+		expect(response).to.have.property('body').that.has.property('user').eqls({
+			organizationId,
+			username
 		});
 
 		expect(server.emit).to.have.been.calledOnce;
@@ -174,12 +172,10 @@ describe('Suite 1 - Puppeteer script for Salesforce authentication', () => {
 
 		// Then
 		expect(response).to.have.property('status', 200);
-		expect(response).to.have.property('body').that.eqls({
-			grantChecked: true,
-			user: {
-				organizationId,
-				username
-			}
+		expect(response).to.have.property('body').that.has.property('grantChecked', true);
+		expect(response).to.have.property('body').that.has.property('user').that.eqls({
+			organizationId,
+			username
 		});
 
 		expect(server.emit).to.have.been.calledTwice;

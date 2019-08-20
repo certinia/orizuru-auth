@@ -31,6 +31,8 @@
 import { NextFunction, Request, RequestHandler, Response } from '@financialforcedev/orizuru';
 
 import { EVENT_GRANT_CHECKED, GrantOptions, JwtGrantParams, JwtTokenGrantorParams } from '../..';
+import { AccessTokenResponse } from '../client/oauth2';
+import { isSalesforceAccessTokenResponse } from '../client/salesforce/identity';
 import { createTokenGrantor } from '../flow/jwtBearerToken';
 import { DEFAULT_MIDDLEWARE_OPTIONS, MiddlewareOptions, setAccessTokenOnRequest } from './common/accessToken';
 import { fail } from './common/fail';
@@ -74,6 +76,7 @@ export function createMiddleware(app: Orizuru.IServer, provider?: string, params
 
 			setGrant(app, req);
 			setAccessTokenOnRequest(req, tokenResponse.access_token, setTokenOnContext);
+			setInstanceUrlOnRequest(req, tokenResponse);
 
 			next();
 
@@ -125,5 +128,23 @@ function setGrant(app: Orizuru.IServer, req: Request) {
 	orizuru.grantChecked = true;
 
 	app.emit(EVENT_GRANT_CHECKED, `Grant checked for user (${orizuru.user!.username}) [${req.ip}].`);
+
+}
+
+/**
+ * Sets the instance URL on the Orizuru context.
+ *
+ * @param req The HTTP request.
+ * @param accessTokenResponse The access token response
+ */
+export function setInstanceUrlOnRequest(req: Request, accessTokenResponse: AccessTokenResponse) {
+
+	if (!isSalesforceAccessTokenResponse(accessTokenResponse)) {
+		return;
+	}
+
+	const orizuru = req.orizuru!;
+	orizuru.salesforce = orizuru.salesforce || {};
+	orizuru.salesforce.instanceUrl = accessTokenResponse.instance_url;
 
 }

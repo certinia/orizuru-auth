@@ -30,7 +30,7 @@ import sinonChai from 'sinon-chai';
 
 import { Request, RequestHandler, Response } from '@financialforcedev/orizuru';
 
-import { Environment, EVENT_GRANT_CHECKED, GrantOptions, OpenIdOptions } from '../../../src';
+import { Environment, EVENT_GRANT_CHECKED, GrantOptions, OpenIdOptions, SalesforceAccessTokenResponse } from '../../../src';
 import * as jwtBearerToken from '../../../src/index/flow/jwtBearerToken';
 import { MiddlewareOptions } from '../../../src/index/middleware/common/accessToken';
 import * as fail from '../../../src/index/middleware/common/fail';
@@ -268,6 +268,30 @@ describe('index/middleware/grantChecker', () => {
 
 				// Then
 				expect(req.orizuru).to.have.property('accessToken').that.eqls('testAccessToken');
+
+				expect(requestAccessTokenStub).to.have.been.calledOnce;
+				expect(requestAccessTokenStub).to.have.been.calledWithExactly(sinon.match.object, {
+					verifySignature: false
+				});
+				expect(next).to.have.been.calledOnce;
+
+			});
+
+			it('and set the instance URL on request if required', async () => {
+
+				// Given
+				const tokenResponse: Partial<SalesforceAccessTokenResponse> = {
+					access_token: 'testAccessToken',
+					instance_url: 'https://test.salesforce.com'
+				};
+
+				requestAccessTokenStub.resolves(tokenResponse);
+
+				// When
+				await middleware(req, res, next);
+
+				// Then
+				expect(req.orizuru).to.have.property('salesforce').that.has.property('instanceUrl', 'https://test.salesforce.com');
 
 				expect(requestAccessTokenStub).to.have.been.calledOnce;
 				expect(requestAccessTokenStub).to.have.been.calledWithExactly(sinon.match.object, {
